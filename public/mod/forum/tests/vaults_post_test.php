@@ -28,8 +28,8 @@ require_once(__DIR__ . '/generator_trait.php');
  * @package    mod_forum
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_forum\local\vaults\post
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_forum\local\vaults\post::class)]
 final class vaults_post_test extends \advanced_testcase {
     // Make use of the test generator trait.
     use mod_forum_tests_generator_trait;
@@ -73,8 +73,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_from_discussion_id.
-     *
-     * @covers ::get_from_discussion_id
      */
     public function test_get_from_discussion_id(): void {
         $this->resetAfterTest();
@@ -102,8 +100,6 @@ final class vaults_post_test extends \advanced_testcase {
     /**
      * Ensure that selecting posts in a discussion only returns posts that the user can see, when considering private
      * replies.
-     *
-     * @covers ::get_from_discussion_id
      */
     public function test_get_from_discussion_id_private_replies(): void {
         $this->resetAfterTest();
@@ -146,8 +142,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_from_discussion_ids when no discussion ids were provided.
-     *
-     * @covers ::get_from_discussion_ids
      */
     public function test_get_from_discussion_ids_empty(): void {
         $this->resetAfterTest();
@@ -162,8 +156,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_from_discussion_ids.
-     *
-     * @covers ::get_from_discussion_ids
      */
     public function test_get_from_discussion_ids(): void {
         $this->resetAfterTest();
@@ -208,8 +200,6 @@ final class vaults_post_test extends \advanced_testcase {
     /**
      * Ensure that selecting posts in a discussion only returns posts that the user can see, when considering private
      * replies.
-     *
-     * @covers ::get_from_discussion_ids
      */
     public function test_get_from_discussion_ids_private_replies(): void {
         $this->resetAfterTest();
@@ -304,8 +294,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_replies_to_post.
-     *
-     * @covers ::get_replies_to_post
      */
     public function test_get_replies_to_post(): void {
         $this->resetAfterTest();
@@ -352,8 +340,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_replies_to_post with private replies.
-     *
-     * @covers ::get_replies_to_post
      */
     public function test_get_replies_to_post_private_replies(): void {
         $this->resetAfterTest();
@@ -512,8 +498,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_reply_count_for_discussion_ids when no discussion ids were provided.
-     *
-     * @covers ::get_reply_count_for_discussion_ids
      */
     public function test_get_reply_count_for_discussion_ids_empty(): void {
         $this->resetAfterTest();
@@ -528,8 +512,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_reply_count_for_discussion_ids.
-     *
-     * @covers ::get_reply_count_for_discussion_ids
      */
     public function test_get_reply_count_for_discussion_ids(): void {
         $this->resetAfterTest();
@@ -577,8 +559,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_reply_count_for_discussion_ids.
-     *
-     * @covers ::get_reply_count_for_discussion_ids
      */
     public function test_get_reply_count_for_discussion_ids_private_replies(): void {
         $this->resetAfterTest();
@@ -627,8 +607,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_reply_count_for_discussion_id.
-     *
-     * @covers ::get_reply_count_for_post_id_in_discussion_id
      */
     public function test_get_reply_count_for_post_id_in_discussion_id(): void {
         $this->resetAfterTest();
@@ -657,8 +635,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_reply_count_for_post_id_in_discussion_id.
-     *
-     * @covers ::get_reply_count_for_post_id_in_discussion_id
      */
     public function test_get_reply_count_for_post_id_in_discussion_id_private_replies(): void {
         $this->resetAfterTest();
@@ -707,8 +683,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_unread_count_for_discussion_ids.
-     *
-     * @covers ::get_unread_count_for_discussion_ids
      */
     public function test_get_unread_count_for_discussion_ids(): void {
         global $CFG;
@@ -767,8 +741,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_unread_count_for_discussion_ids when no discussion ids were provided.
-     *
-     * @covers ::get_unread_count_for_discussion_ids
      */
     public function test_get_unread_count_for_discussion_ids_empty(): void {
         $this->resetAfterTest();
@@ -783,8 +755,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_latest_posts_for_discussion_ids.
-     *
-     * @covers ::get_latest_posts_for_discussion_ids
      */
     public function test_get_latest_posts_for_discussion_ids(): void {
         $this->resetAfterTest();
@@ -848,8 +818,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_latest_posts_for_discussion_ids when no discussion ids were provided.
-     *
-     * @covers ::get_latest_posts_for_discussion_ids
      */
     public function test_get_latest_posts_for_discussion_ids_empty(): void {
         $this->resetAfterTest();
@@ -864,8 +832,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_first_post_for_discussion_ids.
-     *
-     * @covers ::get_first_post_for_discussion_ids
      */
     public function test_get_first_post_for_discussion_ids(): void {
         $this->resetAfterTest();
@@ -914,8 +880,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_first_post_for_discussion_ids when no discussion ids were provided.
-     *
-     * @covers ::get_first_post_for_discussion_ids
      */
     public function test_get_first_post_for_discussion_ids_empty(): void {
         $this->resetAfterTest();
@@ -930,8 +894,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_from_filters.
-     *
-     * @covers ::get_from_filters
      */
     public function test_get_from_filters(): void {
         $this->resetAfterTest();
@@ -1026,8 +988,6 @@ final class vaults_post_test extends \advanced_testcase {
 
     /**
      * Test get_from_filters when no discussion ids were provided.
-     *
-     * @covers ::get_from_filters
      */
     public function test_get_from_filters_empty(): void {
         $this->resetAfterTest();
@@ -1043,8 +1003,6 @@ final class vaults_post_test extends \advanced_testcase {
     /**
      * Ensure that selecting posts in a discussion only returns posts that the user can see, when considering private
      * replies.
-     *
-     * @covers ::get_from_filters
      */
     public function test_get_from_filters_private_replies(): void {
         $this->resetAfterTest();

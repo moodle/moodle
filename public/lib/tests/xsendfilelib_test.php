@@ -25,8 +25,8 @@ namespace core;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers ::xsendfile
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('xsendfile')]
 final class xsendfilelib_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
@@ -71,9 +71,8 @@ final class xsendfilelib_test extends \advanced_testcase {
 
     /**
      * Test that a file served from a request dir is not served.
-     *
-     * @runInSeparateProcess
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_file_found_request_dir(): void {
         global $CFG;
 
@@ -95,9 +94,8 @@ final class xsendfilelib_test extends \advanced_testcase {
 
     /**
      * Test that a file served from an aliased dir is served.
-     *
-     * @runInSeparateProcess
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_nginx_accelerated(): void {
         global $CFG;
 
@@ -126,9 +124,8 @@ final class xsendfilelib_test extends \advanced_testcase {
 
     /**
      * Test that a file served from an unknown alias is not served.
-     *
-     * @runInSeparateProcess
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_nginx_no_alias(): void {
         global $CFG;
 
@@ -148,9 +145,8 @@ final class xsendfilelib_test extends \advanced_testcase {
 
     /**
      * Test that an alias dir which doesn't exist is ignored.
-     *
-     * @runInSeparateProcess
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_nginx_alias_dir_not_found(): void {
         global $CFG;
 

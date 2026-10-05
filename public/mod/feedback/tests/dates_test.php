@@ -88,11 +88,11 @@ final class dates_test extends advanced_testcase {
     /**
      * Test for get_dates_for_module().
      *
-     * @dataProvider get_dates_for_module_provider
      * @param int|null $timeopen The "allow answers from" time in the feedback activity.
      * @param int|null $timeclose The "allow answers to" time in the feedback activity.
      * @param array $expected The expected value of calling get_dates_for_module()
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_dates_for_module_provider')]
     public function test_get_dates_for_module(?int $timeopen, ?int $timeclose, array $expected): void {
         $this->resetAfterTest();
 

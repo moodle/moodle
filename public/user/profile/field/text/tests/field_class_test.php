@@ -31,17 +31,17 @@ use profile_field_text;
  * @package    profilefield_text
  * @copyright  2022 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \profilefield_text\profile_field_text
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\profilefield_text\profile_field_text::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\profile_field_text::class, 'display_data')]
 final class field_class_test extends \advanced_testcase {
     /**
      * Test that the profile text data is formatted and required filters applied
      *
-     * @covers \profile_field_text::display_data
-     * @dataProvider filter_profile_field_text_provider
      * @param string $input
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_profile_field_text_provider')]
     public function test_filter_display_data(string $input, string $expected): void {
         $this->resetAfterTest();
         $field = new profile_field_text();

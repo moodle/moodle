@@ -22,8 +22,8 @@ namespace tool_usertours;
  * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \tool_usertours\tour
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\tour::class)]
 final class tour_test extends \advanced_testcase {
     /**
      * @var moodle_database
@@ -111,10 +111,10 @@ final class tour_test extends \advanced_testcase {
     /**
      * Test that setters mark things as dirty.
      *
-     * @dataProvider dirty_value_provider
      * @param   string  $name           The name of the key being tested
      * @param   mixed   $value          The value being set
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('dirty_value_provider')]
     public function test_dirty_values($name, $value): void {
         $tour = new \tool_usertours\tour();
         $method = 'set_' . $name;
@@ -167,10 +167,10 @@ final class tour_test extends \advanced_testcase {
     /**
      * Test that getters return the configured value.
      *
-     * @dataProvider getter_provider
      * @param   string  $key            The name of the key being tested
      * @param   mixed   $value          The value being set
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getter_provider')]
     public function test_getters($key, $value): void {
         $tour = new \tool_usertours\tour();
 
@@ -461,12 +461,12 @@ final class tour_test extends \advanced_testcase {
     /**
      * Test get_config with valid keys provided.
      *
-     * @dataProvider get_config_provider
      * @param   object  $values     The config values
      * @param   string  $key        The key
      * @param   mixed   $default    The default value
      * @param   mixed   $expected   The expected value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_config_provider')]
     public function test_get_config_valid_keys($values, $key, $default, $expected): void {
         $tour = new \tool_usertours\tour();
 
@@ -664,13 +664,13 @@ final class tour_test extends \advanced_testcase {
     /**
      * Test that a disabled tour should never be shown to users.
      *
-     * @dataProvider should_show_for_user_provider
      * @param   mixed   $completiondate The user's completion date for this tour
      * @param   mixed   $requesteddate  The user's last requested date for this tour
      * @param   mixed   $updateddate    The date this tour was last updated
      * @param   mixed   $config         The tour config to apply
      * @param   string  $expectation    The expected tour key
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('should_show_for_user_provider')]
     public function test_should_show_for_user(
         $completiondate,
         $requesteddate,
@@ -767,7 +767,6 @@ final class tour_test extends \advanced_testcase {
     /**
      * Test that get_tour_key provides the anticipated unique keys.
      *
-     * @dataProvider get_tour_key_provider
      * @param   int     $id             The tour ID
      * @param   array   $getconfig      The mocked values for get_config calls
      * @param   array   $setconfig      The mocked values for set_config calls
@@ -775,6 +774,7 @@ final class tour_test extends \advanced_testcase {
      * @param   mixed   $userpref       The value to set for the user preference
      * @param   string  $expectation    The expected tour key
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_tour_key_provider')]
     public function test_get_tour_key($id, $getconfig, $setconfig, $willpersist, $userpref, $expectation): void {
         // Uses user preferences so we must be in a user context.
         $this->resetAfterTest();
@@ -912,12 +912,12 @@ final class tour_test extends \advanced_testcase {
     /**
      * Test the is_first_tour() function.
      *
-     * @dataProvider sortorder_first_last_provider
      * @param   int     $sortorder      The new sort order
      * @param   bool    $isfirst        Whether this is the first tour
      * @param   int     $total          The number of tours
      * @param   bool    $islast         Whether this is the last tour
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sortorder_first_last_provider')]
     public function test_is_first_tour($sortorder, $isfirst, $total, $islast): void {
         $tour = new \tool_usertours\tour();
 
@@ -931,12 +931,12 @@ final class tour_test extends \advanced_testcase {
     /**
      * Test the is_last_tour() function.
      *
-     * @dataProvider sortorder_first_last_provider
      * @param   int     $sortorder      The new sort order
      * @param   bool    $isfirst        Whether this is the first tour
      * @param   int     $total          The number of tours
      * @param   bool    $islast         Whether this is the last tour
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sortorder_first_last_provider')]
     public function test_is_last_tour_calculated($sortorder, $isfirst, $total, $islast): void {
         $tour = new \tool_usertours\tour();
 
@@ -955,12 +955,12 @@ final class tour_test extends \advanced_testcase {
     /**
      * Test the is_last_tour() function.
      *
-     * @dataProvider sortorder_first_last_provider
      * @param   int     $sortorder      The new sort order
      * @param   bool    $isfirst        Whether this is the first tour
      * @param   int     $total          The number of tours
      * @param   bool    $islast         Whether this is the last tour
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sortorder_first_last_provider')]
     public function test_is_last_tour_provided($sortorder, $isfirst, $total, $islast): void {
         $tour = new \tool_usertours\tour();
 
@@ -1019,11 +1019,11 @@ final class tour_test extends \advanced_testcase {
     /**
      * Tests for the get_filter_values function.
      *
-     * @dataProvider get_filter_values_provider
      * @param   array       $fullconfig     The config value being tested
      * @param   string      $filtername     The name of the filter being tested
      * @param   array       $expectedvalues The expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_filter_values_provider')]
     public function test_get_filter_values($fullconfig, $filtername, $expectedvalues): void {
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods(['get_config'])
@@ -1076,12 +1076,12 @@ final class tour_test extends \advanced_testcase {
     /**
      * Base tests for set_filter_values.
      *
-     * @dataProvider set_filter_values_provider
      * @param   array       $currentvalues  The current value
      * @param   string      $filtername     The name of the filter to add to
      * @param   array       $newvalues      The new values to store
      * @param   array       $expectedvalues The combined values
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_filter_values_provider')]
     public function test_set_filter_values_merge($currentvalues, $filtername, $newvalues, $expectedvalues): void {
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods(['get_config', 'set_config'])

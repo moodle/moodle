@@ -24,8 +24,8 @@ use moodle_url;
  * @package    core
  * @copyright  2021 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\task\send_login_notifications
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\task\send_login_notifications::class)]
 final class send_login_notifications_test extends \advanced_testcase {
 
     /**

@@ -36,6 +36,8 @@ require_once($CFG->dirroot . '/mod/glossary/locallib.php');
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('glossary_get_entries_by_search')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('mod_glossary_get_comments')]
 final class lib_test extends \advanced_testcase {
 
     public function test_glossary_view(): void {
@@ -508,8 +510,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test that glossary_get_entries_by_search orders concepts case-insensitively.
-     *
-     * @covers ::glossary_get_entries_by_search
      */
     public function test_glossary_get_entries_by_search_orders_concepts_case_insensitive(): void {
         $this->resetAfterTest();
@@ -813,8 +813,6 @@ final class lib_test extends \advanced_testcase {
     /**
      * Test get_comments function.
      *
-     * @covers ::mod_glossary_get_comments
-     * @dataProvider provider_test_get_comments
      *
      * @param string $role The role of the current user.
      * @param bool $requireapproval Whether approval is required for entries.
@@ -824,6 +822,7 @@ final class lib_test extends \advanced_testcase {
      * @param bool $usecomments Whether comments are enabled in the system.
      * @param bool $commentcapability Whether the user has the capability to comment.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_comments')]
     public function test_get_comments(
         string $role,
         bool $requireapproval,

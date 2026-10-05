@@ -29,18 +29,19 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests for the report model
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\models\report
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\models\report::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\event\report_created::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\event\report_updated::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\event\report_deleted::class)]
 final class report_test extends advanced_testcase {
 
     /**
      * Tests for report_created event
      *
      * @return report
-     *
-     * @covers \core_reportbuilder\event\report_created
      */
     public function test_report_created_event(): report {
         $this->resetAfterTest();
@@ -78,10 +79,8 @@ final class report_test extends advanced_testcase {
      *
      * @param report $report
      * @return report
-     *
-     * @depends test_report_created_event
-     * @covers \core_reportbuilder\event\report_updated
      */
+    #[\PHPUnit\Framework\Attributes\Depends('test_report_created_event')]
     public function test_report_updated_event(report $report): report {
         global $DB;
 
@@ -115,10 +114,8 @@ final class report_test extends advanced_testcase {
      * Tests for report_deleted event
      *
      * @param report $report
-     *
-     * @depends test_report_updated_event
-     * @covers \core_reportbuilder\event\report_deleted
      */
+    #[\PHPUnit\Framework\Attributes\Depends('test_report_updated_event')]
     public function test_report_deleted_event(report $report): void {
         global $DB;
 

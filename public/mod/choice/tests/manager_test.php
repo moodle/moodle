@@ -25,8 +25,13 @@ use context_module;
  * @category   test
  * @copyright  2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_choice\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_choice\manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_choice\manager::class, 'create_from_instance')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_choice\manager::class, 'create_from_coursemodule')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('count_all_users_answered')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_choice\manager::class, 'has_answered')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_choice\manager::class, 'get_options')]
 final class manager_test extends \advanced_testcase {
     /**
      * Set up the test environment.
@@ -38,8 +43,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test creating a manager instance from an instance record.
-     *
-     * @covers \mod_choice\manager::create_from_instance
      */
     public function test_create_manager_instance_from_instance_record(): void {
         $this->resetAfterTest();
@@ -56,8 +59,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test creating a manager instance from an instance record.
-     *
-     * @covers \mod_choice\manager::create_from_coursemodule
      */
     public function test_create_manager_from_coursemodule(): void {
         $this->resetAfterTest();
@@ -73,8 +74,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test creating a manager instance from a course module.
-     *
-     * @covers \mod_choice\manager::create_from_coursemodule
      */
     public function test_create_manager_instance_from_coursemodule(): void {
         $this->resetAfterTest();
@@ -91,10 +90,8 @@ final class manager_test extends \advanced_testcase {
      * @param int $groupmode The group mode.
      * @param array $selectedgroups The groups to filter by, empty array means no filtering.
      * @param array $expectedcount The expected count of answers for the user.
-     *
-     * @covers       ::count_all_users_answered
-     * @dataProvider provider_count_all_answers
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_count_all_answers')]
     public function test_count_all_users_answered(
         string $currentuser,
         int $groupmode,
@@ -233,8 +230,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test checking if user has answered the choice.
-     *
-     * @covers \mod_choice\manager::has_answered
      */
     public function test_has_answered(): void {
         ['users' => $users, 'instance' => $instance] = $this->setup_users_and_activity();
@@ -247,8 +242,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test get_options method.
-     *
-     * @covers \mod_choice\manager::get_options
      */
     public function test_get_options(): void {
         $course = $this->getDataGenerator()->create_course();

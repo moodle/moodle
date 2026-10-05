@@ -25,9 +25,9 @@ use core\tests\router\route_testcase;
  * @package    core
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\objects\stacktrace
- * @covers     \core\router\schema\objects\type_base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\objects\stacktrace::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\objects\type_base::class)]
 final class stacktrace_test extends route_testcase {
     public function test_referenced_object(): void {
         $object = new stacktrace();

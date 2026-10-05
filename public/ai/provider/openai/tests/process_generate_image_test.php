@@ -27,10 +27,10 @@ use GuzzleHttp\Psr7\Response;
  * @package    aiprovider_openai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiprovider_openai\provider
- * @covers     \aiprovider_openai\process_generate_image
- * @covers     \aiprovider_openai\abstract_processor
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_openai\provider::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_openai\process_generate_image::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_openai\abstract_processor::class)]
 final class process_generate_image_test extends \advanced_testcase {
 
     use testcase_helper_trait;

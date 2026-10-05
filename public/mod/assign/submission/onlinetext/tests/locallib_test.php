@@ -44,10 +44,10 @@ final class locallib_test extends \advanced_testcase {
     /**
      * Test submission_is_empty
      *
-     * @dataProvider submission_is_empty_testcases
      * @param string $submissiontext The online text submission text
      * @param bool $expected The expected return value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('submission_is_empty_testcases')]
     public function test_submission_is_empty($submissiontext, $expected): void {
         $this->resetAfterTest();
 
@@ -71,10 +71,10 @@ final class locallib_test extends \advanced_testcase {
     /**
      * Test new_submission_empty
      *
-     * @dataProvider submission_is_empty_testcases
      * @param string $submissiontext The file submission data
      * @param bool $expected The expected return value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('submission_is_empty_testcases')]
     public function test_new_submission_empty($submissiontext, $expected): void {
         $this->resetAfterTest();
 

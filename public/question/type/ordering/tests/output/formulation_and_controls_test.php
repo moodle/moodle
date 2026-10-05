@@ -34,21 +34,21 @@ require_once($CFG->dirroot . '/question/type/ordering/question.php');
  * @package   qtype_ordering
  * @copyright 2023 Ilya Tregubov <ilya.a.tregubov@gmail.com.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \qtype_ordering\output\renderable_base
- * @covers    \qtype_ordering\output\formulation_and_controls
- * @covers    \qtype_ordering_renderer::feedback_image
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering\output\renderable_base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering\output\formulation_and_controls::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\qtype_ordering_renderer::class, 'feedback_image')]
 final class formulation_and_controls_test extends advanced_testcase {
     /**
      * Test the exported data for the template that renders the formulation and controls for a given question.
      *
-     * @dataProvider export_for_template_provider
      * @param array $answeritems The array of ordered answers.
      * @param int $gradingtype Grading type.
      * @param string $layouttype The type of the layout.
      * @param array $expected The expected exported data.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_for_template_provider')]
     public function test_export_for_template(array $answeritems, int $gradingtype, string $layouttype, array $expected): void {
         global $OUTPUT, $PAGE;
 

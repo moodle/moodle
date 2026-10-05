@@ -41,6 +41,8 @@ require_once(__DIR__ . '/local/ltiadvantage/lti_advantage_testcase.php');
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_lti_plugin::class, 'delete_instance')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti_pre_course_module_delete::class)]
 final class lib_test extends \lti_advantage_testcase {
 
     /**
@@ -124,8 +126,6 @@ final class lib_test extends \lti_advantage_testcase {
 
     /**
      * Test confirming that relevant data is removed after enrol instance removal.
-     *
-     * @covers \enrol_lti_plugin::delete_instance
      */
     public function test_delete_instance_lti_advantage(): void {
         global $DB;
@@ -220,8 +220,6 @@ final class lib_test extends \lti_advantage_testcase {
 
     /**
      * Test the behaviour of an enrolment method when the activity to which it provides access is deleted.
-     *
-     * @covers \enrol_lti_pre_course_module_delete
      */
     public function test_course_module_deletion(): void {
         // Create two modules and publish them.

@@ -102,11 +102,11 @@ final class statement_test extends advanced_testcase {
     /**
      * Test statement creation.
      *
-     * @dataProvider create_provider
      * @param bool $useagent if use agent as actor (or group if false)
      * @param array $extras extra item elements
      * @param array $extravalues extra string values
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_provider')]
     public function test_create(bool $useagent, array $extras, array $extravalues): void {
 
         $this->resetAfterTest();
@@ -234,11 +234,11 @@ final class statement_test extends advanced_testcase {
     /**
      * Test statement creation from xAPI statement data.
      *
-     * @dataProvider create_provider
      * @param bool $useagent if use agent as actor (or group if false)
      * @param array $extras extra item elements
      * @param array $extravalues extra string values
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_provider')]
     public function test_create_from_data(bool $useagent, array $extras, array $extravalues): void {
         $this->resetAfterTest();
 
@@ -395,10 +395,10 @@ final class statement_test extends advanced_testcase {
     /**
      * Test all getters into a not set statement.
      *
-     * @dataProvider invalid_gets_provider
      * @param string $method the method to test
      * @param bool $exception if an exception is expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_gets_provider')]
     public function test_invalid_gets(string $method, bool $exception): void {
         $statement = new statement();
         if ($exception) {
@@ -502,11 +502,11 @@ final class statement_test extends advanced_testcase {
     /**
      * Test for invalid structures.
      *
-     * @dataProvider invalid_data_provider
      * @param bool $useuser if use user into statement
      * @param bool $userverb if use verb into statement
      * @param bool $useobject if use object into statement
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_data_provider')]
     public function test_invalid_data(bool $useuser, bool $userverb, bool $useobject): void {
 
         $data = new stdClass();

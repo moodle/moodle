@@ -28,6 +28,7 @@ use backup_section_task;
  * @copyright 2023 Ferran Recio <ferran@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\backup_section_structure_step::class, 'define_structure')]
 final class backup_stepslib_test extends \advanced_testcase {
     /**
      * Setup to include all libraries.
@@ -42,8 +43,6 @@ final class backup_stepslib_test extends \advanced_testcase {
 
     /**
      * Test for the section structure step included elements.
-     *
-     * @covers \backup_section_structure_step::define_structure
      */
     public function test_backup_section_structure_step(): void {
         global $USER;

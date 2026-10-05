@@ -23,16 +23,16 @@ namespace filter_emailprotect;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_emailprotect\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_emailprotect\text_filter::class)]
 final class text_filter_test extends \advanced_testcase {
     /**
      * Test the filter method.
      *
-     * @dataProvider filter_provider
      * @param string $expression The regexp to check.
      * @param string $text The text to filter.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_provider')]
     public function test_filter(
         string $expression,
         string $text,

@@ -31,10 +31,10 @@ require_once("{$CFG->libdir}/form/filemanager.php");
  * Tests for the filemanager form element
  *
  * @package    core_form
- * @covers     \MoodleQuickForm_filemanager
  * @copyright  2026 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\MoodleQuickForm_filemanager::class)]
 final class filemanager_test extends advanced_testcase {
     /**
      * Test retrieving frozen HTML

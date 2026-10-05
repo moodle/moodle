@@ -26,8 +26,8 @@ use restore_controller;
  * @package   mod_quiz
  * @copyright 2024 Tomo Tsuyuki <tomotsuyuki@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \restore_move_module_questions_categories
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_move_module_questions_categories::class)]
 final class restore_39_test extends advanced_testcase {
 
     public function test_restore_random_question_39(): void {

@@ -28,17 +28,17 @@ use InvalidArgumentException;
  * @category  test
  * @copyright 2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core_table\local\filter\filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_table\local\filter\filter::class)]
 final class filter_test extends advanced_testcase {
     /**
      * Test that the constructor correctly handles a number of conditions.
      *
-     * @dataProvider constructor_provider
      * @param array $args
      * @param int $jointype
      * @param array $values
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('constructor_provider')]
     public function test_constructor(array $args, int $jointype, array $values): void {
         $filter = new filter(...$args);
 
@@ -132,9 +132,9 @@ final class filter_test extends advanced_testcase {
     /**
      * Test that the constructor throws a relevant exception when passed an invalid join.
      *
-     * @dataProvider constructor_invalid_join_provider
      * @param mixed $jointype
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('constructor_invalid_join_provider')]
     public function test_constructor_invalid_joins($jointype): void {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid join type specified');
@@ -268,10 +268,10 @@ final class filter_test extends advanced_testcase {
     /**
      * Ensure that the filter is countable.
      *
-     * @dataProvider    filter_value_provider
      * @param   array   $values List of context IDs
      * @param   int     $count Expected count
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_value_provider')]
     public function test_countable($values, $count): void {
         $filter = new filter('example', null, $values);
 

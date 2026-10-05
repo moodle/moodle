@@ -36,6 +36,9 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_move_module_questions_categories::class, 'define_execution')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_xapistate_structure_step::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_xapistate_structure_step::class)]
 final class moodle2_test extends \advanced_testcase {
 
     /**
@@ -1102,7 +1105,6 @@ final class moodle2_test extends \advanced_testcase {
 
     /**
      * Check that the backup/restore process correctly wires the question categories, see MDL-86300.
-     * @covers \restore_move_module_questions_categories::define_execution
      */
     public function test_restore_question_categories_from_500(): void {
         global $DB, $CFG, $USER;
@@ -1190,9 +1192,6 @@ final class moodle2_test extends \advanced_testcase {
 
     /**
      * Test the xAPI state through a backup and restore.
-     *
-     * @covers \backup_xapistate_structure_step
-     * @covers \restore_xapistate_structure_step
      */
     public function test_xapistate_backup(): void {
         global $DB;

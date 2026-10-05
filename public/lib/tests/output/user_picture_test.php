@@ -22,8 +22,8 @@ namespace core\output;
  * @package core
  * @copyright 2024 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\output\user_picture
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\user_picture::class)]
 final class user_picture_test extends \advanced_testcase {
 
     /**

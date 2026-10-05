@@ -31,8 +31,8 @@ use core_sms\manager;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_sms\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_sms\privacy\provider::class)]
 final class provider_test extends \core_privacy\tests\provider_testcase {
     public function test_get_metadata(): void {
         $collection = new collection('core_sms');

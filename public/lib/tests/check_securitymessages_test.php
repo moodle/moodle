@@ -26,8 +26,8 @@ use core\check\security\securitymessages;
  * @category   check
  * @copyright  2026 Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\check\security\securitymessages
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\check\security\securitymessages::class)]
 final class check_securitymessages_test extends \advanced_testcase {
     /**
      * Set up: isolate DB and reset caches.

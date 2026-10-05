@@ -29,10 +29,10 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests for report audience filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\audience
  * @copyright   2024 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\audience::class)]
 final class audience_test extends advanced_testcase {
 
     /**
@@ -56,9 +56,8 @@ final class audience_test extends advanced_testcase {
      * @param int $operator
      * @param string|null $audiencename
      * @param string[] $expected
-     *
-     * @dataProvider get_sql_filter_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_provider')]
     public function test_get_sql_filter(int $operator, ?string $audiencename, array $expected): void {
         global $DB;
 

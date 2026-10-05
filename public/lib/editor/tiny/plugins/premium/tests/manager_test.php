@@ -24,11 +24,10 @@ namespace tiny_premium;
  * @copyright  2024 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tiny_premium\manager::class)]
 final class manager_test extends \advanced_testcase {
     /**
      * Test the getting of all available Tiny Premium plugins.
-     *
-     * @covers \tiny_premium\manager
      */
     public function test_get_plugins(): void {
         $this->resetAfterTest();
@@ -41,8 +40,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test the getting and setting of enabled Tiny Premium plugins.
-     *
-     * @covers \tiny_premium\manager
      */
     public function test_get_and_set_enabled_plugins(): void {
         $this->resetAfterTest();

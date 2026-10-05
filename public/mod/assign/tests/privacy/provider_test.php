@@ -27,8 +27,8 @@ use mod_assign\tests\provider_testcase;
  * @package    mod_assign
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_assign\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\privacy\provider::class)]
 final class provider_test extends provider_testcase {
     /**
      * Test that getting the contexts for a user works.

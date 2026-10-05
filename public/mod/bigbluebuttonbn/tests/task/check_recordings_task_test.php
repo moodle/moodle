@@ -27,10 +27,10 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @package   mod_bigbluebuttonbn
  * @copyright 2022 onwards, Blindside Networks Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_bigbluebuttonbn\task\check_dismissed_recordings
- * @covers \mod_bigbluebuttonbn\task\check_pending_recordings
- * @covers \mod_bigbluebuttonbn\recording::sync_pending_recordings_from_server
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\task\check_dismissed_recordings::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\task\check_pending_recordings::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_bigbluebuttonbn\recording::class, 'sync_pending_recordings_from_server')]
 final class check_recordings_task_test extends advanced_testcase {
 
     use testcase_helper_trait;

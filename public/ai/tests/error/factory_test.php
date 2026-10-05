@@ -22,16 +22,16 @@ namespace core_ai\error;
  * @package    core_ai
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\error\factory
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_ai\error\factory::class)]
 final class factory_test extends \advanced_testcase {
     /**
      * Tests the creation of an object.
      *
-     * @dataProvider create_provider
      * @param array $input The input data for creating the object.
      * @param string $expectedclass The expected class name of the created object.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_provider')]
     public function test_create(array $input, string $expectedclass): void {
         $actualclass = factory::create(
             errorcode: $input['errorcode'],
@@ -57,10 +57,10 @@ final class factory_test extends \advanced_testcase {
     /**
      * Tests the handle_error function.
      *
-     * @dataProvider handle_error_provider
      * @param array $input The input data for the error handler.
      * @param array $expected The expected result after handling the error.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('handle_error_provider')]
     public function test_handle_error(array $input, array $expected): void {
         global $CFG;
 

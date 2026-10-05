@@ -25,15 +25,13 @@ use core_adminpresets\manager;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_admin_presets\local\action\import
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_admin_presets\local\action\import::class)]
 final class import_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of execute() method.
      *
-     * @dataProvider import_execute_provider
-     * @covers ::execute
      *
      * @param string $filecontents File content to import.
      * @param bool $expectedpreset Whether the preset should be created or not.
@@ -43,6 +41,7 @@ final class import_test extends \advanced_testcase {
      * @param string|null $expectedexception Expected exception class (if that's the case).
      * @param string|null $expectedpresetname Expected preset name.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('import_execute_provider')]
     public function test_import_execute(string $filecontents, bool $expectedpreset, bool $expectedsettings = false,
             bool $expectedplugins = false, bool $expecteddebugging = false, ?string $expectedexception = null,
             string $expectedpresetname = 'Imported preset'): void {

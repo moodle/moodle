@@ -28,6 +28,7 @@ use mod_forum_external;
  * @copyright  2012 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_forum\event\discussion_lock_updated::class)]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Tests set up
@@ -1741,10 +1742,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
     }
 
-    /*
+    /**
      * Test set_lock_state.
-     *
-     * @covers \mod_forum\event\discussion_lock_updated
      */
     public function test_set_lock_state(): void {
         global $DB;

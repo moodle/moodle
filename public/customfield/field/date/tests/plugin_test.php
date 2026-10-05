@@ -187,9 +187,8 @@ final class plugin_test extends \advanced_testcase {
      * @param string $value
      * @param int $expected
      * @return void
-     *
-     * @dataProvider parse_value_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('parse_value_provider')]
     public function test_parse_value(string $value, int $expected): void {
         $this->assertSame($expected, $this->cfields[1]->parse_value($value));
     }

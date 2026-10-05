@@ -30,8 +30,8 @@ use stdClass;
  * @category    navigation
  * @copyright   Stefan Topfstedt
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \core\navigation\output\more_menu
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\navigation\output\more_menu::class)]
 final class more_menu_test extends advanced_testcase {
     /**
      * Checks that export_for_template() returns an empty array if the given content is empty.

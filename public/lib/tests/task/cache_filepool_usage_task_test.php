@@ -22,8 +22,8 @@ namespace core\task;
  * @package    core
  * @copyright  2026 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\task\cache_filepool_usage_task
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\task\cache_filepool_usage_task::class)]
 final class cache_filepool_usage_task_test extends \advanced_testcase {
     /**
      * Test that executing the task refreshes a stale cached value.

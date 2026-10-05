@@ -22,8 +22,8 @@ namespace core_form;
  * @package   core_form
  * @copyright 2017 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core_form\filetypes_util
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_form\filetypes_util::class)]
 final class filetypes_util_test extends \advanced_testcase {
     /**
      * Test normalizing list of extensions.
@@ -384,11 +384,11 @@ final class filetypes_util_test extends \advanced_testcase {
 
     /**
      * Test is_allowed_file_type().
-     * @dataProvider is_allowed_file_type_provider
      * @param string $filename The filename to check
      * @param string $list The space , or ; separated list of types supported
      * @param boolean $expected The expected result. True if the file is allowed, false if not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_allowed_file_type_provider')]
     public function test_is_allowed_file_type($filename, $list, $expected): void {
         $util = new filetypes_util();
         $this->assertSame($expected, $util->is_allowed_file_type($filename, $list));
@@ -454,10 +454,10 @@ final class filetypes_util_test extends \advanced_testcase {
 
     /**
      * Test get_unknown_file_types().
-     * @dataProvider get_unknown_file_types_provider
      * @param string $filetypes The filetypes to check
      * @param array $expected The expected result. The list of non existant file types.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_unknown_file_types_provider')]
     public function test_get_unknown_file_types($filetypes, $expected): void {
         $util = new filetypes_util();
         $this->assertSame($expected, $util->get_unknown_file_types($filetypes));

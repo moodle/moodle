@@ -44,8 +44,14 @@ require_once($CFG->libdir . '/gradelib.php');
  * @copyright  2018 Frédéric Massart
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_grades\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_grades\privacy\provider::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\privacy\provider::class, 'get_contexts_for_userid')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\privacy\provider::class, 'export_user_data')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\privacy\provider::class, 'get_users_in_context')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\privacy\provider::class, 'delete_data_for_user')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\privacy\provider::class, 'delete_data_for_users')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\privacy\provider::class, 'delete_data_for_all_users_in_context')]
 final class provider_test extends provider_testcase {
 
     public function setUp(): void {
@@ -1626,9 +1632,6 @@ final class provider_test extends provider_testcase {
 
     /**
      * Verifies contexts and exported data for outcome-module associations.
-     *
-     * @covers \core_grades\privacy\provider::get_contexts_for_userid
-     * @covers \core_grades\privacy\provider::export_user_data
      */
     public function test_outcomes_modules_contexts_and_export(): void {
         [$course, $outcome, $u1, $u2, $cm1, $cm2, $cm1ctx, $cm2ctx] =
@@ -1667,8 +1670,6 @@ final class provider_test extends provider_testcase {
 
     /**
      * Verifies users are correctly identified for outcome-module associations.
-     *
-     * @covers \core_grades\privacy\provider::get_users_in_context
      */
     public function test_outcomes_modules_get_users_in_context(): void {
         [$course, $outcome, $u1, $u2, $cm1, $cm2, $cm1ctx, $cm2ctx] =
@@ -1696,10 +1697,6 @@ final class provider_test extends provider_testcase {
 
     /**
      * Verifies that the privacy deletion methods remove outcome-module associations.
-     *
-     * @covers \core_grades\privacy\provider::delete_data_for_user
-     * @covers \core_grades\privacy\provider::delete_data_for_users
-     * @covers \core_grades\privacy\provider::delete_data_for_all_users_in_context
      */
     public function test_outcomes_modules_deletion(): void {
         global $DB;

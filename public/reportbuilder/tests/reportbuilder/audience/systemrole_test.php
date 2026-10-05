@@ -29,10 +29,10 @@ defined('MOODLE_INTERNAL') || die();
  * Unit tests for system role report audience type
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\reportbuilder\audience\systemrole
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\reportbuilder\audience\systemrole::class)]
 final class systemrole_test extends advanced_testcase {
 
     /**

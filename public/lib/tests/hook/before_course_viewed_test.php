@@ -19,16 +19,16 @@ namespace core\hook;
 /**
  * Test hook for external routing
  *
- * @coversDefaultClass \core_course\hook\before_course_viewed
  *
  * @package    core
  * @copyright  2024 Jacob Viertel
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_course\hook\before_course_viewed::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\hook\manager::class, 'dispatch')]
 final class before_course_viewed_test extends \advanced_testcase {
     /**
      * Test hook description.
-     * @covers ::get_hook_description
      */
     public function test_hook_description(): void {
         $description = \core_course\hook\before_course_viewed::get_hook_description();
@@ -38,7 +38,6 @@ final class before_course_viewed_test extends \advanced_testcase {
 
     /**
      * Test hook tags.
-     * @covers ::get_hook_tags
      */
     public function test_hook_tags(): void {
         $tags = \core_course\hook\before_course_viewed::get_hook_tags();
@@ -51,7 +50,6 @@ final class before_course_viewed_test extends \advanced_testcase {
 
     /**
      * Test hook initialization with course data.
-     * @covers ::__construct
      */
     public function test_hook_initialization(): void {
         $course = new \stdClass();
@@ -66,7 +64,6 @@ final class before_course_viewed_test extends \advanced_testcase {
 
     /**
      * Test hook dispatch and propagation.
-     * @covers \core\hook\manager::dispatch
      */
     public function test_hook_dispatch(): void {
         $course = new \stdClass();

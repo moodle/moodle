@@ -55,12 +55,12 @@ final class restore_test extends advanced_testcase {
     /**
      * Test on H5P activity backup and restore.
      *
-     * @dataProvider backup_restore_data
      * @param bool $content if has to create attempts
      * @param bool $userdata if backup have userdata
      * @param array $result1 data to check on original course
      * @param array $result2 data to check on resotred course
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('backup_restore_data')]
     public function test_backup_restore(bool $content, bool $userdata, array $result1, array $result2): void {
         global $DB;
         $this->resetAfterTest();

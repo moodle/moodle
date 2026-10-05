@@ -29,8 +29,8 @@ use moodle_database;
  * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_question\local\bank\question_counts
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\local\bank\question_counts::class)]
 final class question_counts_test extends advanced_testcase {
     /**
      * An empty bank should return a count of 0.

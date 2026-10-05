@@ -141,10 +141,10 @@ final class compressor_test extends \advanced_testcase {
     /**
      * It works with different types.
      *
-     * @dataProvider provider_for_test_it_works_with_different_types
      * @param string $key
      * @param mixed $value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_for_test_it_works_with_different_types')]
     public function test_it_works_with_different_types($key, $value): void {
         $store = $this->create_store(cachestore_redis::COMPRESSOR_PHP_GZIP, \Redis::SERIALIZER_PHP);
         $store->set($key, $value);
@@ -233,14 +233,14 @@ final class compressor_test extends \advanced_testcase {
     /**
      * Test we can use get and set with all combinations.
      *
-     * @dataProvider provider_for_tests_setget
-     * @requires extension Redis
      * @param string $name
      * @param int $serializer
      * @param int $compressor
      * @param string $rawexpected1
      * @param string $rawexpected2
      */
+    #[\PHPUnit\Framework\Attributes\RequiresExtension('Redis')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_for_tests_setget')]
     public function test_it_can_use_getset($name, $serializer, $compressor, $rawexpected1, $rawexpected2): void {
         // Create a connection with the desired serialisation.
         $store = $this->create_store($compressor, $serializer);
@@ -258,14 +258,14 @@ final class compressor_test extends \advanced_testcase {
     /**
      * Test we can use get and set many with all combinations.
      *
-     * @dataProvider provider_for_tests_setget
-     * @requires extension Redis
      * @param string $name
      * @param int $serializer
      * @param int $compressor
      * @param string $rawexpected1
      * @param string $rawexpected2
      */
+    #[\PHPUnit\Framework\Attributes\RequiresExtension('Redis')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_for_tests_setget')]
     public function test_it_can_use_getsetmany($name, $serializer, $compressor, $rawexpected1, $rawexpected2): void {
         $many = [
             ['key' => 'key1', 'value' => 'value1'],

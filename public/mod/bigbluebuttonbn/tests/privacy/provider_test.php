@@ -37,8 +37,8 @@ use core_privacy\local\request\userlist;
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
- * @covers \mod_bigbluebuttonbn\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\privacy\provider::class)]
 final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**

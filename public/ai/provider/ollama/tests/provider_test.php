@@ -22,8 +22,8 @@ namespace aiprovider_ollama;
  * @package    aiprovider_ollama
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiprovider_ollama\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_ollama\provider::class)]
 final class provider_test extends \advanced_testcase {
 
     /** @var \core_ai\manager */

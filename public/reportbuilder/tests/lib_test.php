@@ -35,12 +35,11 @@ require_once("{$CFG->dirroot}/reportbuilder/lib.php");
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('core_reportbuilder_get_tagged_reports')]
 final class lib_test extends advanced_testcase {
 
     /**
      * Test getting tagged reports
-     *
-     * @covers ::core_reportbuilder_get_tagged_reports
      */
     public function test_core_reportbuilder_get_tagged_reports(): void {
         $this->resetAfterTest();

@@ -50,8 +50,8 @@ final class responses_from_steps_walkthrough_test extends \mod_quiz\tests\attemp
      * @param array $quizsettings settings to override default settings for quiz created by generator. Taken from quizzes.csv.
      * @param array $csvdata of data read from csv file "questionsXX.csv", "stepsXX.csv" and "responsesXX.csv".
      * // phpcs:ignore moodle.PHPUnit.TestCaseProvider.dataProviderSyntaxMethodNotFound
-     * @dataProvider get_data_for_walkthrough
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_data_for_walkthrough')]
     public function test_walkthrough_from_csv($quizsettings, $csvdata): void {
         $this->resetAfterTest(true);
 

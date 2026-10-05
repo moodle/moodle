@@ -25,8 +25,8 @@ use core\tests\fake_plugins_test_trait;
  * @category  test
  * @copyright 2024 Jake Dallimore <jrhdallimore@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\event\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\manager::class)]
 final class manager_test extends \advanced_testcase {
 
     use fake_plugins_test_trait;
@@ -34,9 +34,9 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test verifying that observers are not returned for deprecated plugin types.
      *
-     * @runInSeparateProcess
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_get_all_observers_deprecated_plugintype(): void {
         $this->resetAfterTest();
 

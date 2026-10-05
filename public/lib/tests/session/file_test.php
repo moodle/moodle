@@ -24,10 +24,9 @@ use core\tests\session\mock_handler;
  * @package   core
  * @copyright Meirza <meirza.arson@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @runTestsInSeparateProcesses
- * @covers \core\session\file
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\session\file::class)]
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class file_test extends \advanced_testcase {
     /** @var file|null $filesession */
     private ?file $filesession = null;

@@ -118,9 +118,7 @@ CSS
         ];
     }
 
-    /**
-     * @dataProvider is_valid_file_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_valid_file_provider')]
     public function test_is_valid_file($path, $valid): void {
         $scss = new \core_scss();
         $pathvalid = \core\test\phpunit\phpunit_util::call_internal_method($scss, 'is_valid_file', [$path], \core_scss::class);
@@ -130,10 +128,10 @@ CSS
     /**
      * Test that we can use the SassC compiler if it's provided.
      *
-     * @dataProvider scss_compilation_provider
      * @param string $scss The raw scss to compile.
      * @param string $expected The expected CSS output.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('scss_compilation_provider')]
     public function test_scss_compilation_with_sassc($scss, $expected): void {
         if (!defined('PHPUNIT_PATH_TO_SASSC')) {
             $this->markTestSkipped('Path to SassC not provided');

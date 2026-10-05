@@ -23,14 +23,12 @@ namespace contenttype_h5p;
  * @category   test
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \contenttype_h5p\content
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\contenttype_h5p\content::class)]
 final class content_h5p_test extends \advanced_testcase {
 
     /**
      * Tests for uploaded file.
-     *
-     * @covers ::get_file
      */
     public function test_upload_file(): void {
         $this->resetAfterTest();
@@ -63,14 +61,13 @@ final class content_h5p_test extends \advanced_testcase {
     /**
      * Tests for is view allowed content.
      *
-     * @covers ::is_view_allowed
-     * @dataProvider is_view_allowed_provider
      *
      * @param string $role User role to use for create and view contents.
      * @param array $disabledlibraries Library names to disable.
      * @param array $expected Array with the expected values for the contents in the following order:
      *     ['H5P.Blanks deployed', 'H5P.Accordion deployed', 'H5P.Accordion undeployed', 'Invalid content'].
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_view_allowed_provider')]
     public function test_is_view_allowed(string $role, array $disabledlibraries, array $expected): void {
         global $CFG, $USER, $DB;
 

@@ -68,10 +68,10 @@ final class dates_test extends advanced_testcase {
     /**
      * Test for get_dates_for_module().
      *
-     * @dataProvider get_dates_for_module_provider
      * @param int|null $duedate Forum's due date.
      * @param array $expected The expected value of calling get_dates_for_module()
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_dates_for_module_provider')]
     public function test_get_dates_for_module(?int $duedate, array $expected): void {
         $this->resetAfterTest();
 

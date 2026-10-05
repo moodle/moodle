@@ -28,14 +28,12 @@ use \core_privacy\local\request\approved_userlist;
  * @category    test
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_privacy\local\request\userlist_collection
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_privacy\local\request\userlist_collection::class)]
 final class userlist_collection_test extends advanced_testcase {
 
     /**
      * A userlist_collection should support the userlist type.
-     *
-     * @covers ::add_userlist
      */
     public function test_supports_userlist(): void {
         $cut = \context_system::instance();
@@ -49,8 +47,6 @@ final class userlist_collection_test extends advanced_testcase {
 
     /**
      * A userlist_collection should support the approved_userlist type.
-     *
-     * @covers ::add_userlist
      */
     public function test_supports_approved_userlist(): void {
         $cut = \context_system::instance();
@@ -64,8 +60,6 @@ final class userlist_collection_test extends advanced_testcase {
 
     /**
      * Ensure that get_userlist_for_component returns the correct userlist.
-     *
-     * @covers ::get_userlist_for_component
      */
     public function test_get_userlist_for_component(): void {
         $cut = \context_system::instance();
@@ -85,8 +79,6 @@ final class userlist_collection_test extends advanced_testcase {
 
     /**
      * Ensure that get_userlist_for_component does not die horribly when querying a non-existent component.
-     *
-     * @covers ::get_userlist_for_component
      */
     public function test_get_userlist_for_component_not_found(): void {
         $cut = \context_system::instance();
@@ -97,8 +89,6 @@ final class userlist_collection_test extends advanced_testcase {
 
     /**
      * Ensure that a duplicate userlist in the collection throws an Exception.
-     *
-     * @covers ::add_userlist
      */
     public function test_duplicate_addition_throws(): void {
         $cut = \context_system::instance();
@@ -113,8 +103,6 @@ final class userlist_collection_test extends advanced_testcase {
 
     /**
      * Ensure that the userlist_collection is countable.
-     *
-     * @covers ::count
      */
     public function test_countable(): void {
         $cut = \context_system::instance();
@@ -128,12 +116,6 @@ final class userlist_collection_test extends advanced_testcase {
 
     /**
      * Ensure that the userlist_collection iterates over the set of userlists.
-     *
-     * @covers ::current
-     * @covers ::key
-     * @covers ::next
-     * @covers ::rewind
-     * @covers ::valid
      */
     public function test_iteration(): void {
         $cut = \context_system::instance();
@@ -162,8 +144,6 @@ final class userlist_collection_test extends advanced_testcase {
 
     /**
      * Test that the context is correctly returned.
-     *
-     * @covers ::get_context
      */
     public function test_get_context(): void {
         $cut = \context_system::instance();

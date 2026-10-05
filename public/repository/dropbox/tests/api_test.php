@@ -70,10 +70,10 @@ final class api_test extends \advanced_testcase {
     /**
      * Tests for the has_additional_results API function.
      *
-     * @dataProvider has_additional_results_provider
      * @param   object      $result     The data to test
      * @param   bool        $expected   The expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('has_additional_results_provider')]
     public function test_has_additional_results($result, $expected): void {
         $mock = $this->getMockBuilder(\repository_dropbox\dropbox::class)
             ->disableOriginalConstructor()
@@ -144,12 +144,12 @@ final class api_test extends \advanced_testcase {
     /**
      * Tests for check_and_handle_api_errors.
      *
-     * @dataProvider check_and_handle_api_errors_provider
      * @param   object      $info       The response to test
      * @param   string      $data       The contented returned by the curl call
      * @param   string      $exception  The name of the expected exception
      * @param   string      $exceptionmessage  The expected message in the exception
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('check_and_handle_api_errors_provider')]
     public function test_check_and_handle_api_errors($info, $data, $exception, $exceptionmessage): void {
         $mock = $this->getMockBuilder(\repository_dropbox\dropbox::class)
             ->disableOriginalConstructor()
@@ -240,10 +240,10 @@ final class api_test extends \advanced_testcase {
     /**
      * Test the supports_thumbnail function.
      *
-     * @dataProvider supports_thumbnail_provider
      * @param   object      $entry      The entry to test
      * @param   bool        $expected   Whether this entry supports thumbnail generation
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('supports_thumbnail_provider')]
     public function test_supports_thumbnail($entry, $expected): void {
         $mock = $this->getMockBuilder(\repository_dropbox\dropbox::class)
             ->disableOriginalConstructor()

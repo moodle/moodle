@@ -52,11 +52,11 @@ final class phpparser_test extends advanced_testcase {
     /**
      * Test get instance parse method.
      *
-     * @dataProvider parse_provider
      * @param string $phpcode PHP code to test
      * @param array $expected Expected result
      * @param bool $exception if an exception is expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('parse_provider')]
     public function test_parse(string $phpcode, array $expected, bool $exception): void {
 
         $instance = phpparser::get_instance();

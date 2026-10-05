@@ -24,10 +24,10 @@ use core_component;
  * Tests for the dataformat plugins
  *
  * @package    core
- * @covers     \core\dataformat
  * @copyright  2020 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\dataformat::class)]
 final class dataformat_test extends \advanced_testcase {
 
     /**
@@ -68,9 +68,8 @@ final class dataformat_test extends \advanced_testcase {
      *
      * @param string $dataformat
      * @return void
-     *
-     * @dataProvider write_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('write_data_provider')]
     public function test_write_data(string $dataformat): void {
         $columns = ['fruit', 'colour', 'animal'];
         $rows = [
@@ -90,9 +89,8 @@ final class dataformat_test extends \advanced_testcase {
      *
      * @param string $dataformat
      * @return void
-     *
-     * @dataProvider write_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('write_data_provider')]
     public function test_write_data_to_filearea(string $dataformat): void {
         $this->resetAfterTest();
 
@@ -188,10 +186,10 @@ final class dataformat_test extends \advanced_testcase {
     /**
      * Test escape_spreadsheet_formula.
      *
-     * @dataProvider escape_spreadsheet_formula_provider
      * @param string|null $value The value to test.
      * @param string|null $expected The expected value after escaping.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('escape_spreadsheet_formula_provider')]
     public function test_escape_spreadsheet_formula(?string $value, ?string $expected): void {
         $this->resetAfterTest();
 

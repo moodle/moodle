@@ -23,8 +23,8 @@ namespace core\external;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\external\pix_icon_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\external\pix_icon_exporter::class)]
 final class pix_icon_exporter_test extends \advanced_testcase {
     /**
      * Test export method.

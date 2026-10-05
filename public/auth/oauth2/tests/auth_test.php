@@ -23,8 +23,9 @@ namespace auth_oauth2;
  * @category   test
  * @copyright  2019 Shamim Rezaie
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \auth_oauth2\auth
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\auth_oauth2\auth::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('complete_login')]
 final class auth_test extends \advanced_testcase {
 
     public function test_get_password_change_info(): void {
@@ -42,7 +43,6 @@ final class auth_test extends \advanced_testcase {
 
     /**
      * Test complete_login for oauth2.
-     * @covers ::complete_login
      */
     public function test_oauth2_complete_login(): void {
         global $CFG;

@@ -27,22 +27,25 @@ use mod_data\local\exporter\utils;
  * Also {@see entries_export_test} class which provides module tests for exporting entries.
  *
  * @package    mod_data
- * @covers     \mod_data\local\exporter\entries_exporter
- * @covers     \mod_data\local\exporter\csv_entries_exporter
  * @copyright  2023 ISB Bayern
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\local\exporter\entries_exporter::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\local\exporter\csv_entries_exporter::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_data\local\exporter\entries_exporter::class, 'get_records_count')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_data\local\exporter\entries_exporter::class, 'add_file_from_string')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_data\local\exporter\entries_exporter::class, 'file_exists')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_data\local\exporter\entries_exporter::class, 'create_unique_filename')]
 final class entries_exporter_test extends \advanced_testcase {
 
     /**
      * Tests get_records_count method.
      *
-     * @covers \mod_data\local\exporter\entries_exporter::get_records_count
-     * @dataProvider get_records_count_provider
      * @param array $rows the rows from the data provider to be tested by the exporter
      * @param int $expectedcount the expected count of records to be exported
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_records_count_provider')]
     public function test_get_records_count(array $rows, int $expectedcount): void {
         $exporter = new csv_entries_exporter();
         foreach ($rows as $row) {
@@ -85,12 +88,10 @@ final class entries_exporter_test extends \advanced_testcase {
     /**
      * Tests adding of files to the exporter to be included in the exported zip archive.
      *
-     * @dataProvider add_file_from_string_provider
-     * @covers \mod_data\local\exporter\entries_exporter::add_file_from_string
-     * @covers \mod_data\local\exporter\entries_exporter::file_exists
      * @param array $files array of filename and filecontent to be tested for exporting
      * @param bool $success if the exporting of files should be successful
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_file_from_string_provider')]
     public function test_add_file_from_string(array $files, bool $success): void {
         $exporter = new csv_entries_exporter();
         foreach ($files as $file) {
@@ -164,11 +165,10 @@ final class entries_exporter_test extends \advanced_testcase {
     /**
      * Tests if unique filenames are being created correctly.
      *
-     * @covers \mod_data\local\exporter\entries_exporter::create_unique_filename
-     * @dataProvider create_unique_filename_provider
      * @param string $inputfilename the name of the file which should be converted into a unique filename
      * @param string $resultfilename the maybe changed $inputfilename, so that it is unique in the exporter
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_unique_filename_provider')]
     public function test_create_unique_filename(string $inputfilename, string $resultfilename): void {
         $exporter = new csv_entries_exporter();
         $exporter->add_file_from_string('test.txt', 'somecontent');

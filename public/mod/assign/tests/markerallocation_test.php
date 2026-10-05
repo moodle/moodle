@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  * @category   test
  * @copyright  2017 Andrés Melo <andres.torres@blackboard.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \assign
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\assign::class)]
 final class markerallocation_test extends \advanced_testcase {
 
     /** @var \stdClass course record. */
@@ -203,8 +203,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test marker allocation and marking with group submissions.
-     *
-     * @covers ::update_marker_allocations, ::save_grade
      */
     public function test_allocated_markers_with_group_submissions(): void {
         $this->setup_group_data();
@@ -284,9 +282,8 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Create all the needed elements to test the difference between both functions.
-     *
-     * @coversNothing
      */
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_markerusers(): void {
         $this->setup_data();
 
@@ -321,8 +318,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test functionality around having multiple allocated markers.
-     *
-     * @covers ::update_marker_allocations, ::update_mark
      */
     public function test_multiple_marker_allocation(): void {
 
@@ -382,8 +377,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test functionality around having duplicate allocated markers.
-     *
-     * @covers ::update_marker_allocations
      */
     public function test_duplicate_marker_allocation(): void {
         global $DB;
@@ -487,14 +480,13 @@ final class markerallocation_test extends \advanced_testcase {
     /**
      * Test whether marker positions are valid for protecting against stale form submissions.
      *
-     * @dataProvider validate_marker_positions_provider
-     * @covers ::validate_marker_positions
      *
      * @param array $config Assignment config.
      * @param array $allocated Whether a marker is allocated to a position.
      * @param array $enabled Whether an optional marker is enabled.
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validate_marker_positions_provider')]
     public function test_validate_marker_positions(array $config, array $allocated, array $enabled, bool $expected): void {
         $this->setup_data();
         $assignment = $this->create_assignment($config);
@@ -578,8 +570,6 @@ final class markerallocation_test extends \advanced_testcase {
     /**
      * Test get_modified_marker_allocation().
      *
-     * @dataProvider get_modified_marker_allocation_provider
-     * @covers ::get_modified_marker_allocation
      *
      * @param array $config Assignment config.
      * @param array $current Current allocated markers.
@@ -587,6 +577,7 @@ final class markerallocation_test extends \advanced_testcase {
      * @param array $submittedenabled Submitted enabled status.
      * @param array $expected Expected modified allocations.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_modified_marker_allocation_provider')]
     public function test_get_modified_marker_allocation(
         array $config,
         array $current,
@@ -766,8 +757,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test whether a user can allocate markers.
-     *
-     * @covers ::can_allocate_marker
      */
     public function test_can_allocate_marker(): void {
         $this->setup_data();
@@ -833,8 +822,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Verify direct grading is restricted when not all allocated markers have marked.
-     *
-     * @covers ::grading_restricted
      */
     public function test_grading_restricted(): void {
         $this->setup_data();
@@ -882,12 +869,11 @@ final class markerallocation_test extends \advanced_testcase {
     /**
      * Test validation of mark workflow state and mark combinations.
      *
-     * @dataProvider validate_mark_workflow_state_provider
      * @param string|null $workflowstate The marking workflow state to validate.
      * @param float|null $mark Mark value.
      * @param bool $expected Expected validation result.
-     * @covers ::validate_mark_workflow_state
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validate_mark_workflow_state_provider')]
     public function test_validate_mark_workflow_state(?string $workflowstate, ?float $mark, bool $expected): void {
         $method = new \ReflectionMethod(assign::class, 'validate_mark_workflow_state');
         $this->assertSame($expected, $method->invoke(null, $workflowstate, $mark));
@@ -915,8 +901,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test manual calculation of final grade.
-     *
-     * @covers ::update_mark
      */
     public function test_calculated_marker_grade_manual(): void {
         $this->setup_data();
@@ -965,8 +949,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test "maximum" calculation of final grade when using scale grading.
-     *
-     * @covers ::update_mark
      */
     public function test_calculated_marker_grade_maximum(): void {
         $this->setup_data();
@@ -997,8 +979,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test "average" calculation of final grade when using rounding of "none".
-     *
-     * @covers ::update_mark
      */
     public function test_calculated_marker_grade_average_round_none(): void {
         $this->setup_data();
@@ -1030,8 +1010,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test "average" calculation of final grade when using rounding of "down".
-     *
-     * @covers ::update_mark
      */
     public function test_calculated_marker_grade_average_rounding_down(): void {
         $this->setup_data();
@@ -1063,8 +1041,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test that the grade calculation from marks using method "average" with up rounding, sets the correct grade.
-     *
-     * @covers ::update_mark
      */
     public function test_calculated_marker_grade_average_round_up(): void {
         $this->setup_data();
@@ -1096,8 +1072,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test that the grade calculation from marks using method "average" with natural rounding, sets the correct grade.
-     *
-     * @covers ::update_mark
      */
     public function test_calculated_marker_grade_average_round_natural(): void {
         $this->setup_data();
@@ -1129,8 +1103,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test that the workflow state changes on the overall grade based on marker states.
-     *
-     * @covers ::update_mark, ::calculate_and_save_overall_workflow_state
      */
     public function test_calculated_marker_workflow(): void {
         $this->setup_data();
@@ -1189,8 +1161,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Test that when we remove a marker their marks are not counted towards anything.
-     *
-     * @covers ::update_mark
      */
     public function test_unallocated_marker_not_included_in_mark_calculations(): void {
         $this->setup_data();
@@ -1230,8 +1200,6 @@ final class markerallocation_test extends \advanced_testcase {
     /**
      * Verify that stale agreed grade calculations are cleared when a mark can no longer be calculated.
      * This should only be triggered when markers are allocated or marks are assigned.
-     *
-     * @covers ::update_mark, ::update_marker_allocations
      */
     public function test_clear_stale_agreed_grade_calculations(): void {
         $this->setup_data();
@@ -1326,8 +1294,6 @@ final class markerallocation_test extends \advanced_testcase {
     /**
      * Verify that a final grade is not calculated when an enabled optional marker
      * has not completed marking.
-     *
-     * @covers ::update_mark
      */
     public function test_enabled_optional_markers_included_in_mark_calculations(): void {
         global $DB;
@@ -1367,8 +1333,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Verify that disabled optional markers are ignored during grade calculation.
-     *
-     * @covers ::update_mark
      */
     public function test_disabled_optional_markers_not_included_in_mark_calculations(): void {
         global $DB;
@@ -1426,8 +1390,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Verify behaviour when increasing required marker count.
-     *
-     * @covers ::can_change_marker_count, ::update_instance
      */
     public function test_increasing_marker_count(): void {
         $this->setup_data();
@@ -1476,8 +1438,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Verify behaviour when decreasing required marker count.
-     *
-     * @covers ::can_change_marker_count, ::update_instance
      */
     public function test_decreasing_marker_count(): void {
         $this->setup_data();
@@ -1523,8 +1483,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Verify behaviour when increasing optional marker count.
-     *
-     * @covers ::can_change_marker_count, ::update_instance
      */
     public function test_increasing_optional_marker_count(): void {
         global $DB;
@@ -1580,8 +1538,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Verify behaviour when decreasing optional marker count.
-     *
-     * @covers ::can_change_marker_count, ::update_instance
      */
     public function test_decreasing_optional_marker_count(): void {
         $this->setup_data();
@@ -1622,8 +1578,6 @@ final class markerallocation_test extends \advanced_testcase {
 
     /**
      * Verify enabling multi-marking keeps existing grades when no marker marks exist.
-     *
-     * @covers ::update_instance
      */
     public function test_enabling_multimarking_keeps_existing_grades(): void {
         $this->setup_data();
@@ -1656,13 +1610,12 @@ final class markerallocation_test extends \advanced_testcase {
     /**
      * Verify that grades are recalculated when the marking method changes.
      *
-     * @dataProvider changing_grade_calculation_provider
      * @param string $method
      * @param int|null $rounding
      * @param string $action
      * @param float $expectedgrade
-     * @covers ::update_instance
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('changing_grade_calculation_provider')]
     public function test_changing_grade_calculation(string $method, ?int $rounding, string $action, float $expectedgrade): void {
         $this->setup_data();
 

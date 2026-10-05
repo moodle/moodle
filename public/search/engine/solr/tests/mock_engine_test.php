@@ -32,8 +32,8 @@ namespace search_solr;
  * @category test
  * @copyright 2024 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \search_solr\engine
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\search_solr\engine::class)]
 final class mock_engine_test extends \advanced_testcase {
 
     protected function setUp(): void {

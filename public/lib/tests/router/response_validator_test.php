@@ -27,8 +27,8 @@ use Psr\Http\Message\ResponseInterface;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\router\response_validator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\response_validator::class)]
 final class response_validator_test extends \advanced_testcase {
     public function test_validate_response_without_moodle_route(): void {
         $validator = new response_validator();

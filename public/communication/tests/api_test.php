@@ -36,8 +36,8 @@ require_once(__DIR__ . '/communication_test_helper_trait.php');
  * @category   test
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_communication\api
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_communication\api::class)]
 final class api_test extends \advanced_testcase {
     use matrix_test_helper_trait;
     use communication_test_helper_trait;

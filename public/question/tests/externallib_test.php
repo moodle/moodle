@@ -29,12 +29,12 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * Question external functions tests
  *
  * @package    core_question
- * @covers     \core_question_external
  * @category   external
  * @copyright  2016 Pau Ferrer <pau@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.1
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question_external::class)]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /** @var \stdClass course record. */
     protected $course;
@@ -182,12 +182,12 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
      *          Parent: cat1
      *      Category: emptycat
      *
-     * @dataProvider get_random_question_summaries_test_cases
      * @param string $categoryindex The named index for the category to use
      * @param bool $includesubcategories If the search should include subcategories
      * @param string[] $usetagnames The tag names to include in the search
      * @param string[] $expectedquestionindexes The questions expected in the result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_random_question_summaries_test_cases')]
     public function test_get_random_question_summaries_variations(
         $categoryindex,
         $includesubcategories,

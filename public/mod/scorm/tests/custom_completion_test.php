@@ -152,7 +152,6 @@ final class custom_completion_test extends advanced_testcase {
     /**
      * Test for get_state().
      *
-     * @dataProvider get_state_provider
      * @param string $rule The custom completion condition.
      * @param int $rulevalue The custom completion rule value.
      * @param array $uservalue The relevant record database mock data recorded against the user for the rule.
@@ -160,6 +159,7 @@ final class custom_completion_test extends advanced_testcase {
      * @param int|null $status Expected completion status for the rule.
      * @param string|null $exception Expected exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_state_provider')]
     public function test_get_state(string $rule, int $rulevalue, array $uservalue, int $maxattempts, ?int $status,
             ?string $exception): void {
         global $DB;
@@ -345,10 +345,10 @@ final class custom_completion_test extends advanced_testcase {
     /**
      * Test for get_available_custom_rules().
      *
-     * @dataProvider get_available_custom_rules_provider
      * @param array $completionrulesvalues
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_available_custom_rules_provider')]
     public function test_get_available_custom_rules(array $completionrulesvalues, array $expected): void {
         $customcompletionrules = [
             'customcompletionrules' => $completionrulesvalues,

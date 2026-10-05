@@ -31,6 +31,8 @@ use core_backup\hook\fixtures\copy_course_hook_callbacks;
  * @copyright 2024 Monash University (https://www.monash.edu)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\task\asynchronous_copy_task::class, 'execute')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_backup\hook\before_copy_course_execute::class)]
 final class copy_course_hook_test extends advanced_testcase {
     /**
      * Load required test libraries
@@ -43,9 +45,6 @@ final class copy_course_hook_test extends advanced_testcase {
 
     /**
      * Test the hook.
-     *
-     * @covers \core\task\asynchronous_copy_task::execute
-     * @covers \core_backup\hook\before_copy_course_execute
      */
     public function test_copy_course_hook(): void {
         // Load the callback classes.

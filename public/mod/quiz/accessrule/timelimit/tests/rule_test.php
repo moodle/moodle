@@ -78,8 +78,8 @@ final class rule_test extends \basic_testcase {
      * @param int $timelimit    Time limit of the quiz
      * @param int $displaylimit The limit that is displayed on the quiz page
      * @param int $actuallimit  The actual limit that is being applied
-     * @dataProvider time_limit_access_rule_with_time_close_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('time_limit_access_rule_with_time_close_provider')]
     public function test_time_limit_access_rule_with_time_close($timetoclose, $timelimit, $displaylimit, $actuallimit): void {
         $timenow = 10000;
 

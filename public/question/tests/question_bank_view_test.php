@@ -29,8 +29,8 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @package    core_question
  * @copyright  2024 the Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_question\local\bank\view
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\local\bank\view::class)]
 final class question_bank_view_test extends \advanced_testcase {
 
     public function test_viewing_question_bank_should_not_load_hidden_question(): void {

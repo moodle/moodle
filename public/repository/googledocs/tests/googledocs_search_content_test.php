@@ -29,19 +29,19 @@ require_once($CFG->dirroot . '/repository/googledocs/lib.php');
  * @copyright  2021 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\repository_googledocs\googledocs_content_search::class)]
 final class googledocs_search_content_test extends \googledocs_content_testcase {
 
     /**
      * Test get_content_nodes().
      *
-     * @covers \repository_googledocs\googledocs_content_search
-     * @dataProvider get_content_nodes_provider
      * @param string $query The query string
      * @param bool $sortcontent Whether the contents should be sorted in alphabetical order
      * @param array $filterextensions The array containing file extensions that should be disallowed (filtered)
      * @param array $searccontents The array containing the fetched google drive contents that match the search criteria
      * @param array $expected The expected array which contains the generated repository content nodes
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_content_nodes_provider')]
     public function test_get_content_nodes(
         string $query,
         bool $sortcontent,

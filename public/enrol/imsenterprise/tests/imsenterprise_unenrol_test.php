@@ -33,9 +33,8 @@ require_once($CFG->dirroot . '/enrol/imsenterprise/lib.php');
  * @category   test
  * @copyright  2019 Segun Babalola
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \enrol_imsenterprise_plugin
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_imsenterprise_plugin::class)]
 final class imsenterprise_unenrol_test extends \advanced_testcase {
 
     /**

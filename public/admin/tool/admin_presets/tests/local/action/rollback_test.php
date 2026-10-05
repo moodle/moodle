@@ -23,14 +23,12 @@ namespace tool_admin_presets\local\action;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_admin_presets\local\action\rollback
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_admin_presets\local\action\rollback::class)]
 final class rollback_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of execute() method.
-     *
-     * @covers ::execute
      */
     public function test_rollback_execute(): void {
         global $DB;
@@ -120,8 +118,6 @@ final class rollback_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of execute() method when the preset applied id doesn't exist.
-     *
-     * @covers ::execute
      */
     public function test_rollback_execute_unexisting_presetapp(): void {
         global $DB;

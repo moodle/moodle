@@ -24,11 +24,13 @@ namespace tool_mobile;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since       Moodle 3.1
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tool_mobile\api::class, 'get_normalized_plan')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tool_mobile\api::class, 'is_premium_or_bma_plan')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tool_mobile\api::class, 'contains_matomo_tracking')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tool_mobile\api::class, 'has_matomo_additional_html')]
 final class api_test extends \core_external\tests\externallib_testcase {
     /**
      * Test subscription plan normalisation.
-     *
-     * @covers \tool_mobile\api::get_normalized_plan
      */
     public function test_get_normalized_plan(): void {
         $this->resetAfterTest(true);
@@ -57,8 +59,6 @@ final class api_test extends \core_external\tests\externallib_testcase {
 
     /**
      * Test Premium and BMA plan detection.
-     *
-     * @covers \tool_mobile\api::is_premium_or_bma_plan
      */
     public function test_is_premium_or_bma_plan(): void {
         $this->resetAfterTest(true);
@@ -94,8 +94,6 @@ final class api_test extends \core_external\tests\externallib_testcase {
 
     /**
      * Test Matomo detection against common identifiers.
-     *
-     * @covers \tool_mobile\api::contains_matomo_tracking
      */
     public function test_contains_matomo_tracking(): void {
         $samples = [
@@ -121,8 +119,6 @@ final class api_test extends \core_external\tests\externallib_testcase {
 
     /**
      * Test Matomo detection in the Additional HTML settings.
-     *
-     * @covers \tool_mobile\api::has_matomo_additional_html
      */
     public function test_has_matomo_additional_html(): void {
         global $CFG;

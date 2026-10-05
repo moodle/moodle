@@ -28,8 +28,16 @@ use grade_item;
  * @package   core_grades
  * @copyright 2024 Catalyst IT Australia Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_grades\penalty_manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_grades\penalty_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\penalty_manager::class, 'apply_grade_penalty_to_user')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\penalty_manager::class, 'apply_grade_item_factors')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_item::class, 'regrade_final_grades')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\penalty_manager::class, 'requires_legacy_penalty_calculation')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\penalty_manager::class, 'get_authoritative_user_grades')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\penalty_container::class, 'get_grade_before_penalties')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_item::class, 'update_raw_grade')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\penalty_manager::class, 'repair_penalised_rawgrade')]
 final class penalty_manager_test extends advanced_testcase {
     /**
      * Test is_penalty_enabled_for_module method.
@@ -109,9 +117,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * Test penalty is deducted from raw grade before grade-item factors are applied.
-     *
-     * @covers \core_grades\penalty_manager::apply_grade_penalty_to_user
-     * @covers \core_grades\penalty_manager::apply_grade_item_factors
      */
     public function test_penalty_applied_before_grade_factors(): void {
         global $DB;
@@ -174,8 +179,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * Test that due date change triggers recalculation of penalty.
-     *
-     * @covers \core_grades\penalty_manager::apply_grade_penalty_to_user
      */
     public function test_apply_grade_penalty_with_due_date_extension(): void {
         global $DB;
@@ -247,8 +250,6 @@ final class penalty_manager_test extends advanced_testcase {
      * A full regrade must not overwrite a penalised finalgrade with the plain
      * adjust_raw_grade(rawgrade) result. This regression test covers the fix in
      * grade_item::regrade_final_grades() that checks deductedmark before recomputing.
-     *
-     * @covers \grade_item::regrade_final_grades
      */
     public function test_full_regrade_preserves_penalised_finalgrade(): void {
         global $DB;
@@ -326,10 +327,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * Test that a frozen gradebook uses the pre-MDL-88407 penalty calculation.
-     *
-     * @covers \core_grades\penalty_manager::apply_grade_penalty_to_user
-     * @covers \core_grades\penalty_manager::requires_legacy_penalty_calculation
-     * @covers \core_grades\penalty_manager::get_authoritative_user_grades
      */
     public function test_frozen_gradebook_uses_legacy_penalty_calculation(): void {
         global $DB;
@@ -391,11 +388,6 @@ final class penalty_manager_test extends advanced_testcase {
      *
      * This also covers the ordering requirement in apply_grade_penalty_to_user(), where the penalised
      * raw grade must be read before deductedmark is updated (see MDL-89749).
-     *
-     * @covers \core_grades\penalty_manager::apply_grade_penalty_to_user
-     * @covers \core_grades\penalty_manager::get_authoritative_user_grades
-     * @covers \core_grades\penalty_manager::requires_legacy_penalty_calculation
-     * @covers \core_grades\penalty_container::get_grade_before_penalties
      */
     public function test_frozen_gradebook_uses_fixed_calculation_for_verified_grade(): void {
         global $DB;
@@ -448,9 +440,6 @@ final class penalty_manager_test extends advanced_testcase {
     /**
      * Test that re-applying a penalty to an already-correct grade does not compound the penalty,
      * even while the gradebook is frozen.
-     *
-     * @covers \core_grades\penalty_manager::apply_grade_penalty_to_user
-     * @covers \core_grades\penalty_container::get_grade_before_penalties
      */
     public function test_frozen_gradebook_reapplying_penalty_does_not_compound(): void {
         global $DB;
@@ -500,10 +489,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * Test that a frozen regrade preserves the penalty on an already-correct grade in a mixed-state course.
-     *
-     * @covers \core_grades\penalty_manager::get_authoritative_user_grades
-     * @covers \core_grades\penalty_manager::requires_legacy_penalty_calculation
-     * @covers \grade_item::regrade_final_grades
      */
     public function test_frozen_regrade_preserves_penalty_on_already_correct_row(): void {
         global $DB;
@@ -541,8 +526,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * Test that a frozen regrade still protects a genuinely legacy-corrupted grade.
-     *
-     * @covers \grade_item::regrade_final_grades
      */
     public function test_frozen_regrade_still_protects_legacy_row(): void {
         global $DB;
@@ -571,9 +554,6 @@ final class penalty_manager_test extends advanced_testcase {
     /**
      * Test that a legacy-corrupted grade whose stored rawgrade coincidentally matches the authoritative
      * Assignment grade survives an intervening regrade while the course is frozen.
-     *
-     * @covers \core_grades\penalty_manager::requires_legacy_penalty_calculation
-     * @covers \grade_item::regrade_final_grades
      */
     public function test_frozen_regrade_protects_legacy_row_with_coincidental_rawgrade(): void {
         global $DB;
@@ -615,10 +595,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * Test that update_raw_grade() preserves the penalty on an already-correct grade while frozen.
-     *
-     * @covers \core_grades\penalty_manager::get_authoritative_user_grades
-     * @covers \core_grades\penalty_manager::requires_legacy_penalty_calculation
-     * @covers \grade_item::update_raw_grade
      */
     public function test_frozen_update_raw_grade_preserves_penalty_on_already_correct_row(): void {
         global $DB;
@@ -652,10 +628,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * Test that reopening an Assignment preserves the penalty on an already-correct grade while frozen.
-     *
-     * @covers \core_grades\penalty_manager::get_authoritative_user_grades
-     * @covers \core_grades\penalty_manager::requires_legacy_penalty_calculation
-     * @covers \grade_item::update_raw_grade
      */
     public function test_frozen_update_raw_grade_preserves_penalty_after_reopening_attempt(): void {
         global $DB;
@@ -703,10 +675,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * Test that a feedback-only update preserves deductedmark on an already-correct grade while frozen.
-     *
-     * @covers \core_grades\penalty_manager::get_authoritative_user_grades
-     * @covers \core_grades\penalty_manager::requires_legacy_penalty_calculation
-     * @covers \grade_item::update_raw_grade
      */
     public function test_frozen_update_raw_grade_preserves_deductedmark_on_feedback_only_update(): void {
         global $DB;
@@ -748,8 +716,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * Repairs legacy penalised rawgrades for Assignment grades using the Assignment gradebook API.
-     *
-     * @covers \core_grades\penalty_manager::repair_penalised_rawgrade
      */
     public function test_repair_penalised_rawgrade_uses_assignment_gradebook_grade(): void {
         $this->resetAfterTest();
@@ -773,8 +739,6 @@ final class penalty_manager_test extends advanced_testcase {
      * Assignment repair respects locked and overridden grades and lock times.
      *
      * The rawgrade and the finalgrade must not be modified if the grade is locked or overridden.
-     *
-     * @covers \core_grades\penalty_manager::repair_penalised_rawgrade
      */
     public function test_repair_penalised_rawgrade_respects_grade_lock_state(): void {
         global $DB;
@@ -844,8 +808,6 @@ final class penalty_manager_test extends advanced_testcase {
      /**
       * Test that repair_penalised_rawgrade() repairs Gradebook grades for Assignments whose rawgrade still contains
       * the legacy pre-MDL-88407 representation, while leaving grades that cannot be safely repaired untouched.
-      *
-      * @covers \core_grades\penalty_manager::repair_penalised_rawgrade
       */
     public function test_repair_penalised_rawgrade(): void {
         global $DB;
@@ -967,8 +929,6 @@ final class penalty_manager_test extends advanced_testcase {
 
     /**
      * A null Assignment grade must be treated as an ungraded attempt and skipped.
-     *
-     * @covers \core_grades\penalty_manager::repair_penalised_rawgrade
      */
     public function test_repair_penalised_rawgrade_skips_null_assignment_grade(): void {
         global $DB;
@@ -1007,9 +967,6 @@ final class penalty_manager_test extends advanced_testcase {
      * interpreted for an arbitrary one. A non-Assignment grade item with a deducted mark must therefore
      * be left untouched, even though mod_quiz happens to implement the same get_user_grades()
      * convention as Assignment.
-     *
-     * @covers \core_grades\penalty_manager::get_authoritative_user_grades
-     * @covers \core_grades\penalty_manager::repair_penalised_rawgrade
      */
     public function test_repair_penalised_rawgrade_does_not_affect_non_assignment_modules(): void {
         global $DB;

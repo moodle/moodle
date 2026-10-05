@@ -1931,10 +1931,10 @@ final class expired_contexts_test extends \advanced_testcase {
     /**
      * Test that the can_process_deletion function returns expected results.
      *
-     * @dataProvider    can_process_deletion_provider
      * @param       int     $status
      * @param       bool    $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_process_deletion_provider')]
     public function test_can_process_deletion($status, $expected): void {
         $purpose = new expired_context(0, (object) [
             'status' => $status,
@@ -1970,10 +1970,10 @@ final class expired_contexts_test extends \advanced_testcase {
     /**
      * Test that the is_complete function returns expected results.
      *
-     * @dataProvider        is_complete_provider
      * @param       int     $status
      * @param       bool    $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_complete_provider')]
     public function test_is_complete($status, $expected): void {
         $purpose = new expired_context(0, (object) [
             'status' => $status,
@@ -2008,10 +2008,10 @@ final class expired_contexts_test extends \advanced_testcase {
     /**
      * Test that the is_fully_expired function returns expected results.
      *
-     * @dataProvider        is_fully_expired_provider
      * @param       array   $record
      * @param       bool    $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_fully_expired_provider')]
     public function test_is_fully_expired($record, $expected): void {
         $purpose = new expired_context(0, (object) $record);
 

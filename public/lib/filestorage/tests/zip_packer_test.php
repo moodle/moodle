@@ -74,9 +74,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
         $this->assertInstanceOf('zip_packer', $packer);
     }
 
-    /**
-     * @depends test_get_packer
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_get_packer')]
     public function test_list_files(): void {
         $this->resetAfterTest(false);
 
@@ -137,9 +135,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
         $this->assertSame(array(), $archivefiles);
     }
 
-    /**
-     * @depends test_list_files
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_list_files')]
     public function test_archive_to_pathname(): void {
         global $CFG;
 
@@ -195,9 +191,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
         unlink($archive);
     }
 
-    /**
-     * @depends test_archive_to_pathname
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_archive_to_pathname')]
     public function test_archive_to_storage(): void {
         $this->resetAfterTest(false);
 
@@ -218,9 +212,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
         }
     }
 
-    /**
-     * @depends test_archive_to_storage
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_archive_to_storage')]
     public function test_extract_to_pathname(): void {
         global $CFG;
 
@@ -332,9 +324,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
         }
     }
 
-    /**
-     * @depends test_archive_to_storage
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_archive_to_storage')]
     public function test_extract_to_pathname_onlyfiles(): void {
         global $CFG;
 
@@ -372,9 +362,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
 
     }
 
-    /**
-     * @depends test_archive_to_storage
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_archive_to_storage')]
     public function test_extract_to_pathname_returnvalue_successful(): void {
         global $CFG;
 
@@ -390,9 +378,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
         $this->assertTrue($result);
     }
 
-    /**
-     * @depends test_archive_to_storage
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_archive_to_storage')]
     public function test_extract_to_pathname_returnvalue_failure(): void {
         global $CFG;
 
@@ -407,9 +393,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
         $this->assertFalse($result);
     }
 
-    /**
-     * @depends test_archive_to_storage
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_archive_to_storage')]
     public function test_extract_to_storage(): void {
         global $CFG;
 
@@ -447,9 +431,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
         unlink($archive);
     }
 
-    /**
-     * @depends test_extract_to_storage
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_extract_to_storage')]
     public function test_add_files(): void {
         global $CFG;
 
@@ -545,9 +527,7 @@ final class zip_packer_test extends \advanced_testcase implements file_progress 
         restore_error_handler();
     }
 
-    /**
-     * @depends test_add_files
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_add_files')]
     public function test_open_archive(): void {
         global $CFG;
 

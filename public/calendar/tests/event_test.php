@@ -36,9 +36,9 @@ final class event_test extends \advanced_testcase {
     /**
      * Test event class getters.
      *
-     * @dataProvider getters_testcases
      * @param array $constructorparams Associative array of constructor parameters.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getters_testcases')]
     public function test_getters($constructorparams): void {
         $event = new event(
             $constructorparams['id'],

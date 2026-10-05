@@ -22,8 +22,8 @@ namespace core_user;
  * @package core
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_user\fields
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_user\fields::class)]
 final class fields_test extends \advanced_testcase {
 
     /**
@@ -565,9 +565,8 @@ final class fields_test extends \advanced_testcase {
      *
      * @param string $fullnamedisplay
      * @param string $expectedfullname
-     *
-     * @dataProvider get_sql_fullname_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_fullname_provider')]
     public function test_get_sql_fullname(string $fullnamedisplay, string $expectedfullname): void {
         global $DB;
 

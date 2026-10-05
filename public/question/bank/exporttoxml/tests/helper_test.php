@@ -28,14 +28,12 @@ use question_bank;
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \qbank_exporttoxml\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_exporttoxml\helper::class)]
 final class helper_test extends \advanced_testcase {
 
     /**
      * Test the export single question url.
-     *
-     * @covers ::question_get_export_single_question_url
      */
     public function test_question_get_export_single_question_url(): void {
         $this->resetAfterTest();

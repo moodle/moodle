@@ -23,8 +23,8 @@ namespace core_sms;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_sms\gateway
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_sms\gateway::class)]
 final class gateway_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . "/fixtures/dummy_gateway.php");
@@ -83,10 +83,10 @@ final class gateway_test extends \advanced_testcase {
     /**
      * Test truncation of messages.
      *
-     * @dataProvider get_truncation_strings
      * @param string $original
      * @param string $truncated
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_truncation_strings')]
     public function test_truncate_message(
         string $content,
         string $expected,

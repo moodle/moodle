@@ -28,6 +28,8 @@ require_once(__DIR__ . '/test_helper_trait.php');
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\quizaccess_seb\seb_quiz_settings::class, 'get_record')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_quizaccess_seb_subplugin::class, 'process_quizaccess_seb_quizsettings')]
 final class backup_restore_test extends \advanced_testcase {
     use \quizaccess_seb_test_helper_trait;
 
@@ -195,9 +197,6 @@ final class backup_restore_test extends \advanced_testcase {
 
     /**
      * Test backup and restore when using template when said template is disabled.
-     *
-     * @covers \quizaccess_seb\seb_quiz_settings::get_record
-     * @covers \restore_quizaccess_seb_subplugin::process_quizaccess_seb_quizsettings
      */
     public function test_backup_restore_disabled_template_config(): void {
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);

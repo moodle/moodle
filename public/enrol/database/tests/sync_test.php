@@ -27,6 +27,7 @@ namespace enrol_database;
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_database_plugin::class, 'sync_courses')]
 final class sync_test extends \advanced_testcase {
     protected static $courses = array();
     protected static $users = array();
@@ -422,9 +423,7 @@ final class sync_test extends \advanced_testcase {
         $this->assertIsEnrolled(1, 2, ENROL_USER_ACTIVE, 'teacher');
     }
 
-    /**
-     * @depends test_sync_user_enrolments
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_sync_user_enrolments')]
     public function test_sync_users(): void {
         global $DB;
 
@@ -693,9 +692,7 @@ final class sync_test extends \advanced_testcase {
         $this->assertEquals(0, $DB->count_records('role_assignments', array('component' => 'enrol_database')));
     }
 
-    /**
-     * @depends test_sync_users
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_sync_users')]
     public function test_sync_courses(): void {
         global $DB;
 
@@ -801,8 +798,6 @@ final class sync_test extends \advanced_testcase {
 
     /**
      * Test syncing courses with start and end dates.
-     *
-     * @covers \enrol_database_plugin::sync_courses
      */
     public function test_sync_courses_start_end_dates(): void {
         global $DB;

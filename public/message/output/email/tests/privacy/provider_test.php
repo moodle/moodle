@@ -25,10 +25,10 @@ use core_privacy\tests\provider_testcase;
  * Unit tests for message\output\email\classes\privacy\provider.php
  *
  * @package    message_email
- * @covers     \message_email\privacy\provider
  * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\message_email\privacy\provider::class)]
 final class provider_test extends provider_testcase {
     /**
      * Basic setup for these tests.

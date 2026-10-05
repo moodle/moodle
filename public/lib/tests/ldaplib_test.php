@@ -171,10 +171,10 @@ final class ldaplib_test extends \advanced_testcase {
     /**
      * Tests for ldap_normalise_objectclass.
      *
-     * @dataProvider ldap_normalise_objectclass_provider
      * @param array $args Arguments passed to ldap_normalise_objectclass
      * @param string $expected The expected objectclass filter
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ldap_normalise_objectclass_provider')]
     public function test_ldap_normalise_objectclass($args, $expected): void {
         $this->assertEquals($expected, call_user_func_array('ldap_normalise_objectclass', $args));
     }

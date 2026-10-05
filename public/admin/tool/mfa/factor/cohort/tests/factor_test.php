@@ -19,18 +19,17 @@ namespace factor_cohort;
 /**
  * Tests for cohort factor.
  *
- * @covers      \factor_cohort\factor
  * @package     factor_cohort
  * @copyright   2023 Stevani Andolo <stevani@hotmail.com.au>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\factor_cohort\factor::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_summary_condition')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_cohorts')]
 final class factor_test extends \advanced_testcase {
 
     /**
      * Tests getting the summary condition
-     *
-     * @covers ::get_summary_condition
-     * @covers ::get_cohorts
      */
     public function test_get_summary_condition(): void {
         $this->resetAfterTest();

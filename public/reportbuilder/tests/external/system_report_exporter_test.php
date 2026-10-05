@@ -29,10 +29,10 @@ use core_reportbuilder\system_report_factory;
  * Unit tests for system report exporter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\external\system_report_exporter
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\external\system_report_exporter::class)]
 final class system_report_exporter_test extends advanced_testcase {
 
     /**
@@ -61,9 +61,8 @@ final class system_report_exporter_test extends advanced_testcase {
      * Text execute method
      *
      * @param bool $withfilters
-     *
-     * @dataProvider export_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_provider')]
     public function test_export(bool $withfilters): void {
         global $PAGE;
 

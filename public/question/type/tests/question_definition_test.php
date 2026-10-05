@@ -27,8 +27,8 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package   core_question
  * @copyright  2015 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \question_definition
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_definition::class)]
 final class question_definition_test extends \advanced_testcase {
     public function test_make_html_inline(): void {
         // Base class is abstract, so we need to pick one qusetion type to test this method.

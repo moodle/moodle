@@ -23,8 +23,8 @@ namespace filter_urltolink;
  * @category   test
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_urltolink\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_urltolink\text_filter::class)]
 final class text_filter_test extends \basic_testcase {
     /**
      * Data provider for test_convert_urls_into_links.
@@ -187,10 +187,10 @@ final class text_filter_test extends \basic_testcase {
     /**
      * Test the convert_urls_into_links method.
      *
-     * @dataProvider get_convert_urls_into_links_test_cases
      * @param string $text
      * @param string $correctresult
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_convert_urls_into_links_test_cases')]
     public function test_convert_urls_into_links($text, $correctresult): void {
         $testablefilter = $this->get_testable_text_filter();
 

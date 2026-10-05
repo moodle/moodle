@@ -23,14 +23,13 @@ namespace core_completion;
  * @category    test
  * @copyright   2023 Amaia Anabitarte <amaia@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_completion_generator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_completion_generator::class)]
 final class generator_test extends \advanced_testcase {
 
     /**
      * Test create_default_completion.
      *
-     * @dataProvider create_default_completion_provider
      *
      * @param int|null|string $course The course to add the default activities conditions to.
      * @param int|null|string $module The module to add the default activities conditions to.
@@ -38,8 +37,8 @@ final class generator_test extends \advanced_testcase {
      * @param int $count The number of default activity completions to be created.
      * @param int $completion The value for completion setting.
      *
-     * @covers ::create_default_completion
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_default_completion_provider')]
     public function test_create_default_completion($course, $module, bool $exception, int $count, int $completion = 0): void {
         global $DB;
 

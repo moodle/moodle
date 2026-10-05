@@ -37,8 +37,8 @@ final class secondary_test extends \advanced_testcase {
      * @param float $siteorder The order for the siteadmin node
      * @param float $courseorder The order for the course node
      * @param float $moduleorder The order for the module node
-     * @dataProvider leaf_nodes_order_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('leaf_nodes_order_provider')]
     public function test_get_leaf_nodes(float $siteorder, float $courseorder, float $moduleorder): void {
         global $PAGE;
 
@@ -89,8 +89,8 @@ final class secondary_test extends \advanced_testcase {
      * @param string $activenode The expected active node
      * @param string $courseformat The used course format (only applicable in the course and module context).
      * @return void
-     * @dataProvider setting_initialise_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('setting_initialise_provider')]
     public function test_setting_initialise(string $context, string $expectedfirstnode,
             string $header, string $activenode, string $courseformat = 'topics'): void {
         global $PAGE, $SITE;
@@ -197,8 +197,8 @@ final class secondary_test extends \advanced_testcase {
      * @param string|null $key The key set by user using set_secondary_active_tab.
      * @param string|null $seturl The url set by user.
      * @return void
-     * @dataProvider active_node_scan_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('active_node_scan_provider')]
     public function test_active_node_scan(string $expectedkey, ?string $key = null, ?string $seturl = null): void {
         global $PAGE;
 
@@ -259,8 +259,8 @@ final class secondary_test extends \advanced_testcase {
      * @param int|null $maxdisplayednodes  The maximum limit of navigation nodes displayed in the secondary navigation
      * @param array $expecedmoremenunodes  The array containing the keys of the expected navigation nodes which are
      *                                     forced into the "more" menu
-     * @dataProvider force_nodes_into_more_menu_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('force_nodes_into_more_menu_provider')]
     public function test_force_nodes_into_more_menu(array $secondarynavnodesdata, array $defaultmoremenunodes,
             ?int $maxdisplayednodes, array $expecedmoremenunodes): void {
         global $PAGE;
@@ -443,8 +443,8 @@ final class secondary_test extends \advanced_testcase {
      *
      * @param string $selectedurl
      * @param string $expectednode
-     * @dataProvider nodes_match_current_url_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('nodes_match_current_url_provider')]
     public function test_nodes_match_current_url(string $selectedurl, string $expectednode): void {
         global $PAGE;
         $structure = [
@@ -492,8 +492,8 @@ final class secondary_test extends \advanced_testcase {
      *
      * @param string $selected
      * @param array $expected
-     * @dataProvider get_menu_array_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_menu_array_provider')]
     public function test_get_menu_array(string $selected, array $expected): void {
         global $PAGE;
 
@@ -584,8 +584,8 @@ final class secondary_test extends \advanced_testcase {
      *
      * @param string $selectedkey
      * @param string|null $expectedkey
-     * @dataProvider get_node_with_first_action_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_node_with_first_action_provider')]
     public function test_get_node_with_first_action(string $selectedkey, ?string $expectedkey): void {
         global $PAGE;
         $structure = [
@@ -662,8 +662,8 @@ final class secondary_test extends \advanced_testcase {
      * @param array $structure The structure of the navigation node tree to setup with.
      * @param array $expectednodes The expected nodes added to the secondary navigation
      * @param bool $separatenode Whether or not to create a separate node to add nodes to.
-     * @dataProvider add_external_nodes_to_secondary_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_external_nodes_to_secondary_provider')]
     public function test_add_external_nodes_to_secondary(array $structure, array $expectednodes, bool $separatenode = false): void {
         global $PAGE;
 
@@ -801,8 +801,8 @@ final class secondary_test extends \advanced_testcase {
      * @param string $selectedurl
      * @param bool $expectednull
      * @param bool $emptynode
-     * @dataProvider get_overflow_menu_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_overflow_menu_data_provider')]
     public function test_get_overflow_menu_data(string $selectedurl, bool $expectednull, bool $emptynode = false): void {
         global $PAGE;
 
@@ -891,11 +891,11 @@ final class secondary_test extends \advanced_testcase {
     /**
      * Test the course administration settings return an overflow menu.
      *
-     * @dataProvider get_overflow_menu_data_course_admin_provider
      * @param string $url Url of the page we are testing.
      * @param string $contextidentifier id or contextid or something similar.
      * @param bool $expected The expected return. True to return the overflow menu otherwise false for nothing.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_overflow_menu_data_course_admin_provider')]
     public function test_get_overflow_menu_data_course_admin(string $url, string $contextidentifier, bool $expected): void {
         global $PAGE;
         $this->resetAfterTest();

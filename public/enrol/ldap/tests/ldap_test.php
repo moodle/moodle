@@ -60,10 +60,10 @@ final class ldap_test extends \advanced_testcase {
     /**
      * General enrol_ldap testcase
      *
-     * @dataProvider enrol_ldap_provider
      * @param int $pagesize Value to be configured in settings controlling page size.
      * @param int $subcontext Value to be configured in settings controlling searching in subcontexts.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('enrol_ldap_provider')]
     public function test_enrol_ldap(int $pagesize, int $subcontext): void {
         global $CFG, $DB;
 
@@ -498,10 +498,10 @@ final class ldap_test extends \advanced_testcase {
     /**
      * Test that normalisation of the use objectclass is completed successfully.
      *
-     * @dataProvider objectclass_fetch_provider
      * @param string $usertype The supported user type
      * @param string $expected The expected filter value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('objectclass_fetch_provider')]
     public function test_objectclass_fetch($usertype, $expected): void {
         $this->resetAfterTest();
         // Set the user type - this must be performed before the plugin is instantiated.

@@ -28,10 +28,10 @@ use stdClass;
  * Unit tests for a report action
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\report\action
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\report\action::class)]
 final class action_test extends advanced_testcase {
 
     /**
@@ -80,9 +80,8 @@ final class action_test extends advanced_testcase {
      * @param array $attributes
      * @param lang_string|null $title
      * @param array $row
-     *
-     * @dataProvider action_title_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('action_title_provider')]
     public function test_action_title(
         string $pixiconalt,
         array $attributes = [],

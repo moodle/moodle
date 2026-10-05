@@ -28,15 +28,15 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
  * @category   test
  * @copyright  2026 Muhammad Arnaldo <muhammad.arnaldo@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \backup_plan_dbops::get_default_backup_filename
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\backup_plan_dbops::class, 'get_default_backup_filename')]
 final class backup_plan_dbops_test extends \advanced_testcase {
     /**
      * Test that get_default_backup_filename returns a valid filename within the OS 255-byte limit.
      *
      * @param string $shortname The course shortname.
-     * @dataProvider get_default_backup_filename_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_default_backup_filename_provider')]
     public function test_get_default_backup_filename(string $shortname): void {
         $this->resetAfterTest();
 

@@ -22,8 +22,8 @@ namespace core\output;
  * @package     core
  * @copyright   2023 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\output\icon_system_fontawesome
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\icon_system_fontawesome::class)]
 final class icon_system_fontawesome_test extends \advanced_testcase {
 
     /**

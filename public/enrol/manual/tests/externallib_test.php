@@ -31,9 +31,9 @@ require_once($CFG->dirroot . '/enrol/manual/externallib.php');
  * @category   phpunit
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \enrol_manual_external
  * @since Moodle 2.4
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_manual_external::class)]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_enrolled_users

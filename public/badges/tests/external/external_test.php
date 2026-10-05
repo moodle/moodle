@@ -46,14 +46,13 @@ require_once($CFG->libdir . '/badgeslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.1
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_badges_external::class, 'get_user_badges')]
 final class external_test extends \core_external\tests\externallib_testcase {
     use external_helper;
 
     /**
      * Test get user badges.
      * These is a basic test since the badges_get_my_user_badges used by the external function already has unit tests.
-     *
-     * @covers \core_badges_external::get_user_badges
      */
     public function test_get_my_user_badges(): void {
         $data = $this->prepare_test_data();
@@ -74,8 +73,6 @@ final class external_test extends \core_external\tests\externallib_testcase {
 
     /**
      * Test get user badges.
-     *
-     * @covers \core_badges_external::get_user_badges
      */
     public function test_get_other_user_badges(): void {
         $data = $this->prepare_test_data();
@@ -99,8 +96,6 @@ final class external_test extends \core_external\tests\externallib_testcase {
 
     /**
      * Test get_user_badges where issuername contains text to be filtered
-     *
-     * @covers \core_badges_external::get_user_badges
      */
     public function test_get_user_badges_filter_issuername(): void {
         global $DB;

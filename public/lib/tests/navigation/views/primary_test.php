@@ -35,8 +35,8 @@ final class primary_test extends \advanced_testcase {
      *
      * @param string $usertype The user to setup for - admin, guest, regular user
      * @param string $expected The expected nodes
-     * @dataProvider setting_initialise_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('setting_initialise_provider')]
     public function test_setting_initialise($usertype, $expected): void {
         global $PAGE;
         $PAGE->set_url("/");
@@ -110,8 +110,8 @@ final class primary_test extends \advanced_testcase {
      * @param string|null $key The key of the node to activate.
      * @param string|null $seturl Set the url for $PAGE.
      * @return void
-     * @dataProvider search_and_set_active_node_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('search_and_set_active_node_provider')]
     public function test_search_and_set_active_node(string $expectedkey, ?string $key = null, ?string $seturl = null): void {
         global $PAGE;
 

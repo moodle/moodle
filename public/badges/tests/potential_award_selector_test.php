@@ -29,10 +29,10 @@ require_once($CFG->libdir . '/badgeslib.php');
  * Unit tests for potential_award_selector class.
  *
  * @package     core_badges
- * @covers      \core_badges\potential_award_selector
  * @copyright   2025 Dai Nguyen Trong <ngtrdai@hotmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\potential_award_selector::class)]
 final class potential_award_selector_test extends badges_testcase {
     /**
      * Create a simple test environment.

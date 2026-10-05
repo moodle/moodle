@@ -34,8 +34,14 @@ use question_engine;
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \question_engine
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_engine::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\question_engine::class, 'load_behaviour_class')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\question_engine::class, 'get_behaviour_unused_display_options')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\question_engine::class, 'can_questions_finish_during_the_attempt')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\question_engine::class, 'sort_behaviours')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\question_engine::class, 'is_manual_grade_in_range')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_question_renderer::class, 'number')]
 final class question_engine_test extends advanced_testcase {
 
     /**
@@ -50,8 +56,6 @@ final class question_engine_test extends advanced_testcase {
 
     /**
      * Tests for load_behaviour_class.
-     *
-     * @covers \question_engine::load_behaviour_class
      */
     public function test_load_behaviour_class(): void {
         // Exercise SUT.
@@ -63,8 +67,6 @@ final class question_engine_test extends advanced_testcase {
 
     /**
      * Tests for load_behaviour_class when a class is missing.
-     *
-     * @covers \question_engine::load_behaviour_class
      */
     public function test_load_behaviour_class_missing(): void {
         // Exercise SUT.
@@ -75,11 +77,10 @@ final class question_engine_test extends advanced_testcase {
     /**
      * Test the get_behaviour_unused_display_options with various options.
      *
-     * @covers \question_engine::get_behaviour_unused_display_options
-     * @dataProvider get_behaviour_unused_display_options_provider
      * @param string $behaviour
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_behaviour_unused_display_options_provider')]
     public function test_get_behaviour_unused_display_options(string $behaviour, array $expected): void {
         $this->assertEquals($expected, question_engine::get_behaviour_unused_display_options($behaviour));
     }
@@ -113,11 +114,10 @@ final class question_engine_test extends advanced_testcase {
     /**
      * Tests for can_questions_finish_during_the_attempt.
      *
-     * @covers \question_engine::can_questions_finish_during_the_attempt
-     * @dataProvider can_questions_finish_during_the_attempt_provider
      * @param string $behaviour
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_questions_finish_during_the_attempt_provider')]
     public function test_can_questions_finish_during_the_attempt(string $behaviour, bool $expected): void {
         $this->assertEquals($expected, question_engine::can_questions_finish_during_the_attempt($behaviour));
     }
@@ -137,11 +137,10 @@ final class question_engine_test extends advanced_testcase {
     /**
      * Tests for sort_behaviours
      *
-     * @covers \question_engine::sort_behaviours
-     * @dataProvider sort_behaviours_provider
      * @param array $input The params passed to sort_behaviours
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sort_behaviours_provider')]
     public function test_sort_behaviours(array $input, array $expected): void {
         $this->assertSame($expected, question_engine::sort_behaviours(...$input));
     }
@@ -206,12 +205,11 @@ final class question_engine_test extends advanced_testcase {
     /**
      * Tests for is_manual_grade_in_range.
      *
-     * @dataProvider is_manual_grade_in_range_provider
-     * @covers \question_engine::is_manual_grade_in_range
      * @param array $post The values to add to $_POST
      * @param array $range The params to pass to is_manual_grade_in_range
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_manual_grade_in_range_provider')]
     public function test_is_manual_grade_in_range(array $post, array $range, bool $expected): void {
         $_POST[] = $post;
         $this->assertEquals($expected, question_engine::is_manual_grade_in_range(...$range));
@@ -279,8 +277,6 @@ final class question_engine_test extends advanced_testcase {
 
     /**
      * Tests for is_manual_grade_in_range.
-     *
-     * @covers \question_engine::is_manual_grade_in_range
      */
     public function test_is_manual_grade_in_range_ungraded(): void {
         $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
@@ -289,11 +285,10 @@ final class question_engine_test extends advanced_testcase {
     /**
      * Ensure that the number renderer performs as expected.
      *
-     * @covers \core_question_renderer::number
-     * @dataProvider render_question_number_provider
      * @param mixed $value
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('render_question_number_provider')]
     public function test_render_question_number($value, string $expected): void {
         global $PAGE;
 

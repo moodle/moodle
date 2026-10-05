@@ -24,8 +24,8 @@ use enrol_lti\local\ltiadvantage\entity\deployment;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\application_registration_repository
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\repository\application_registration_repository::class)]
 final class application_registration_repository_test extends \advanced_testcase {
     /**
      * Helper to generate a new application_registration object.
@@ -96,10 +96,9 @@ final class application_registration_repository_test extends \advanced_testcase 
     /**
      * Tests saving application_registration instances using the repository.
      *
-     * @dataProvider save_data_provider
-     * @covers ::save
      * @param array $registrationdata the registration data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('save_data_provider')]
     public function test_save_new(array $registrationdata): void {
         $this->resetAfterTest();
 
@@ -179,8 +178,6 @@ final class application_registration_repository_test extends \advanced_testcase 
 
     /**
      * Test saving an application_registration that is already present in the store.
-     *
-     * @covers ::save
      */
     public function test_save_existing(): void {
         $this->resetAfterTest();
@@ -224,8 +221,6 @@ final class application_registration_repository_test extends \advanced_testcase 
 
     /**
      * Tests trying to persist two as-yet-unpersisted objects having identical makeup.
-     *
-     * @covers ::save
      */
     public function test_save_duplicate_unique_constraints(): void {
         $this->resetAfterTest();
@@ -240,8 +235,6 @@ final class application_registration_repository_test extends \advanced_testcase 
 
     /**
      * Test finding an application_registration in the repository.
-     *
-     * @covers ::find
      */
     public function test_find(): void {
         $this->resetAfterTest();
@@ -257,8 +250,6 @@ final class application_registration_repository_test extends \advanced_testcase 
 
     /**
      * Test finding an application registration by its unique id.
-     *
-     * @covers ::find_by_uniqueid
      */
     public function test_find_by_uniqueid(): void {
         $this->resetAfterTest();
@@ -274,8 +265,6 @@ final class application_registration_repository_test extends \advanced_testcase 
 
     /**
      * Test finding an application registration by its platform and unique id combination.
-     *
-     * @covers ::find_by_platform_uniqueid
      */
     public function test_find_by_platform_uniqueid(): void {
         $this->resetAfterTest();
@@ -304,8 +293,6 @@ final class application_registration_repository_test extends \advanced_testcase 
 
     /**
      * Test verifying that find_all() returns all registrations.
-     *
-     * @covers ::find_all
      */
     public function test_find_all(): void {
         $this->resetAfterTest();
@@ -332,8 +319,6 @@ final class application_registration_repository_test extends \advanced_testcase 
 
     /**
      * Test confirming that registrations can be found by their platform string.
-     *
-     * @covers ::find_by_platform
      */
     public function test_find_by_platform(): void {
         $this->resetAfterTest();
@@ -356,8 +341,6 @@ final class application_registration_repository_test extends \advanced_testcase 
 
     /**
      * Test checking existence of an application_registration within the repository.
-     *
-     * @covers ::exists
      */
     public function test_exists(): void {
         $this->resetAfterTest();
@@ -371,8 +354,6 @@ final class application_registration_repository_test extends \advanced_testcase 
 
     /**
      * Test confirming that delete removes items from the repository.
-     *
-     * @covers ::delete
      */
     public function test_delete(): void {
         $this->resetAfterTest();
@@ -391,8 +372,6 @@ final class application_registration_repository_test extends \advanced_testcase 
 
     /**
      * Verify that application registrations can be found through their linked deployments.
-     *
-     * @covers ::find_by_deployment
      */
     public function test_find_by_deployment(): void {
         $this->resetAfterTest();

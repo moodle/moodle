@@ -33,10 +33,10 @@ final class servicelib_test extends \basic_testcase {
     /**
      * Test that lti_parse_message_id never fails with good and bad XML.
      *
-     * @dataProvider message_id_provider
      * @param mixed $expected Expected message ID.
      * @param string $xml XML to parse.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('message_id_provider')]
     public function test_lti_parse_message_id($expected, $xml): void {
         $xml = simplexml_load_string($xml);
         $this->assertEquals($expected, lti_parse_message_id($xml));

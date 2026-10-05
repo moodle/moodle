@@ -22,17 +22,16 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\ags_info
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\entity\ags_info::class)]
 final class ags_info_test extends \advanced_testcase {
 
     /**
      * Test creation of the object instances.
-     * @dataProvider instantiation_data_provider
      * @param array $args the arguments to the creation method.
      * @param array $expectations various expectations for the test cases.
-     * @covers ::create
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('instantiation_data_provider')]
     public function test_creation(array $args, array $expectations): void {
         if (!$expectations['valid']) {
             $this->expectException($expectations['exception']);

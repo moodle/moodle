@@ -30,15 +30,22 @@ use stdClass;
  * @copyright  2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author     Simon Adams <simon.adams@catalyst-eu.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_question\local\bank\question_bank_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\local\bank\question_bank_helper::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_activity_types_with_shareable_questions')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_activity_types_with_private_questions')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_activity_instances_with_shareable_questions')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_activity_instances_with_private_questions')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_default_open_instance')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_recently_used_open_banks')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('add_bank_context_to_recently_viewed')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_default_open_instance_system_type')]
 final class question_bank_helper_test extends \advanced_testcase {
 
     /**
      * Assert that at least 1 module type that shares questions exists and that mod_qbank is in the returned list.
      *
      * @return void
-     * @covers ::get_activity_types_with_shareable_questions
      */
     public function test_get_shareable_modules(): void {
         $openmods = question_bank_helper::get_activity_types_with_shareable_questions();
@@ -51,7 +58,6 @@ final class question_bank_helper_test extends \advanced_testcase {
      * Assert that at least 1 module type that does not share questions exists and that mod_quiz is in the returned list.
      *
      * @return void
-     * @covers ::get_activity_types_with_private_questions
      */
     public function test_get_private_modules(): void {
         $closedmods = question_bank_helper::get_activity_types_with_private_questions();
@@ -64,8 +70,6 @@ final class question_bank_helper_test extends \advanced_testcase {
      * Setup some courses with quiz and qbank module instances and set different permissions for a user.
      * Then assert that the correct results are returned from calls to the class methods.
      *
-     * @covers ::get_activity_instances_with_shareable_questions
-     * @covers ::get_activity_instances_with_private_questions
      * @return void
      */
     public function test_get_instances(): void {
@@ -169,9 +173,6 @@ final class question_bank_helper_test extends \advanced_testcase {
 
     /**
      * Tests if applying the limit and capability checks are interacting properly.
-     *
-     * @covers ::get_activity_instances_with_shareable_questions
-     * @covers ::get_activity_instances_with_private_questions
      */
     public function test_get_instances_with_limit_and_capabilities(): void {
         global $DB;
@@ -219,7 +220,6 @@ final class question_bank_helper_test extends \advanced_testcase {
      * Preview type question banks must never be returned by get_activity_instances_with_shareable_questions.
      *
      * @return void
-     * @covers ::get_activity_instances_with_shareable_questions
      */
     public function test_get_instances_excludes_preview_bank(): void {
         $this->resetAfterTest();
@@ -242,7 +242,6 @@ final class question_bank_helper_test extends \advanced_testcase {
     /**
      * We should be able to filter sharable question bank instances by name.
      *
-     * @covers ::get_activity_instances_with_shareable_questions
      * @return void
      */
     public function test_get_instances_by_name(): void {
@@ -297,7 +296,6 @@ final class question_bank_helper_test extends \advanced_testcase {
      * Assert creating a default mod_qbank instance on a course provides the expected boilerplate settings.
      *
      * @return void
-     * @covers ::create_default_open_instance
      */
     public function test_create_default_open_instance(): void {
         global $DB;
@@ -420,8 +418,6 @@ final class question_bank_helper_test extends \advanced_testcase {
      * Assert that viewing a question bank logs the view for that user up to a maximum of 5 unique bank views.
      *
      * @return void
-     * @covers ::get_recently_used_open_banks
-     * @covers ::add_bank_context_to_recently_viewed
      */
     public function test_recently_viewed_question_banks(): void {
         $this->resetAfterTest();
@@ -522,7 +518,6 @@ final class question_bank_helper_test extends \advanced_testcase {
      * Assert that getting a default qbank instance on a course works with and without the "$createifnotexists" argument.
      *
      * @return void
-     * @covers ::get_default_open_instance_system_type
      */
     public function test_get_default_open_instance_system_type(): void {
         global $DB;
@@ -563,12 +558,12 @@ final class question_bank_helper_test extends \advanced_testcase {
     /**
      * Assert that get_bank_name_string returns suitably truncated strings.
      *
-     * @dataProvider bank_name_strings
      * @param string $identifier
      * @param string $component
      * @param mixed $params
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('bank_name_strings')]
     public function test_get_bank_name_string(string $identifier, string $component, mixed $params, string $expected): void {
         $this->assertEquals($expected, question_bank_helper::get_bank_name_string($identifier, $component, $params));
     }

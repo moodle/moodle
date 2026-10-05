@@ -24,8 +24,8 @@ use assignfeedback_file\feedback_helper_trait;
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package    assignfeedback_file
- * @covers     \assignfeedback_file\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\assignfeedback_file\privacy\provider::class)]
 final class provider_test extends \mod_assign\tests\provider_testcase {
     use feedback_helper_trait;
 

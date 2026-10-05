@@ -30,10 +30,10 @@ final class numeric_helper_test extends \advanced_testcase {
     /**
      * Test the lesson_unformat_numeric_value function.
      *
-     * @dataProvider lesson_unformat_dataprovider
      * @param $decsep
      * @param $tests
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('lesson_unformat_dataprovider')]
     public function test_lesson_unformat_numeric_value($decsep, $tests): void {
         $this->define_local_decimal_separator($decsep);
 
@@ -45,10 +45,10 @@ final class numeric_helper_test extends \advanced_testcase {
     /**
      * Test the lesson_format_numeric_value function.
      *
-     * @dataProvider lesson_format_dataprovider
      * @param $decsep
      * @param $tests
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('lesson_format_dataprovider')]
     public function test_lesson_format_numeric_value($decsep, $tests): void {
         $this->define_local_decimal_separator($decsep);
 

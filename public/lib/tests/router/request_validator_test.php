@@ -33,8 +33,8 @@ use Slim\Exception\HttpNotFoundException;
  * @category   test
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\request_validator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\request_validator::class)]
 final class request_validator_test extends route_testcase {
     /**
      * Request validation on a route which does not have a matching Moodle route attribute.

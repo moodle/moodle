@@ -27,17 +27,13 @@ use cachestore_file;
  * @copyright Catalyst IT Europe Ltd 2021
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Jackson D'Souza <jackson.dsouza@catalyst-eu.net>
- * @coversDefaultClass \cachestore_file
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\cachestore_file::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\cachestore_file\task::class)]
 final class asyncpurge_test extends \advanced_testcase {
 
     /**
      * Testing Asynchronous file store cache purge
-     *
-     * @covers ::initialise
-     * @covers ::set
-     * @covers ::get
-     * @covers ::purge
      */
     public function test_cache_async_purge(): void {
         $this->resetAfterTest(true);
@@ -69,8 +65,6 @@ final class asyncpurge_test extends \advanced_testcase {
 
     /**
      * Testing Adhoc Cron - deletes old cache revision directory
-     *
-     * @covers \cachestore_file\task
      */
     public function test_cache_async_purge_cron(): void {
         global $CFG, $USER;

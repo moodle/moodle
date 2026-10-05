@@ -24,10 +24,10 @@ use testing_data_generator;
  * Class for testing report progress helper.
  *
  * @package   report_progress
- * @covers    \report_progress\local\helper
  * @copyright 2021 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\report_progress\local\helper::class)]
 final class report_progress_helper_test extends advanced_testcase {
 
     /** @var testing_data_generator data generator.*/

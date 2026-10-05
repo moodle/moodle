@@ -26,13 +26,11 @@ require_once(__DIR__ . '/../lti_advantage_testcase.php');
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\legacy_consumer_repository
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\repository\legacy_consumer_repository::class)]
 final class legacy_consumer_repository_test extends \lti_advantage_testcase {
     /**
      * Test the get_consumer_secrets repository method.
-     *
-     * @covers ::get_consumer_secrets
      */
     public function test_get_consumer_secrets(): void {
         $this->resetAfterTest();

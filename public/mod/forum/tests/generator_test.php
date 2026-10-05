@@ -23,8 +23,8 @@ namespace mod_forum;
  * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_forum_generator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_forum_generator::class)]
 final class generator_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

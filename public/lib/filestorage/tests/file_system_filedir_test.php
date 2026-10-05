@@ -31,8 +31,8 @@ require_once($CFG->libdir . '/filestorage/file_system_filedir.php');
  * @category  test
  * @copyright 2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \file_system_filedir
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\file_system_filedir::class)]
 final class file_system_filedir_test extends \advanced_testcase {
 
     /**
@@ -135,8 +135,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Ensure that an appropriate error is shown when the filedir directory
      * is not writable.
-     *
-     * @covers ::__construct
      */
     public function test_readonly_filesystem_filedir(): void {
         $this->resetAfterTest();
@@ -159,8 +157,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Ensure that an appropriate error is shown when the trash directory
      * is not writable.
-     *
-     * @covers ::__construct
      */
     public function test_readonly_filesystem_trashdir(): void {
         $this->resetAfterTest();
@@ -182,8 +178,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Test that the standard Moodle warning message is put into the filedir.
-     *
-     * @covers ::__construct
      */
     public function test_warnings_put_in_place(): void {
         $this->resetAfterTest();
@@ -202,8 +196,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Ensure that the default implementation of get_remote_path_from_hash
      * simply calls get_local_path_from_hash.
-     *
-     * @covers ::get_remote_path_from_hash
      */
     public function test_get_remote_path_from_hash(): void {
         $filecontent = 'example content';
@@ -228,8 +220,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Test the stock implementation of get_local_path_from_storedfile_with_recovery with no file found and
      * a failed recovery.
-     *
-     * @covers ::get_local_path_from_storedfile
      */
     public function test_get_local_path_from_storedfile_with_recovery(): void {
         $filecontent = 'example content';
@@ -256,8 +246,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Test the stock implementation of get_local_path_from_storedfile_with_recovery with no file found and
      * a failed recovery.
-     *
-     * @covers ::get_local_path_from_storedfile
      */
     public function test_get_local_path_from_storedfile_without_recovery(): void {
         $filecontent = 'example content';
@@ -284,12 +272,11 @@ final class file_system_filedir_test extends \advanced_testcase {
      * Test that the correct path is generated for the supplied content
      * hashes.
      *
-     * @dataProvider contenthash_dataprovider
      * @param   string  $hash contenthash to test
      * @param   string  $hashdir Expected format of content directory
      *
-     * @covers ::get_fulldir_from_hash
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('contenthash_dataprovider')]
     public function test_get_fulldir_from_hash($hash, $hashdir): void {
         global $CFG;
 
@@ -305,12 +292,11 @@ final class file_system_filedir_test extends \advanced_testcase {
      * Test that the correct path is generated for the supplied content
      * hashes when used with a stored_file.
      *
-     * @dataProvider contenthash_dataprovider
      * @param   string  $hash contenthash to test
      * @param   string  $hashdir Expected format of content directory
      *
-     * @covers ::get_fulldir_from_storedfile
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('contenthash_dataprovider')]
     public function test_get_fulldir_from_storedfile($hash, $hashdir): void {
         global $CFG;
 
@@ -336,12 +322,11 @@ final class file_system_filedir_test extends \advanced_testcase {
      * Test that the correct content directory is generated for the supplied
      * content hashes.
      *
-     * @dataProvider contenthash_dataprovider
      * @param   string  $hash contenthash to test
      * @param   string  $hashdir Expected format of content directory
      *
-     * @covers ::get_contentdir_from_hash
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('contenthash_dataprovider')]
     public function test_get_contentdir_from_hash($hash, $hashdir): void {
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_contentdir_from_hash');
 
@@ -355,12 +340,11 @@ final class file_system_filedir_test extends \advanced_testcase {
      * Test that the correct content path is generated for the supplied
      * content hashes.
      *
-     * @dataProvider contenthash_dataprovider
      * @param   string  $hash contenthash to test
      * @param   string  $hashdir Expected format of content directory
      *
-     * @covers ::get_contentpath_from_hash
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('contenthash_dataprovider')]
     public function test_get_contentpath_from_hash($hash, $hashdir): void {
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_contentpath_from_hash');
 
@@ -375,12 +359,11 @@ final class file_system_filedir_test extends \advanced_testcase {
      * Test that the correct trash path is generated for the supplied
      * content hashes.
      *
-     * @dataProvider contenthash_dataprovider
      * @param   string  $hash contenthash to test
      * @param   string  $hashdir Expected format of content directory
      *
-     * @covers ::get_trash_fullpath_from_hash
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('contenthash_dataprovider')]
     public function test_get_trash_fullpath_from_hash($hash, $hashdir): void {
         global $CFG;
 
@@ -396,12 +379,11 @@ final class file_system_filedir_test extends \advanced_testcase {
      * Test that the correct trash directory is generated for the supplied
      * content hashes.
      *
-     * @dataProvider contenthash_dataprovider
      * @param   string  $hash contenthash to test
      * @param   string  $hashdir Expected format of content directory
      *
-     * @covers ::get_trash_fulldir_from_hash
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('contenthash_dataprovider')]
     public function test_get_trash_fulldir_from_hash($hash, $hashdir): void {
         global $CFG;
 
@@ -415,8 +397,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Ensure that copying a file to a target from a stored_file works as anticipated.
-     *
-     * @covers ::copy_content_from_storedfile
      */
     public function test_copy_content_from_storedfile(): void {
         $this->resetAfterTest();
@@ -453,8 +433,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Ensure that content recovery works.
-     *
-     * @covers ::recover_file
      */
     public function test_recover_file(): void {
         $this->resetAfterTest();
@@ -492,8 +470,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Ensure that content recovery works.
-     *
-     * @covers ::recover_file
      */
     public function test_recover_file_already_present(): void {
         $this->resetAfterTest();
@@ -530,8 +506,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Ensure that content recovery works.
-     *
-     * @covers ::recover_file
      */
     public function test_recover_file_size_mismatch(): void {
         $this->resetAfterTest();
@@ -566,8 +540,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Ensure that content recovery works.
-     *
-     * @covers ::recover_file
      */
     public function test_recover_file_has_mismatch(): void {
         $this->resetAfterTest();
@@ -603,8 +575,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Ensure that content recovery works when the content file is in the
      * alt trash directory.
-     *
-     * @covers ::recover_file
      */
     public function test_recover_file_alttrash(): void {
         $this->resetAfterTest();
@@ -637,8 +607,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Test that an appropriate error message is generated when adding a
      * file to the pool when the pool directory structure is not writable.
-     *
-     * @covers ::recover_file
      */
     public function test_recover_file_contentdir_readonly(): void {
         $this->resetAfterTest();
@@ -673,8 +641,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Test adding a file to the pool.
-     *
-     * @covers ::add_file_from_path
      */
     public function test_add_file_from_path(): void {
         $this->resetAfterTest();
@@ -709,8 +675,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Test that an appropriate error message is generated when adding an
      * unavailable file to the pool is attempted.
-     *
-     * @covers ::add_file_from_path
      */
     public function test_add_file_from_path_file_unavailable(): void {
         $this->resetAfterTest();
@@ -729,8 +693,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Test that an appropriate error message is generated when specifying
      * the wrong contenthash when adding a file to the pool.
-     *
-     * @covers ::add_file_from_path
      */
     public function test_add_file_from_path_mismatched_hash(): void {
         $this->resetAfterTest();
@@ -751,8 +713,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Test that an appropriate error message is generated when an existing
      * file in the pool has the wrong contenthash
-     *
-     * @covers ::add_file_from_path
      */
     public function test_add_file_from_path_existing_content_invalid(): void {
         $this->resetAfterTest();
@@ -796,8 +756,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Test that an appropriate error message is generated when adding a
      * file to the pool when the pool directory structure is not writable.
-     *
-     * @covers ::add_file_from_path
      */
     public function test_add_file_from_path_existing_cannot_write_hashpath(): void {
         $this->resetAfterTest();
@@ -829,8 +787,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Test adding a string to the pool.
-     *
-     * @covers ::add_file_from_string
      */
     public function test_add_file_from_string(): void {
         $this->resetAfterTest();
@@ -856,8 +812,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Test that an appropriate error message is generated when adding a
      * string to the pool when the pool directory structure is not writable.
-     *
-     * @covers ::add_file_from_string
      */
     public function test_add_file_from_string_existing_cannot_write_hashpath(): void {
         $this->resetAfterTest();
@@ -887,8 +841,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Test adding a string to the pool when an item with the same
      * contenthash is already present.
-     *
-     * @covers ::add_file_from_string
      */
     public function test_add_file_from_string_existing_matches(): void {
         $this->resetAfterTest();
@@ -921,8 +873,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Test the cleanup of deleted files when there are no files to delete.
-     *
-     * @covers ::remove_file
      */
     public function test_remove_file_missing(): void {
         $this->resetAfterTest();
@@ -944,8 +894,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Test the cleanup of deleted files when a file already exists in the
      * trash for that path.
-     *
-     * @covers ::remove_file
      */
     public function test_remove_file_existing_trash(): void {
         $this->resetAfterTest();
@@ -973,8 +921,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Ensure that remove_file does nothing with an empty file.
-     *
-     * @covers ::remove_file
      */
     public function test_remove_file_empty(): void {
         $this->resetAfterTest();
@@ -996,8 +942,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Ensure that remove_file does nothing when a file is still
      * in use.
-     *
-     * @covers ::remove_file
      */
     public function test_remove_file_in_use(): void {
         $this->resetAfterTest();
@@ -1029,8 +973,6 @@ final class file_system_filedir_test extends \advanced_testcase {
     /**
      * Ensure that remove_file removes the file when it is no
      * longer in use.
-     *
-     * @covers ::remove_file
      */
     public function test_remove_file_expired(): void {
         $this->resetAfterTest();
@@ -1061,8 +1003,6 @@ final class file_system_filedir_test extends \advanced_testcase {
 
     /**
      * Test purging the cache.
-     *
-     * @covers ::empty_trash
      */
     public function test_empty_trash(): void {
         $this->resetAfterTest();

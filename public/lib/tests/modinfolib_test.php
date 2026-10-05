@@ -36,6 +36,7 @@ use Exception;
  * @copyright  2012 Andrew Davis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('rebuild_course_cache')]
 final class modinfolib_test extends advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
@@ -149,8 +150,6 @@ final class modinfolib_test extends advanced_testcase {
      * existing course object with old cacherev might be reused within the same request after
      * clearing the cache. In that case, we need to check that the new data is loaded and it
      * does not reuse the old cached data with old cacherev.
-     *
-     * @covers ::rebuild_course_cache()
      */
     public function test_cache_clear_wrong_cacherev(): void {
         global $DB;
@@ -177,8 +176,6 @@ final class modinfolib_test extends advanced_testcase {
     /**
      * When cacherev is updated for a course, it is supposed to update in the $COURSE and $SITE
      * globals automatically. Check this is working.
-     *
-     * @covers ::rebuild_course_cache()
      */
     public function test_cacherev_update_in_globals(): void {
         global $DB, $COURSE, $SITE;

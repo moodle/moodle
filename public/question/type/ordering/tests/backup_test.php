@@ -31,9 +31,9 @@ require_once($CFG->dirroot . '/course/externallib.php');
  * @package   qtype_ordering
  * @copyright 2020 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
- * @covers    \backup_qtype_ordering_plugin
- * @covers    \restore_qtype_ordering_plugin
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_qtype_ordering_plugin::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_qtype_ordering_plugin::class)]
 final class backup_test extends \advanced_testcase {
     /**
      * Duplicate quiz with a orderinging question, and check it worked.

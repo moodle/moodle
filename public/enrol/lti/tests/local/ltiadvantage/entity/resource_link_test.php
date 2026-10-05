@@ -22,17 +22,16 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\resource_link
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\entity\resource_link::class)]
 final class resource_link_test extends \advanced_testcase {
     /**
      * Test creation of the object instances.
      *
-     * @dataProvider instantiation_data_provider
      * @param array $args the arguments to the creation method.
      * @param array $expectations various expectations for the test cases.
-     * @covers ::create
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('instantiation_data_provider')]
     public function test_create(array $args, array $expectations): void {
         if (!$expectations['valid']) {
             $this->expectException($expectations['exception']);
@@ -117,9 +116,8 @@ final class resource_link_test extends \advanced_testcase {
      *
      * @param array $args the array of method arguments
      * @param array $expected the array of expectations
-     * @dataProvider add_grade_service_provider
-     * @covers ::add_grade_service
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_grade_service_provider')]
     public function test_add_grade_service(array $args, array $expected): void {
         $reslink = resource_link::create('res-link-id-123', 24, 44);
         $this->assertNull($reslink->get_grade_service());
@@ -209,8 +207,6 @@ final class resource_link_test extends \advanced_testcase {
 
     /**
      * Test confirming that a names and roles service instance can be added to the object instance.
-     *
-     * @covers ::add_names_and_roles_service
      */
     public function test_add_names_and_roles_service(): void {
         $reslink = resource_link::create('res-link-id-123', 24, 44);
@@ -225,8 +221,6 @@ final class resource_link_test extends \advanced_testcase {
 
     /**
      * Verify that a user can be created from a resource link that has an id.
-     *
-     * @covers ::add_user
      */
     public function test_add_user(): void {
         global $CFG;
@@ -243,8 +237,6 @@ final class resource_link_test extends \advanced_testcase {
 
     /**
      * Test confirming that the resourceid can be changed on the object.
-     *
-     * @covers ::set_resourceid
      */
     public function test_set_resource_id(): void {
         $reslink = resource_link::create('res-link-id-123', 24, 44);
@@ -258,8 +250,6 @@ final class resource_link_test extends \advanced_testcase {
 
     /**
      * Test confirming that the contextid can be changed on the object.
-     *
-     * @covers ::set_contextid
      */
     public function test_set_context_id(): void {
         $reslink = resource_link::create('res-link-id-123', 24, 44);

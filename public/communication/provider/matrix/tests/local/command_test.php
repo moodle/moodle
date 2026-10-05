@@ -31,9 +31,9 @@ require_once(dirname(__DIR__) . '/matrix_client_test_trait.php');
  * @category   test
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \communication_matrix\local\command
- * @coversDefaultClass \communication_matrix\local\command
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\communication_matrix\local\command::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\communication_matrix\local\command::class)]
 final class command_test extends \advanced_testcase {
     use \communication_matrix\matrix_client_test_trait;
 
@@ -75,11 +75,11 @@ final class command_test extends \advanced_testcase {
     /**
      * Test processing of command URL properties.
      *
-     * @dataProvider url_parsing_provider
      * @param string $url
      * @param array $params
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('url_parsing_provider')]
     public function test_url_parsing(
         string $url,
         array $params,
@@ -161,13 +161,13 @@ final class command_test extends \advanced_testcase {
     /**
      * Test the parameter fetching, processing, and parsing.
      *
-     * @dataProvider parameter_and_option_provider
      * @param string $endpoint
      * @param array $params
      * @param array $remainingparams
      * @param array $allparams
      * @param array $options
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('parameter_and_option_provider')]
     public function test_parameters(
         string $endpoint,
         array $params,
@@ -248,10 +248,10 @@ final class command_test extends \advanced_testcase {
     /**
      * Test the query parameter handling.
      *
-     * @dataProvider query_provider
      * @param array $query
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('query_provider')]
     public function test_query_parameters(
         array $query,
         string $expected,
@@ -313,7 +313,6 @@ final class command_test extends \advanced_testcase {
     /**
      * Test the sendasjson constructor parameter.
      *
-     * @dataProvider sendasjson_provider
      * @param bool $sendasjson
      * @param string $endpoint
      * @param array $params
@@ -321,6 +320,7 @@ final class command_test extends \advanced_testcase {
      * @param array $allparams
      * @param array $expectedoptions
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sendasjson_provider')]
     public function test_send_as_json(
         bool $sendasjson,
         string $endpoint,

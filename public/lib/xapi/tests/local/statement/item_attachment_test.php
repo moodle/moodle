@@ -72,10 +72,10 @@ final class item_attachment_test extends advanced_testcase {
     /**
      * Test for invalid values.
      *
-     * @dataProvider invalid_values_data
      * @param string $attr attribute to modify
      * @param mixed $newvalue new value (null means unset)
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_values_data')]
     public function test_invalid_values(string $attr, $newvalue): void {
 
         $data = $this->get_generic_data();

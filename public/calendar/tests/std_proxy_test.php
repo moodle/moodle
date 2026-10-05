@@ -50,11 +50,11 @@ final class std_proxy_test extends \advanced_testcase {
     /**
      * Test proxying.
      *
-     * @dataProvider proxy_testcases
      * @param int    $id       Object ID.
      * @param string $member   Object member to retrieve.
      * @param mixed  $expected Expected value of member.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('proxy_testcases')]
     public function test_proxy($id, $member, $expected): void {
         $proxy = new std_proxy($id, function($id) {
             return $this->objects[$id];
@@ -66,11 +66,11 @@ final class std_proxy_test extends \advanced_testcase {
     /**
      * Test setting values with a base class.
      *
-     * @dataProvider proxy_testcases
      * @param int    $id          Object ID.
      * @param string $member      Object member to retrieve.
      * @param mixed  $storedvalue Value as would be stored externally.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('proxy_testcases')]
     public function test_base_values($id, $member, $storedvalue): void {
         $proxy = new std_proxy(
             $id,
@@ -87,9 +87,9 @@ final class std_proxy_test extends \advanced_testcase {
     /**
      * Test getting a non existant member.
      *
-     * @dataProvider get_set_testcases
      * @param int $id ID of the object being proxied.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_set_testcases')]
     public function test_get_invalid_member($id): void {
         $proxy = new std_proxy($id, function($id) {
             return $this->objects[$id];
@@ -102,9 +102,9 @@ final class std_proxy_test extends \advanced_testcase {
     /**
      * Test get proxied instance.
      *
-     * @dataProvider get_set_testcases
      * @param int $id Object ID.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_set_testcases')]
     public function test_get_proxied_instance($id): void {
         $proxy = new std_proxy($id, function($id) {
             return $this->objects[$id];

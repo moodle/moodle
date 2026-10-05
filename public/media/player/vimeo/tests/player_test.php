@@ -25,6 +25,7 @@ use core_media_manager;
  * @copyright 2016 Marina Glancy
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\media_vimeo_plugin::class, 'embed_external')]
 final class player_test extends \advanced_testcase {
 
     /**
@@ -229,8 +230,6 @@ final class player_test extends \advanced_testcase {
     /**
      * Test that Vimeo media plugin renders embed code correctly
      * when the "do not track" config options is set to true.
-     *
-     * @covers \media_vimeo_plugin::embed_external
      */
     public function test_vimeo_donottrack(): void {
         // Turn on the do not track option.

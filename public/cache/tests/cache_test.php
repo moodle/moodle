@@ -40,8 +40,9 @@ use core\exception\moodle_exception;
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_cache\cache
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_cache\cache::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_cache\application_cache::class)]
 final class cache_test extends \advanced_testcase {
     /**
      * Load required libraries and fixtures.
@@ -1625,10 +1626,10 @@ final class cache_test extends \advanced_testcase {
     /**
      * Tests basic use of versioned cache.
      *
-     * @dataProvider ttl_and_simple_data_or_not
      * @param bool $ttl If true, uses a TTL cache.
      * @param bool $simpledata If true, turns on simple data flag
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ttl_and_simple_data_or_not')]
     public function test_versioned_cache_basic(bool $ttl, bool $simpledata): void {
         $multicache = $this->create_versioned_cache($ttl, false, false, $simpledata);
 
@@ -1642,10 +1643,10 @@ final class cache_test extends \advanced_testcase {
     /**
      * Tests versioned cache with objects.
      *
-     * @dataProvider ttl_and_static_acceleration_or_not
      * @param bool $ttl If true, uses a TTL cache.
      * @param bool $staticacceleration If true, enables static acceleration
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ttl_and_static_acceleration_or_not')]
     public function test_versioned_cache_objects(bool $ttl, bool $staticacceleration): void {
         $multicache = $this->create_versioned_cache($ttl, false, $staticacceleration);
 
@@ -1668,9 +1669,9 @@ final class cache_test extends \advanced_testcase {
     /**
      * Tests requesting a version that doesn't exist.
      *
-     * @dataProvider ttl_or_not
      * @param bool $ttl If true, uses a TTL cache.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ttl_or_not')]
     public function test_versioned_cache_not_exist(bool $ttl): void {
         $multicache = $this->create_versioned_cache($ttl);
 
@@ -1686,9 +1687,9 @@ final class cache_test extends \advanced_testcase {
     /**
      * Tests attempts to use get after set_version or get_version after set.
      *
-     * @dataProvider ttl_or_not
      * @param bool $ttl If true, uses a TTL cache.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ttl_or_not')]
     public function test_versioned_cache_incompatible_versioning(bool $ttl): void {
         $multicache = $this->create_versioned_cache($ttl);
 
@@ -1715,9 +1716,9 @@ final class cache_test extends \advanced_testcase {
      * Versions are only stored once, so if you set a newer version you will always get it even
      * if you ask for the lower version number.
      *
-     * @dataProvider ttl_or_not
      * @param bool $ttl If true, uses a TTL cache.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ttl_or_not')]
     public function test_versioned_cache_single_copy(bool $ttl): void {
         $multicache = $this->create_versioned_cache($ttl);
 
@@ -1733,9 +1734,9 @@ final class cache_test extends \advanced_testcase {
      * If the first (local) store has an outdated copy but the second (shared) store has a newer
      * one, then it should automatically be retrieved.
      *
-     * @dataProvider ttl_or_not
      * @param bool $ttl If true, uses a TTL cache.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ttl_or_not')]
     public function test_versioned_cache_outdated_local(bool $ttl): void {
         $multicache = $this->create_versioned_cache($ttl);
 
@@ -1781,9 +1782,9 @@ final class cache_test extends \advanced_testcase {
      * cache (to save I/O if there are multiple requests, as if there is another request it will
      * not have to retrieve the values to find out that they're old).
      *
-     * @dataProvider ttl_or_not
      * @param bool $ttl If true, uses a TTL cache.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ttl_or_not')]
     public function test_versioned_cache_deleting_outdated(bool $ttl): void {
         $multicache = $this->create_versioned_cache($ttl);
 
@@ -2213,8 +2214,6 @@ final class cache_test extends \advanced_testcase {
 
     /**
      * Test that locking before write works when writing across multiple layers.
-     *
-     * @covers \core_cache\application_cache
      */
     public function test_application_locking_multiple_layers(): void {
 
@@ -2292,8 +2291,6 @@ final class cache_test extends \advanced_testcase {
 
     /**
      * Tests that locking fails correctly when either layer of a 2-layer cache has a lock already.
-     *
-     * @covers \core_cache\application_cache
      */
     public function test_application_locking_multiple_layers_failures(): void {
 
@@ -3018,11 +3015,11 @@ final class cache_test extends \advanced_testcase {
     /**
      * Test performance of static acceleration caches with values which are frequently confused with missing values.
      *
-     * @dataProvider static_acceleration_performance_provider
      * @param mixed $value The value to test
      * @param array $firstfetchstats The expected stats on the first fetch
      * @param array $secondfetchstats The expected stats on the subsequent fetch
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('static_acceleration_performance_provider')]
     public function test_static_acceleration_values_performance(
         $value,
         array $firstfetchstats,

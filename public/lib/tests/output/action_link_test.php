@@ -23,8 +23,8 @@ namespace core\output;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\output\action_link
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\action_link::class)]
 final class action_link_test extends \advanced_testcase {
     /**
      * Test the exportable interface implementation.

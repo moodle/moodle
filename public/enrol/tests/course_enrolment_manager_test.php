@@ -28,8 +28,8 @@ use stdClass;
  * @category   test
  * @copyright  2016 Ruslan Kabalin, Lancaster University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \course_enrolment_manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\course_enrolment_manager::class)]
 final class course_enrolment_manager_test extends \advanced_testcase {
     /**
      * The course used in tests.
@@ -375,7 +375,6 @@ final class course_enrolment_manager_test extends \advanced_testcase {
     /**
      * Test get_potential_users without returnexactcount param.
      *
-     * @dataProvider search_users_provider
      *
      * @param int $perpage Number of users per page.
      * @param bool $returnexactcount Return the exact count or not.
@@ -383,6 +382,7 @@ final class course_enrolment_manager_test extends \advanced_testcase {
      * @param int $expectedtotalusers Expected total of users in database.
      * @param bool $expectedmoreusers Expected for more users return or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('search_users_provider')]
     public function test_get_potential_users($perpage, $returnexactcount, $expectedusers, $expectedtotalusers, $expectedmoreusers): void {
         global $DB, $PAGE;
         $this->resetAfterTest();
@@ -493,7 +493,6 @@ final class course_enrolment_manager_test extends \advanced_testcase {
     /**
      * Test search_other_users with returnexactcount param.
      *
-     * @dataProvider search_users_provider
      *
      * @param int $perpage Number of users per page.
      * @param bool $returnexactcount Return the exact count or not.
@@ -501,6 +500,7 @@ final class course_enrolment_manager_test extends \advanced_testcase {
      * @param int $expectedtotalusers Expected total of users in database.
      * @param bool $expectedmoreusers Expected for more users return or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('search_users_provider')]
     public function test_search_other_users($perpage, $returnexactcount, $expectedusers, $expectedtotalusers, $expectedmoreusers): void {
         global $PAGE;
         $this->resetAfterTest();
@@ -564,7 +564,6 @@ final class course_enrolment_manager_test extends \advanced_testcase {
     /**
      * Test search_users function.
      *
-     * @dataProvider search_users_provider
      *
      * @param int $perpage Number of users per page.
      * @param bool $returnexactcount Return the exact count or not.
@@ -572,6 +571,7 @@ final class course_enrolment_manager_test extends \advanced_testcase {
      * @param int $expectedtotalusers Expected total of users in database.
      * @param bool $expectedmoreusers Expected for more users return or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('search_users_provider')]
     public function test_search_users($perpage, $returnexactcount, $expectedusers, $expectedtotalusers, $expectedmoreusers): void {
         global $PAGE;
         $this->resetAfterTest();

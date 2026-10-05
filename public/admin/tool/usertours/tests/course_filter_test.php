@@ -24,8 +24,8 @@ use tool_usertours\local\filter\course;
  * @package    tool_usertours
  * @copyright  2025 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \tool_usertours\local\filter\course
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\local\filter\course::class)]
 final class course_filter_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
@@ -65,11 +65,11 @@ final class course_filter_test extends \advanced_testcase {
     /**
      * Test filter matches.
      *
-     * @dataProvider filter_matches_provider
      *
      * @param string $operator the filter operator.
      * @param bool $expected result expected.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_matches_provider')]
     public function test_filter_matches(string $operator, bool $expected): void {
         global $COURSE;
 

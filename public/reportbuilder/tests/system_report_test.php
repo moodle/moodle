@@ -26,10 +26,10 @@ use core_reportbuilder\local\report\action;
  * Unit tests for the system report class
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\system_report
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\system_report::class)]
 final class system_report_test extends advanced_testcase {
     /**
      * Test for actions

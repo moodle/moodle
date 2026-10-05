@@ -21,21 +21,21 @@ use DateTime;
 /**
  * Tests for humantimeperiod_test class.
  *
- * @covers     \core_calendar\output\humantimeperiod
  * @package    core_calendar
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_calendar\output\humantimeperiod::class)]
 final class humantimeperiod_test extends \advanced_testcase {
 
     /**
      * Test format_period() method.
      *
-     * @dataProvider provider_format_period
      * @param int|null $addsecondsend The number of seconds to add to the current time for the end date.
      * @param bool $expectedendnull Whether the end date is null.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_format_period')]
     public function test_format_period(
         ?int $addsecondsend,
         bool $expectedendnull,

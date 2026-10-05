@@ -26,10 +26,10 @@ use qbank_editquestion\external\update_question_version_status;
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \core_question\local\bank\question_version_status
- * @coversDefaultClass \qbank_editquestion\external\update_question_version_status
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_editquestion\external\update_question_version_status::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\local\bank\question_version_status::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\qbank_editquestion\editquestion_helper::class, 'get_question_status_string')]
 final class update_question_version_status_test extends \advanced_testcase {
 
     /** @var \stdClass course record. */
@@ -51,9 +51,6 @@ final class update_question_version_status_test extends \advanced_testcase {
 
     /**
      * Test if the submit status webservice changes the status of the question.
-     *
-     * @covers ::execute
-     * @covers \qbank_editquestion\editquestion_helper::get_question_status_string
      */
     public function test_submit_status_updates_the_question_status(): void {
         global $DB;
@@ -70,8 +67,6 @@ final class update_question_version_status_test extends \advanced_testcase {
 
     /**
      * Test submit status webservice only takes an existing parameter status.
-     *
-     * @covers ::execute
      */
     public function test_submit_status_error(): void {
         global $DB;
@@ -93,8 +88,6 @@ final class update_question_version_status_test extends \advanced_testcase {
 
     /**
      * Test that updating the status does not create a new version.
-     *
-     * @covers ::execute
      */
     public function test_submit_status_does_not_create_a_new_version(): void {
         global $DB;

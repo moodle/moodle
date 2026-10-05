@@ -19,18 +19,17 @@ namespace factor_email;
 /**
  * Tests for email factor.
  *
- * @covers      \factor_email\factor
  * @package     factor_email
  * @copyright   2023 Stevani Andolo <stevani@hotmail.com.au>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\factor_email\factor::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('check_verification_code')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('post_pass_state')]
 final class factor_test extends \advanced_testcase {
 
     /**
      * Tests checking verification code
-     *
-     * @covers ::check_verification_code
-     * @covers ::post_pass_state
      */
     public function test_check_verification_code(): void {
         global $DB, $USER;

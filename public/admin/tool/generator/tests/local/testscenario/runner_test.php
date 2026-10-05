@@ -22,14 +22,12 @@ namespace tool_generator\local\testscenario;
  * @package tool_generator
  * @copyright 2023 Ferran Recio <ferran@moodel.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_generator\local\testscenario\runner
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_generator\local\testscenario\runner::class)]
 final class runner_test extends \advanced_testcase {
 
     /**
      * Test for parse_feature.
-     * @covers ::parse_feature
-     * @covers ::execute
      */
     public function test_parse_and_execute_feature(): void {
         global $CFG, $DB;
@@ -79,8 +77,6 @@ final class runner_test extends \advanced_testcase {
 
     /**
      * Test for parse_feature.
-     * @covers ::parse_feature
-     * @covers ::execute
      */
     public function test_parse_and_execute_wrong_feature(): void {
         global $CFG, $DB;
@@ -107,8 +103,6 @@ final class runner_test extends \advanced_testcase {
 
     /**
      * Test for parse_feature.
-     * @covers ::parse_feature
-     * @covers ::execute
      */
     public function test_parse_and_execute_outline_feature(): void {
         global $CFG, $DB;

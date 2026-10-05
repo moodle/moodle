@@ -34,18 +34,17 @@ use \core_privacy\local\request\contextlist_base;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_privacy\local\request\contextlist_base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_privacy\local\request\contextlist_base::class)]
 final class contextlist_base_test extends advanced_testcase {
     /**
      * Ensure that get_contextids returns the list of unique contextids.
      *
-     * @dataProvider    get_contextids_provider
      * @param   array   $input List of context IDs
      * @param   array   $expected list of contextids
      * @param   int     $count Expected count
-     * @covers ::get_contextids
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_contextids_provider')]
     public function test_get_contextids($input, $expected, $count): void {
         $uit = new test_contextlist_base();
         $uit->set_contextids($input);
@@ -86,8 +85,6 @@ final class contextlist_base_test extends advanced_testcase {
 
     /**
      * Ensure that get_contexts returns the correct list of contexts.
-     *
-     * @covers ::get_contexts
      */
     public function test_get_contexts(): void {
         global $DB;
@@ -114,12 +111,11 @@ final class contextlist_base_test extends advanced_testcase {
     /**
      * Ensure that the contextlist_base is countable.
      *
-     * @dataProvider    get_contextids_provider
      * @param   array   $input List of context IDs
      * @param   array   $expected list of contextids
      * @param   int     $count Expected count
-     * @covers ::count
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_contextids_provider')]
     public function test_countable($input, $expected, $count): void {
         $uit = new test_contextlist_base();
         $uit->set_contextids($input);
@@ -129,12 +125,6 @@ final class contextlist_base_test extends advanced_testcase {
 
     /**
      * Ensure that the contextlist_base iterates over the set of contexts.
-     *
-     * @covers ::current
-     * @covers ::key
-     * @covers ::next
-     * @covers ::rewind
-     * @covers ::valid
      */
     public function test_context_iteration(): void {
         global $DB;
@@ -155,8 +145,6 @@ final class contextlist_base_test extends advanced_testcase {
 
     /**
      * Test that deleting a context results in current returning nothing.
-     *
-     * @covers ::current
      */
     public function test_current_context_one_context(): void {
         global $DB;
@@ -184,8 +172,6 @@ final class contextlist_base_test extends advanced_testcase {
 
     /**
      * Test that deleting a context results in the next record being returned.
-     *
-     * @covers ::current
      */
     public function test_current_context_two_contexts(): void {
         global $DB;
@@ -221,8 +207,6 @@ final class contextlist_base_test extends advanced_testcase {
 
     /**
      * Test that if there are no non-deleted contexts that nothing is returned.
-     *
-     * @covers ::get_contexts
      */
     public function test_get_contexts_all_deleted(): void {
         global $DB;
@@ -248,8 +232,6 @@ final class contextlist_base_test extends advanced_testcase {
 
     /**
      * Test that get_contexts() returns only active contexts.
-     *
-     * @covers ::get_contexts
      */
     public function test_get_contexts_one_deleted(): void {
         global $DB;

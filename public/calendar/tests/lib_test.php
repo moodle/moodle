@@ -24,6 +24,8 @@ namespace core_calendar;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\PHPUnit\Framework\Attributes\CoversFunction('calendar_can_edit_subscription')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('calendar_can_manage_user_event')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('calendar_format_event_location')]
 final class lib_test extends \advanced_testcase {
 
     /**
@@ -1177,8 +1179,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      *  Test calendar_can_manage_user_event for different users.
-     *
-     * @covers ::calendar_can_manage_user_event
      */
     public function test_calendar_can_manage_user_event(): void {
         global $DB, $USER;
@@ -1243,10 +1243,8 @@ final class lib_test extends \advanced_testcase {
      *
      * @param string $location
      * @param string $expectedpattern
-     *
-     * @covers ::calendar_format_event_location
-     * @dataProvider calendar_format_event_location_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('calendar_format_event_location_provider')]
     public function test_calendar_format_event_location(string $location, string $expectedpattern): void {
         $this->resetAfterTest();
         $this->setAdminUser();

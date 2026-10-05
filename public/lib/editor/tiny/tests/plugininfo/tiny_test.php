@@ -24,15 +24,16 @@ use advanced_testcase;
  * Unit tests for the editor_tiny\tiny plugininfo class.
  *
  * @package     editor_tiny
- * @covers      \editor_tiny\plugininfo\tiny
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\editor_tiny\plugininfo\tiny::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('is_uninstall_allowed')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_manage_url')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_enabled_plugin')]
 final class tiny_test extends advanced_testcase {
     /**
      * Uninstall is allowed of TinyMCE plugins.
-     *
-     * @covers ::is_uninstall_allowed
      */
     public function test_is_uninstall_allowed(): void {
         $instance = new tiny();
@@ -41,8 +42,6 @@ final class tiny_test extends advanced_testcase {
 
     /**
      * Check the manage URL.
-     *
-     * @covers ::get_manage_url
      */
     public function test_get_manage_url(): void {
         $this->assertInstanceOf(\moodle_url::class, tiny::get_manage_url());
@@ -50,8 +49,6 @@ final class tiny_test extends advanced_testcase {
 
     /**
      * Test the get_enabled_plugins method.
-     *
-     * @covers ::get_enabled_plugin
      */
     public function test_get_enabled_plugins(): void {
         $this->resetAfterTest();

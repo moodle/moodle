@@ -35,6 +35,7 @@ require_once($CFG->dirroot . '/blog/lib.php');
 /**
  * Test functions that rely on the DB tables
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('core_blog_myprofile_navigation')]
 final class lib_test extends \advanced_testcase {
 
     private $courseid;
@@ -158,8 +159,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests the core_blog_myprofile_navigation() function.
-     *
-     * @covers ::core_blog_myprofile_navigation
      */
     public function test_core_blog_myprofile_navigation(): void {
         global $USER;
@@ -194,8 +193,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests the core_blog_myprofile_navigation() function when a course context is provided.
-     *
-     * @covers ::core_blog_myprofile_navigation
      */
     public function test_core_blog_myprofile_navigation_in_course(): void {
         global $DB, $USER;
@@ -224,8 +221,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests the core_blog_myprofile_navigation() function as a guest.
-     *
-     * @covers ::core_blog_myprofile_navigation
      */
     public function test_core_blog_myprofile_navigation_as_guest(): void {
         global $USER;
@@ -249,8 +244,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests the core_blog_myprofile_navigation() function when blogs are disabled.
-     *
-     * @covers ::core_blog_myprofile_navigation
      */
     public function test_core_blog_myprofile_navigation_blogs_disabled(): void {
         global $USER;
@@ -275,8 +268,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests the core_blog_myprofile_navigation() function when viewing another user's profile.
-     *
-     * @covers ::core_blog_myprofile_navigation
      */
     public function test_core_blog_myprofile_navigation_other_user(): void {
         // Set up the test: admin views another user's profile.
@@ -314,8 +305,6 @@ final class lib_test extends \advanced_testcase {
      *
      * A viewer with moodle/blog:view capability but without moodle/user:readuserblogs on the
      * profile owner's context should still see the site blog link, provided bloglevel allows it.
-     *
-     * @covers ::core_blog_myprofile_navigation
      */
     public function test_core_blog_myprofile_navigation_site_blog_independent_of_user_visibility(): void {
         // Create a viewer (plain user role) and a profile owner.
@@ -348,8 +337,6 @@ final class lib_test extends \advanced_testcase {
     /**
      * Tests that the site blog link is shown once bloglevel allows site-wide access, even when
      * the profile owner's personal entries remain inaccessible to the viewer.
-     *
-     * @covers ::core_blog_myprofile_navigation
      */
     public function test_core_blog_myprofile_navigation_site_blog_shown_at_site_level(): void {
         // Create a viewer (plain user role) and a profile owner.

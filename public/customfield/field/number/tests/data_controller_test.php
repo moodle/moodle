@@ -26,10 +26,10 @@ use core_customfield_test_instance_form;
  * Tests for the data controller
  *
  * @package    customfield_number
- * @covers     \customfield_number\data_controller
  * @copyright  2024 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\customfield_number\data_controller::class)]
 final class data_controller_test extends advanced_testcase {
 
     /**
@@ -171,9 +171,8 @@ final class data_controller_test extends advanced_testcase {
      * @param float|string $datavalue
      * @param string|null $expectedvalue
      * @param array $configdata
-     *
-     * @dataProvider export_value_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_value_provider')]
     public function test_export_value(
         float|string $datavalue,
         string|null $expectedvalue,

@@ -29,8 +29,8 @@ use moodle_exception;
  * @category   external
  * @copyright  2024 Ilya Tregubov <ilya.tregubov@proton.me>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \customfield_number\external\recalculate
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\customfield_number\external\recalculate::class)]
 final class recalculate_test extends \core_external\tests\externallib_testcase {
     /**
      * Tests when teacher can not edit locked field.

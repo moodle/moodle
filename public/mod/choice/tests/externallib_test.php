@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/mod/choice/lib.php');
  * @category   external
  * @copyright  2015 Costantino Cito <ccito@cvaconsulting.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_choice_external
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_choice_external::class)]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_choice_results

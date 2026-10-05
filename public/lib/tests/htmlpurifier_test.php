@@ -341,10 +341,10 @@ final class htmlpurifier_test extends \basic_testcase {
     /**
      * Tests media tags.
      *
-     * @dataProvider media_tags_provider
      * @param string $mediatag HTML media tag
      * @param string $expected expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('media_tags_provider')]
     public function test_media_tags($mediatag, $expected): void {
         $actual = format_text($mediatag, FORMAT_MOODLE, ['filter' => false]);
         $this->assertEquals($expected, $actual);

@@ -25,8 +25,8 @@ namespace tool_installaddon\task;
  * @category  test
  * @copyright 2026 Safat Shahin <safat.shahin@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \tool_installaddon\task\post_install
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_installaddon\task\post_install::class)]
 final class post_install_test extends \advanced_testcase {
     /**
      * Tests that the task sets the activity chooser footer plugin to tool_installaddon.

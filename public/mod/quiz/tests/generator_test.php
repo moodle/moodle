@@ -23,8 +23,8 @@ namespace mod_quiz;
  * @category   phpunit
  * @copyright  2012 Matt Petro
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz_generator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz_generator::class)]
 final class generator_test extends \advanced_testcase {
     public function test_generator(): void {
         global $DB, $SITE;

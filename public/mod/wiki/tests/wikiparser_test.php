@@ -39,16 +39,17 @@ require_once($CFG->dirroot . '/mod/wiki/parser/parser.php');
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\wiki_parser_proxy::class, 'parse')]
 final class wikiparser_test extends \advanced_testcase {
 
     /**
      * URL inside the clickable text of some link should not be turned into a new link via the url_tag_rule.
      *
-     * @dataProvider urls_inside_link_text_provider
      * @param string $markup Markup of the Wiki page the text is part of.
      * @param string $input The input text.
      * @param string $output The expected output HTML as a result of the parsed input text.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('urls_inside_link_text_provider')]
     public function test_urls_inside_link_text(string $markup, string $input, string $output): void {
 
         $parsingresult = wiki_parser_proxy::parse($input, $markup, [
@@ -337,9 +338,8 @@ final class wikiparser_test extends \advanced_testcase {
      *
      * @param string $format
      * @param string $expected
-     * @covers \wiki_parser_proxy::parse
-     * @dataProvider format_parser_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_parser_provider')]
     public function test_format_parser(string $format, string $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();

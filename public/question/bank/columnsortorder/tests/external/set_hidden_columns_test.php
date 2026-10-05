@@ -21,7 +21,6 @@ use qbank_columnsortorder\tests\external_function_testcase;
 
 // phpcs:disable moodle.PHPUnit.TestCaseNames.Missing
 // This class inherits its test methods from the parent class.
-
 /**
  * Unit tests for qbank_columnsortorder external API.
  *
@@ -29,8 +28,8 @@ use qbank_columnsortorder\tests\external_function_testcase;
  * @copyright 2023 Catalyst IT Europe Ltd.
  * @author Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qbank_columnsortorder\external\set_hidden_columns
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_columnsortorder\external\set_hidden_columns::class)]
 final class set_hidden_columns_test extends external_function_testcase {
     /**
      * @var string Fully-qualified external function class to test.

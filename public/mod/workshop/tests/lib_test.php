@@ -590,7 +590,6 @@ final class lib_test extends \advanced_testcase {
     /**
      * Tests mod_workshop_core_calendar_get_valid_event_timestart_range in various settings.
      *
-     * @dataProvider mod_workshop_core_calendar_get_valid_event_timestart_range_due_no_limit_provider
      *
      * @param int $submissionstart  The start of the submission phase
      * @param int $submissionend    The end of the submission phase
@@ -600,6 +599,7 @@ final class lib_test extends \advanced_testcase {
      * @param int|null $expectedmin The expected value for min of the valid event range
      * @param int|null $expectedmax The expected value for max of the valid event range
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('mod_workshop_core_calendar_get_valid_event_timestart_range_due_no_limit_provider')]
     public function test_mod_workshop_core_calendar_get_valid_event_timestart_range($submissionstart, $submissionend,
             $assessmentstart, $assessmentend, $eventtype, $expectedmin, $expectedmax): void {
 
@@ -713,7 +713,6 @@ final class lib_test extends \advanced_testcase {
     /**
      * Due date events should update the workshop due date.
      *
-     * @dataProvider mod_workshop_core_calendar_event_timestart_updated_provider
      *
      * @param int $submissionstart  The start of the submission phase
      * @param int $submissionend    The end of the submission phase
@@ -724,6 +723,7 @@ final class lib_test extends \advanced_testcase {
      *                              Either of 'submissionstart', 'submissionend', 'assessmentstart' or 'assessmentend'.
      * @param int $newtime          The new value for the $fieldtoupdate
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('mod_workshop_core_calendar_event_timestart_updated_provider')]
     public function test_mod_workshop_core_calendar_event_timestart_updated($submissionstart, $submissionend, $assessmentstart,
             $assessmentend, $eventtype, $fieldtoupdate, $newtime): void {
         global $CFG, $DB;

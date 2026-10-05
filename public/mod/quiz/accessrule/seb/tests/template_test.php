@@ -28,6 +28,8 @@ require_once(__DIR__ . '/test_helper_trait.php');
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\quizaccess_seb\seb_quiz_settings::class, 'get_record')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\quizaccess_seb\settings_provider::class, 'get_requiresafeexambrowser_options')]
 final class template_test extends \advanced_testcase {
     use \quizaccess_seb_test_helper_trait;
 
@@ -153,9 +155,6 @@ final class template_test extends \advanced_testcase {
 
     /**
      * Test that a disabled template no longer shows up in quiz SEB settings other than quizzes already using it.
-     *
-     * @covers \quizaccess_seb\seb_quiz_settings::get_record
-     * @covers \quizaccess_seb\settings_provider::get_requiresafeexambrowser_options
      */
     public function test_disabled_template_quiz_setting_options(): void {
         // Create quiz and fetch standard SEB requirement options.

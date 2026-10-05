@@ -23,8 +23,8 @@ namespace qbank_tagquestion\event;
  * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \qbank_tagquestion\event\question_deleted_observer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_tagquestion\event\question_deleted_observer::class)]
 final class question_deleted_observer_test extends \advanced_testcase {
 
     /**

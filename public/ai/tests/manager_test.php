@@ -28,14 +28,13 @@ use core_ai\aiactions\responses\response_generate_image;
  * @package    core_ai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_ai\manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_ai\placement::class, 'is_available_in_context')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_ai\placement::class, 'get_actions_available')]
 final class manager_test extends \advanced_testcase {
     /**
      * Test the default placement context API.
-     *
-     * @covers \core_ai\placement::is_available_in_context
-     * @covers \core_ai\placement::get_actions_available
      */
     public function test_default_placement_context_api(): void {
         $placement = new class extends placement {
@@ -1048,9 +1047,9 @@ final class manager_test extends \advanced_testcase {
      *
      * @param string $enabledactions
      * @param array $expectedactions
-     * @dataProvider ai_actions_provider
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ai_actions_provider')]
     public function test_get_enabled_actions_in_course_module(
         string $enabledactions,
         array $expectedactions,

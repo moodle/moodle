@@ -19,11 +19,11 @@ namespace core_calendar;
 /**
  * Renderer testcase.
  *
- * @covers \core_calendar_renderer
  * @package core_calendar
  * @copyright 2025 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_calendar_renderer::class)]
 final class renderer_test extends \advanced_testcase {
     /**
      * Tests {@see \core_calendar_renderer::course_filter_selector()} shows course names correctly

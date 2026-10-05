@@ -29,12 +29,14 @@ use zip_archive;
  * Also {@see entries_import_test} class which provides module tests for importing entries.
  *
  * @package    mod_data
- * @covers     \mod_data\local\importer\entries_importer
- * @covers     \mod_data\local\importer\csv_entries_importer
  * @copyright  2023 ISB Bayern
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\local\importer\entries_importer::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\local\importer\csv_entries_importer::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_data\local\importer\entries_importer::class, 'get_file_content_from_zip')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_data\local\importer\entries_importer::class, 'get_data_file_content')]
 final class entries_importer_test extends \advanced_testcase {
 
     /**
@@ -98,12 +100,10 @@ final class entries_importer_test extends \advanced_testcase {
     /**
      * Test importing files from zip archive.
      *
-     * @covers \mod_data\local\importer\entries_importer::get_file_content_from_zip
-     * @covers \mod_data\local\importer\entries_importer::get_data_file_content
-     * @dataProvider get_file_content_from_zip_provider
      * @param array $files array of filenames and filecontents to test
      * @param mixed $datafilecontent the expected result returned by the method which is being tested here
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_file_content_from_zip_provider')]
     public function test_get_file_content_from_zip(array $files, mixed $datafilecontent): void {
         // First we need to create the zip file from the provided data.
         $tmpdir = make_request_directory();
@@ -205,8 +205,6 @@ final class entries_importer_test extends \advanced_testcase {
 
     /**
      * Test file paths passed to get_file_content_from_zip are cleaned.
-     *
-     * @covers \mod_data\local\importer\entries_importer::get_file_content_from_zip
      */
     public function test_get_file_content_from_zip_paths_are_cleaned(): void {
         $zipfilepath = self::get_fixture_path(__NAMESPACE__, 'test_data_import_with_files.zip');

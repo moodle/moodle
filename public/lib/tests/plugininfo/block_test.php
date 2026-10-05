@@ -24,10 +24,10 @@ use advanced_testcase;
  * Unit tests for the mod plugininfo class
  *
  * @package     core
- * @covers      \core\plugininfo\block
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\plugininfo\block::class)]
 final class block_test extends advanced_testcase {
 
     /**
@@ -55,10 +55,10 @@ final class block_test extends advanced_testcase {
     /**
      * Test the is_uninstall_allowed method.
      *
-     * @dataProvider is_uninstall_allowed_provider
      * @param string $plugin
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_uninstall_allowed_provider')]
     public function test_is_uninstall_allowed(
         string $plugin,
         bool $expected,

@@ -23,17 +23,17 @@ namespace mlbackend_python;
  * @category  test
  * @copyright 2019 David Mudrák <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mlbackend_python\processor
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mlbackend_python\processor::class)]
 final class processor_test extends \advanced_testcase {
     /**
      * Test implementation of the {@link \mlbackend_python\processor::check_pip_package_version()} method.
      *
-     * @dataProvider check_pip_package_versions
      * @param string $actual A sample of the actual package version
      * @param string $required A sample of the required package version
      * @param int $result Expected value returned by the tested method
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('check_pip_package_versions')]
     public function test_check_pip_package_version($actual, $required, $result): void {
         $this->assertSame($result, \mlbackend_python\processor::check_pip_package_version($actual, $required));
     }

@@ -30,9 +30,8 @@ require_once('all_checks.php');
 
 /**
  * Class i_is_not_used_testcase
- *
- * @covers \tool_brickfield\local\htmlchecker\common\checks\i_is_not_used
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_brickfield\local\htmlchecker\common\checks\i_is_not_used::class)]
 final class i_is_not_used_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'i_is_not_used';

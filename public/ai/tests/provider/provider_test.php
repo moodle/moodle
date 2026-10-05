@@ -35,8 +35,8 @@ use core_privacy\tests\request\content_writer;
  * @package    core_ai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_ai\provider::class)]
 final class provider_test extends \advanced_testcase {
 
     /** @var \core_ai\manager */

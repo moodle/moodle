@@ -31,8 +31,8 @@ require_once($CFG->libdir . '/questionlib.php');
  * @category   test
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \question_state
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_state::class)]
 final class questionstate_test extends \advanced_testcase {
     public function test_is_active(): void {
         $this->assertFalse(question_state::$notstarted->is_active());

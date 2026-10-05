@@ -28,6 +28,7 @@ require_once(__DIR__ . '/fixtures/test_target_shortname.php');
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_analytics\prediction::class, 'get_executed_actions')]
 final class prediction_actions_test extends \advanced_testcase {
 
     /** @var model Store Model. */
@@ -190,13 +191,12 @@ final class prediction_actions_test extends \advanced_testcase {
     /**
      * Tests for get_executed_actions() function.
      *
-     * @dataProvider    execute_actions_provider
      * @param   array   $actionstoexecute    An array of actions to execute
      * @param   array   $actionnamefilter   Actions to filter
      * @param   int     $returned             Number of actions returned
      *
-     * @covers \core_analytics\prediction::get_executed_actions
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_actions_provider')]
     public function test_get_executed_actions(array $actionstoexecute, array $actionnamefilter, int $returned): void {
 
         $this->setUser($this->teacher2);

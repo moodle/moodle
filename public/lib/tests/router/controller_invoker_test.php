@@ -26,10 +26,10 @@ use Psr\Http\Message\ServerRequestInterface;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\controller_invoker
- * @covers     \core\router\bridge
- * @covers     \core\router\response_handler
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\controller_invoker::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\bridge::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\response_handler::class)]
 final class controller_invoker_test extends route_testcase {
     /**
      * Configure an instance of Slim and fetch the Invoker.
@@ -45,8 +45,6 @@ final class controller_invoker_test extends route_testcase {
 
     /**
      * Test that setup of the invoker using the router\bridge sets the correct invoker strategy.
-     * @covers \core\router\bridge
-     * @covers \core\router\controller_invoker
      */
     public function test_setup_of_invoker(): void {
         $strategy = $this->get_invocation_strategy();

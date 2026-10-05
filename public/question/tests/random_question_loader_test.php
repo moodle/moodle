@@ -38,8 +38,8 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @package   core_question
  * @copyright 2015 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \random_question_loader
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\random_question_loader::class)]
 final class random_question_loader_test extends \advanced_testcase {
 
     use \quiz_question_helper_test_trait;
@@ -379,12 +379,12 @@ final class random_question_loader_test extends \advanced_testcase {
      *          Parent: cat1
      *      Category: emptycat
      *
-     * @dataProvider get_questions_test_cases
      * @param string $categoryindex The named index for the category to use
      * @param bool $includesubcategories If the search should include subcategories
      * @param string[] $usetagnames The tag names to include in the search
      * @param string[] $expectedquestionindexes The questions expected in the result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_questions_test_cases')]
     public function test_get_questions_variations(
             $categoryindex,
             $includesubcategories,
@@ -589,12 +589,12 @@ final class random_question_loader_test extends \advanced_testcase {
      *          Parent: cat1
      *      Category: emptycat
      *
-     * @dataProvider count_questions_test_cases
      * @param string $categoryindex The named index for the category to use
      * @param bool $includesubcategories If the search should include subcategories
      * @param string[] $usetagnames The tag names to include in the search
      * @param int $expectedcount The number of questions expected in the result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('count_questions_test_cases')]
     public function test_count_questions_variations(
             $categoryindex,
             $includesubcategories,

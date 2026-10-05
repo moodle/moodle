@@ -23,11 +23,14 @@ use stdClass;
  * Manager tests class for mod_h5pactivity.
  *
  * @package    mod_h5pactivity
- * @covers     \mod_h5pactivity\local\manager
  * @category   test
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_h5pactivity\local\manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('is_tracking_enabled')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('can_submit')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_report')]
 final class manager_test extends \advanced_testcase {
 
     /**
@@ -63,15 +66,13 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test for is_tracking_enabled and can_submit methods.
      *
-     * @covers ::is_tracking_enabled
-     * @covers ::can_submit
-     * @dataProvider is_tracking_enabled_data
      * @param bool $login if the user is logged in
      * @param string $role user role in course
      * @param int $enabletracking if tracking is enabled
      * @param bool $expectedtracking expected result for is_tracking_enabled()
      * @param bool $expectedsubmit expected result for can_submit()
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_tracking_enabled_data')]
     public function test_is_tracking_enabled_and_can_submit(bool $login, string $role, int $enabletracking, bool $expectedtracking,
             bool $expectedsubmit): void {
 
@@ -132,12 +133,12 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test for get_users_scaled_score.
      *
-     * @dataProvider get_users_scaled_score_data
      * @param int $enabletracking if tracking is enabled
      * @param int $gradingmethod new grading method
      * @param array $result1 student 1 results (scaled, timemodified, attempt number)
      * @param array $result2 student 2 results (scaled, timemodified, attempt number)
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_users_scaled_score_data')]
     public function test_get_users_scaled_score(int $enabletracking, int $gradingmethod, array $result1, array $result2): void {
         global $DB;
 
@@ -265,11 +266,11 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test static get_selected_attempt.
      *
-     * @dataProvider get_selected_attempt_data
      * @param int $enabletracking if tracking is enabled
      * @param int $gradingmethod new grading method
      * @param int $result the expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_selected_attempt_data')]
     public function test_get_selected_attempt(int $enabletracking, int $gradingmethod, int $result): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -358,12 +359,12 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test static can_view_all_attempts.
      *
-     * @dataProvider can_view_all_attempts_data
      * @param int $enabletracking if tracking is enabled
      * @param bool $usestudent if test must be done with a user role
      * @param bool $useloggedin if test must be done with the loggedin user
      * @param bool $result the expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_view_all_attempts_data')]
     public function test_can_view_all_attempts(int $enabletracking, bool $usestudent, bool $useloggedin, bool $result): void {
         global $USER;
 
@@ -434,13 +435,13 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test static can_view_own_attempts.
      *
-     * @dataProvider can_view_own_attempts_data
      * @param int $enabletracking if tracking is enabled
      * @param int $reviewmode the attempt review mode
      * @param bool $useloggedin if test must be done with the loggedin user
      * @param bool $hasattempts if the student have attempts
      * @param bool $result the expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_view_own_attempts_data')]
     public function test_can_view_own_attempts(int $enabletracking, int $reviewmode,
             bool $useloggedin, bool $hasattempts, bool $result): void {
 
@@ -604,12 +605,12 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test static count_attempts of all active participants.
      *
-     * @dataProvider count_attempts_all_data
      * @param bool $canview if the student role has mod_h5pactivity/view capability
      * @param bool $cansubmit if the student role has mod_h5pactivity/submit capability
      * @param bool $extrarole if an extra role without submit capability is required
      * @param int $result the expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('count_attempts_all_data')]
     public function test_count_attempts_all(bool $canview, bool $cansubmit, bool $extrarole, int $result): void {
         global $DB;
 
@@ -697,10 +698,10 @@ final class manager_test extends \advanced_testcase {
      * Most method scenarios are tested in test_count_attempts_all so we only
      * need to test the with $allpotentialusers true and false.
      *
-     * @dataProvider get_active_users_join_data
      * @param bool $allpotentialusers if the join should return all potential users or only the submitted ones.
      * @param int $result the expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_active_users_join_data')]
     public function test_get_active_users_join(bool $allpotentialusers, int $result): void {
         global $DB;
 
@@ -967,13 +968,13 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test static get_report.
      *
-     * @dataProvider get_report_data
      * @param int $enabletracking if tracking is enabled
      * @param int $reviewmode the attempt review mode
      * @param bool $createattempts if the student have attempts
      * @param string $role the user role (student or editingteacher)
      * @param array $results the expected classname (or null)
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_report_data')]
     public function test_get_report(int $enabletracking, int $reviewmode, bool $createattempts,
             string $role, array $results): void {
 
@@ -1111,11 +1112,10 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test teacher access to student reports (get_report) when course groupmode is SEPARATEGROUPS.
-     * @covers ::get_report()
-     * @dataProvider get_report_data_groupmode
      *
      * @param bool $activitygroupmode Course or activity groupmode
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_report_data_groupmode')]
     public function test_get_report_groupmode(bool $activitygroupmode): void {
         global $DB;
 
@@ -1200,10 +1200,10 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test get_attempt method.
      *
-     * @dataProvider get_attempt_data
      * @param string $attemptname the attempt to use
      * @param string|null $result the expected attempt ID or null for none
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_attempt_data')]
     public function test_get_attempt(string $attemptname, ?string $result): void {
 
         $this->resetAfterTest();

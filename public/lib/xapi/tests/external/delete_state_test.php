@@ -28,11 +28,11 @@ use core_xapi\xapi_exception;
  * Unit tests for xAPI delete state webservice.
  *
  * @package    core_xapi
- * @covers     \core_xapi\external\delete_state
  * @since      Moodle 4.2
  * @copyright  2023 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_xapi\external\delete_state::class)]
 final class delete_state_test extends \core_external\tests\externallib_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
@@ -46,10 +46,10 @@ final class delete_state_test extends \core_external\tests\externallib_testcase 
     /**
      * Testing different component names on valid states.
      *
-     * @dataProvider components_provider
      * @param string $component component name
      * @param string|null $expected expected results
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('components_provider')]
     public function test_component_names(string $component, ?string $expected): void {
 
         $this->resetAfterTest();
@@ -106,11 +106,11 @@ final class delete_state_test extends \core_external\tests\externallib_testcase 
     /**
      * Testing valid/invalid state.
      *
-     * @dataProvider states_provider
      * @param array $info array of overriden state data.
      * @param string|null $expected Expected results.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('states_provider')]
     public function test_delete_state(array $info, ?string $expected): void {
         $this->resetAfterTest();
 

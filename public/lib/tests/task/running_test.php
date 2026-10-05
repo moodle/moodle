@@ -24,6 +24,7 @@ namespace core\task;
  * @copyright 2019 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\task\manager::class, 'cleanup_metadata')]
 final class running_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . '/../fixtures/task_fixtures.php');
@@ -159,8 +160,6 @@ final class running_test extends \advanced_testcase {
 
     /**
      * Test for adhoc task cleanup.
-     *
-     * @covers \core\task\manager::cleanup_metadata()
      */
     public function test_adhoc_cleanup_metadata(): void {
         global $DB;
@@ -213,8 +212,6 @@ final class running_test extends \advanced_testcase {
 
     /**
      * Test for scheduled task cleanup.
-     *
-     * @covers \core\task\manager::cleanup_metadata()
      */
     public function test_scheduled_cleanup_metadata(): void {
         global $DB;

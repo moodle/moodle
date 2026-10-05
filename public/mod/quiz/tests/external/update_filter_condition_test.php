@@ -28,8 +28,8 @@ use mod_quiz\quiz_settings;
  * @copyright  2025 onwards Catalyst IT {@link http://www.catalyst-eu.net/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Conn Warwicker <conn.warwicker@catalyst-eu.net>
- * @covers \mod_quiz\external\update_filter_condition::execute
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_quiz\external\update_filter_condition::class, 'execute')]
 final class update_filter_condition_test extends advanced_testcase {
 
     /**

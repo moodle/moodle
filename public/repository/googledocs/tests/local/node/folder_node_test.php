@@ -33,11 +33,11 @@ final class folder_node_test extends \repository_googledocs_testcase {
     /**
      * Test create_node_array().
      *
-     * @dataProvider create_node_array_provider
      * @param \stdClass $gdfolder The Google Drive folder object
      * @param string $path The current path
      * @param array $expected The expected repository folder node array
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_node_array_provider')]
     public function test_create_node_array(\stdClass $gdfolder, string $path, array $expected): void {
         $foldernode = new folder_node($gdfolder, $path);
         $foldernodearray = $foldernode->create_node_array();

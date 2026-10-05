@@ -101,9 +101,9 @@ final class item_object_test extends advanced_testcase {
     /**
      * Test for invalid structures.
      *
-     * @dataProvider invalid_data_provider
      * @param string  $id
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_data_provider')]
     public function test_invalid_data(string $id): void {
         $this->expectException(xapi_exception::class);
         $data = (object) [

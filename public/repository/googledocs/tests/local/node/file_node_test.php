@@ -32,11 +32,11 @@ final class file_node_test extends \repository_googledocs_testcase {
     /**
      * Test create_node_array().
      *
-     * @dataProvider create_node_array_provider
      * @param \stdClass $gdfile The Google Drive file object
      * @param array $configsettings The googledoc repository config settings that should be set
      * @param array|null $expected The expected repository file node array
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_node_array_provider')]
     public function test_create_node_array(\stdClass $gdfile, array $configsettings, ?array $expected): void {
         $this->resetAfterTest();
         // Set the required config settings.

@@ -33,8 +33,8 @@ require_once($CFG->libdir . '/form/duration.php');
  * @category   test
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \MoodleQuickForm_duration
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\MoodleQuickForm_duration::class)]
 final class duration_test extends \basic_testcase {
 
     /**
@@ -138,10 +138,10 @@ final class duration_test extends \basic_testcase {
     /**
      * Testcase for testing conversion of seconds to the best possible unit.
      *
-     * @dataProvider seconds_to_unit_cases
      * @param array $expected expected return value from seconds_to_unit
      * @param int $seconds value to pass to seconds_to_unit
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('seconds_to_unit_cases')]
     public function test_seconds_to_unit(array $expected, int $seconds): void {
         [, $element] = $this->get_test_form_and_element();
         $this->assertEquals($expected, $element->seconds_to_unit($seconds));
@@ -182,7 +182,6 @@ final class duration_test extends \basic_testcase {
     /**
      * Testcase to check generated timestamp
      *
-     * @dataProvider export_value_cases
      * @param int $expected Expected value returned by the element.
      * @param string $number Number entered into the element.
      * @param int $unit Unit selected in the element.
@@ -190,6 +189,7 @@ final class duration_test extends \basic_testcase {
      * @param bool $optional Whether the element has the optional option on.
      * @param string|null $label The element's label.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_value_cases')]
     public function test_export_value(int $expected, string $number, int $unit, int $enabled = 0,
             bool $optional = false, ?string $label = null): void {
 
@@ -256,12 +256,12 @@ final class duration_test extends \basic_testcase {
     /**
      * Test for {@see MoodleQuickForm_duration::validateSubmitValue()}.
      *
-     * @dataProvider validate_submit_value_cases
      * @param bool $allownegative whether the element should be created to allow negative values.
      * @param int $number the number submitted.
      * @param int $unit the unit submitted.
      * @param bool $isvalid whether this submission is valid.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validate_submit_value_cases')]
     public function test_validate_submit_value(bool $allownegative, int $number, int $unit, bool $isvalid): void {
         $form = new temp_form_duration(null, null, 'post', '', null, true);
         /** @var \MoodleQuickForm_duration $element */

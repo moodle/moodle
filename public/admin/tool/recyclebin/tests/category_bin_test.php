@@ -22,8 +22,8 @@ namespace tool_recyclebin;
  * @package    tool_recyclebin
  * @copyright  2015 University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \tool_recyclebin\category_bin
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_recyclebin\category_bin::class)]
 final class category_bin_test extends \advanced_testcase {
 
     /**
@@ -222,9 +222,9 @@ final class category_bin_test extends \advanced_testcase {
     /**
      * Tests that user data is restored when course is restored.
      *
-     * @dataProvider recycle_bin_settings_provider
      * @param array $settings array of plugin, name, value stdClass().
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('recycle_bin_settings_provider')]
     public function test_course_restore_with_userdata($settings): void {
         global $DB;
 
@@ -266,9 +266,9 @@ final class category_bin_test extends \advanced_testcase {
     /**
      * Tests that user data is not restored when course is restored.
      *
-     * @dataProvider recycle_bin_settings_provider
      * @param array $settings array of plugin, name, value stdClass().
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('recycle_bin_settings_provider')]
     public function test_course_restore_without_userdata($settings): void {
         global $DB;
 

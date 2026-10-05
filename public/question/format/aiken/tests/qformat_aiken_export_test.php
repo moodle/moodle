@@ -35,10 +35,10 @@ require_once($CFG->dirroot . '/question/editlib.php');
 /**
  * Unit tests for the Aiken question format export.
  *
- * @copyright  2018 Jean-Michel vedrine)
+ * @copyright  2018 Jean-Michel Vedrine
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qformat_aiken
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qformat_aiken::class)]
 final class qformat_aiken_export_test extends advanced_testcase {
     /**
      * Assert that 2 strings are the same, ignoring ends of line.

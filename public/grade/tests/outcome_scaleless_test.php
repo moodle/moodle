@@ -33,6 +33,19 @@ require_once($CFG->dirroot . '/grade/lib.php');
  * @copyright 2026 Anupama Sarjoshi <anupama.sarjoshi@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_outcome::class, 'insert')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_outcome::class, 'fetch')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_outcome::class, 'load_scale')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('edit_module_post_actions')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_outcome::class, 'add_outcome_to_module')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_outcome::class, 'remove_outcome_from_module')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_outcome::class, 'delete')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_outcome::class, 'get_used_outcomes_in_course')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_outcome::class, 'get_outcomes_in_module')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_courseformat\local\cmactions::class, 'delete')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_outcomes_structure_step::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_activity_grades_structure_step::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_annotate_course_outcomes::class)]
 final class outcome_scaleless_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
@@ -43,9 +56,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * An outcome can be created, saved and re-fetched without a scale.
-     *
-     * @covers \grade_outcome::insert
-     * @covers \grade_outcome::fetch
      */
     public function test_outcome_without_scale_can_be_created(): void {
         $this->resetAfterTest();
@@ -68,8 +78,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * load_scale() returns false when the outcome has no scale.
-     *
-     * @covers \grade_outcome::load_scale
      */
     public function test_load_scale_returns_false_for_scaleless_outcome(): void {
         $this->resetAfterTest();
@@ -87,8 +95,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * An outcome can be created with a scale and load_scale() returns the correct object.
-     *
-     * @covers \grade_outcome::load_scale
      */
     public function test_load_scale_returns_scale_for_scaled_outcome(): void {
         $this->resetAfterTest();
@@ -110,8 +116,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * Outcomes without scales do not create grade items when attached to activities.
-     *
-     * @covers ::edit_module_post_actions
      */
     public function test_scaleless_outcomes_do_not_create_grade_items(): void {
         global $CFG;
@@ -177,8 +181,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * Tests that add_outcome_to_module() creates a module outcome record.
-     *
-     * @covers \grade_outcome::add_outcome_to_module
      */
     public function test_add_outcome_to_module_creates_record(): void {
         $this->resetAfterTest();
@@ -208,8 +210,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * Verifies that add_outcome_to_module() returns false and creates no row for a scaled outcome.
-     *
-     * @covers \grade_outcome::add_outcome_to_module
      */
     public function test_scaled_outcome_not_added_to_outcome_module(): void {
         $this->resetAfterTest();
@@ -238,8 +238,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * Tests that remove_outcome_from_module() removes a module outcome record.
-     *
-     * @covers \grade_outcome::remove_outcome_from_module
      */
     public function test_remove_outcome_from_module_deletes_association(): void {
         $this->resetAfterTest();
@@ -261,8 +259,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * Deleting an outcome removes all its grade_outcomes_modules rows.
-     *
-     * @covers \grade_outcome::delete
      */
     public function test_delete_outcome_removes_all_module_records(): void {
         $this->resetAfterTest();
@@ -285,8 +281,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * Scaled and scale-less outcomes with usage records are detected as used.
-     *
-     * @covers \grade_outcome::get_used_outcomes_in_course
      */
     public function test_used_outcomes_are_detected_as_used(): void {
         $this->resetAfterTest();
@@ -325,8 +319,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * Outcomes without any usage record are not detected as used.
-     *
-     * @covers \grade_outcome::get_used_outcomes_in_course
      */
     public function test_unused_outcomes_are_not_detected_as_used(): void {
         $this->resetAfterTest();
@@ -347,8 +339,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
 
     /**
      * Scale-less outcomes for a module are returned.
-     *
-     * @covers \grade_outcome::get_outcomes_in_module
      */
     public function test_scaleless_outcomes_are_returned_for_course_module(): void {
         $this->resetAfterTest();
@@ -372,8 +362,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
     /**
      * Deleting an activity removes grade_outcomes_modules rows for scale-less
      * outcomes that were attached to it.
-     *
-     * @covers \core_courseformat\local\cmactions::delete
      */
     public function test_deleting_activity_removes_outcome_module_records(): void {
         global $CFG;
@@ -411,9 +399,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
     /**
      * Backing up and restoring a full course preserves scaleless outcomes and
      * their activity associations.
-     *
-     * @covers \restore_outcomes_structure_step
-     * @covers \restore_activity_grades_structure_step
      */
     public function test_course_backup_restore_preserves_scaleless_outcome_association(): void {
         global $CFG;
@@ -452,9 +437,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
     /**
      * A course containing scaled and scale-less outcomes, both used and unused,
      * preserves all outcomes across a full course backup/restore.
-     *
-     * @covers \backup_annotate_course_outcomes
-     * @covers \restore_outcomes_structure_step
      */
     public function test_course_backup_restore_preserves_course_outcomes(): void {
         global $CFG;
@@ -524,9 +506,6 @@ final class outcome_scaleless_test extends \advanced_testcase {
     /**
      * Backing up and restoring an activity preserves referenced outcomes but does not
      * include unrelated course outcomes.
-     *
-     * @covers \restore_outcomes_structure_step
-     * @covers \restore_activity_grades_structure_step
      */
     public function test_activity_backup_restore_only_restores_referenced_outcomes(): void {
         global $CFG, $USER;

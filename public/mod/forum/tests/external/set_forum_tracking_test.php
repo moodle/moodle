@@ -32,8 +32,9 @@ use mod_forum\subscriptions;
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_forum\external\set_forum_tracking
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_forum\external\set_forum_tracking::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('execute')]
 final class set_forum_tracking_test extends \core_external\tests\externallib_testcase {
     #[\Override]
     public function setUp(): void {
@@ -54,14 +55,13 @@ final class set_forum_tracking_test extends \core_external\tests\externallib_tes
     /**
      * Test execute method.
      *
-     * @dataProvider execute_provider
-     * @covers ::execute
      *
      * @param bool|null $initialstate Initialise tracking state, null means no initial state.
      * @param bool $targetstate Expected target state of the tracking.
      * @param int $forumtype Tracking mode for the forum.
      * @param bool $expectedexception Whether an exception is expected.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_provider')]
     public function test_execute(
         ?bool $initialstate,
         bool $targetstate,
@@ -147,8 +147,6 @@ final class set_forum_tracking_test extends \core_external\tests\externallib_tes
 
     /**
      * Test execute method when tracking is not enabled for the user.
-     *
-     * @covers ::execute
      */
     public function test_execute_no_tracking(): void {
 
@@ -170,8 +168,6 @@ final class set_forum_tracking_test extends \core_external\tests\externallib_tes
 
     /**
      * Test execute method when forum does not exist.
-     *
-     * @covers ::execute
      */
     public function test_execute_unexisting_forum(): void {
 
@@ -187,8 +183,6 @@ final class set_forum_tracking_test extends \core_external\tests\externallib_tes
 
     /**
      * Test execute method when user is not enrolled in the course of the forum.
-     *
-     * @covers ::execute
      */
     public function test_execute_unenrolled_user(): void {
 

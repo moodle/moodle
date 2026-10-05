@@ -39,6 +39,10 @@ require_once($CFG->dirroot . '/mod/data/lib.php');
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('data_generate_default_template')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('data_replace_field_in_templates')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('data_append_new_field_to_templates')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\data_get_field_new::class)]
 final class lib_test extends \advanced_testcase {
 
     /**
@@ -824,10 +828,10 @@ final class lib_test extends \advanced_testcase {
     /**
      * Tests for data_get_config.
      *
-     * @dataProvider    data_get_config_provider
      * @param   array   $funcargs       The args to pass to data_get_config
      * @param   mixed   $expectation    The expected value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_get_config_provider')]
     public function test_data_get_config($funcargs, $expectation): void {
         $this->assertEquals($expectation, call_user_func_array('data_get_config', $funcargs));
     }
@@ -903,13 +907,13 @@ final class lib_test extends \advanced_testcase {
     /**
      * Tests for data_set_config.
      *
-     * @dataProvider    data_set_config_provider
      * @param   object  $database       The example row for the entry
      * @param   string  $key            The config key to set
      * @param   mixed   $value          The value of the key
      * @param   bool    $expectupdate   Whether we expected an update
      * @param   mixed   $newconfigvalue The expected value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_set_config_provider')]
     public function test_data_set_config($database, $key, $value, $expectupdate, $newconfigvalue): void {
         global $DB;
 
@@ -1975,8 +1979,6 @@ final class lib_test extends \advanced_testcase {
     /**
      * Test for data_generate_default_template(). This method covers different scenarios for checking when the returned value
      * is empty or not, but doesn't check if the content has the expected value when it's not empty.
-     *
-     * @covers ::data_generate_default_template
      */
     public function test_data_generate_default_template(): void {
         $this->resetAfterTest();
@@ -2043,8 +2045,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test for data_replace_field_in_templates().
-     *
-     * @covers ::data_replace_field_in_templates
      */
     public function test_data_replace_field_in_templates(): void {
         global $DB;
@@ -2085,12 +2085,11 @@ final class lib_test extends \advanced_testcase {
     /**
      * Test for data_append_new_field_to_templates().
      *
-     * @covers ::data_append_new_field_to_templates
-     * @dataProvider data_append_new_field_to_templates_provider
      * @param bool $hasfield if the field is present in the templates
      * @param bool $hasotherfields if the field is not present in the templates
      * @param bool $expected the expected return
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_append_new_field_to_templates_provider')]
     public function test_data_append_new_field_to_templates(bool $hasfield, bool $hasotherfields, bool $expected): void {
         global $DB;
         $this->resetAfterTest();
@@ -2172,9 +2171,8 @@ final class lib_test extends \advanced_testcase {
      *
      * @param string $type
      * @param string $expected
-     * @covers \data_get_field_new
-     * @dataProvider format_parser_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_parser_provider')]
     public function test_create_field(string $type, string $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();

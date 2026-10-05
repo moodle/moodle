@@ -26,10 +26,10 @@ use core_customfield\field_controller;
  * Unit tests for cohort custom field handler.
  *
  * @package    core_cohort
- * @covers     \core_cohort\customfield\cohort_handler
  * @copyright  2022 Dmitrii Metelkin <dmitriim@catalys-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_cohort\customfield\cohort_handler::class)]
 final class cohort_handler_test extends advanced_testcase {
     /**
      * Test custom field handler.

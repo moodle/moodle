@@ -211,9 +211,9 @@ final class database_logger_test extends \advanced_testcase {
     /**
      * Ensure that the delete_task_logs function performs necessary deletion tasks.
      *
-     * @dataProvider    delete_task_logs_provider
      * @param   mixed   $ids
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('delete_task_logs_provider')]
     public function test_delete_task_logs($ids): void {
         $DB = $this->mock_database();
         $DB->expects($this->once())

@@ -35,7 +35,6 @@ final class event_factory_test extends \advanced_testcase {
     /**
      * Test event class getters.
      *
-     * @dataProvider create_instance_testcases
      * @param \stdClass $dbrow Row from the event table.
      * @param callable  $actioncallbackapplier     Action callback applier.
      * @param callable  $visibilitycallbackapplier Visibility callback applier.
@@ -43,6 +42,7 @@ final class event_factory_test extends \advanced_testcase {
      * @param string    $expectedclass             Class the factory is expected to produce.
      * @param mixed     $expectedattributevalue    Expected value of the modified attribute.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_instance_testcases')]
     public function test_create_instance(
         $dbrow,
         callable $actioncallbackapplier,

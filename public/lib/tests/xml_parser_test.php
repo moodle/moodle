@@ -23,10 +23,10 @@ use core\exception\xml_format_exception;
  *
  * @package    core
  * @category   test
- * @covers     \core\xml_parser
  * @copyright  2017 Kilian Singer {@link http://quantumtechnology.info}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\xml_parser::class)]
 final class xml_parser_test extends \basic_testcase {
     /**
      * Test an XML import using a valid XML file.

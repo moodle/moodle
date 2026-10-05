@@ -31,8 +31,8 @@ require_once(__DIR__ . '/fixtures/test_target_course_level_shortname.php');
  * @package   core_analytics
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core_analytics\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_analytics\manager::class)]
 final class manager_test extends \advanced_testcase {
     use mlbackend_helper_trait;
 
@@ -217,10 +217,10 @@ final class manager_test extends \advanced_testcase {
     /**
      * Tests for the exceptions thrown by {@link \core_analytics\manager::validate_models_declaration()}.
      *
-     * @dataProvider validate_models_declaration_exceptions_provider
      * @param array $models Models declaration.
      * @param string $exception Expected coding exception message.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validate_models_declaration_exceptions_provider')]
     public function test_validate_models_declaration_exceptions(array $models, string $exception): void {
         $this->resetAfterTest();
 

@@ -24,10 +24,10 @@ use advanced_testcase;
  * Unit tests for the \tiny_equation\plugininfo class.
  *
  * @package     tiny_equation
- * @covers      \tiny_equation\plugininfo::get_plugin_configuration_for_external
  * @copyright   2025 Moodle Pty Ltd
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tiny_equation\plugininfo::class, 'get_plugin_configuration_for_external')]
 final class plugininfo_test extends advanced_testcase {
 
     /**
@@ -41,11 +41,11 @@ final class plugininfo_test extends advanced_testcase {
     /**
      * Test the get_plugin_configuration_for_external method.
      *
-     * @dataProvider get_plugin_configuration_for_external_provider
      * @param bool $enabled True if the filter must be enabled.
      * @param array $expectedconfiguration Expected configuration.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_plugin_configuration_for_external_provider')]
     public function test_get_plugin_configuration_for_external(bool $enabled, array $expectedconfiguration): void {
         global $CFG;
 

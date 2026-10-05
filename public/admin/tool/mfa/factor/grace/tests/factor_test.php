@@ -24,12 +24,12 @@ namespace factor_grace;
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_affecting_factors')]
 final class factor_test extends \advanced_testcase {
 
     /**
      * Test affecting factors
      *
-     * @covers ::get_affecting_factors
      * @return void
      */
     public function test_affecting_factors(): void {

@@ -24,8 +24,8 @@ use enrol_lti\local\ltiadvantage\entity\user;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\user_repository
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\repository\user_repository::class)]
 final class user_repository_test extends \advanced_testcase {
     /**
      * Helper to generate a new user instance.
@@ -162,8 +162,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Tests adding a user to the store, assuming that the user has been created using the default 'user default values'.
-     *
-     * @covers ::save
      */
     public function test_save_new_unchanged_user_defaults(): void {
         $this->resetAfterTest();
@@ -183,8 +181,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Tests adding a user to the store, assuming that the user has been created using modified 'user default values'.
-     *
-     * @covers ::save
      */
     public function test_save_new_changed_user_defaults(): void {
         $this->resetAfterTest();
@@ -204,8 +200,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Test saving an existing user instance.
-     *
-     * @covers ::save
      */
     public function test_save_existing(): void {
         $this->resetAfterTest();
@@ -234,8 +228,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Test saving an instance which exists by id, but has a different localid to the data in the store.
-     *
-     * @covers ::save
      */
     public function test_save_existing_localid_mismatch(): void {
         $this->resetAfterTest();
@@ -267,8 +259,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Test trying to save a user with an id that is invalid.
-     *
-     * @covers ::save
      */
     public function test_save_stale_id(): void {
         global $CFG;
@@ -299,8 +289,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Verify that trying to save a stale object results in an exception referring to unique constraint violation.
-     *
-     * @covers ::save
      */
     public function test_save_uniqueness_constraint(): void {
         $this->resetAfterTest();
@@ -315,8 +303,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Test finding a user instance by id.
-     *
-     * @covers ::find
      */
     public function test_find(): void {
         $this->resetAfterTest();
@@ -333,8 +319,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Test finding all of users associated with a given published resource.
-     *
-     * @covers ::find_by_resource
      */
     public function test_find_by_resource(): void {
         global $CFG;
@@ -368,8 +352,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Test that users can be found based on their resource_link association.
-     *
-     * @covers ::find_by_resource_link
      */
     public function test_find_by_resource_link(): void {
         global $CFG;
@@ -407,8 +389,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Test checking existence of a user instance, based on id.
-     *
-     * @covers ::exists
      */
     public function test_exists(): void {
         $this->resetAfterTest();
@@ -422,8 +402,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Test deleting a user instance, based on id.
-     *
-     * @covers ::delete
      */
     public function test_delete(): void {
         $this->resetAfterTest();
@@ -445,8 +423,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Test deleting a collection of lti user instances by deployment.
-     *
-     * @covers ::delete_by_deployment
      */
     public function test_delete_by_deployment(): void {
         global $CFG;
@@ -494,8 +470,6 @@ final class user_repository_test extends \advanced_testcase {
 
     /**
      * Verify a user who has been deleted can be re-saved to the repository and matched to an existing local user.
-     *
-     * @covers ::save
      */
     public function test_save_deleted(): void {
         $this->resetAfterTest();
@@ -515,10 +489,6 @@ final class user_repository_test extends \advanced_testcase {
      * Test confirming that any associated legacy lti user records are not returned by the repository.
      *
      * This test ensures that any enrolment methods (resources) updated in-place from legacy LTI to 1.3 only return LTI 1.3 users.
-     *
-     * @covers ::find
-     * @covers ::find_single_user_by_resource
-     * @covers ::find_by_resource
      */
     public function test_find_filters_legacy_lti_users(): void {
         $this->resetAfterTest();

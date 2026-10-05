@@ -41,8 +41,8 @@ require_once($CFG->libdir . '/completionlib.php');
  * @package   core_completion
  * @copyright 2021 Jun Pataleta <jun@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_completion\cm_completion_details
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_completion\cm_completion_details::class)]
 final class cm_completion_details_test extends advanced_testcase {
 
     /** @var completion_info A completion object. */
@@ -122,11 +122,10 @@ final class cm_completion_details_test extends advanced_testcase {
     /**
      * Test for has_completion().
      *
-     * @covers ::has_completion
-     * @dataProvider has_completion_provider
      * @param int $completion The completion tracking mode.
      * @param bool $expectedresult Expected result.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('has_completion_provider')]
     public function test_has_completion(int $completion, bool $expectedresult): void {
         $cmcompletion = $this->setup_data($completion);
 
@@ -155,11 +154,10 @@ final class cm_completion_details_test extends advanced_testcase {
     /**
      * Test for is_available().
      *
-     * @covers ::is_automatic
-     * @dataProvider is_automatic_provider
      * @param int $completion The completion tracking mode.
      * @param bool $expectedresult Expected result.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_automatic_provider')]
     public function test_is_automatic(int $completion, bool $expectedresult): void {
         $cmcompletion = $this->setup_data($completion);
 
@@ -188,11 +186,10 @@ final class cm_completion_details_test extends advanced_testcase {
     /**
      * Test for is_manual().
      *
-     * @covers ::is_manual
-     * @dataProvider is_manual_provider
      * @param int $completion The completion tracking mode.
      * @param bool $expectedresult Expected result.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_manual_provider')]
     public function test_is_manual(int $completion, bool $expectedresult): void {
         $cmcompletion = $this->setup_data($completion);
 
@@ -213,10 +210,9 @@ final class cm_completion_details_test extends advanced_testcase {
     /**
      * Test for get_overall_completion().
      *
-     * @covers ::get_overall_completion
-     * @dataProvider overall_completion_provider
      * @param int $state
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('overall_completion_provider')]
     public function test_get_overall_completion(int $state): void {
         $completiondata = (object)['completionstate' => $state];
         $cmcompletion = $this->setup_data(COMPLETION_TRACKING_AUTOMATIC, [], $completiondata);
@@ -319,8 +315,6 @@ final class cm_completion_details_test extends advanced_testcase {
     /**
      * Test for is_overall_complete().
      *
-     * @covers ::is_overall_complete
-     * @dataProvider is_overall_complete_provider
      * @param bool $expected Expected result returned by is_overall_complete().
      * @param int $completion The completion tracking mode.
      * @param int $completionstate The overall completion state.
@@ -328,6 +322,7 @@ final class cm_completion_details_test extends advanced_testcase {
      * @param int|null $completiongrade Completion status of the "must receive grade" completion condition.
      * @param int|null $completionpassgrade Completion status of the "must receive passing grade" completion condition.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_overall_complete_provider')]
     public function test_is_overall_complete(
         bool $expected,
         int $completion,
@@ -488,14 +483,13 @@ final class cm_completion_details_test extends advanced_testcase {
     /**
      * Test for \core_completion\cm_completion_details::get_details().
      *
-     * @covers ::get_details
-     * @dataProvider get_details_provider
      * @param int $completion The completion tracking mode.
      * @param int|null $completionview Completion status of the "view" completion condition.
      * @param int|null $completiongrade Completion status of the "must receive grade" completion condition.
      * @param int|null $completionpassgrade Completion status of the "must receive passing grade" completion condition.
      * @param array $expecteddetails Expected completion details returned by get_details().
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_details_provider')]
     public function test_get_details(int $completion, ?int $completionview,
              ?int $completiongrade, ?int $completionpassgrade, array $expecteddetails): void {
         $options = [];
@@ -588,14 +582,13 @@ final class cm_completion_details_test extends advanced_testcase {
     /**
      * Test custom sort order is functioning in \core_completion\cm_completion_details::get_details().
      *
-     * @covers ::get_details
-     * @dataProvider get_details_custom_order_provider
      * @param bool $completionview Completion status of the "view" completion condition.
      * @param bool $completiongrade Completion status of the "must receive grade" completion condition.
      * @param array $customcompletionrules Custom completion requirements, along with their values.
      * @param string $modname The name of the module having data fetched.
      * @param array $expectedorder The expected order of completion conditions returned about the module.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_details_custom_order_provider')]
     public function test_get_details_custom_order(bool $completionview, bool $completiongrade, array $customcompletionrules,
             string $modname, array $expectedorder): void {
 

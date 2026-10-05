@@ -26,10 +26,10 @@ use core_reportbuilder\tests\core_reportbuilder_testcase;
  * Unit tests for users datasource
  *
  * @package     core_user
- * @covers      \core_user\reportbuilder\datasource\users
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_user\reportbuilder\datasource\users::class)]
 final class users_test extends core_reportbuilder_testcase {
 
     /**
@@ -542,9 +542,8 @@ final class users_test extends core_reportbuilder_testcase {
      * @param string $filtername
      * @param array $filtervalues
      * @param bool $expectmatch
-     *
-     * @dataProvider datasource_filters_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('datasource_filters_provider')]
     public function test_datasource_filters(string $filtername, array $filtervalues, bool $expectmatch): void {
         $this->resetAfterTest();
 

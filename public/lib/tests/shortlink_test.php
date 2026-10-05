@@ -23,8 +23,8 @@ namespace core;
  * @category   test
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\shortlink
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\shortlink::class)]
 final class shortlink_test extends \advanced_testcase {
     public function test_create_public_shortlink(): void {
         $this->resetAfterTest();
@@ -248,9 +248,7 @@ final class shortlink_test extends \advanced_testcase {
         $manager->create_shortlink_for_users('mod_example', 'submit', 123, [$user->id, 0]);
     }
 
-    /**
-     * @dataProvider valid_min_max_length_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_min_max_length_provider')]
     public function test_creation_min_max_length(
         int $minlength,
         int $maxlength,
@@ -279,9 +277,7 @@ final class shortlink_test extends \advanced_testcase {
         yield [4, 40, 4];
     }
 
-    /**
-     * @dataProvider invalid_min_max_length_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_min_max_length_provider')]
     public function test_creation_invalid_min_max_length(
         int $minlength,
         int $maxlength,

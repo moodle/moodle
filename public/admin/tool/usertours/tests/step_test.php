@@ -27,8 +27,8 @@ require_once($CFG->libdir . '/formslib.php');
  * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \tool_usertours\step
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\step::class)]
 final class step_test extends \advanced_testcase {
     /**
      * @var moodle_database
@@ -137,10 +137,10 @@ final class step_test extends \advanced_testcase {
     /**
      * Test that setters mark things as dirty.
      *
-     * @dataProvider dirty_value_provider
      * @param   string  $name       The key to update
      * @param   string  $value      The value to set
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('dirty_value_provider')]
     public function test_dirty_values($name, $value): void {
         $step = new \tool_usertours\step();
         $method = 'set_' . $name;
@@ -168,12 +168,12 @@ final class step_test extends \advanced_testcase {
     /**
      * Test is_first_step.
      *
-     * @dataProvider step_sortorder_provider
      * @param   int     $sortorder      The sortorder to check
      * @param   int     $count          Unused in this function
      * @param   bool    $isfirst        Whether this is the first step
      * @param   bool    $islast         Whether this is the last step
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('step_sortorder_provider')]
     public function test_is_first_step($sortorder, $count, $isfirst, $islast): void {
         $step = $this->getMockBuilder(\tool_usertours\step::class)
             ->onlyMethods(['get_sortorder'])
@@ -189,12 +189,12 @@ final class step_test extends \advanced_testcase {
     /**
      * Test is_last_step.
      *
-     * @dataProvider step_sortorder_provider
      * @param   int     $sortorder      The sortorder to check
      * @param   int     $count          Total number of steps for this test
      * @param   bool    $isfirst        Whether this is the first step
      * @param   bool    $islast         Whether this is the last step
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('step_sortorder_provider')]
     public function test_is_last_step($sortorder, $count, $isfirst, $islast): void {
         $step = $this->getMockBuilder(\tool_usertours\step::class)
             ->onlyMethods(['get_sortorder', 'get_tour'])
@@ -337,7 +337,6 @@ final class step_test extends \advanced_testcase {
     /**
      * Test get_config with valid keys provided.
      *
-     * @dataProvider get_config_provider
      * @param   object  $values     The config values
      * @param   string  $key        The key
      * @param   mixed   $default    The default value
@@ -346,6 +345,7 @@ final class step_test extends \advanced_testcase {
      * @param   mixed   $forcedvalue    The example value
      * @param   mixed   $expected   The expected value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_config_provider')]
     public function test_get_config_valid_keys($values, $key, $default, $tourconfig, $isforced, $forcedvalue, $expected): void {
         $step = $this->getMockBuilder(\tool_usertours\step::class)
             ->onlyMethods(['get_target', 'get_targettype', 'get_tour'])
@@ -437,12 +437,12 @@ final class step_test extends \advanced_testcase {
     /**
      * Test that set_config works in the anticipated fashion.
      *
-     * @dataProvider set_config_provider
      * @param   mixed   $initialvalues  The inital value to set
      * @param   string  $key        The key to test
      * @param   mixed   $newvalue   The new value to set
      * @param   mixed   $expected   The expected value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_config_provider')]
     public function test_set_config($initialvalues, $key, $newvalue, $expected): void {
         $step = new \tool_usertours\step();
 
@@ -741,10 +741,10 @@ final class step_test extends \advanced_testcase {
     /**
      * Test that getters return the configured value.
      *
-     * @dataProvider getter_provider
      * @param   string  $key        The key to test
      * @param   mixed   $value      The expected value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getter_provider')]
     public function test_getters($key, $value): void {
         $step = new \tool_usertours\step();
 

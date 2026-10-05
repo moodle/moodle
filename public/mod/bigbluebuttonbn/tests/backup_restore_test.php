@@ -40,9 +40,9 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @covers \backup_bigbluebuttonbn_activity_task
- * @covers \restore_bigbluebuttonbn_activity_task
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_bigbluebuttonbn_activity_task::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_bigbluebuttonbn_activity_task::class)]
 final class backup_restore_test extends restore_date_testcase {
     use testcase_helper_trait;
 
@@ -182,9 +182,8 @@ final class backup_restore_test extends restore_date_testcase {
 
     /**
      * Check duplicating activity does not duplicate meeting id
-     *
-     * @dataProvider bbb_type_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('bbb_type_provider')]
     public function test_duplicate_module_no_meetingid(int $type): void {
         list($bbactivitycontext, $bbactivitycm, $bbactivity)
             = $this->create_instance($this->get_course(), ['type' => $type]);
@@ -197,9 +196,8 @@ final class backup_restore_test extends restore_date_testcase {
 
     /**
      * Check that using the recycle bin keeps the meeting id
-     *
-     * @dataProvider bbb_type_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('bbb_type_provider')]
     public function test_recycle_module_keep_meetingid(int $type): void {
         list($bbactivitycontext, $bbactivitycm, $bbactivity)
             = $this->create_instance($this->get_course(), ['type' => $type]);

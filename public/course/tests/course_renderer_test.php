@@ -25,8 +25,8 @@ use moodle_url;
  * @package    core_course
  * @copyright  2025 Ilya Tregubov <ilya.tregubov@proton.me>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_course_renderer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_course_renderer::class)]
 final class course_renderer_test extends \advanced_testcase {
     /**
      * Data provider for {@see self::test_enrolment_options}.
@@ -63,8 +63,8 @@ final class course_renderer_test extends \advanced_testcase {
      * @param bool $isguestuser
      * @param array $expected
      * @param array $notexpected
-     * @dataProvider enrolment_options_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('enrolment_options_provider')]
     public function test_enrolment_options(array $forms, bool $isguestuser, array $expected, array $notexpected): void {
         global $PAGE;
 

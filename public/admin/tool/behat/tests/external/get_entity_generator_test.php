@@ -27,9 +27,8 @@ namespace tool_behat\external;
 
 /**
  * Tests for get_entity_generator web service
- *
- * @covers \tool_behat\external\get_entity_generator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_behat\external\get_entity_generator::class)]
 final class get_entity_generator_test extends \advanced_testcase {
 
     /**

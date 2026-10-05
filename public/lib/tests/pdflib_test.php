@@ -24,8 +24,9 @@ use TCPDF_STATIC;
  * @package    core
  * @copyright  2021 Brendan Heywood (brendan@catalyst-au.net)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \pdf
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\pdf::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\pdf::class, 'get_export_fontlist')]
 final class pdflib_test extends \advanced_testcase {
 
     public function test_gettcpdf_producer(): void {
@@ -71,7 +72,6 @@ final class pdflib_test extends \advanced_testcase {
     /**
      * Test get_export_fontlist function.
      *
-     * @covers \pdf::get_export_fontlist
      *
      * @return void
      */

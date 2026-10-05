@@ -23,6 +23,7 @@ namespace tool_task;
  * @copyright  2026 Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('tool_task_mtrace_wrapper')]
 final class lib_test extends \advanced_testcase {
     /**
      * Data provider for mtrace
@@ -67,11 +68,10 @@ final class lib_test extends \advanced_testcase {
     }
     /**
      * Test validations for minute field.
-     * @dataProvider tool_task_mtrace_wrapper_provider
      * @param string $output task output
      * @param string $expected html
-     * @covers ::tool_task_mtrace_wrapper
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('tool_task_mtrace_wrapper_provider')]
     public function test_tool_task_mtrace_wrapper(string $output, string $expected): void {
         global $CFG;
         require_once("{$CFG->dirroot}/{$CFG->admin}/tool/task/lib.php");

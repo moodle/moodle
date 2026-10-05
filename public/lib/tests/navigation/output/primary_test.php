@@ -26,6 +26,16 @@ use ReflectionMethod;
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\navigation\output\primary::class, 'export_node_for_react')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\navigation\output\primary::class, 'resolve_node_href')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\navigation\output\primary::class, 'resolve_node_key')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\navigation\output\primary::class, 'export_nodes_for_react')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\navigation\output\primary::class, 'decode_node_text')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\navigation\output\primary::class, 'export_react_props')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\navigation\output\primary::class, 'export_for_template')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\navigation\output\primary::class, 'merge_primary_and_custom')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\navigation\output\primary::class, 'flag_active_nodes')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\navigation\output\primary::class, 'get_user_menu')]
 final class primary_test extends \advanced_testcase {
     /**
      * Basic setup to make sure the nav objects gets generated without any issues.
@@ -49,13 +59,13 @@ final class primary_test extends \advanced_testcase {
     /**
      * Test the primary export to confirm we are getting the nodes
      *
-     * @dataProvider primary_export_provider
      * @param bool $withcustom Setup with custom menu
      * @param bool $withlang Setup with langs
      * @param string $userloggedin The type of user ('admin' or 'guest') if creating setup with logged in user,
      *                             otherwise consider the user as non-logged in
      * @param array $expecteditems An array of nodes expected with content in them.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('primary_export_provider')]
     public function test_primary_export(bool $withcustom, bool $withlang, string $userloggedin, array $expecteditems): void {
         global $PAGE, $CFG;
         if ($withcustom) {
@@ -179,10 +189,6 @@ final class primary_test extends \advanced_testcase {
 
     /**
      * A primary nav node's url object and key should survive into the React props.
-     *
-     * @covers \core\navigation\output\primary::export_node_for_react
-     * @covers \core\navigation\output\primary::resolve_node_href
-     * @covers \core\navigation\output\primary::resolve_node_key
      */
     public function test_export_node_for_react_flattens_a_primary_nav_node(): void {
         $url = new \core\url('/course/index.php', ['id' => 7]);
@@ -218,8 +224,6 @@ final class primary_test extends \advanced_testcase {
 
     /**
      * A node with children should be flagged to render them in a submenu.
-     *
-     * @covers \core\navigation\output\primary::export_node_for_react
      */
     public function test_export_node_for_react_flags_nodes_with_children(): void {
         $node = $this->call_react_export('export_node_for_react', [
@@ -244,8 +248,6 @@ final class primary_test extends \advanced_testcase {
 
     /**
      * Dividers are a dropdown-only concept: kept for children, dropped at the top level.
-     *
-     * @covers \core\navigation\output\primary::export_nodes_for_react
      */
     public function test_export_nodes_for_react_only_keeps_dividers_in_submenus(): void {
         $nodes = [
@@ -281,9 +283,6 @@ final class primary_test extends \advanced_testcase {
 
     /**
      * Labels arrive already formatted, so they must be decoded before React escapes them again.
-     *
-     * @covers \core\navigation\output\primary::decode_node_text
-     * @covers \core\navigation\output\primary::export_node_for_react
      */
     public function test_export_node_for_react_decodes_formatted_labels(): void {
         global $CFG, $PAGE;
@@ -308,8 +307,6 @@ final class primary_test extends \advanced_testcase {
 
     /**
      * Custom menu nodes export a stringified url rather than a url object.
-     *
-     * @covers \core\navigation\output\primary::resolve_node_href
      */
     public function test_resolve_node_href_handles_both_node_shapes(): void {
         $url = new \core\url('/my/courses.php');
@@ -330,8 +327,6 @@ final class primary_test extends \advanced_testcase {
 
     /**
      * A stringified url arrives HTML escaped and must be decoded before React sets it as an href.
-     *
-     * @covers \core\navigation\output\primary::resolve_node_href
      */
     public function test_resolve_node_href_decodes_an_escaped_custom_menu_url(): void {
         // The url arrives escaped for the legacy template's raw href="{{{url}}}". React sets href
@@ -347,9 +342,6 @@ final class primary_test extends \advanced_testcase {
 
     /**
      * The whole custom menu pipeline, from admin setting to React prop, keeps a usable url.
-     *
-     * @covers \core\navigation\output\primary::export_react_props
-     * @covers \core\navigation\output\primary::resolve_node_href
      */
     public function test_export_react_props_keeps_custom_menu_urls_navigable(): void {
         global $CFG, $PAGE;
@@ -373,8 +365,6 @@ final class primary_test extends \advanced_testcase {
 
     /**
      * Keys only need to be unique among siblings, and must not depend on the label.
-     *
-     * @covers \core\navigation\output\primary::resolve_node_key
      */
     public function test_resolve_node_key_prefers_key_then_sort_then_position(): void {
         $this->assertSame(
@@ -392,11 +382,10 @@ final class primary_test extends \advanced_testcase {
     /**
      * Test the primary export when the home link is disabled.
      *
-     * @covers \core\navigation\output\primary::export_for_template
-     * @dataProvider primary_export_without_home_provider
      * @param bool $withlang Setup with langs
      * @param array $expecteditems An array of nodes expected with content in them.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('primary_export_without_home_provider')]
     public function test_primary_export_without_home(bool $withlang, array $expecteditems): void {
         global $CFG, $PAGE;
 
@@ -432,10 +421,10 @@ final class primary_test extends \advanced_testcase {
     /**
      * Test the custom menu getter to confirm the nodes gets generated and are returned correctly.
      *
-     * @dataProvider custom_menu_provider
      * @param string $config
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('custom_menu_provider')]
     public function test_get_custom_menu(string $config, array $expected): void {
         $actual = $this->get_custom_menu($config);
         $this->assertEquals($expected, $actual);
@@ -599,8 +588,6 @@ final class primary_test extends \advanced_testcase {
      * Test the merge_primary_and_custom and the eval_is_active method. Merge  primary and custom menu with different
      * page urls and check that the correct nodes are active and open, depending on the data for each menu.
      *
-     * @covers \core\navigation\output\primary::merge_primary_and_custom
-     * @covers \core\navigation\output\primary::flag_active_nodes
      * @return void
      * @throws \ReflectionException
      * @throws \moodle_exception
@@ -683,8 +670,6 @@ final class primary_test extends \advanced_testcase {
 
     /**
      * Test that get_user_menu includes userfirstname in the template context.
-     *
-     * @covers \core\navigation\output\primary::get_user_menu
      */
     public function test_get_user_menu_includes_userfirstname(): void {
         global $PAGE;

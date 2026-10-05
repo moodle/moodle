@@ -31,8 +31,9 @@ use core\tests\router\route_testcase;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\response\response
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\response\response::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\openapi_base::class)]
 final class response_test extends route_testcase {
     public function test_defaults(): void {
         $response = new response();
@@ -131,8 +132,6 @@ final class response_test extends route_testcase {
 
     /**
      * Tests for object references.
-     *
-     * @covers \core\router\schema\openapi_base
      */
     public function test_referenced_object(): void {
         $object = new class (

@@ -22,18 +22,17 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\application_registration
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\entity\application_registration::class)]
 final class application_registration_test extends \advanced_testcase {
 
     /**
      * Test the creation of an application_registration instance.
      *
-     * @dataProvider creation_data_provider
      * @param array $args the arguments to the creation method.
      * @param array $expectations various expectations for the test cases.
-     * @covers ::create
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('creation_data_provider')]
     public function test_creation(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $reg = application_registration::create(...array_values($args));
@@ -144,11 +143,10 @@ final class application_registration_test extends \advanced_testcase {
     /**
      * Test the creation of a draft application_registration instances.
      *
-     * @dataProvider create_draft_data_provider
      * @param array $args the arguments to the creation method.
      * @param array $expectations various expectations for the test cases.
-     * @covers ::create_draft
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_draft_data_provider')]
     public function test_create_draft(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $reg = application_registration::create_draft(...array_values($args));
@@ -171,8 +169,6 @@ final class application_registration_test extends \advanced_testcase {
 
     /**
      * Test that complete registration can transition a pending registration in the correct state to a complete registration.
-     *
-     * @covers ::complete_registration
      */
     public function test_complete_registration(): void {
         // Create a draft registration which should initially be incomplete.
@@ -241,11 +237,10 @@ final class application_registration_test extends \advanced_testcase {
     /**
      * Test the factory method for creating a tool deployment associated with the registration instance.
      *
-     * @dataProvider add_tool_deployment_data_provider
      * @param array $args the arguments to the creation method.
      * @param array $expectations various expectations for the test cases.
-     * @covers ::add_tool_deployment
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_tool_deployment_data_provider')]
     public function test_add_tool_deployment(array $args, array $expectations): void {
 
         if ($expectations['valid']) {

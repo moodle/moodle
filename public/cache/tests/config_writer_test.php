@@ -25,8 +25,8 @@ use cache_config_testing;
  * @category   test
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_cache\config_writer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_cache\config_writer::class)]
 final class config_writer_test extends \advanced_testcase {
     /**
      * Load required libraries and fixtures.

@@ -23,8 +23,8 @@ namespace filter_multilang;
  * @category test
  * @copyright 2019 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_multilang\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_multilang\text_filter::class)]
 final class text_filter_test extends \advanced_testcase {
     /**
      * Setup parent language relationship.
@@ -110,12 +110,12 @@ final class text_filter_test extends \advanced_testcase {
     /**
      * Tests the filtering of multi-language strings.
      *
-     * @dataProvider multilang_testcases
      * @param string $expectedoutput The expected filter output.
      * @param string $input the input that is filtererd.
      * @param string $targetlang the laguage to set as the current languge .
      * @param array $parentlangs Array child lang => parent lang. E.g. ['es_co' => 'es', 'es_mx' => 'es'].
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('multilang_testcases')]
     public function test_filtering($expectedoutput, $input, $targetlang, $parentlangs = []): void {
         $this->resetAfterTest(true);
 

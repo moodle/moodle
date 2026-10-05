@@ -22,8 +22,8 @@ namespace core\output;
  * @package    core
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\output\pix_icon
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\pix_icon::class)]
 final class pix_icon_test extends \advanced_testcase {
     /**
      * Test the exportable interface implementation.

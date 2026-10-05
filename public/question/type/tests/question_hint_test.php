@@ -30,8 +30,8 @@ require_once($CFG->dirroot . '/question/type/questiontypebase.php');
  * @package    core_question
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \question_hint
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_hint::class)]
 final class question_hint_test extends \advanced_testcase {
     public function test_basic(): void {
         $row = new \stdClass();

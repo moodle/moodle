@@ -19,14 +19,13 @@ namespace core;
 /**
  * Unit tests for format_text defined in weblib.php.
  *
- * @covers ::format_text
  *
  * @package   core
  * @category  test
  * @copyright 2015 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @covers ::format_text
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('format_text')]
 final class weblib_format_text_test extends \advanced_testcase {
 
     public function test_format_text_format_html(): void {
@@ -136,10 +135,10 @@ final class weblib_format_text_test extends \advanced_testcase {
     /**
      * Test adding blank target attribute to links
      *
-     * @dataProvider format_text_blanktarget_testcases
      * @param string $link The link to add target="_blank" to
      * @param string $expected The expected filter value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_text_blanktarget_testcases')]
     public function test_format_text_blanktarget($link, $expected): void {
         $actual = format_text($link, FORMAT_MOODLE, array('blanktarget' => true, 'filter' => false, 'noclean' => true));
         $this->assertEquals($expected, $actual);
@@ -199,12 +198,12 @@ final class weblib_format_text_test extends \advanced_testcase {
     /**
      * Test ability to force cleaning of otherwise non-cleaned content.
      *
-     * @dataProvider format_text_cleaning_testcases
      *
      * @param string $input Input text
      * @param string $nocleaned Expected output of format_text() with noclean=true
      * @param string $cleaned Expected output of format_text() with noclean=false
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_text_cleaning_testcases')]
     public function test_format_text_cleaning($input, $nocleaned, $cleaned): void {
         global $CFG;
         $this->resetAfterTest();

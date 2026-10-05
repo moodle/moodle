@@ -23,8 +23,8 @@ namespace smsgateway_aws;
  * @category   test
  * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \smsgateway_aws\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\smsgateway_aws\helper::class)]
 final class helper_test extends \advanced_testcase {
 
     /**
@@ -63,11 +63,11 @@ final class helper_test extends \advanced_testcase {
     /**
      * Test format number with different phones and different country codes.
      *
-     * @dataProvider format_number_provider
      * @param string $phonenumber Phone number.
      * @param string $expected Expected value.
      * @param string|null $countrycode Country code.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_number_provider')]
     public function test_format_number(
         string $phonenumber,
         string $expected,

@@ -21,7 +21,6 @@ use Moodle\H5PCore;
 use Moodle\H5PDisplayOptionBehaviour;
 
 // phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
-
 /**
  *
  * Test class covering the H5PFrameworkInterface interface implementation.
@@ -30,9 +29,9 @@ use Moodle\H5PDisplayOptionBehaviour;
  * @category   test
  * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_h5p\framework
- * @runTestsInSeparateProcesses
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_h5p\framework::class)]
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class framework_test extends \advanced_testcase {
 
     /** @var \core_h5p\framework */
@@ -634,11 +633,11 @@ final class framework_test extends \advanced_testcase {
     /**
      * Test the behaviour of isPatchedLibrary().
      *
-     * @dataProvider isPatchedLibrary_provider
      * @param array $libraryrecords Array containing data for the library creation
      * @param array $testlibrary Array containing the test library data
      * @param bool $expected The expectation whether the library is patched or not
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('isPatchedLibrary_provider')]
     public function test_isPatchedLibrary(array $libraryrecords, array $testlibrary, bool $expected): void {
         $this->resetAfterTest();
 
@@ -1533,11 +1532,11 @@ final class framework_test extends \advanced_testcase {
     /**
      * Test the behaviour of loadLibrarySemantics().
      *
-     * @dataProvider loadLibrarySemantics_provider
      * @param array $libraryrecords Array containing data for the library creation
      * @param array $testlibrary Array containing the test library data
      * @param string $expected The expected semantics value
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('loadLibrarySemantics_provider')]
     public function test_loadLibrarySemantics(array $libraryrecords, array $testlibrary, string $expected): void {
         $this->resetAfterTest();
 
@@ -2338,11 +2337,11 @@ final class framework_test extends \advanced_testcase {
     /**
      * Test the behaviour of test_libraryHasUpgrade().
      *
-     * @dataProvider libraryHasUpgrade_provider
      * @param array $libraryrecords Array containing data for the library creation
      * @param array $testlibrary Array containing the test library data
      * @param bool $expected The expectation whether the library is patched or not
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('libraryHasUpgrade_provider')]
     public function test_libraryHasUpgrade(array $libraryrecords, array $testlibrary, bool $expected): void {
         $this->resetAfterTest();
 

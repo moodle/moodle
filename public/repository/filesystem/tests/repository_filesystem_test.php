@@ -13,15 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * Tests for the repository_filesystem plugin.
  *
  * @package    repository_filesystem
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \repository_filesystem
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\repository_filesystem::class)]
 final class repository_filesystem_test extends \advanced_testcase {
     public function test_get_listing(): void {
         global $CFG;

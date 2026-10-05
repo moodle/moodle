@@ -41,6 +41,7 @@ require_once($CFG->dirroot . '/question/type/missingtype/questiontype.php');
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('question_move_category_to_context')]
 final class missingtype_test extends \question_testcase {
 
     protected function get_unknown_questiondata() {
@@ -146,8 +147,6 @@ final class missingtype_test extends \question_testcase {
 
     /**
      * Test moving a question category from one context to another when it contains questions of an invalid type
-     *
-     * @covers ::question_move_category_to_context
      */
     public function test_move_question_category_with_missing_question_types(): void {
 

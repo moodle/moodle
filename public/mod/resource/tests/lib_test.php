@@ -34,6 +34,7 @@ namespace mod_resource;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('mod_resource_cm_info_dynamic')]
 final class lib_test extends \advanced_testcase {
     /**
      * Prepares things before this test case is initialised
@@ -261,8 +262,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test that mod_resource_cm_info_dynamic overrides the navigation URL.
-     *
-     * @covers ::mod_resource_cm_info_dynamic
      */
     public function test_cm_info_dynamic(): void {
         $this->resetAfterTest();

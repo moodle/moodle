@@ -28,8 +28,8 @@ require_once($CFG->dirroot . '/user/editlib.php');
  * @category   test
  * @copyright  2026 Andi Permana <andi.permana@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers ::useredit_validate_description_length
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('useredit_validate_description_length')]
 final class editlib_validate_description_test extends \advanced_testcase {
 
     /**
@@ -66,10 +66,10 @@ final class editlib_validate_description_test extends \advanced_testcase {
     /**
      * Test that useredit_validate_description_length returns correct errors.
      *
-     * @dataProvider useredit_validate_description_length_provider
      * @param array $data Form data to validate.
      * @param array $expected Expected errors array.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('useredit_validate_description_length_provider')]
     public function test_useredit_validate_description_length(array $data, array $expected): void {
         $this->assertSame($expected, useredit_validate_description_length($data));
     }

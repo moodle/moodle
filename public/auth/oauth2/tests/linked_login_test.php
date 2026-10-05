@@ -31,10 +31,10 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @copyright 2026 eDaktik GmbH {@link https://www.edaktik.at/}
  * @author    Christian Abila <christian.abila@edaktik.at>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \auth_oauth2\linked_login
  */
 #[CoversMethod(linked_login::class, 'delete_expired_confirmation_tokens')]
 #[CoversMethod(linked_login::class, 'delete_expired_pending')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\auth_oauth2\linked_login::class)]
 final class linked_login_test extends advanced_testcase {
     /**
      * Expired confirmation tokens are deleted

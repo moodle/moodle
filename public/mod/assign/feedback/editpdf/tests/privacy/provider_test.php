@@ -25,8 +25,8 @@ use mod_assign\privacy\assign_plugin_request_data;
  * @package    assignfeedback_editpdf
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \assignfeedback_editpdf\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\assignfeedback_editpdf\privacy\provider::class)]
 final class provider_test extends \mod_assign\tests\provider_testcase {
     #[\Override]
     public static function setUpBeforeClass(): void {

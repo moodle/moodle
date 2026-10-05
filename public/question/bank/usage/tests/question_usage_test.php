@@ -25,9 +25,9 @@ use mod_quiz\quiz_attempt;
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \qbank_usage\tables\question_usage_table
- * @covers \qbank_usage_output_fragment_question_usage
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_usage\tables\question_usage_table::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_usage_output_fragment_question_usage::class)]
 final class question_usage_test extends \advanced_testcase {
 
     /**

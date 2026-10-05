@@ -28,9 +28,9 @@ use contenttype_testable\contenttype as contenttype;
  * @category   test
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_contentbank\contenttype
  *
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_contentbank\contenttype::class)]
 final class contenttype_test extends \advanced_testcase {
 
     /** @var int Identifier for the manager role. */
@@ -63,8 +63,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests get_contenttype_name result.
-     *
-     * @covers ::get_contenttype_name
      */
     public function test_get_contenttype_name(): void {
         $this->resetAfterTest();
@@ -77,8 +75,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests get_plugin_name result.
-     *
-     * @covers ::get_plugin_name
      */
     public function test_get_plugin_name(): void {
         $this->resetAfterTest();
@@ -91,8 +87,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests get_icon result.
-     *
-     * @covers ::get_icon
      */
     public function test_get_icon(): void {
         global $CFG;
@@ -112,8 +106,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests is_feature_supported behavior .
-     *
-     * @covers ::is_feature_supported
      */
     public function test_is_feature_supported(): void {
         $this->resetAfterTest();
@@ -127,8 +119,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests can_upload behavior with no implemented upload feature.
-     *
-     * @covers ::can_upload
      */
     public function test_no_upload_feature_supported(): void {
         $this->resetAfterTest();
@@ -143,8 +133,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Test create_content() with empty data.
-     *
-     * @covers ::create_content
      */
     public function test_create_empty_content(): void {
         $this->resetAfterTest();
@@ -161,8 +149,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests for behaviour of create_content() with data.
-     *
-     * @covers ::create_content
      */
     public function test_create_content(): void {
         $this->resetAfterTest();
@@ -183,11 +169,10 @@ final class contenttype_test extends \advanced_testcase {
     /**
      * Tests for behaviour of upload_content() with a file and a record.
      *
-     * @dataProvider upload_content_provider
      * @param bool $userecord if a predefined record has to be used.
      *
-     * @covers ::upload_content
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('upload_content_provider')]
     public function test_upload_content(bool $userecord): void {
         global $USER;
 
@@ -249,8 +234,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests for behaviour of upload_content() with a file wrong file.
-     *
-     * @covers ::upload_content
      */
     public function test_upload_content_exception(): void {
         global $USER, $DB;
@@ -287,8 +270,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests for behaviour of replace_content() using a dummy file.
-     *
-     * @covers ::replace_content
      */
     public function test_replace_content(): void {
         global $USER;
@@ -330,8 +311,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests for behaviour of replace_content() using an error file.
-     *
-     * @covers ::replace_content
      */
     public function test_replace_content_exception(): void {
         global $USER;
@@ -466,13 +445,12 @@ final class contenttype_test extends \advanced_testcase {
     /**
      * Test the behaviour of rename_content().
      *
-     * @dataProvider    rename_content_provider
      * @param   string  $newname    The name to set
      * @param   string   $expected   The name result
      * @param   bool   $result   The bolean result expected when renaming
      *
-     * @covers ::rename_content
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('rename_content_provider')]
     public function test_rename_content(string $newname, string $expected, bool $result): void {
         global $DB;
 
@@ -541,8 +519,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of can_manage().
-     *
-     * @covers ::can_manage
      */
     public function test_can_manage(): void {
         global $DB, $USER;
@@ -590,8 +566,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of can_download().
-     *
-     * @covers ::can_download
      */
     public function test_can_download(): void {
         global $DB;
@@ -624,8 +598,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests get_download_url result.
-     *
-     * @covers ::get_download_url
      */
     public function test_get_download_url(): void {
         global $CFG;
@@ -656,8 +628,6 @@ final class contenttype_test extends \advanced_testcase {
 
     /**
      * Tests pluginfile result.
-     *
-     * @covers ::__construct
      */
     public function test_pluginfile(): void {
         $this->resetAfterTest();

@@ -30,8 +30,8 @@ use core_course\local\entity\lang_string_title;
  * @package   mod_bigbluebuttonbn
  * @copyright 2026 onwards, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    ::bigbluebuttonbn_get_course_content_items
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('bigbluebuttonbn_get_course_content_items')]
 final class get_course_content_items_test extends \advanced_testcase {
     /**
      * Build a minimal content_item to pass as $defaultitem.

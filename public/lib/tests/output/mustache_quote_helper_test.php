@@ -25,14 +25,12 @@ namespace core\output;
  * @category  test
  * @copyright 2022 TU Berlin
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\output\mustache_quote_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\mustache_quote_helper::class)]
 final class mustache_quote_helper_test extends \basic_testcase {
 
     /**
      * Tests the quote helper
-     *
-     * @covers ::quote
      */
     public function test_quote(): void {
         $engine = new \Mustache\Engine();

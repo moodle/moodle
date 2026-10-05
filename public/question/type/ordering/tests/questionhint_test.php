@@ -32,9 +32,9 @@ require_once($CFG->dirroot . '/question/type/ordering/questiontype.php');
  * @package   qtype_ordering
  * @copyright 2024 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \qtype_ordering\question_hint_ordering
- * @covers    \qtype_ordering
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering\question_hint_ordering::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering::class)]
 final class questionhint_test extends advanced_testcase {
     /** @var qtype_ordering Instance of the question type class to test. */
     protected $qtype;

@@ -29,9 +29,9 @@ use GuzzleHttp\Psr7\ServerRequest;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\request_body
- * @covers     \core\router\schema\openapi_base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\request_body::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\openapi_base::class)]
 final class request_body_test extends route_testcase {
     public function test_basics(): void {
         $object = new request_body();
@@ -106,8 +106,6 @@ final class request_body_test extends route_testcase {
 
     /**
      * Test object referencing.
-     *
-     * @covers \core\router\schema\openapi_base
      */
     public function test_referenced_object(): void {
         $object = new class extends request_body implements referenced_object {

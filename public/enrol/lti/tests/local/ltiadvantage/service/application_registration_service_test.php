@@ -33,8 +33,8 @@ require_once(__DIR__ . '/../lti_advantage_testcase.php');
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\service\application_registration_service
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\service\application_registration_service::class)]
 final class application_registration_service_test extends \lti_advantage_testcase {
     /**
      * Helper to get an application_registration_service instance.
@@ -52,8 +52,6 @@ final class application_registration_service_test extends \lti_advantage_testcas
 
     /**
      * Test the use case "As an admin, I can register an application as an LTI consumer (platform)".
-     *
-     * @covers ::create_draft_application_registration
      */
     public function test_create_draft_application(): void {
         $this->resetAfterTest();
@@ -76,8 +74,6 @@ final class application_registration_service_test extends \lti_advantage_testcas
 
     /**
      * Test the update_application_registration method.
-     *
-     * @covers ::update_application_registration
      */
     public function test_update_application_registration(): void {
         $this->resetAfterTest();
@@ -138,8 +134,6 @@ final class application_registration_service_test extends \lti_advantage_testcas
 
     /**
      * Test that removing an application registration also removes all associated data.
-     *
-     * @covers ::delete_application_registration
      */
     public function test_delete_application_registration(): void {
         $this->resetAfterTest();

@@ -27,8 +27,8 @@ use stdClass;
  * @package    core
  * @copyright  Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\parameters\path_coursemodule
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\parameters\path_coursemodule::class)]
 final class path_coursemodule_test extends route_testcase {
     public function test_module_id(): void {
         $this->resetAfterTest();

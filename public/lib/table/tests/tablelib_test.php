@@ -31,8 +31,8 @@ require_once($CFG->libdir . '/tests/fixtures/testable_flexible_table.php');
  * @category   test
  * @copyright  2013 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \flexible_table
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\flexible_table::class)]
 final class tablelib_test extends \advanced_testcase {
     protected function generate_columns($cols) {
         $columns = array();
@@ -376,9 +376,8 @@ final class tablelib_test extends \advanced_testcase {
      *
      * @param string $format
      * @return void
-     *
-     * @dataProvider fullname_column_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('fullname_column_provider')]
     public function test_fullname_column(string $format): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -396,9 +395,8 @@ final class tablelib_test extends \advanced_testcase {
      *
      * @param string $format
      * @return void
-     *
-     * @dataProvider fullname_column_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('fullname_column_provider')]
     public function test_fullname_column_prohibit_viewfullnames(string $format): void {
         global $DB, $CFG;
 
@@ -723,11 +721,11 @@ final class tablelib_test extends \advanced_testcase {
     /**
      * Test the initials functionality.
      *
-     * @dataProvider initials_provider
      * @param string|null $getvalue
      * @param string|null $setvalue
      * @param string|null $finalvalue
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('initials_provider')]
     public function test_initials_first_set(?string $getvalue, ?string $setvalue, ?string $finalvalue): void {
         global $_GET;
 
@@ -758,11 +756,11 @@ final class tablelib_test extends \advanced_testcase {
     /**
      * Test the initials functionality.
      *
-     * @dataProvider initials_provider
      * @param string|null $getvalue
      * @param string|null $setvalue
      * @param string|null $finalvalue
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('initials_provider')]
     public function test_initials_last_set(?string $getvalue, ?string $setvalue, ?string $finalvalue): void {
         global $_GET;
 

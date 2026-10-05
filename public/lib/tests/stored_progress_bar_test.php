@@ -25,8 +25,8 @@ use core\output\stored_progress_bar;
  * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\output\stored_progress_bar
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\stored_progress_bar::class)]
 final class stored_progress_bar_test extends \advanced_testcase {
     /**
      * Test the progress bar initialisation.

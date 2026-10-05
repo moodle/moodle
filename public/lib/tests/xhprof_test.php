@@ -24,6 +24,9 @@ namespace core;
  * @copyright 2019 Brendan Heywood <brendan@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('profiling_string_matches')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\moodle_xhprofrun::class, 'xhprof_topo_sort')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\moodle_xhprofrun::class, 'reduce_run_data')]
 final class xhprof_test extends \advanced_testcase {
 
     public static function setUpBeforeClass(): void {
@@ -67,12 +70,11 @@ final class xhprof_test extends \advanced_testcase {
     /**
      * Test the matching syntax
      *
-     * @covers ::profiling_string_matches
-     * @dataProvider profiling_string_matches_provider
      * @param   string $string
      * @param   string $patterns
      * @param   bool   $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('profiling_string_matches_provider')]
     public function test_profiling_string_matches($string, $patterns, $expected): void {
         $result = profiling_string_matches($string, $patterns);
         $this->assertSame($result, $expected);
@@ -168,12 +170,11 @@ final class xhprof_test extends \advanced_testcase {
     /**
      * Test that topologically sorting the run data works as expected
      *
-     * @covers \moodle_xhprofrun::xhprof_topo_sort
-     * @dataProvider run_data_provider
      *
      * @param array $rundata The run data to be sorted.
      * @param array $expectations The expected results.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('run_data_provider')]
     public function test_xhprof_topo_sort(array $rundata, array $expectations): void {
         // Make sure all the examples in the provider are the same size.
         $this->assertSame($expectations['topocount'], count($rundata));
@@ -212,12 +213,11 @@ final class xhprof_test extends \advanced_testcase {
     /**
      * Test that reducing the data complexity works as expected
      *
-     * @covers \moodle_xhprofrun::reduce_run_data
-     * @dataProvider run_data_provider
      *
      * @param array $rundata The run data to be reduced.
      * @param array $expectations The expected results.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('run_data_provider')]
     public function test_reduce_run_data(array $rundata, array $expectations): void {
         // Make sure that the expected keys that will be removed are present.
         foreach ($expectations['reduceremoved'] as $key) {

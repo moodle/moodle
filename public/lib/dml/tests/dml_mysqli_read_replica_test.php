@@ -38,8 +38,8 @@ require_once(__DIR__.'/fixtures/read_replica_moodle_database_mock_mysqli.php');
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mysqli_native_moodle_database
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mysqli_native_moodle_database::class)]
 final class dml_mysqli_read_replica_test extends \database_driver_testcase {
     /**
      * Test readonly handle is not used for reading from special pg_*() call queries,

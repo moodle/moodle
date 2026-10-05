@@ -24,8 +24,8 @@ use coding_exception;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_files\hook\before_file_created
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_files\hook\before_file_created::class)]
 final class before_file_created_test extends \advanced_testcase {
     public function test_init_with_file_and_content_throws_exception(): void {
         $this->expectException(\InvalidArgumentException::class);

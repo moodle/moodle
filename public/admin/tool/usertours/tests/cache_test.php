@@ -27,8 +27,8 @@ require_once(__DIR__ . '/helper_trait.php');
  * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \tool_usertours\cache
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\cache::class)]
 final class cache_test extends \advanced_testcase {
     // There are shared helpers for these tests in the helper trait.
     use \tool_usertours_helper_trait;
@@ -181,11 +181,11 @@ final class cache_test extends \advanced_testcase {
     /**
      * Tests for the get_matching_tourdata function.
      *
-     * @dataProvider    get_matching_tourdata_provider
      * @param   array   $tourconfigs    The configuration for the tours to create
      * @param   string  $targetmatch    The match to be tested
      * @param   array   $expected       An array containing the ordered names of the expected tours
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_matching_tourdata_provider')]
     public function test_get_matching_tourdata($tourconfigs, $targetmatch, $expected): void {
         $this->resetAfterTest();
         foreach ($tourconfigs as $tourconfig) {

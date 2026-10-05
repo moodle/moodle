@@ -31,10 +31,10 @@ use core_user\reportbuilder\datasource\users;
  * here we just want to assert that the thing we created actually exists
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder_generator
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder_generator::class)]
 final class generator_test extends advanced_testcase {
 
     /**

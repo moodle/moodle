@@ -39,8 +39,8 @@ final class moved_test extends \advanced_testcase {
 
     /**
      * test_event_h5p_viewed description
-     * @runInSeparateProcess
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_event_h5p_viewed(): void {
         $this->resetAfterTest(true);
 

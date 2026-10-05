@@ -26,20 +26,19 @@ use core\tests\courses_tasks_testcase;
  * @package   core
  * @copyright 2023 Sara Arjona <sara@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\task\hide_ended_courses_task
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\task\hide_ended_courses_task::class)]
 final class hide_ended_courses_task_test extends courses_tasks_testcase {
     /**
      * Test hide_ended_courses cron task.
      *
-     * @dataProvider hide_end_courses_provider
-     * @covers ::execute
      *
      * @param int $nextweekvisible Number of courses with the end date set to next week to be created.
      * @param int $yesterdayvisible Number of courses with the end date set to yesterday to be created.
      * @param int $tomorrowvisible Number of courses with the end date set to tomorrow to be created.
      * @param bool $createhidden Whether hidden courses should be created or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('hide_end_courses_provider')]
     public function test_hide_ended_courses(
         int $nextweekvisible,
         int $yesterdayvisible,

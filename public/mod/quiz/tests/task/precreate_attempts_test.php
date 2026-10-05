@@ -31,8 +31,8 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz\task\precreate_attempts
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\task\precreate_attempts::class)]
 final class precreate_attempts_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
@@ -61,8 +61,8 @@ final class precreate_attempts_test extends \advanced_testcase {
      *
      * @param int $period
      * @param string $output
-     * @dataProvider precreate_settings_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('precreate_settings_provider')]
     public function test_execute_disabled(int $period, string $output): void {
         $this->resetAfterTest();
         set_config('precreateperiod', $period, 'quiz');

@@ -30,8 +30,8 @@ require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
  * @category   test
  * @copyright  2023 Michael Hawkins <michaelh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \communication_customlink\communication_feature
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\communication_customlink\communication_feature::class)]
 final class communication_feature_test extends \advanced_testcase {
     use communication_test_helper_trait;
 
@@ -43,8 +43,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test create, update and delete chat room.
-     *
-     * @covers ::load_for_instance
      */
     public function test_load_for_instance(): void {
         $communicationprocessor = $this->get_test_communication_processor();
@@ -55,10 +53,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test create, update and delete chat room.
-     *
-     * @covers ::create_chat_room
-     * @covers ::update_chat_room
-     * @covers ::delete_chat_room
      */
     public function test_create_update_delete_chat_room(): void {
         $communicationprocessor = $this->get_test_communication_processor();
@@ -75,9 +69,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test save form data with provider's custom field and fetching with get_chat_room_url().
-     *
-     * @covers ::save_form_data
-     * @covers ::get_chat_room_url
      */
     public function test_save_form_data(): void {
         $communicationprocessor = $this->get_test_communication_processor();
@@ -134,8 +125,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test if the selected provider is configured.
-     *
-     * @covers ::is_configured
      */
     public function test_is_configured(): void {
         $communicationprocessor = $this->get_test_communication_processor();

@@ -39,6 +39,8 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @copyright  2008 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('quiz_attempt_state')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('quiz_question_tostring')]
 final class locallib_test extends \advanced_testcase {
 
     use \quiz_question_helper_test_trait;
@@ -77,14 +79,13 @@ final class locallib_test extends \advanced_testcase {
     }
 
     /**
-     * @dataProvider quiz_attempt_state_data_provider
      *
      * @param string $attemptstate as in the quiz_attempts.state DB column.
      * @param int|null $relativetimefinish time relative to now when the attempt finished, or null for 0.
      * @param int|null $relativetimeclose time relative to now when the quiz closes, or null for 0.
      * @param int $expectedstate expected result. One of the display_options constants.
-     * @covers ::quiz_attempt_state
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('quiz_attempt_state_data_provider')]
     public function test_quiz_attempt_state(string $attemptstate,
             ?int $relativetimefinish, ?int $relativetimeclose, int $expectedstate): void {
 
@@ -106,9 +107,6 @@ final class locallib_test extends \advanced_testcase {
         $this->assertEquals($expectedstate, quiz_attempt_state($quiz, $attempt));
     }
 
-    /**
-     * @covers ::quiz_question_tostring
-     */
     public function test_quiz_question_tostring(): void {
         $question = new \stdClass();
         $question->qtype = 'multichoice';
@@ -123,8 +121,6 @@ final class locallib_test extends \advanced_testcase {
 
     /**
      * Test the method quiz_question_to_string with the tag display.
-     *
-     * @covers ::quiz_question_tostring
      */
     public function test_quiz_question_tostring_with_tags(): void {
         $this->resetAfterTest();
@@ -147,9 +143,6 @@ final class locallib_test extends \advanced_testcase {
         $this->assertMatchesRegularExpression('/<span[^>]*>\s*Banana\s*<\/span>/', $summary);
     }
 
-    /**
-     * @covers ::quiz_question_tostring
-     */
     public function test_quiz_question_tostring_does_not_filter(): void {
         $question = new \stdClass();
         $question->qtype = 'multichoice';

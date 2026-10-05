@@ -26,10 +26,10 @@ use customfield_number\test_provider;
  * Test the recalculate adhoc task.
  *
  * @package    customfield_number
- * @covers     \customfield_number\task\recalculate
  * @copyright  2026 Yerai Rodríguez <yerai.rodriguez@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\customfield_number\task\recalculate::class)]
 final class recalculate_test extends \advanced_testcase {
     /**
      * Test that schedule_for_fieldtype recalculates shared fields when scheduled with a specific component/area.

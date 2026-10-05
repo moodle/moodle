@@ -26,6 +26,8 @@ namespace core;
  * @copyright 2015 onwards Ankit Agarwal
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\test\phpunit\message_sink::class, 'get_messages_by_component')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\test\phpunit\message_sink::class, 'get_messages_by_component_and_type')]
 final class message_test extends \advanced_testcase {
 
     /**
@@ -260,9 +262,6 @@ final class message_test extends \advanced_testcase {
 
     /**
      * Test get_messages_by_component method.
-     *
-     * @covers \core\test\phpunit\message_sink::get_messages_by_component
-     * @covers \core\test\phpunit\message_sink::get_messages_by_component_and_type
      */
     public function test_get_messages_by_component(): void {
         $this->resetAfterTest();

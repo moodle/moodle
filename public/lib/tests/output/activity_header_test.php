@@ -21,20 +21,19 @@ namespace core\output;
  *
  * @package   core
  * @category  test
- * @coversDefaultClass \core\output\activity_header
  * @copyright 2021 Peter
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\activity_header::class)]
 final class activity_header_test extends \advanced_testcase {
 
     /**
      * Test the title setter
      *
-     * @dataProvider set_title_provider
      * @param string $value
      * @param string $expected
-     * @covers ::set_title
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_title_provider')]
     public function test_set_title(string $value, string $expected): void {
         global $PAGE, $DB;
         $this->resetAfterTest();
@@ -76,8 +75,6 @@ final class activity_header_test extends \advanced_testcase {
 
     /**
      * Test setting multiple attributes
-     *
-     * @covers ::set_attrs
      */
     public function test_set_attrs(): void {
         global $DB, $PAGE;
@@ -114,8 +111,6 @@ final class activity_header_test extends \advanced_testcase {
 
     /**
      * Test calling set_attrs with an invalid variable name
-     *
-     * @covers ::set_attrs
      */
     public function test_set_attrs_invalid_variable(): void {
         global $PAGE;
@@ -141,12 +136,11 @@ final class activity_header_test extends \advanced_testcase {
     /**
      * Test the heading level getter
      *
-     * @dataProvider get_heading_level_provider
-     * @covers ::get_heading_level
      * @param bool $allowtitle Whether the title is allowed.
      * @param string $title The activity heading.
      * @param int $expectedheadinglevel The expected heading level.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_heading_level_provider')]
     public function test_get_heading_level(bool $allowtitle, string $title, int $expectedheadinglevel): void {
         $activityheaderstub = $this->getMockBuilder(activity_header::class)
             ->disableOriginalConstructor()
@@ -165,10 +159,9 @@ final class activity_header_test extends \advanced_testcase {
      * @param array $themeoptions The activityheader options array set in the theme.
      * @param array $layoutoptions The activitityheader options array set in the layout.
      * @param bool $allowed The expected return value of is_title_allowed.
-     * @covers ::is_title_allowed
-     * @dataProvider get_title_options
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_title_options')]
     public function test_is_title_allowed(array $themeoptions, array $layoutoptions, bool $allowed): void {
         $themeconfig = $this->getMockBuilder(\theme_config::class)
             ->disableOriginalConstructor()

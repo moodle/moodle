@@ -32,9 +32,8 @@ require_once('all_checks.php');
 
 /**
  * Class img_alt_is_too_long_testcase
- *
- * @covers \tool_brickfield\local\htmlchecker\common\checks\img_alt_is_too_long
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_brickfield\local\htmlchecker\common\checks\img_alt_is_too_long::class)]
 final class img_alt_is_too_long_test extends all_checks {
     /** @var string Check type */
     protected $checktype = 'img_alt_is_too_long';
@@ -88,10 +87,10 @@ EOD;
     /**
      * Test for image alt attributes being too long
      *
-     * @dataProvider img_alt_text_provider
      * @param bool $expectedpass Whether the test is expected to pass or fail.
      * @param string $alttext The alt text to test.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('img_alt_text_provider')]
     public function test_check(bool $expectedpass, string $alttext): void {
         $html = $this->get_test_html($alttext);
         $results = $this->get_checker_results($html);

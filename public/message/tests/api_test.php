@@ -25,8 +25,8 @@ use core_message\tests\helper as testhelper;
  * @category test
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_message\api
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_message\api::class)]
 final class api_test extends \advanced_testcase {
     /**
      * Test set up.
@@ -2247,11 +2247,11 @@ final class api_test extends \advanced_testcase {
     /**
      * Test get_conversations with a mixture of messages.
      *
-     * @dataProvider get_conversations_mixed_provider
      * @param array $usersdata The list of users to create for this test.
      * @param array $messagesdata The list of messages to create.
      * @param array $expectations The list of expected outcomes.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_conversations_mixed_provider')]
     public function test_get_conversations_mixed($usersdata, $contacts, $messagesdata, $expectations): void {
         global $DB;
         $this->resetAfterTest();
@@ -6295,7 +6295,6 @@ final class api_test extends \advanced_testcase {
     /**
      * Test the get_conversation_counts() function.
      *
-     * @dataProvider get_conversation_counts_test_cases
      * @param array $conversationconfigs Conversations to create
      * @param int $deletemessagesuser The user who is deleting the messages
      * @param array $deletemessages The list of messages to delete (by index)
@@ -6304,6 +6303,7 @@ final class api_test extends \advanced_testcase {
      * @param array $expectedunreadcounts the expected unread conversation counts
      * @param array $deletedusers the array of users to soft delete.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_conversation_counts_test_cases')]
     public function test_get_conversation_counts(
         $conversationconfigs,
         $deletemessagesuser,
@@ -6428,7 +6428,6 @@ final class api_test extends \advanced_testcase {
     /**
      * Test the get_unread_conversation_counts() function.
      *
-     * @dataProvider get_conversation_counts_test_cases
      * @param array $conversationconfigs Conversations to create
      * @param int $deletemessagesuser The user who is deleting the messages
      * @param array $deletemessages The list of messages to delete (by index)
@@ -6437,6 +6436,7 @@ final class api_test extends \advanced_testcase {
      * @param array $expectedunreadcounts the expected unread conversation counts
      * @param array $deletedusers the list of users to soft-delete.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_conversation_counts_test_cases')]
     public function test_get_unread_conversation_counts(
         $conversationconfigs,
         $deletemessagesuser,

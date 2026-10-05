@@ -25,8 +25,8 @@ use advanced_testcase;
  * @category   test
  * @copyright  2023 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass external_value
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(external_value::class)]
 final class external_value_test extends advanced_testcase {
 
     /**
@@ -48,12 +48,12 @@ final class external_value_test extends advanced_testcase {
     /**
      * Tests the constructor for the $required parameter validation.
      *
-     * @dataProvider required_param_provider
      * @param int $required The required param being tested.
      * @param bool $debuggingexpected Whether debugging is expected.
      * @param mixed $requiredstr The string value of the $required param in the debugging message.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('required_param_provider')]
     public function test_required_param_validation($required, $debuggingexpected, $requiredstr = ''): void {
         $externalvalue = new external_value(PARAM_INT, 'Cool description', $required);
         if ($debuggingexpected) {

@@ -194,9 +194,8 @@ final class quiz_settings_test extends \advanced_testcase {
      *
      * @param \stdClass $settings Quiz settings
      * @param string $expectedxml SEB Config XML.
-     *
-     * @dataProvider filter_rules_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_rules_provider')]
     public function test_filter_rules_added_to_config(\stdClass $settings, string $expectedxml): void {
         $quizsettings = new seb_quiz_settings(0, $settings);
         $config = $quizsettings->get_config();
@@ -218,9 +217,8 @@ final class quiz_settings_test extends \advanced_testcase {
      *
      * @param string $bek Browser Exam Key.
      * @param string $expectederrorstring Expected error.
-     *
-     * @dataProvider bad_browser_exam_key_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('bad_browser_exam_key_provider')]
     public function test_browser_exam_keys_validation_errors($bek, $expectederrorstring): void {
         $quizsettings = new seb_quiz_settings();
         $quizsettings->set('allowedbrowserexamkeys', $bek);

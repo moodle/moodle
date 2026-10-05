@@ -22,16 +22,15 @@ use core_privacy\local\request\writer;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_privacy\local\request\moodle_content_writer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_privacy\local\request\moodle_content_writer::class)]
 final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that exported data is saved correctly within the system context.
      *
-     * @dataProvider export_data_provider
      * @param   \stdClass  $data Data
-     * @covers ::export_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_data_provider')]
     public function test_export_data($data): void {
         $context = \context_system::instance();
         $subcontext = [];
@@ -53,10 +52,9 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that exported data is saved correctly for context/subcontext.
      *
-     * @dataProvider export_data_provider
      * @param   \stdClass  $data Data
-     * @covers ::export_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_data_provider')]
     public function test_export_data_different_context($data): void {
         $context = \context_user::instance(\core_user::get_user_by_username('admin')->id);
         $subcontext = ['sub', 'context'];
@@ -77,8 +75,6 @@ final class moodle_content_writer_test extends advanced_testcase {
 
     /**
      * Test that exported is saved within the correct directory locations.
-     *
-     * @covers ::export_data
      */
     public function test_export_data_writes_to_multiple_context(): void {
         $subcontext = ['sub', 'context'];
@@ -121,8 +117,6 @@ final class moodle_content_writer_test extends advanced_testcase {
 
     /**
      * Test that multiple writes to the same location cause the latest version to be written.
-     *
-     * @covers ::export_data
      */
     public function test_export_data_multiple_writes_same_context(): void {
         $subcontext = ['sub', 'context'];
@@ -174,12 +168,11 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that metadata can be set.
      *
-     * @dataProvider export_metadata_provider
      * @param   string  $key Key
      * @param   string  $value Value
      * @param   string  $description Description
-     * @covers ::export_metadata
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_metadata_provider')]
     public function test_export_metadata($key, $value, $description): void {
         $context = \context_system::instance();
         $subcontext = ['a', 'b', 'c'];
@@ -202,8 +195,6 @@ final class moodle_content_writer_test extends advanced_testcase {
 
     /**
      * Test that metadata can be set additively.
-     *
-     * @covers ::export_metadata
      */
     public function test_export_metadata_additive(): void {
         $context = \context_system::instance();
@@ -238,8 +229,6 @@ final class moodle_content_writer_test extends advanced_testcase {
 
     /**
      * Test that metadata can be set additively.
-     *
-     * @covers ::export_metadata
      */
     public function test_export_metadata_to_multiple_contexts(): void {
         $systemcontext = \context_system::instance();
@@ -316,8 +305,6 @@ final class moodle_content_writer_test extends advanced_testcase {
 
     /**
      * Exporting a single stored_file should cause that file to be output in the files directory.
-     *
-     * @covers ::export_area_files
      */
     public function test_export_area_files(): void {
         $this->resetAfterTest();
@@ -416,15 +403,14 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Exporting a single stored_file should cause that file to be output in the files directory.
      *
-     * @dataProvider    export_file_provider
      * @param   string  $filearea File area
      * @param   int     $itemid Item ID
      * @param   string  $filepath File path
      * @param   string  $filename File name
      * @param   string  $content Content
      *
-     * @covers ::export_file
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_file_provider')]
     public function test_export_file($filearea, $itemid, $filepath, $filename, $content): void {
         $this->resetAfterTest();
         $context = \context_system::instance();
@@ -515,13 +501,12 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * User preferences can be exported against a user.
      *
-     * @dataProvider    export_user_preference_provider
      * @param   string      $component  Component
      * @param   string      $key Key
      * @param   string      $value Value
      * @param   string      $desc Description
-     * @covers ::export_user_preference
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_user_preference_provider')]
     public function test_export_user_preference_context_user($component, $key, $value, $desc): void {
         $admin = \core_user::get_user_by_username('admin');
 
@@ -548,13 +533,12 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * User preferences can be exported against a course category.
      *
-     * @dataProvider    export_user_preference_provider
      * @param   string      $component  Component
      * @param   string      $key Key
      * @param   string      $value Value
      * @param   string      $desc Description
-     * @covers ::export_user_preference
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_user_preference_provider')]
     public function test_export_user_preference_context_coursecat($component, $key, $value, $desc): void {
         global $DB;
 
@@ -582,13 +566,12 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * User preferences can be exported against a course.
      *
-     * @dataProvider    export_user_preference_provider
      * @param   string      $component  Component
      * @param   string      $key Key
      * @param   string      $value Value
      * @param   string      $desc Description
-     * @covers ::export_user_preference
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_user_preference_provider')]
     public function test_export_user_preference_context_course($component, $key, $value, $desc): void {
         global $DB;
 
@@ -617,13 +600,12 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * User preferences can be exported against a module context.
      *
-     * @dataProvider    export_user_preference_provider
      * @param   string      $component  Component
      * @param   string      $key Key
      * @param   string      $value Value
      * @param   string      $desc Description
-     * @covers ::export_user_preference
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_user_preference_provider')]
     public function test_export_user_preference_context_module($component, $key, $value, $desc): void {
         global $DB;
 
@@ -653,13 +635,12 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * User preferences can not be exported against a block context.
      *
-     * @dataProvider    export_user_preference_provider
      * @param   string      $component  Component
      * @param   string      $key Key
      * @param   string      $value Value
      * @param   string      $desc Description
-     * @covers ::export_user_preference
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_user_preference_provider')]
     public function test_export_user_preference_context_block($component, $key, $value, $desc): void {
         global $DB;
 
@@ -688,8 +669,6 @@ final class moodle_content_writer_test extends advanced_testcase {
      * Writing user preferences for two different blocks with the same name and
      * same parent context should generate two different context paths and export
      * files.
-     *
-     * @covers ::export_user_preference
      */
     public function test_export_user_preference_context_block_multiple_instances(): void {
         $this->resetAfterTest();
@@ -745,14 +724,13 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * User preferences can be exported against the system.
      *
-     * @dataProvider    export_user_preference_provider
      * @param   string      $component  Component
      * @param   string      $key Key
      * @param   string      $value Value
      * @param   string      $desc Description
      *
-     * @covers ::export_user_preference
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_user_preference_provider')]
     public function test_export_user_preference_context_system($component, $key, $value, $desc): void {
         $context = \context_system::instance();
         $writer = $this->get_writer_instance()
@@ -774,8 +752,6 @@ final class moodle_content_writer_test extends advanced_testcase {
 
     /**
      * User preferences can be exported against the system.
-     *
-     * @covers ::export_user_preference
      */
     public function test_export_multiple_user_preference_context_system(): void {
         $context = \context_system::instance();
@@ -808,8 +784,6 @@ final class moodle_content_writer_test extends advanced_testcase {
 
     /**
      * User preferences can be exported against the system.
-     *
-     * @covers ::export_user_preference
      */
     public function test_export_user_preference_replace(): void {
         $context = \context_system::instance();
@@ -870,10 +844,9 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that exported data is human readable.
      *
-     * @dataProvider unescaped_unicode_export_provider
      * @param string $text
-     * @covers ::export_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('unescaped_unicode_export_provider')]
     public function test_export_data_unescaped_unicode($text): void {
         $context = \context_system::instance();
         $subcontext = [];
@@ -897,10 +870,9 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that exported metadata is human readable.
      *
-     * @dataProvider unescaped_unicode_export_provider
      * @param string $text
-     * @covers ::export_metadata
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('unescaped_unicode_export_provider')]
     public function test_export_metadata_unescaped_unicode($text): void {
         $context = \context_system::instance();
         $subcontext = ['a', 'b', 'c'];
@@ -925,10 +897,9 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that exported related data is human readable.
      *
-     * @dataProvider unescaped_unicode_export_provider
      * @param string $text
-     * @covers ::export_related_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('unescaped_unicode_export_provider')]
     public function test_export_related_data_unescaped_unicode($text): void {
         $context = \context_system::instance();
         $subcontext = [];
@@ -951,8 +922,6 @@ final class moodle_content_writer_test extends advanced_testcase {
 
     /**
      * Test that exported related data name is properly cleaned
-     *
-     * @covers ::export_related_data
      */
     public function test_export_related_data_clean_name(): void {
         $context = \context_system::instance();
@@ -980,10 +949,9 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that exported user preference is human readable.
      *
-     * @dataProvider unescaped_unicode_export_provider
      * @param string $text
-     * @covers ::export_user_preference
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('unescaped_unicode_export_provider')]
     public function test_export_user_preference_unescaped_unicode($text): void {
         $context = \context_system::instance();
         $component = 'core_privacy';
@@ -1018,8 +986,6 @@ final class moodle_content_writer_test extends advanced_testcase {
 
     /**
      * Test that exported data subcontext is properly cleaned
-     *
-     * @covers ::export_data
      */
     public function test_export_data_clean_subcontext(): void {
         $context = \context_system::instance();
@@ -1043,13 +1009,12 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that exported data is shortened when exceeds the limit.
      *
-     * @dataProvider long_filename_provider
      * @param string $longtext
      * @param string $expected
      * @param string $text
      *
-     * @covers ::export_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('long_filename_provider')]
     public function test_export_data_long_filename($longtext, $expected, $text): void {
         $context = \context_system::instance();
         $subcontext = [$longtext];
@@ -1075,13 +1040,12 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that exported related data is shortened when exceeds the limit.
      *
-     * @dataProvider long_filename_provider
      * @param string $longtext
      * @param string $expected
      * @param string $text
      *
-     * @covers ::export_related_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('long_filename_provider')]
     public function test_export_related_data_long_filename($longtext, $expected, $text): void {
         $context = \context_system::instance();
         $subcontext = [$longtext];
@@ -1107,11 +1071,11 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that exported metadata is shortened when exceeds the limit.
      *
-     * @dataProvider long_filename_provider
      * @param string $longtext
      * @param string $expected
      * @param string $text
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('long_filename_provider')]
     public function test_export_metadata_long_filename($longtext, $expected, $text): void {
         $context = \context_system::instance();
         $subcontext = [$longtext];
@@ -1139,11 +1103,11 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test that exported user preference is shortened when exceeds the limit.
      *
-     * @dataProvider long_filename_provider
      * @param string $longtext
      * @param string $expected
      * @param string $text
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('long_filename_provider')]
     public function test_export_user_preference_long_filename($longtext, $expected, $text): void {
         $this->resetAfterTest();
 
@@ -1252,13 +1216,12 @@ final class moodle_content_writer_test extends advanced_testcase {
     /**
      * Test correct rewriting of @@PLUGINFILE@@ in the exported contents.
      *
-     * @dataProvider rewrite_pluginfile_urls_provider
      * @param string $filearea The filearea within that component.
      * @param int $itemid Which item those files belong to.
      * @param string $input Raw text as stored in the database.
      * @param string $expectedoutput Expected output of URL rewriting.
-     * @covers ::rewrite_pluginfile_urls
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('rewrite_pluginfile_urls_provider')]
     public function test_rewrite_pluginfile_urls($filearea, $itemid, $input, $expectedoutput): void {
 
         $writer = $this->get_writer_instance();

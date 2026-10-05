@@ -91,9 +91,8 @@ final class calculated_question_summary_test extends \advanced_testcase {
 
     /**
      * Unit test for get_min_max_of() method.
-     *
-     * @dataProvider get_min_max_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_min_max_provider')]
     public function test_get_min_max_of($subqstats, $expected): void {
         $calculatedsummary = new calculated_question_summary(null, null, $subqstats);
         $res = $calculatedsummary->get_min_max_of('index');
@@ -151,9 +150,8 @@ final class calculated_question_summary_test extends \advanced_testcase {
 
     /**
      * Unit test for get_min_max_of_sd() method.
-     *
-     * @dataProvider get_sd_min_max_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sd_min_max_provider')]
     public function test_get_min_max_of_sd($subqstats, $expected): void {
         $calculatedsummary = new calculated_question_summary(null, null, $subqstats);
         $res = $calculatedsummary->get_min_max_of('sd');

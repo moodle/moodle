@@ -29,13 +29,12 @@ use Slim\Exception\HttpNotFoundException;
  * @category   test
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\router\middleware\moodle_bootstrap_middleware
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\middleware\moodle_bootstrap_middleware::class)]
 final class moodle_bootstrap_middleware_test extends route_testcase {
     /**
      * Test setting of the page URI based on the request URI.
      *
-     * @dataProvider page_url_provider
      *
      * @param string $pattern The pattern to register with the app.
      * @param string $basepath The basepath of the wwwroot.
@@ -43,6 +42,7 @@ final class moodle_bootstrap_middleware_test extends route_testcase {
      * @param array $cfg The configuration to use.
      * @param string|false $expected The expected page URI, or false if no page URI is expected.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('page_url_provider')]
     public function test_set_page_to_uri(
         string $pattern,
         string $basepath,

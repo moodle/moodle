@@ -22,9 +22,10 @@ namespace auth_oauth2;
  * @package     auth_oauth2
  * @copyright   2017 Damyon Wiese
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \auth_oauth2\api
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\auth_oauth2\api::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\auth_oauth2\api::class, 'create_new_confirmed_account')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\auth_oauth2\api::class, 'send_confirm_account_email')]
 final class api_test extends \advanced_testcase {
 
     /**
@@ -93,8 +94,6 @@ final class api_test extends \advanced_testcase {
     /**
      * Test creating a new confirmed account.
      * Including testing that user profile fields are correctly set.
-     *
-     * @covers \auth_oauth2\api::create_new_confirmed_account
      */
     public function test_create_new_confirmed_account(): void {
         global $DB;
@@ -247,8 +246,6 @@ final class api_test extends \advanced_testcase {
     /**
      * Test creating a user via the send confirm account email method.
      * Including testing that user profile fields are correctly set.
-     *
-     * @covers \auth_oauth2\api::send_confirm_account_email
      */
     public function test_send_confirm_account_email(): void {
         global $DB;

@@ -24,8 +24,8 @@ use GuzzleHttp\Psr7\Uri;
  * @package   core
  * @copyright 2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\url
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\url::class)]
 final class url_test extends \advanced_testcase {
     /**
      * Test basic url construction.
@@ -235,10 +235,10 @@ final class url_test extends \advanced_testcase {
     /**
      * Test exporting params for templates.
      *
-     * @dataProvider export_params_for_template_provider
      * @param string $url URL with params to test.
      * @param array $expected The expected result.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_params_for_template_provider')]
     public function test_export_params_for_template(string $url, array $expected): void {
         // Should return params in the URL.
         $moodleurl = new url($url);
@@ -319,11 +319,11 @@ final class url_test extends \advanced_testcase {
     /**
      * Test the make_pluginfile_url function.
      *
-     * @dataProvider make_pluginfile_url_provider
      * @param   bool    $slashargs
      * @param   array   $args Args to be provided to make_pluginfile_url
      * @param   string  $expected The expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('make_pluginfile_url_provider')]
     public function test_make_pluginfile_url($slashargs, $args, $expected): void {
         global $CFG;
 
@@ -443,9 +443,8 @@ final class url_test extends \advanced_testcase {
 
     /**
      * Test url fragment parsing.
-     *
-     * @dataProvider url_fragment_parsing_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('url_fragment_parsing_provider')]
     public function test_url_fragment_parsing(string $fragment, string $expected): void {
         $url = new url('/index.php', null, $fragment);
 
@@ -518,8 +517,8 @@ final class url_test extends \advanced_testcase {
      *
      * @param url $url The URL pointing to a web resource.
      * @param string $exmessage The expected output URL.
-     * @dataProvider out_as_local_url_coding_exception_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('out_as_local_url_coding_exception_provider')]
     public function test_out_as_local_url_coding_exception(url $url, string $exmessage): void {
         $this->expectException(\coding_exception::class);
         $this->expectExceptionMessage($exmessage);
@@ -550,8 +549,8 @@ final class url_test extends \advanced_testcase {
      * @param url $url The URL pointing to a web resource.
      * @param string $expected The expected local URL.
      * @param string|null $wwwroot
-     * @dataProvider out_as_local_url_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('out_as_local_url_provider')]
     public function test_out_as_local_url(
         url $url,
         string $expected,
@@ -615,8 +614,8 @@ final class url_test extends \advanced_testcase {
      *
      * @param url $url The URL pointing to a web resource.
      * @param bool $expected The expected result.
-     * @dataProvider is_local_url_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_local_url_provider')]
     public function test_is_local_url(url $url, bool $expected): void {
         $this->assertEquals($expected, $url->is_local_url(), "'{$url}' is not a local URL!");
     }
@@ -658,9 +657,7 @@ final class url_test extends \advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider remove_params_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('remove_params_provider')]
     public function test_remove_params($params, $remove, $expected): void {
         $url = new url('/index.php', $params);
         if ($remove !== null) {
@@ -780,8 +777,8 @@ final class url_test extends \advanced_testcase {
      * @param array $extraparams extra parameters to pass directly to ->params() function.
      * @param array $expectedparams php array of expected parameters expected to be parsed.
      * @param string $expectedurlout unescaped url string that is expected when calling ->out() on the url object.
-     * @dataProvider multi_level_query_params_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('multi_level_query_params_provider')]
     public function test_multi_level_array_query_params(
         string $url,
         array $extraparams,

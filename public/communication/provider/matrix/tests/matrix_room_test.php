@@ -23,13 +23,11 @@ namespace communication_matrix;
  * @category   test
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \communication_matrix\matrix_room
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\communication_matrix\matrix_room::class)]
 final class matrix_room_test extends \advanced_testcase {
     /**
      * Test for load_by_processor_id with no record.
-     *
-     * @covers ::load_by_processor_id
      */
     public function test_load_by_processor_id_none(): void {
         $this->assertNull(matrix_room::load_by_processor_id(999999999));
@@ -37,13 +35,6 @@ final class matrix_room_test extends \advanced_testcase {
 
     /**
      * Test for load_by_processor_id with valid records.
-     *
-     * @covers ::create_room_record
-     * @covers ::__construct
-     * @covers ::load_by_processor_id
-     * @covers ::get_processor_id
-     * @covers ::get_room_id
-     * @covers ::get_topic
      */
     public function test_create_room_record(): void {
         $this->resetAfterTest();
@@ -87,8 +78,6 @@ final class matrix_room_test extends \advanced_testcase {
 
     /**
      * Test for update_room_record.
-     *
-     * @covers ::update_room_record
      */
     public function test_update_room_record(): void {
         $this->resetAfterTest();
@@ -120,8 +109,6 @@ final class matrix_room_test extends \advanced_testcase {
 
     /**
      * Tests for delete_room_record.
-     *
-     * @covers ::delete_room_record
      */
     public function test_delete_room_record(): void {
         global $DB;

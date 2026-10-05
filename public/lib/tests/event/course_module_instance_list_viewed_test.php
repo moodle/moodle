@@ -30,10 +30,10 @@ require_once(__DIR__.'/../fixtures/event_mod_fixtures.php');
  *
  * @package    core
  * @category   phpunit
- * @covers     \core\event\course_module_instance_list_viewed
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\course_module_instance_list_viewed::class)]
 final class course_module_instance_list_viewed_test extends advanced_testcase {
 
     /**

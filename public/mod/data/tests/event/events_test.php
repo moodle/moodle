@@ -401,12 +401,12 @@ final class events_test extends \advanced_testcase {
     /**
      * Test for needs_mapping method.
      *
-     * @dataProvider preset_importer_provider
      *
      * @param array $currentfields Fields of the current activity.
      * @param array $newfields Fields to be imported.
      * @param array $expected Expected events.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('preset_importer_provider')]
     public function test_importing_events(
         array $currentfields,
         array $newfields,

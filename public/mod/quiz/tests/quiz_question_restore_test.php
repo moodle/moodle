@@ -36,10 +36,14 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz\question\bank\qbank_helper
- * @covers \restore_quiz_activity_structure_step
- * @covers \restore_question_set_reference_data_trait
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\question\bank\qbank_helper::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_quiz_activity_structure_step::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_question_set_reference_data_trait::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_quiz\question\bank\qbank_helper::class, 'get_question_structure')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_quiz_activity_structure_step::class, 'process_quiz_question_legacy_instance')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\backup_quiz_activity_structure_step::class, 'define_structure')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_question_set_reference_data_trait::class, 'process_question_set_reference')]
 final class quiz_question_restore_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
@@ -310,8 +314,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
 
     /**
      * Test a quiz backup and restore in a different course without attempts for quiz question bank.
-     *
-     * @covers \mod_quiz\question\bank\qbank_helper::get_question_structure
      */
     public function test_quiz_restore_in_a_different_course_using_quiz_question_bank(): void {
         $this->resetAfterTest();
@@ -421,8 +423,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
 
     /**
      * Test quiz restore with attempts.
-     *
-     * @covers \mod_quiz\question\bank\qbank_helper::get_question_structure
      */
     public function test_quiz_restore_with_attempts(): void {
         $this->resetAfterTest();
@@ -462,8 +462,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
      * Test pre 4.0 quiz restore for regular questions.
      *
      * Also, for efficiency, tests restore of the review options.
-     *
-     * @covers \restore_quiz_activity_structure_step::process_quiz_question_legacy_instance
      */
     public function test_pre_4_quiz_restore_for_regular_questions(): void {
         global $USER, $DB;
@@ -510,8 +508,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
 
     /**
      * Test pre 4.0 quiz restore for random questions.
-     *
-     * @covers \restore_quiz_activity_structure_step::process_quiz_question_legacy_instance
      */
     public function test_pre_4_quiz_restore_for_random_questions(): void {
         global $USER, $DB;
@@ -569,8 +565,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
 
     /**
      * Test pre 4.0 quiz restore for random question tags.
-     *
-     * @covers \restore_quiz_activity_structure_step::process_quiz_question_legacy_instance
      */
     public function test_pre_4_quiz_restore_for_random_question_tags(): void {
         global $USER, $DB;
@@ -622,8 +616,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test pre 4.0 quiz restore for random question tags, where one of the tags in the random question condition is
      * not in the backup but does already exist on the site.
-     *
-     * @covers \restore_quiz_activity_structure_step::process_quiz_question_legacy_instance
      */
     public function test_pre_4_quiz_restore_for_random_question_tags_with_tag_not_in_backup(): void {
         global $DB, $USER;
@@ -699,8 +691,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test pre 4.0 quiz restore for random question tags, where one of the tags in the random question condition is
      * not in the backup or the target site.
-     *
-     * @covers \restore_quiz_activity_structure_step::process_quiz_question_legacy_instance
      */
     public function test_pre_4_quiz_restore_for_random_question_tags_with_tag_not_in_backup_or_site(): void {
         global $DB, $USER;
@@ -776,8 +766,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
 
     /**
      * Test pre 4.0 quiz restore for random question used on multiple quizzes.
-     *
-     * @covers \restore_quiz_activity_structure_step::process_quiz_question_legacy_instance
      */
     public function test_pre_4_quiz_restore_shared_random_question(): void {
         global $USER, $DB;
@@ -837,7 +825,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Ensure that question slots are correctly backed up and restored with all properties.
      *
-     * @covers \backup_quiz_activity_structure_step::define_structure()
      * @return void
      */
     public function test_backup_restore_question_slots(): void {
@@ -917,8 +904,6 @@ final class quiz_question_restore_test extends \advanced_testcase {
      * behaviour of how the old category and tag conditions are converted are covered in
      * {@see qbank_managecategories\category_condition_test} and
      * {@see qbank_tagquestion\tag_condition_test} respectively.
-     *
-     * @covers \restore_question_set_reference_data_trait::process_question_set_reference
      */
     public function test_pre_43_quiz_restore_for_random_question_filtercondition(): void {
         global $USER, $DB;

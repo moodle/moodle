@@ -36,9 +36,8 @@ use stdClass;
  * @category  test
  * @copyright 2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \core_user\table\participants_search
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_user\table\participants_search::class)]
 final class participants_search_test extends advanced_testcase {
 
     /**
@@ -113,8 +112,8 @@ final class participants_search_test extends advanced_testcase {
      * @param int $jointype The join type to use when combining filter values
      * @param int $count The expected count
      * @param array $expectedusers
-     * @dataProvider role_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('role_provider')]
     public function test_roles_filter(array $usersdata, array $testroles, int $jointype, int $count, array $expectedusers): void {
         global $DB;
 
@@ -760,9 +759,8 @@ final class participants_search_test extends advanced_testcase {
      * @param array $countries
      * @param int $jointype
      * @param array $expectedusers
-     *
-     * @dataProvider country_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('country_provider')]
     public function test_country_filter(array $usersdata, array $countries, int $jointype, array $expectedusers): void {
         $this->resetAfterTest();
 
@@ -929,8 +927,8 @@ final class participants_search_test extends advanced_testcase {
      * @param int $count The expected count
      * @param array $expectedusers
      * @param string $asuser If non-blank, uses that user account (for identify field permission checks)
-     * @dataProvider keywords_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('keywords_provider')]
     public function test_keywords_filter(array $usersdata, array $keywords, int $jointype, int $count,
             array $expectedusers, string $asuser): void {
         global $DB;
@@ -1479,8 +1477,8 @@ final class participants_search_test extends advanced_testcase {
      * @param int $jointype The join type to use when combining filter values
      * @param int $count The expected count
      * @param array $expectedusers
-     * @dataProvider status_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('status_provider')]
     public function test_status_filter(array $usersdata, array $statuses, int $jointype, int $count, array $expectedusers): void {
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
@@ -1734,8 +1732,8 @@ final class participants_search_test extends advanced_testcase {
      * @param int $jointype The join type to use when combining filter values
      * @param int $count The expected count
      * @param array $expectedusers
-     * @dataProvider enrolments_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('enrolments_provider')]
     public function test_enrolments_filter(array $usersdata, array $enrolmethods, int $jointype, int $count,
             array $expectedusers): void {
 
@@ -1949,8 +1947,8 @@ final class participants_search_test extends advanced_testcase {
      * @param int $jointype The join type to use when combining filter values
      * @param int $count The expected count
      * @param array $expectedusers
-     * @dataProvider groups_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('groups_provider')]
     public function test_groups_filter(array $usersdata, array $groupsavailable, array $filtergroups, int $jointype, int $count,
             array $expectedusers): void {
 
@@ -2270,8 +2268,8 @@ final class participants_search_test extends advanced_testcase {
      * @param int $count The expected count
      * @param array $expectedusers
      * @param string $loginusername The user to login as for the tests
-     * @dataProvider groups_separate_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('groups_separate_provider')]
     public function test_groups_filter_separate_groups(array $usersdata, array $groupsavailable, array $filtergroups, int $jointype,
             int $count, array $expectedusers, string $loginusername): void {
 
@@ -2671,8 +2669,8 @@ final class participants_search_test extends advanced_testcase {
      * @param int $jointype The join type to use when combining filter values
      * @param int $count The expected count
      * @param array $expectedusers
-     * @dataProvider accesssince_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('accesssince_provider')]
     public function test_accesssince_filter(array $usersdata, array $accesssince, int $jointype, int $count,
             array $expectedusers): void {
 
@@ -2969,8 +2967,8 @@ final class participants_search_test extends advanced_testcase {
      * @param int $jointype The join type to used between each filter being applied
      * @param int $count The expected count
      * @param array $expectedusers
-     * @dataProvider filterset_joins_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filterset_joins_provider')]
     public function test_filterset_joins(array $usersdata, array $filterdata, array $groupsavailable, int $jointype, int $count,
             array $expectedusers): void {
         global $DB;

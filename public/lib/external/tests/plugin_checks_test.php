@@ -17,27 +17,26 @@
 namespace core_external;
 
 // phpcs:disable moodle.PHPUnit.TestCaseProvider.dataProviderSyntaxMethodNotFound
-
 /**
  * Detect common problems in plugin external API.
  *
- * @group     plugin_checks
  * @package   core_external
  * @copyright 2025 Petr Skoda
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\Group('plugin_checks')]
 final class plugin_checks_test extends \core\tests\plugin_checks_testcase {
     /**
      * Verify plugin external API definition files.
      *
-     * @dataProvider all_plugins_provider
-     * @coversNothing
      *
      * @param string $component
      * @param string $plugintype
      * @param string $pluginname
      * @param string $dir
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('all_plugins_provider')]
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_db_services_file(string $component, string $plugintype, string $pluginname, string $dir): void {
         $file = "$dir/db/services.php";
         $functions = $this->fetch_array_from_file($file, 'functions');

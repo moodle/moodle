@@ -30,11 +30,11 @@ final class get_h5pactivity_access_information_test extends \core_external\tests
     /**
      * Test the behaviour of get_h5pactivity_access_information().
      *
-     * @dataProvider get_h5pactivity_access_information_data
      * @param string $role user role in course
      * @param int $enabletracking if tracking is enabled
      * @param array $enabledcaps capabilities enabled
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_h5pactivity_access_information_data')]
     public function test_get_h5pactivity_access_information(string $role, int $enabletracking, array $enabledcaps): void {
         $this->resetAfterTest();
         $this->setAdminUser();

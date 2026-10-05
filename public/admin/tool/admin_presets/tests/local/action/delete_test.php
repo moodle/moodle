@@ -23,14 +23,12 @@ namespace tool_admin_presets\local\action;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_admin_presets\local\action\delete
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_admin_presets\local\action\delete::class)]
 final class delete_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of execute() method.
-     *
-     * @covers ::execute
      */
     public function test_delete_execute(): void {
         global $DB;
@@ -101,8 +99,6 @@ final class delete_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of execute() method when the preset id doesn't exist.
-     *
-     * @covers ::execute
      */
     public function test_delete_execute_unexisting_preset(): void {
 
@@ -126,8 +122,6 @@ final class delete_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of show() method when the preset id doesn't exist.
-     *
-     * @covers ::show
      */
     public function test_delete_show_unexisting_preset(): void {
 

@@ -22,10 +22,10 @@ use core_external\external_api;
  * Unit tests of external class for re-ordering feedback question items
  *
  * @package    mod_feedback
- * @covers     \mod_feedback\external\questions\reorder
  * @copyright  2024 Mikel Martín <mikel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_feedback\external\questions\reorder::class)]
 final class reorder_test extends \advanced_testcase {
 
     /**

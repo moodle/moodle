@@ -28,17 +28,16 @@ require_once($CFG->dirroot . '/backup/util/helper/backup_cron_helper.class.php')
  * @copyright  2024 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\task\automated_backup_report_task::class, 'execute')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\backup_cron_automated_helper::class, 'send_backup_status_to_admin')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\backup_cron_automated_helper::class, 'run_automated_backup')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\backup_cron_automated_helper::class, 'check_and_push_automated_backups')]
 final class automated_backup_task_test extends \advanced_testcase {
 
     use task_trait;
 
     /**
      * Test the automated backup and report tasks.
-     *
-     * @covers \core\task\automated_backup_report_task::execute
-     * @covers \backup_cron_automated_helper::send_backup_status_to_admin
-     * @covers \backup_cron_automated_helper::run_automated_backup
-     * @covers \backup_cron_automated_helper::check_and_push_automated_backups
      */
     public function test_automated_backup(): void {
         global $DB;

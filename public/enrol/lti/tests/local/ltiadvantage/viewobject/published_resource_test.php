@@ -22,14 +22,12 @@ namespace enrol_lti\local\ltiadvantage\viewobject;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\viewobject\published_resource
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\viewobject\published_resource::class)]
 final class published_resource_test extends \advanced_testcase {
 
     /**
      * Test creating a simple published_resource view object and fetching information about it.
-     *
-     * @covers ::__construct
      */
     public function test_create(): void {
         $pr = new published_resource(

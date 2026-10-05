@@ -36,9 +36,8 @@ require_once(__DIR__.'/../lib.php');
  * @package   cachestore_redis
  * @copyright (c) 2015 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @coversDefaultClass \cachestore_redis
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\cachestore_redis::class)]
 final class cachestore_redis_test extends \cachestore_tests {
     /** @var cachestore_redis $store Redis Cache Store. */
     protected $store;
@@ -83,9 +82,6 @@ final class cachestore_redis_test extends \cachestore_tests {
 
     /**
      * Test methods for various operations (set and has) in the cachestore_redis class.
-     *
-     * @covers ::set
-     * @covers ::has
      */
     public function test_has(): void {
         $store = $this->create_cachestore_redis();
@@ -97,9 +93,6 @@ final class cachestore_redis_test extends \cachestore_tests {
 
     /**
      * Test methods for the 'has_any' operation in the cachestore_redis class.
-     *
-     * @covers ::set
-     * @covers ::has_any
      */
     public function test_has_any(): void {
         $store = $this->create_cachestore_redis();
@@ -111,9 +104,6 @@ final class cachestore_redis_test extends \cachestore_tests {
 
     /**
      * PHPUnit test methods for the 'has_all' operation in the cachestore_redis class.
-     *
-     * @covers ::set
-     * @covers ::has_all
      */
     public function test_has_all(): void {
         $store = $this->create_cachestore_redis();
@@ -126,10 +116,6 @@ final class cachestore_redis_test extends \cachestore_tests {
 
     /**
      * Test methods for the 'lock' operations in the cachestore_redis class.
-     *
-     * @covers ::acquire_lock
-     * @covers ::check_lock_state
-     * @covers ::release_lock
      */
     public function test_lock(): void {
         $store = $this->create_cachestore_redis();
@@ -144,8 +130,6 @@ final class cachestore_redis_test extends \cachestore_tests {
 
     /**
      * Test method to check if the cachestore_redis instance is ready after connecting.
-     *
-     * @covers ::is_ready
      */
     public function test_it_is_ready_after_connecting(): void {
         $store = $this->create_cachestore_redis();

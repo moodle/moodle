@@ -199,11 +199,11 @@ final class server_test extends \advanced_testcase {
     }
 
     /**
-     * @dataProvider xmlize_provider
      * @param \core_external\external_description $description The data structure.
      * @param mixed $value The value to xmlise.
      * @param mixed $expected The expected output.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('xmlize_provider')]
     public function test_xmlize($description, $value, $expected): void {
         $method = new \ReflectionMethod('webservice_rest_server', 'xmlize_result');
         $this->assertEquals($expected, $method->invoke(null, $value, $description));

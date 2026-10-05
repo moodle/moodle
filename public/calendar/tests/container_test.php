@@ -37,8 +37,8 @@ require_once($CFG->dirroot . '/calendar/lib.php');
  * @package core_calendar
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_calendar\local\event\container
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_calendar\local\event\container::class)]
 final class container_test extends \advanced_testcase {
 
     /**
@@ -69,9 +69,9 @@ final class container_test extends \advanced_testcase {
     /**
      * Test that the event factory correctly creates instances of events.
      *
-     * @dataProvider get_event_factory_testcases
      * @param \stdClass $dbrow Row from the "database".
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_event_factory_testcases')]
     public function test_event_factory_create_instance($dbrow): void {
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\container::get_event_factory();
@@ -130,9 +130,9 @@ final class container_test extends \advanced_testcase {
     /**
      * Test that the event factory deals with invisible modules properly as admin.
      *
-     * @dataProvider get_event_factory_testcases
      * @param \stdClass $dbrow Row from the "database".
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_event_factory_testcases')]
     public function test_event_factory_when_module_visibility_is_toggled_as_admin($dbrow): void {
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\container::get_event_factory();
@@ -156,9 +156,9 @@ final class container_test extends \advanced_testcase {
     /**
      * Test that the event factory deals with invisible modules properly as a guest.
      *
-     * @dataProvider get_event_factory_testcases
      * @param \stdClass $dbrow Row from the "database".
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_event_factory_testcases')]
     public function test_event_factory_when_module_visibility_is_toggled_as_guest($dbrow): void {
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\container::get_event_factory();
@@ -185,9 +185,9 @@ final class container_test extends \advanced_testcase {
     /**
      * Test that the event factory deals with invisible courses as an admin.
      *
-     * @dataProvider get_event_factory_testcases
      * @param \stdClass $dbrow Row from the "database".
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_event_factory_testcases')]
     public function test_event_factory_when_course_visibility_is_toggled_as_admin($dbrow): void {
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\container::get_event_factory();
@@ -210,9 +210,9 @@ final class container_test extends \advanced_testcase {
     /**
      * Test that the event factory deals with invisible courses as a student.
      *
-     * @dataProvider get_event_factory_testcases
      * @param \stdClass $dbrow Row from the "database".
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_event_factory_testcases')]
     public function test_event_factory_when_course_visibility_is_toggled_as_student($dbrow): void {
         $legacyevent = $this->create_event($dbrow);
         $factory = \core_calendar\local\event\container::get_event_factory();

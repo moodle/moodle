@@ -26,10 +26,10 @@ use core_customfield_generator;
  * Unit tests for custom field toggle_shared_category external method
  *
  * @package     core_customfield
- * @covers      \core_customfield\external\toggle_shared_category
  * @copyright   2025 David Carrillo <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_customfield\external\toggle_shared_category::class)]
 final class toggle_shared_category_test extends \core_external\tests\externallib_testcase {
     /**
      * Test execute

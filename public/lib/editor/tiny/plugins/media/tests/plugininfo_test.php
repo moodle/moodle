@@ -24,10 +24,10 @@ use advanced_testcase;
  * Unit tests for the \tiny_media\plugininfo class.
  *
  * @package     tiny_media
- * @covers      \tiny_media\plugininfo::is_enabled_for_external
  * @copyright   2025 Moodle Pty Ltd
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tiny_media\plugininfo::class, 'is_enabled_for_external')]
 final class plugininfo_test extends advanced_testcase {
 
     /**
@@ -41,11 +41,11 @@ final class plugininfo_test extends advanced_testcase {
     /**
      * Test the is_enabled_for_external method.
      *
-     * @dataProvider is_enabled_for_external_provider
      * @param bool $guest True to use guest user.
      * @param bool $expectedenabled Expected result.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_enabled_for_external_provider')]
     public function test_is_enabled_for_external(bool $guest, bool $expectedenabled): void {
         global $CFG;
 

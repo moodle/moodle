@@ -35,11 +35,11 @@ require_once($CFG->libdir . '/adminlib.php');
  * Unit tests check API get_result webservice
  *
  * @package     core
- * @covers      \core\check\external\get_result_admintree
  * @author      Matthew Hilton <matthewhilton@catalyst-au.net>
  * @copyright   Catalyst IT, 2023
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\check\external\get_result_admintree::class)]
 final class get_result_admintree_test extends \core_external\tests\externallib_testcase {
     /**
      * Sets up admin tree for the given settings.
@@ -132,8 +132,8 @@ final class get_result_admintree_test extends \core_external\tests\externallib_t
      * @param bool $includedetails if details are included
      * @param array $expectedreturn an array of key value pairs. For each key, if the value is null it expects the
      * webservice to not return it. If it has a value, it checks that that value was inside what was returned from the webservice.
-     * @dataProvider execute_options_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_options_provider')]
     public function test_execute_options(bool $triggererror, check $check, bool $includedetails, array $expectedreturn): void {
         global $CFG;
 
@@ -212,8 +212,8 @@ final class get_result_admintree_test extends \core_external\tests\externallib_t
      * @param string $searchname name of setting to search for
      * @param string $searchid id of setting to search for
      * @param string $expectedcheck class name of expected check to be found. If empty, expects that none was found.
-     * @dataProvider find_check_from_setting_tree_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('find_check_from_setting_tree_provider')]
     public function test_find_check_from_setting_tree(array $settings, string $searchname, string $searchid,
         string $expectedcheck): void {
         $this->resetAfterTest(true);
@@ -254,8 +254,8 @@ final class get_result_admintree_test extends \core_external\tests\externallib_t
      *
      * @param int $permission the permission level to assign the capability to the role for.
      * @param string|null $expectedexception Exception class expected, or null if none is expected.
-     * @dataProvider capability_check_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('capability_check_provider')]
     public function test_capability_check($permission, $expectedexception): void {
         $this->resetAfterTest(true);
 

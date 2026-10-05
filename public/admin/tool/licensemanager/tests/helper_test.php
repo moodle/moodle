@@ -30,8 +30,8 @@ defined('MOODLE_INTERNAL') || die();
  * @package    tool_licensemanager
  * @copyright  2020 Tom Dickman <tom.dickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @group      tool_licensemanager
  */
+#[\PHPUnit\Framework\Attributes\Group('tool_licensemanager')]
 final class helper_test extends advanced_testcase {
 
     public function test_convert_version_to_epoch(): void {

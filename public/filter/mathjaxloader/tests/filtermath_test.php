@@ -25,16 +25,16 @@ use core\context\system as context_system;
  * @category  test
  * @copyright 2018 Markku Riekkinen
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_mathjaxloader\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_mathjaxloader\text_filter::class)]
 final class filtermath_test extends \advanced_testcase {
     /**
      * Test the functionality of {@see text_filter::filter()}.
      *
      * @param string $inputtext The text given by the user.
      * @param string $expected The expected output after filtering.
-     * @dataProvider math_filtering_inputs
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('math_filtering_inputs')]
     public function test_math_filtering($inputtext, $expected): void {
         $filter = new text_filter(context_system::instance(), []);
         $this->assertEquals($expected, $filter->filter($inputtext));

@@ -25,8 +25,8 @@ use advanced_testcase;
  * @category   test
  * @copyright  2026 Yusuf Wibisono <yusuf.wibisono@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers ::filter_algebra_updatedcallback
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('filter_algebra_updatedcallback')]
 final class lib_test extends advanced_testcase {
     public function test_updatedcallback_purges_file_area_and_cache(): void {
         $this->resetAfterTest(true);

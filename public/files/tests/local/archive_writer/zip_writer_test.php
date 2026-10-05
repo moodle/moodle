@@ -28,8 +28,8 @@ use ZipArchive;
  * @category test
  * @copyright 2020 Mark Nelson <mdjnelson@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @covers \core_files\local\archive_writer\zip_writer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_files\local\archive_writer\zip_writer::class)]
 final class zip_writer_test extends advanced_testcase {
 
     /**

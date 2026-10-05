@@ -30,10 +30,10 @@ use invalid_parameter_exception;
  * Unit tests for audience helper
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\helpers\audience
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\helpers\audience::class)]
 final class audience_test extends advanced_testcase {
 
      /**
@@ -306,9 +306,8 @@ final class audience_test extends advanced_testcase {
      * Test retrieving list of reports that user can access observes capability to view all reports
      *
      * @param string $capability
-     *
-     * @dataProvider user_reports_list_access_sql_with_capability_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_reports_list_access_sql_with_capability_provider')]
     public function test_user_reports_list_access_sql_with_capability(string $capability): void {
         global $DB;
 

@@ -26,10 +26,10 @@ use core_customfield\field_config_form;
  * Tests for the field controller
  *
  * @package    customfield_number
- * @covers     \customfield_number\field_controller
  * @copyright  2024 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\customfield_number\field_controller::class)]
 final class field_controller_test extends advanced_testcase {
 
     /**
@@ -73,9 +73,8 @@ final class field_controller_test extends advanced_testcase {
      * @param float|string $maximumvalue
      * @param string $display
      * @param bool $expected
-     *
-     * @dataProvider form_definition_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('form_definition_provider')]
     public function test_form_definition(
         float|string $defaultvalue,
         float|string $minimumvalue,

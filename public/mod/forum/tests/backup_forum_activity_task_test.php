@@ -42,9 +42,8 @@ final class backup_forum_activity_task_test extends \advanced_testcase {
      *
      * @param string $content       The incoming content
      * @param string $expectation   The expected result
-     *
-     * @dataProvider encode_content_links_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('encode_content_links_provider')]
     public function test_encode_content_links($content, $expectation): void {
         $this->assertEquals($expectation, backup_forum_activity_task::encode_content_links($content));
     }

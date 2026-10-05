@@ -26,8 +26,8 @@ use Invoker\Exception\NotCallableException;
  * @package    core
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\router\callable_resolver
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\callable_resolver::class)]
 final class callable_resolver_test extends \advanced_testcase {
     public function test_can_resolve_slim_notation(): void {
         $resolver = di::get(callable_resolver::class);

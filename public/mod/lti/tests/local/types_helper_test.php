@@ -48,14 +48,13 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  * @package    mod_lti
  * @copyright  2023 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_lti\local\types_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_lti\local\types_helper::class)]
 final class types_helper_test extends mod_lti_testcase {
 
     /**
      * Test fetching tool types for a given course and user.
      *
-     * @covers ::get_lti_types_by_course
      * @return void.
      */
     public function test_get_lti_types_by_course(): void {
@@ -172,7 +171,6 @@ final class types_helper_test extends mod_lti_testcase {
     /**
      * Test fetching tool types for a given course and user.
      *
-     * @covers ::override_type_showinactivitychooser
      * @return void.
      */
     public function test_override_type_showinactivitychooser(): void {

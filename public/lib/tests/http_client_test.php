@@ -29,9 +29,14 @@ use GuzzleHttp\Psr7\Uri;
  * @category   test
  * @copyright  2022 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @coversDefaultClass \core\http_client
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\http_client::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\http_client::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\local\guzzle\check_request::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\local\guzzle\redirect_middleware::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\local\guzzle\cache_item::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\local\guzzle\cache_handler::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\local\guzzle\cache_storage::class)]
 final class http_client_test extends \advanced_testcase {
 
     /**
@@ -40,7 +45,6 @@ final class http_client_test extends \advanced_testcase {
      * @param object $object
      * @param string $attributename
      * @return mixed
-     * @covers \core\http_client
      */
     public static function read_object_attribute(object $object, string $attributename) {
         $reflector = new \ReflectionObject($object);
@@ -68,8 +72,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test http client can send request synchronously.
-     *
-     * @covers \core\http_client
      */
     public function test_http_client_can_send_synchronously(): void {
         $testhtml = $this->getExternalTestFileUrl('/test.html');
@@ -83,8 +85,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test http client can have options as a part of the request.
-     *
-     * @covers \core\http_client
      */
     public function test_http_client_has_options(): void {
         $testhtml = $this->getExternalTestFileUrl('/test.html');
@@ -108,8 +108,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test guzzle can have headers changed in the request.
-     *
-     * @covers \core\http_client
      */
     public function test_http_client_can_modify_the_header_for_each_request(): void {
         $testhtml = $this->getExternalTestFileUrl('/test.html');
@@ -125,8 +123,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test guzzle can unset options.
-     *
-     * @covers \core\http_client
      */
     public function test_can_unset_request_option_with_null(): void {
         $testhtml = $this->getExternalTestFileUrl('/test.html');
@@ -143,8 +139,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test the basic cookiejar functionality.
-     *
-     * @covers \core\http_client
      */
     public function test_basic_cookie_jar(): void {
         $mock = new MockHandler([
@@ -160,8 +154,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test the basic shared cookiejar.
-     *
-     * @covers \core\http_client
      */
     public function test_shared_cookie_jar(): void {
         $mock = new MockHandler([
@@ -176,9 +168,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test guzzle security helper.
-     *
-     * @covers \core\http_client
-     * @covers \core\local\guzzle\check_request
      */
     public function test_guzzle_basics_with_security_helper(): void {
         $this->resetAfterTest();
@@ -221,9 +210,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test guzzle proxy bypass with moodle.
-     *
-     * @covers \core\http_client
-     * @covers \core\local\guzzle\check_request
      */
     public function test_http_client_proxy_bypass(): void {
         $this->resetAfterTest();
@@ -252,9 +238,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test moodle redirect can be set with guzzle.
-     *
-     * @covers \core\http_client
-     * @covers \core\local\guzzle\redirect_middleware
      */
     public function test_moodle_allow_redirects_can_be_true(): void {
         $testurl = $this->getExternalTestFileUrl('/test_redir.php');
@@ -268,9 +251,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test redirect with absolute url.
-     *
-     * @covers \core\http_client
-     * @covers \core\local\guzzle\redirect_middleware
      */
     public function test_redirects_with_absolute_uri(): void {
         $testurl = $this->getExternalTestFileUrl('/test_redir.php');
@@ -289,9 +269,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test redirect with relatetive url.
-     *
-     * @covers \core\http_client
-     * @covers \core\local\guzzle\redirect_middleware
      */
     public function test_redirects_with_relative_uri(): void {
         $testurl = $this->getExternalTestFileUrl('/test_relative_redir.php');
@@ -360,10 +337,6 @@ final class http_client_test extends \advanced_testcase {
 
     /**
      * Test guzzle cache middleware.
-     *
-     * @covers \core\local\guzzle\cache_item
-     * @covers \core\local\guzzle\cache_handler
-     * @covers \core\local\guzzle\cache_storage
      */
     public function test_http_client_cache_item(): void {
         global $CFG, $USER;

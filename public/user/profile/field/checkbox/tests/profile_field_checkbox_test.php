@@ -23,10 +23,10 @@ use profile_field_checkbox;
  * Unit tests for the field class
  *
  * @package     profilefield_checkbox
- * @covers      \profile_field_checkbox
  * @copyright   2024 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\profile_field_checkbox::class)]
 final class profile_field_checkbox_test extends advanced_testcase {
 
     /**
@@ -65,9 +65,8 @@ final class profile_field_checkbox_test extends advanced_testcase {
      *
      * @param array $userrecord
      * @param bool $expected
-     *
-     * @dataProvider is_empty_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_empty_provider')]
     public function test_is_empty(array $userrecord, bool $expected): void {
         $this->resetAfterTest();
 

@@ -35,9 +35,9 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @covers \mod_bigbluebuttonbn\local\helpers\mod_helper
- * @coversDefaultClass \mod_bigbluebuttonbn\local\helpers\mod_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\local\helpers\mod_helper::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\local\helpers\mod_helper::class)]
 final class mod_helper_trait_test extends \advanced_testcase {
     use testcase_helper_trait;
 

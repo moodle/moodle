@@ -33,6 +33,7 @@ require_once($CFG->dirroot . '/my/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_block_external::class, 'get_dashboard_blocks')]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_course_blocks
@@ -527,8 +528,6 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
     /**
      * Test that requesting My courses blocks when enablemycourses is disabled throws an exception.
-     *
-     * @covers \core_block_external::get_dashboard_blocks
      */
     public function test_get_dashboard_blocks_my_courses_disabled(): void {
         global $CFG, $PAGE;

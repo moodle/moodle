@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @copyright  2006 The Open University
  * @author     2021, Guillermo Gomez Arias <guillermogomez@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \qbank_managecategories\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_managecategories\helper::class)]
 final class helper_test extends manage_category_test_base {
     use \quiz_question_helper_test_trait;
 
@@ -77,8 +77,6 @@ final class helper_test extends manage_category_test_base {
 
     /**
      * Test question_remove_stale_questions_from_category function.
-     *
-     * @covers ::question_remove_stale_questions_from_category
      */
     public function test_question_remove_stale_questions_from_category(): void {
         global $DB;
@@ -150,9 +148,6 @@ final class helper_test extends manage_category_test_base {
 
     /**
      * Test delete top category in function question_can_delete_cat.
-     *
-     * @covers ::question_can_delete_cat
-     * @covers ::question_is_top_category
      */
     public function test_question_can_delete_cat_top_category(): void {
 
@@ -175,9 +170,6 @@ final class helper_test extends manage_category_test_base {
 
     /**
      * Test delete only child category in function question_can_delete_cat.
-     *
-     * @covers ::question_can_delete_cat
-     * @covers ::question_is_only_child_of_top_category_in_context
      */
     public function test_question_can_delete_cat_child_category(): void {
 
@@ -199,8 +191,6 @@ final class helper_test extends manage_category_test_base {
 
     /**
      * Test delete category in function question_can_delete_cat without capabilities.
-     *
-     * @covers ::question_can_delete_cat
      */
     public function test_question_can_delete_cat_capability(): void {
 
@@ -231,9 +221,6 @@ final class helper_test extends manage_category_test_base {
 
     /**
      * Test question_category_select_menu function.
-     *
-     * @covers ::question_category_select_menu
-     * @covers ::question_category_options
      */
     public function test_question_category_select_menu(): void {
         $this->setAdminUser();
@@ -255,12 +242,6 @@ final class helper_test extends manage_category_test_base {
 
     /**
      * Test that question_category_options function returns the correct category tree.
-     *
-     * @covers ::question_category_options
-     * @covers ::get_categories_for_contexts
-     * @covers ::question_fix_top_names
-     * @covers ::question_add_context_in_key
-     * @covers ::add_indented_names
      */
     public function test_question_category_options(): void {
         $this->setAdminUser();
@@ -292,8 +273,6 @@ final class helper_test extends manage_category_test_base {
 
     /**
      * Test that question_category_options function does not include the current category.
-     *
-     * @covers ::question_category_options
      */
     public function test_question_category_options_exclude_current(): void {
         $this->setAdminUser();
@@ -327,8 +306,6 @@ final class helper_test extends manage_category_test_base {
 
     /**
      * Test that get_categories_for_contexts function returns the correct question count number.
-     *
-     * @covers ::get_categories_for_contexts
      */
     public function test_question_category_question_count(): void {
         global $DB;

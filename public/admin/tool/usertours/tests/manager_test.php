@@ -28,8 +28,8 @@ require_once(__DIR__ . '/helper_trait.php');
  * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \tool_usertours\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\manager::class)]
 final class manager_test extends \advanced_testcase {
     // There are shared helpers for these tests in the helper trait.
     use \tool_usertours_helper_trait;
@@ -104,10 +104,10 @@ final class manager_test extends \advanced_testcase {
     /**
      * Ensure that all modification actions require the session key.
      *
-     * @dataProvider sesskey_required_provider
      * @param   string  $function   The function to test
      * @param   array   $arguments  The arguments to pass with it
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sesskey_required_provider')]
     public function test_sesskey_required($function, $arguments): void {
         $manager = new \tool_usertours\manager();
 
@@ -161,7 +161,6 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test moving tours (changing sortorder)
      *
-     * @dataProvider move_tour_provider
      *
      * @param array $alltours
      * @param string $movetourname
@@ -169,6 +168,7 @@ final class manager_test extends \advanced_testcase {
      * @param int $expectedsortorder
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('move_tour_provider')]
     public function test_move_tour($alltours, $movetourname, $direction, $expectedsortorder): void {
         global $DB;
 
@@ -313,11 +313,11 @@ final class manager_test extends \advanced_testcase {
     /**
      * Tests for the get_matching_tours function.
      *
-     * @dataProvider get_matching_tours_provider
      * @param   array   $alltours   The list of tours to insert.
      * @param   string  $url        The URL to test.
      * @param   array   $expected   List of names of the expected matching tours.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_matching_tours_provider')]
     public function test_get_matching_tours(array $alltours, string $url, array $expected): void {
         $this->resetAfterTest();
 

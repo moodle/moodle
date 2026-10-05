@@ -34,8 +34,10 @@ require_once($CFG->dirroot . '/question/editlib.php');
  *
  * @copyright  2014 Nikita Nikitsky, Volgograd State Technical University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \qformat_xml
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qformat_xml::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\qformat_default::class, 'importprocess')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\qformat_default::class, 'importprocess')]
 final class qformat_xml_import_export_test extends advanced_testcase {
     /** @var stdClass mod_qbank instance */
     private stdClass $qbank;
@@ -167,7 +169,6 @@ final class qformat_xml_import_export_test extends advanced_testcase {
      * Check importing categories that were in a now deprecated context.
      *
      * @return void
-     * @covers \qformat_default::importprocess()
      */
     public function test_deprecated_category_import(): void {
         $this->resetAfterTest();
@@ -258,8 +259,6 @@ final class qformat_xml_import_export_test extends advanced_testcase {
 
     /**
      * Check exception when importing questions with invalid grades.
-     *
-     * @covers \qformat_default::importprocess
      */
     public function test_import_invalid_grades(): void {
         global $OUTPUT;

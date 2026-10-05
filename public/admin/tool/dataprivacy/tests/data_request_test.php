@@ -88,11 +88,11 @@ final class data_request_test extends data_privacy_testcase {
     /**
      * Test the pseudo states of a data request with an export request.
      *
-     * @dataProvider        status_state_provider
      * @param       int     $state
      * @param       bool    $resettable
      * @param       bool    $active
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('status_state_provider')]
     public function test_pseudo_states_export(int $state, bool $resettable, bool $active): void {
         $uut = new \tool_dataprivacy\data_request();
         $uut->set('status', $state);
@@ -105,11 +105,11 @@ final class data_request_test extends data_privacy_testcase {
     /**
      * Test the pseudo states of a data request with a delete request.
      *
-     * @dataProvider        status_state_provider
      * @param       int     $state
      * @param       bool    $resettable
      * @param       bool    $active
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('status_state_provider')]
     public function test_pseudo_states_delete(int $state, bool $resettable, bool $active): void {
         $uut = new \tool_dataprivacy\data_request();
         $uut->set('status', $state);
@@ -122,9 +122,9 @@ final class data_request_test extends data_privacy_testcase {
     /**
      * Test the pseudo states of a data request.
      *
-     * @dataProvider        status_state_provider
      * @param       int     $state
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('status_state_provider')]
     public function test_can_reset_others(int $state, bool $resettable, bool $active): void {
         $uut = new \tool_dataprivacy\data_request();
         $uut->set('status', $state);
@@ -152,9 +152,9 @@ final class data_request_test extends data_privacy_testcase {
     /**
      * Ensure that requests which are not resettable cause an exception to be thrown.
      *
-     * @dataProvider        non_resettable_provider
      * @param       int     $state
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('non_resettable_provider')]
     public function test_non_resubmit_request($state): void {
         $uut = new \tool_dataprivacy\data_request();
         $uut->set('status', $state);

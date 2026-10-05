@@ -178,7 +178,6 @@ final class prediction_test extends \advanced_testcase {
     /**
      * test_ml_training_and_prediction
      *
-     * @dataProvider provider_ml_training_and_prediction
      * @param string $timesplittingid
      * @param int $predictedrangeindex
      * @param int $nranges
@@ -186,6 +185,7 @@ final class prediction_test extends \advanced_testcase {
      * @param array $forcedconfig
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_ml_training_and_prediction')]
     public function test_ml_training_and_prediction($timesplittingid, $predictedrangeindex, $nranges, $predictionsprocessorclass,
             $forcedconfig): void {
         global $DB;
@@ -360,8 +360,8 @@ final class prediction_test extends \advanced_testcase {
      *
      * @param string $predictionsprocessorclass The class name
      * @param array $forcedconfig
-     * @dataProvider provider_ml_processors
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_ml_processors')]
     public function test_ml_export_import($predictionsprocessorclass, $forcedconfig): void {
         $this->resetAfterTest(true);
 
@@ -435,7 +435,6 @@ final class prediction_test extends \advanced_testcase {
      * This test checks that all mlbackend plugins in the system are able to return proper status codes
      * even under weird situations.
      *
-     * @dataProvider provider_ml_classifiers_return
      * @param int $success
      * @param int $nsamples
      * @param int $classes
@@ -443,6 +442,7 @@ final class prediction_test extends \advanced_testcase {
      * @param array $forcedconfig
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_ml_classifiers_return')]
     public function test_ml_classifiers_return($success, $nsamples, $classes, $predictionsprocessorclass, $forcedconfig): void {
         $this->resetAfterTest();
 
@@ -527,13 +527,13 @@ final class prediction_test extends \advanced_testcase {
     /**
      * Tests correct multi-classification.
      *
-     * @dataProvider provider_test_multi_classifier
      * @param string $timesplittingid
      * @param string $predictionsprocessorclass
      * @param array|null $forcedconfig
      * @throws coding_exception
      * @throws moodle_exception
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_multi_classifier')]
     public function test_ml_multi_classifier($timesplittingid, $predictionsprocessorclass, $forcedconfig): void {
         global $DB;
 
@@ -597,8 +597,6 @@ final class prediction_test extends \advanced_testcase {
     /**
      * Basic test to check that prediction processors work as expected.
      *
-     * @coversNothing
-     * @dataProvider provider_ml_test_evaluation_configuration
      * @param string $modelquality
      * @param int $ncourses
      * @param array $expected
@@ -606,6 +604,8 @@ final class prediction_test extends \advanced_testcase {
      * @param array $forcedconfig
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_ml_test_evaluation_configuration')]
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_ml_evaluation_configuration($modelquality, $ncourses, $expected, $predictionsprocessorclass,
             $forcedconfig): void {
         $this->resetAfterTest(true);
@@ -655,12 +655,12 @@ final class prediction_test extends \advanced_testcase {
     /**
      * Tests the evaluation of already trained models.
      *
-     * @coversNothing
-     * @dataProvider provider_ml_processors
      * @param  string $predictionsprocessorclass
      * @param array $forcedconfig
      * @return null
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_ml_processors')]
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_ml_evaluation_trained_model($predictionsprocessorclass, $forcedconfig): void {
         $this->resetAfterTest(true);
 

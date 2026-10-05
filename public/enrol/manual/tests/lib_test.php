@@ -27,6 +27,10 @@ use stdClass;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_manual::class, 'add_default_instance')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_manual::class, 'update_instance')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('find_instance')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_plugin::class, 'send_course_welcome_message_to_user')]
 final class lib_test extends \advanced_testcase {
     /**
      * Test enrol migration function used when uninstalling enrol plugins.
@@ -537,11 +541,10 @@ final class lib_test extends \advanced_testcase {
     /**
      * Test how the default enrolment instance inherits its settings from the global plugin settings.
      *
-     * @dataProvider default_enrolment_instance_data_provider
      * @param stdClass $expectation
      * @param stdClass $globalsettings
-     * @covers \enrol_manual::add_default_instance
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('default_enrolment_instance_data_provider')]
     public function test_default_enrolment_instance_acquires_correct_settings(stdClass $expectation, stdClass $globalsettings): void {
         global $DB;
 
@@ -640,12 +643,11 @@ final class lib_test extends \advanced_testcase {
     /**
      * Tests an enrolment instance is updated properly.
      *
-     * @covers \enrol_manual::update_instance
-     * @dataProvider update_enrolment_instance_data_provider
      *
      * @param stdClass $expectation
      * @param stdClass $updatedata
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('update_enrolment_instance_data_provider')]
     public function test_enrolment_instance_is_updated(stdClass $expectation, stdClass $updatedata): void {
         global $DB;
 
@@ -753,8 +755,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of find_instance().
-     *
-     * @covers ::find_instance
      */
     public function test_find_instance(): void {
         global $DB;
@@ -780,8 +780,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test send_course_welcome_message_to_user() method.
-     *
-     * @covers \enrol_plugin::send_course_welcome_message_to_user
      */
     public function test_send_course_welcome_message(): void {
         global $DB;
@@ -907,8 +905,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test send_course_welcome_message_to_user() method via hook.
-     *
-     * @covers \enrol_plugin::send_course_welcome_message_to_user
      */
     public function test_send_course_welcome_message_via_hook(): void {
         global $DB;

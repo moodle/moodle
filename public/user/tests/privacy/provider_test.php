@@ -28,8 +28,8 @@ use core_user\privacy\provider;
  * @package core_user
  * @copyright  2018 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_user\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_user\privacy\provider::class)]
 final class provider_test extends provider_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;

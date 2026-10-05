@@ -34,10 +34,11 @@ require_once(__DIR__ . '/testcase_helper_trait.php');
  * @package    aiprovider_awsbedrock
  * @copyright  2025 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiprovider_awsbedrock\provider
- * @covers     \aiprovider_awsbedrock\process_generate_image
- * @covers     \aiprovider_awsbedrock\abstract_processor
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_awsbedrock\provider::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_awsbedrock\process_generate_image::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_awsbedrock\abstract_processor::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_stability_aspect_ratio')]
 final class process_generate_image_test extends \advanced_testcase {
     use testcase_helper_trait;
 
@@ -275,10 +276,10 @@ final class process_generate_image_test extends \advanced_testcase {
     /**
      * Test handling of various API errors from AWS Bedrock.
      *
-     * @dataProvider aws_api_error_provider
      * @param AwsException $exception The AWS exception to simulate.
      * @param int $expectedstatus The expected HTTP status code in the error response.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('aws_api_error_provider')]
     public function test_handle_api_error(AwsException $exception, int $expectedstatus): void {
         // Create an instance of the class that processes API errors.
         $processor = new process_generate_image($this->provider, $this->action);
@@ -719,13 +720,12 @@ final class process_generate_image_test extends \advanced_testcase {
      * Tests the get_stability_aspect_ratio() method.
      * Verifies that the correct aspect ratio value is returned for a given combination of aspect ratio and quality settings.
      *
-     * @covers ::get_stability_aspect_ratio
-     * @dataProvider aspect_ratio_provider
      *
      * @param string $aspectratio The requested aspect ratio (e.g. square, landscape, portrait).
      * @param string $quality     The requested quality setting (e.g. standard, hd).
      * @param string $expected    The expected Stability aspect ratio value.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('aspect_ratio_provider')]
     public function test_get_stability_aspect_ratio(string $aspectratio, string $quality, string $expected): void {
         $processor = new process_generate_image($this->provider, $this->action);
 

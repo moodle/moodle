@@ -25,18 +25,17 @@ use core_adminpresets\manager;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_admin_presets\local\action\export
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_admin_presets\local\action\export::class)]
 final class export_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of execute() method.
-     * @covers ::execute
-     * @dataProvider export_execute_provider
      *
      * @param bool $includesensible Whether the sensible settings should be exported too or not.
      * @param string $presetname Preset name.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_execute_provider')]
     public function test_export_execute(bool $includesensible = false, string $presetname = 'Export 1'): void {
         global $DB;
 

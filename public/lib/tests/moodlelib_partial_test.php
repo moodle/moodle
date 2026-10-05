@@ -23,8 +23,8 @@ namespace core;
  * @category  test
  * @copyright 2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers ::partial
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('partial')]
 final class moodlelib_partial_test extends \advanced_testcase {
     /**
      * Test that arguments to partial can be passed as anticipated.
@@ -33,8 +33,8 @@ final class moodlelib_partial_test extends \advanced_testcase {
      * @param array $initialargs The initial arguments to pass to the callable.
      * @param array $calledargs The arguments to pass to the partially applied callable.
      * @param mixed $expected The expected return value.
-     * @dataProvider partial_args_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('partial_args_provider')]
     public function test_partial_args(
         callable $callable,
         array $initialargs,

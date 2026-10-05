@@ -23,8 +23,8 @@ namespace tool_admin_presets\event;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \tool_admin_presets\event\preset_loaded
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_admin_presets\event\preset_loaded::class)]
 final class preset_loaded_test extends \advanced_testcase {
 
     /**

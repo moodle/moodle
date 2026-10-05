@@ -38,11 +38,11 @@ final class upgrade_util_test extends \advanced_testcase {
     /**
      * Test PHP/cURL validation.
      *
-     * @dataProvider validate_php_curl_tls_testcases
      * @param array $curlinfo server curl_version array
      * @param int   $zts      0 or 1 as defined by PHP_ZTS
      * @param bool  $expected expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validate_php_curl_tls_testcases')]
     public function test_validate_php_curl_tls($curlinfo, $zts, $expected): void {
         $this->assertSame($expected, \core\upgrade\util::validate_php_curl_tls($curlinfo, $zts));
     }
@@ -100,11 +100,11 @@ final class upgrade_util_test extends \advanced_testcase {
     /**
      * Test various combinations of SSL/TLS libraries.
      *
-     * @dataProvider can_use_tls12_testcases
      * @param string $sslversion the ssl_version string.
      * @param string|null $uname uname string (or null if not relevant)
      * @param bool $expected expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_use_tls12_testcases')]
     public function test_can_use_tls12($sslversion, $uname, $expected): void {
         // Populate curlinfo with whats installed on this php install.
         $curlinfo = curl_version();

@@ -33,15 +33,14 @@ defined('MOODLE_INTERNAL') || die();
  * @category   phpunit
  * @copyright  2010 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_text
  *
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_text::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\moodle_phpmailer::class, 'encodeHeader')]
 final class text_test extends advanced_testcase {
 
     /**
      * Tests the static parse charset method.
-     *
-     * @covers ::parse_charset()
      */
     public function test_parse_charset(): void {
         $this->assertSame('windows-1250', core_text::parse_charset('Cp1250'));
@@ -51,8 +50,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static convert method.
-     *
-     * @covers ::convert()
      */
     public function test_convert(): void {
         $this->assertSame('', core_text::convert('', 'utf-8', 'utf-8'));
@@ -113,8 +110,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static sub string method.
-     *
-     * @covers ::substr()
      */
     public function test_substr(): void {
         $str = "Žluťoučký koníček";
@@ -163,8 +158,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static string length method.
-     *
-     * @covers ::strlen()
      */
     public function test_strlen(): void {
         $str = "Žluťoučký koníček";
@@ -208,8 +201,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Test unicode safe string truncation.
-     *
-     * @covers ::str_max_bytes()
      */
     public function test_str_max_bytes(): void {
         // These are all 3 byte characters, so this is a 12-byte string.
@@ -263,8 +254,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static strtolower method.
-     *
-     * @covers ::strtolower()
      */
     public function test_strtolower(): void {
         $str = "Žluťoučký koníček";
@@ -305,8 +294,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static strtoupper.
-     *
-     * @covers ::strtoupper()
      */
     public function test_strtoupper(): void {
         $str = "Žluťoučký koníček";
@@ -344,8 +331,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Test the strrev method.
-     *
-     * @covers ::strrev()
      */
     public function test_strrev(): void {
         $strings = array(
@@ -369,8 +354,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static strpos method.
-     *
-     * @covers ::strpos()
      */
     public function test_strpos(): void {
         $str = "Žluťoučký koníček";
@@ -382,8 +365,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static strrpos.
-     *
-     * @covers ::strrpos()
      */
     public function test_strrpos(): void {
         $str = "Žluťoučký koníček";
@@ -395,8 +376,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static specialtoascii method.
-     *
-     * @covers ::specialtoascii()
      */
     public function test_specialtoascii(): void {
         $str = "Žluťoučký koníček";
@@ -423,9 +402,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static encode_mimeheader method.
-     *
-     * @covers ::encode_mimeheader()
-     * @covers \moodle_phpmailer::encodeHeader()
      */
     public function test_encode_mimeheader(): void {
         global $CFG;
@@ -467,8 +443,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests conversion of named to numeric html entities.
-     *
-     * @covers ::entities_named_to_numeric()
      */
     public function test_entities_named_to_numeric(): void {
         $str = '&amp; &quot; &lt; &gt;';
@@ -499,8 +473,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static entities_to_utf8 method.
-     *
-     * @covers ::entities_to_utf8()
      */
     public function test_entities_to_utf8(): void {
         $str = "&#x17d;lu&#x165;ou&#x10d;k&#xfd; kon&iacute;&#269;ek&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
@@ -512,8 +484,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static utf8_to_entities method.
-     *
-     * @covers ::utf8_to_entities()
      */
     public function test_utf8_to_entities(): void {
         $str = "&#x17d;luťoučký kon&iacute;ček&copy;&quot;&amp;&lt;&gt;&sect;&laquo;";
@@ -531,8 +501,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static trim_utf8_bom method.
-     *
-     * @covers ::trim_utf8_bom()
      */
     public function test_trim_utf8_bom(): void {
         $bom = "\xef\xbb\xbf";
@@ -545,8 +513,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static remove_unicode_non_characters method.
-     *
-     * @covers ::remove_unicode_non_characters()
      */
     public function test_remove_unicode_non_characters(): void {
         // Confirm that texts which don't contain these characters are unchanged.
@@ -571,8 +537,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static get_encodings method.
-     *
-     * @covers ::get_encodings()
      */
     public function test_get_encodings(): void {
         $encodings = core_text::get_encodings();
@@ -583,8 +547,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static code2utf8 method.
-     *
-     * @covers ::code2utf8()
      */
     public function test_code2utf8(): void {
         $this->assertSame('Ž', core_text::code2utf8(381));
@@ -592,8 +554,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static utf8ord method.
-     *
-     * @covers ::utf8ord()
      */
     public function test_utf8ord(): void {
         $this->assertSame(ord(''), core_text::utf8ord(''));
@@ -609,8 +569,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Tests the static strtotitle method.
-     *
-     * @covers ::strtotitle()
      */
     public function test_strtotitle(): void {
         $str = "žluťoučký koníček";
@@ -622,8 +580,6 @@ final class text_test extends advanced_testcase {
 
     /**
      * Test strrchr.
-     *
-     * @covers ::strrchr()
      */
     public function test_strrchr(): void {
         $str = "Žluťoučký koníček";
@@ -639,11 +595,10 @@ final class text_test extends advanced_testcase {
     /**
      * Tests the static checker is_charset_supported
      *
-     * @dataProvider is_charset_supported_provider
      * @param string $charset
      * @param bool $expected
-     * @covers ::is_charset_supported()
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_charset_supported_provider')]
     public function test_is_charset_supported(string $charset, bool $expected): void {
         $charset = core_text::parse_charset($charset);
         $this->assertEquals($expected, core_text::is_charset_supported($charset));

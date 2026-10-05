@@ -26,8 +26,8 @@ use mod_bigbluebuttonbn\task\completion_update_state;
  * @copyright 2024 Catalyst IT
  * @author    Matthew Hilton <matthewhilton@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \mod_bigbluebuttonbn\task\completion_update_state
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\task\completion_update_state::class)]
 final class completion_update_state_task_test extends advanced_testcase {
 
     /**
@@ -86,8 +86,8 @@ final class completion_update_state_task_test extends advanced_testcase {
      * @param array $customdata customdata to set (with placeholders to replace with real data).
      * @param string $expectoutput any output expected from the test, or empty to not expect output.
      * @param string $expectexceptionmessage exception message expected from test, or empty to expect nothing.
-     * @dataProvider invalid_customdata_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_customdata_provider')]
     public function test_invalid_customdata(array $customdata, string $expectoutput, string $expectexceptionmessage): void {
         $this->resetAfterTest();
         $customdata = (object) $customdata;

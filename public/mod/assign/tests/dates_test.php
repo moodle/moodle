@@ -120,7 +120,6 @@ final class dates_test extends advanced_testcase {
     /**
      * Test for get_dates_for_module().
      *
-     * @dataProvider get_dates_for_module_provider
      * @param int|null $from Time of opening submissions in the assignment.
      * @param int|null $due Assignment's due date.
      * @param int|null $userfrom The user override for opening submissions.
@@ -129,6 +128,7 @@ final class dates_test extends advanced_testcase {
      * @param int|null $groupdue The group override for due date.
      * @param array $expected The expected value of calling get_dates_for_module()
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_dates_for_module_provider')]
     public function test_get_dates_for_module(?int $from, ?int $due,
             ?int $userfrom, ?int $userdue,
             ?int $groupfrom, ?int $groupdue,

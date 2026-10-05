@@ -32,14 +32,12 @@ namespace core\event;
  * @category   test
  * @copyright  2020 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\event\grade_item_deleted
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\grade_item_deleted::class)]
 final class grade_item_deleted_test extends \advanced_testcase {
 
     /**
      * Test the grade item deleted event.
-     *
-     * @covers ::create_from_grade_item
      */
     public function test_grade_item_deleted(): void {
         global $DB;

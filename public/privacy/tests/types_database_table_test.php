@@ -29,19 +29,18 @@ global $CFG;
  * @category    test
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_privacy\local\metadata\types\database_table
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_privacy\local\metadata\types\database_table::class)]
 final class types_database_table_test extends \advanced_testcase {
 
     /**
      * Ensure that warnings are thrown if string identifiers contain invalid characters.
      *
-     * @dataProvider invalid_string_provider
      * @param   string  $name Name
      * @param   array   $fields List of fields
      * @param   string  $summary Summary
-     * @covers ::__construct
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_string_provider')]
     public function test_invalid_configs($name, $fields, $summary): void {
         $record = new database_table($name, $fields, $summary);
         $this->assertDebuggingCalled();
@@ -50,12 +49,11 @@ final class types_database_table_test extends \advanced_testcase {
     /**
      * Ensure that warnings are not thrown if debugging is not enabled, even if string identifiers contain invalid characters.
      *
-     * @dataProvider invalid_string_provider
      * @param   string  $name Name
      * @param   array   $fields List of fields
      * @param   string  $summary Summary
-     * @covers ::__construct
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_string_provider')]
     public function test_invalid_configs_debug_normal($name, $fields, $summary): void {
         global $CFG;
         $this->resetAfterTest();
@@ -68,12 +66,11 @@ final class types_database_table_test extends \advanced_testcase {
     /**
      * Ensure that no warnings are shown for valid combinations.
      *
-     * @dataProvider valid_string_provider
      * @param   string  $name Name
      * @param   array   $fields List of fields
      * @param   string  $summary Summary
-     * @covers ::__construct
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_string_provider')]
     public function test_valid_configs($name, $fields, $summary): void {
         $record = new database_table($name, $fields, $summary);
         $this->assertDebuggingNotCalled();

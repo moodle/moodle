@@ -29,10 +29,10 @@ use core_reportbuilder\tests\core_reportbuilder_testcase;
  * Unit tests for messages datasource
  *
  * @package     core_message
- * @covers      \core_message\reportbuilder\datasource\messages
  * @copyright   2025 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_message\reportbuilder\datasource\messages::class)]
 final class messages_test extends core_reportbuilder_testcase {
     /** @var clock $clock */
     private readonly clock $clock;
@@ -237,9 +237,8 @@ final class messages_test extends core_reportbuilder_testcase {
      * @param string $filtername
      * @param array $filtervalues
      * @param bool $expectmatch
-     *
-     * @dataProvider datasource_filters_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('datasource_filters_provider')]
     public function test_datasource_filters(string $filtername, array $filtervalues, bool $expectmatch): void {
         $this->resetAfterTest();
 

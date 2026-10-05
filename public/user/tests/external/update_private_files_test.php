@@ -25,8 +25,8 @@ use core_external\external_api;
  * @category  external
  * @copyright 2024 Juan Leyva
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_user\external\update_private_files
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_user\external\update_private_files::class)]
 final class update_private_files_test extends \advanced_testcase {
 
     /**

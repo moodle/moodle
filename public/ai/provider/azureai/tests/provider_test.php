@@ -24,8 +24,8 @@ use core_ai\manager;
  * @package    aiprovider_azureai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiprovider_azureai\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_azureai\provider::class)]
 final class provider_test extends \advanced_testcase {
 
     /** @var manager $manager */

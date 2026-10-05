@@ -31,6 +31,8 @@ require_once($CFG->dirroot . '/mod/quiz/lib.php');
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('mod_quiz_core_calendar_event_timestart_updated')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('mod_quiz_core_calendar_get_valid_event_timestart_range')]
 final class calendar_event_modified_test extends \advanced_testcase {
 
     /**
@@ -194,7 +196,6 @@ final class calendar_event_modified_test extends \advanced_testcase {
 
     /**
      * A QUIZ_EVENT_TYPE_DUE event should update the due date property of the quiz activity.
-     * @covers ::mod_quiz_core_calendar_event_timestart_updated
      */
     public function test_mod_quiz_core_calendar_event_timestart_updated_due_event(): void {
         global $DB;
@@ -278,7 +279,6 @@ final class calendar_event_modified_test extends \advanced_testcase {
 
     /**
      * A QUIZ_EVENT_TYPE_DUE event should not update the duedate property of the quiz activity if it's an override.
-     * @covers ::mod_quiz_core_calendar_event_timestart_updated
      */
     public function test_mod_quiz_core_calendar_event_timestart_updated_due_event_override(): void {
         global $DB;
@@ -550,7 +550,6 @@ final class calendar_event_modified_test extends \advanced_testcase {
 
     /**
      * The due event should be limited by the quiz's timeopen and timeclose properties, if set.
-     * @covers ::mod_quiz_core_calendar_get_valid_event_timestart_range
      */
     public function test_mod_quiz_core_calendar_get_valid_event_timestart_range_due_event(): void {
         $this->resetAfterTest();

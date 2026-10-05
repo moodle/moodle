@@ -34,10 +34,9 @@ require_once($CFG->dirroot . '/question/type/calculated/tests/helper.php');
  * @package    qtype_calculated
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \question_type
- * @covers \qtype_calculated
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_type::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_calculated::class)]
 final class question_type_test extends \advanced_testcase {
     protected $tolerance = 0.00000001;
     protected $qtype;

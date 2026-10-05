@@ -28,6 +28,7 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David  (laurent.david [at] call-learning [dt] fr)
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\recording_row_playback::class, 'should_be_included')]
 final class recording_row_playback_test extends \advanced_testcase {
     use testcase_helper_trait;
 
@@ -92,9 +93,8 @@ final class recording_row_playback_test extends \advanced_testcase {
      * @param array $canview
      * @param object|null $globalsettings
      * @return void
-     * @covers       \recording_row_playback::should_be_included
-     * @dataProvider should_be_included_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('should_be_included_data_provider')]
     public function test_should_be_included(string $role, array $canview, ?object $globalsettings = null): void {
         global $PAGE;
         $this->resetAfterTest();
@@ -153,7 +153,6 @@ final class recording_row_playback_test extends \advanced_testcase {
      * Test recording link is rendered for imported recordings.
      *
      * @return void
-     * @covers       \recording_row_playback::should_be_included
      */
     public function test_show_recording_links(): void {
         global $PAGE;

@@ -37,9 +37,8 @@ final class phpxmlrpc_test extends \basic_testcase {
      *
      * This may seem silly, sure it is. But it's a good way to verify
      * that the Moodle PSR-4 autoloader is working ok.
-     *
-     * @coversNothing
      */
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_phpxmlrpc_availability(): void {
         // All these classes need to be at hand.
         $this->assertInstanceOf(\PhpXmlRpc\Client::class, new Client('https://example.com'));

@@ -31,8 +31,8 @@ namespace filter_data;
  * @package filter_data
  * @copyright 2015 David Monllao
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_data\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_data\text_filter::class)]
 final class text_filter_test extends \advanced_testcase {
     /**
      * Tests that the filter applies the required changes.

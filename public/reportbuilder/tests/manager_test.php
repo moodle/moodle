@@ -31,10 +31,10 @@ use stdClass;
  * Unit tests for the report manager class
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\manager
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\manager::class)]
 final class manager_test extends core_reportbuilder_testcase {
 
     /**
@@ -191,8 +191,8 @@ final class manager_test extends core_reportbuilder_testcase {
      * @param int $customreportslimit
      * @param int $existingreports
      * @param bool $expected
-     * @dataProvider report_limit_reached_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('report_limit_reached_provider')]
     public function test_report_limit_reached(int $customreportslimit, int $existingreports, bool $expected): void {
         global $CFG;
 

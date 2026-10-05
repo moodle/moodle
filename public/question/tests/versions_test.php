@@ -28,8 +28,8 @@ use mod_quiz\quiz_settings;
  * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_question\versions
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\versions::class)]
 final class versions_test extends \advanced_testcase {
     /**
      * Generate 3 questions - one with 3 versions, one with 2, and one with 1.
@@ -358,9 +358,9 @@ final class versions_test extends \advanced_testcase {
      * @param $versions
      * @param $expectedrenumbers
      * @return array
-     * @dataProvider renumber_versions_provider
      * @todo Deprecate in 6.0 MDL-87844 for removal in 7.0 MDL-87845.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('renumber_versions_provider')]
     public function test_renumber_versions(array $versions, array $expectedrenumbers): void {
         $this->assertEquals($expectedrenumbers, versions::renumber_versions($versions));
     }

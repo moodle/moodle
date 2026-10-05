@@ -34,8 +34,8 @@ require_once($CFG->dirroot . '/question/type/multichoice/edit_multichoice_form.p
  * @package   qtype_multichoice
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \qtype_multichoice
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_multichoice::class)]
 final class question_type_test extends \advanced_testcase {
     protected $qtype;
 
@@ -113,9 +113,7 @@ final class question_type_test extends \advanced_testcase {
         return array(array('two_of_four'), array('one_of_four'));
     }
 
-    /**
-     * @dataProvider get_question_saving_which
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_question_saving_which')]
     public function test_question_saving_two_of_four($which): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();

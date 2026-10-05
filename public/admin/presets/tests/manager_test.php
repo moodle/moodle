@@ -26,8 +26,8 @@ use stdClass;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_adminpresets\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_adminpresets\manager::class)]
 final class manager_test extends \advanced_testcase {
     /**
      * Include required libraries.
@@ -40,9 +40,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of protected get_site_settings method.
-     *
-     * @covers ::get_site_settings
-     * @covers ::get_settings
      */
     public function test_manager_get_site_settings(): void {
         global $DB;
@@ -109,9 +106,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of protected get_setting method.
-     *
-     * @covers ::get_setting
-     * @covers ::get_settings_class
      */
     public function test_manager_get_setting(): void {
         $this->resetAfterTest();
@@ -157,8 +151,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of apply_preset() method when the given presetid doesn't exist.
-     *
-     * @covers ::apply_preset
      */
     public function test_apply_preset_unexisting_preset(): void {
         $this->resetAfterTest();
@@ -178,8 +170,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of apply_preset() method.
-     *
-     * @covers ::apply_preset
      */
     public function test_apply_preset(): void {
         global $DB;
@@ -261,12 +251,11 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test the behaviour of export_preset() method.
      *
-     * @covers ::export_preset
-     * @dataProvider export_preset_provider
      *
      * @param bool $includesensible Whether the sensible settings should be exported too or not.
      * @param string $presetname Preset name.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_preset_provider')]
     public function test_export_preset(bool $includesensible = false, string $presetname = 'Export 1'): void {
         global $DB;
 
@@ -390,8 +379,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of download_preset() method, when the given presetid doesn't exist.
-     *
-     * @covers ::download_preset
      */
     public function test_download_unexisting_preset(): void {
         $this->resetAfterTest();
@@ -413,8 +400,6 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test the behaviour of import_preset() method.
      *
-     * @dataProvider import_preset_provider
-     * @covers ::import_preset
      *
      * @param string $filecontents File content to import.
      * @param bool $expectedpreset Whether the preset should be created or not.
@@ -424,6 +409,7 @@ final class manager_test extends \advanced_testcase {
      * @param string|null $expectedexception Expected exception class (if that's the case).
      * @param string|null $expectedpresetname Expected preset name.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('import_preset_provider')]
     public function test_import_preset(string $filecontents, bool $expectedpreset, bool $expectedsettings = false,
             bool $expectedplugins = false, bool $expecteddebugging = false, ?string $expectedexception = null,
             string $expectedpresetname = 'Imported preset'): void {
@@ -609,8 +595,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of delete_preset() method when the preset id doesn't exist.
-     *
-     * @covers ::delete_preset
      */
     public function test_delete_preset_unexisting_preset(): void {
 
@@ -633,8 +617,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test trying to delete the core/pre-defined presets
-     *
-     * @covers ::delete_preset
      */
     public function test_delete_preset_core(): void {
         global $DB;
@@ -650,8 +632,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of delete_preset() method.
-     *
-     * @covers ::delete_preset
      */
     public function test_delete_preset(): void {
         global $DB;
@@ -704,8 +684,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of revert_preset() method when the preset applied id doesn't exist.
-     *
-     * @covers ::revert_preset
      */
     public function test_revert_preset_unexisting_presetapp(): void {
         global $DB;
@@ -728,8 +706,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of revert_preset() method.
-     *
-     * @covers ::revert_preset
      */
     public function test_revert_preset(): void {
         global $DB;
@@ -817,11 +793,10 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test apply_preset for a deprecated plugin type.
      *
-     * @runInSeparateProcess
      *
-     * @covers ::apply_preset
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_apply_preset_deprecated_plugintype(): void {
         global $CFG;
         $this->resetAfterTest();
@@ -854,14 +829,13 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test import_preset() behaviour for executable-path settings depending on $CFG->preventexecpath.
      *
-     * @dataProvider import_preset_execpath_provider
-     * @covers ::import_preset
      *
      * @param bool $preventexecpath Whether to set $CFG->preventexecpath before importing.
      * @param int $expecteditemcount Expected number of items stored in the preset.
      * @param string[] $presentnames Setting names that must appear in the stored items.
      * @param string[] $absentnames Setting names that must not appear in the stored items.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('import_preset_execpath_provider')]
     public function test_import_preset_execpath(
         bool $preventexecpath,
         int $expecteditemcount,
@@ -922,13 +896,12 @@ final class manager_test extends \advanced_testcase {
      * guard (skipped) and happy-path (applied) branches depending on $CFG->preventexecpath
      * and whether the path is a valid executable.
      *
-     * @dataProvider apply_settings_execpath_provider
-     * @covers ::apply_preset
      *
      * @param bool $preventexecpath Whether to set $CFG->preventexecpath.
      * @param string $presetpath The executable path value stored in the preset.
      * @param bool $expectedapplied Whether the setting should end up in $applied (true) or $skipped (false).
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('apply_settings_execpath_provider')]
     public function test_apply_settings_execpath(bool $preventexecpath, string $presetpath, bool $expectedapplied): void {
         global $CFG;
 

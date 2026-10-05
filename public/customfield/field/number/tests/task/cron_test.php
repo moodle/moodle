@@ -27,10 +27,10 @@ use customfield_number\test_provider;
  * Test the cron task.
  *
  * @package    customfield_number
- * @covers     \customfield_number\task\cron
  * @copyright  2026 Sebastian Gundersen <sebastian.gundersen@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\customfield_number\task\cron::class)]
 final class cron_test extends \advanced_testcase {
     /** @var field_controller Field */
     private field_controller $field;

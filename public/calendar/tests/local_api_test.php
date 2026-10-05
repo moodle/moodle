@@ -28,8 +28,8 @@ require_once(__DIR__ . '/helpers.php');
  * @package    core_calendar
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_calendar\local\api
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_calendar\local\api::class)]
 final class local_api_test extends \advanced_testcase {
 
     /**
@@ -288,7 +288,6 @@ final class local_api_test extends \advanced_testcase {
 
     /**
      * Test get_calendar_action_events_by_timesort with search feature.
-     * @covers ::get_action_events_by_timesort
      */
     public function test_get_calendar_action_events_by_timesort_with_search(): void {
         // Generate data.
@@ -715,7 +714,6 @@ final class local_api_test extends \advanced_testcase {
 
     /**
      * Test get_action_events_by_courses with search feature.
-     * @covers ::get_action_events_by_courses
      */
     public function test_get_action_events_by_courses_with_search(): void {
         // Generate data.

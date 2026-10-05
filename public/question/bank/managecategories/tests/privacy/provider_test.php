@@ -27,13 +27,11 @@ use qbank_managecategories\privacy\provider;
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     2021, Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \qbank_managecategories\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_managecategories\privacy\provider::class)]
 final class provider_test extends advanced_testcase {
     /**
      * Test to check export_user_preferences.
-     *
-     * @covers ::export_user_preferences
      */
     public function test_export_user_preferences(): void {
         $this->resetAfterTest();

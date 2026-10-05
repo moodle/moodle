@@ -25,8 +25,8 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @package   mod_bigbluebuttonbn
  * @copyright 2026 onwards, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_bigbluebuttonbn\output\unconfigured_view
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\output\unconfigured_view::class)]
 final class unconfigured_view_test extends \advanced_testcase {
     use testcase_helper_trait;
 
@@ -46,8 +46,6 @@ final class unconfigured_view_test extends \advanced_testcase {
 
     /**
      * Admin sees the admin message and a settings link.
-     *
-     * @covers ::export_for_template
      */
     public function test_admin_sees_settings_link(): void {
         global $PAGE;
@@ -74,8 +72,6 @@ final class unconfigured_view_test extends \advanced_testcase {
 
     /**
      * Teacher (editing teacher with manageactivities but not site:config) sees teacher message, no settings link.
-     *
-     * @covers ::export_for_template
      */
     public function test_teacher_sees_contact_admin_message(): void {
         global $PAGE;
@@ -94,8 +90,6 @@ final class unconfigured_view_test extends \advanced_testcase {
 
     /**
      * Student sees student message, no settings link.
-     *
-     * @covers ::export_for_template
      */
     public function test_student_sees_contact_teacher_message(): void {
         global $PAGE;

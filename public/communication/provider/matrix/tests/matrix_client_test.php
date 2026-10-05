@@ -34,9 +34,9 @@ require_once(__DIR__ . '/matrix_client_test_trait.php');
  * @category   test
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \communication_matrix\matrix_client
- * @coversDefaultClass \communication_matrix\matrix_client
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\communication_matrix\matrix_client::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\communication_matrix\matrix_client::class)]
 final class matrix_client_test extends \advanced_testcase {
     use matrix_client_test_trait;
 
@@ -78,10 +78,10 @@ final class matrix_client_test extends \advanced_testcase {
     /**
      * Test that the instance method returns a valid instance for the given versions.
      *
-     * @dataProvider instance_provider
      * @param array|null $versions
      * @param string $expectedversion
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('instance_provider')]
     public function test_instance(
         ?array $versions,
         string $expectedversion,
@@ -165,13 +165,11 @@ final class matrix_client_test extends \advanced_testcase {
     /**
      * Test the feature implementation check methods.
      *
-     * @covers ::implements_feature
-     * @covers ::get_supported_versions
-     * @dataProvider implements_feature_provider
      * @param string $version
      * @param array|string $features
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('implements_feature_provider')]
     public function test_implements_feature(
         string $version,
         array|string $features,
@@ -184,14 +182,11 @@ final class matrix_client_test extends \advanced_testcase {
     /**
      * Test the feature implementation requirement methods.
      *
-     * @covers ::implements_feature
-     * @covers ::get_supported_versions
-     * @covers ::require_feature
-     * @dataProvider implements_feature_provider
      * @param string $version
      * @param array|string $features
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('implements_feature_provider')]
     public function test_require_feature(
         string $version,
         array|string $features,
@@ -210,15 +205,11 @@ final class matrix_client_test extends \advanced_testcase {
     /**
      * Test the feature implementation requirement methods for a require all.
      *
-     * @covers ::implements_feature
-     * @covers ::get_supported_versions
-     * @covers ::require_feature
-     * @covers ::require_features
-     * @dataProvider require_features_provider
      * @param string $version
      * @param array|string $features
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('require_features_provider')]
     public function test_require_features(
         string $version,
         array|string $features,
@@ -332,10 +323,8 @@ final class matrix_client_test extends \advanced_testcase {
      *
      * @param string $version
      * @param string $expectedversion
-     * @dataProvider get_version_provider
-     * @covers ::get_version
-     * @covers ::get_version_from_classname
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_version_provider')]
     public function test_get_version(
         string $version,
         string $expectedversion,
@@ -362,9 +351,8 @@ final class matrix_client_test extends \advanced_testcase {
      * @param string $version The version of the API to test against
      * @param string $testversion The version to test
      * @param bool $expected Whether the version meets the requirement
-     * @dataProvider meets_version_provider
-     * @covers ::meets_version
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('meets_version_provider')]
     public function test_meets_version(
         string $version,
         string $testversion,
@@ -380,9 +368,8 @@ final class matrix_client_test extends \advanced_testcase {
      * @param string $version The version of the API to test against
      * @param string $testversion The version to test
      * @param bool $expected Whether the version meets the requirement
-     * @dataProvider meets_version_provider
-     * @covers ::requires_version
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('meets_version_provider')]
     public function test_requires_version(
         string $version,
         string $testversion,
@@ -414,8 +401,6 @@ final class matrix_client_test extends \advanced_testcase {
 
     /**
      * Test the execute method with a command.
-     *
-     * @covers ::execute
      */
     public function test_command_is_executed(): void {
         $historycontainer = [];

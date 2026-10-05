@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/tests/helper.php');
  * @package   qtype_ddimageortext
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers qtype_ddimageortext_question
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ddimageortext_question::class)]
 final class question_test extends \basic_testcase {
 
     public function test_get_question_summary(): void {
