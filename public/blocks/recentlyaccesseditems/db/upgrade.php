@@ -73,5 +73,8 @@ function xmldb_block_recentlyaccesseditems_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2026050700, 'recentlyaccesseditems');
     }
 
+    // Automatically generated Moodle v5.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
