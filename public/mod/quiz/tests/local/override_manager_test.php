@@ -566,6 +566,53 @@ final class override_manager_test extends \advanced_testcase {
     }
 
     /**
+     * Tests that an override belonging to another quiz cannot be hijacked by referencing its id.
+     *
+     * A manager scoped to one quiz must reject a save that targets an existing override owned by a
+     * different quiz, leaving the original override untouched.
+     */
+    public function test_save_override_rejects_cross_quiz_existing_id(): void {
+        global $DB;
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        // Two independent quizzes. The override lives on the victim quiz.
+        [$victimquiz, $victimcourse] = $this->create_quiz_and_course();
+        [$attackerquiz] = $this->create_quiz_and_course();
+
+        $victimuser = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($victimuser->id, $victimcourse->id);
+
+        $overrideid = $DB->insert_record('quiz_overrides', [
+            'quiz' => $victimquiz->get_quizid(),
+            'userid' => $victimuser->id,
+            'attempts' => 5,
+            'password' => 'original',
+        ]);
+
+        // The attacker's manager references the victim override id while saving against its own quiz.
+        $manager = $attackerquiz->get_override_manager();
+
+        try {
+            $manager->save_override([
+                'id' => $overrideid,
+                'userid' => $victimuser->id,
+                'attempts' => 1,
+                'password' => 'STOLEN',
+            ]);
+            $this->fail('Expected invalid_parameter_exception was not thrown.');
+        } catch (\invalid_parameter_exception $e) {
+            $this->assertStringContainsString(get_string('overrideinvalidexistingid', 'quiz'), $e->getMessage());
+        }
+
+        // The victim override still belongs to the victim quiz with its original values.
+        $override = $DB->get_record('quiz_overrides', ['id' => $overrideid]);
+        $this->assertEquals($victimquiz->get_quizid(), $override->quiz);
+        $this->assertEquals(5, $override->attempts);
+        $this->assertEquals('original', $override->password);
+    }
+
+    /**
      * Provides values to test_validate_data
      *
      * @return array
