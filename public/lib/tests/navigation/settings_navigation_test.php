@@ -42,10 +42,10 @@ final class settings_navigation_test extends \advanced_testcase {
     }
 
     /**
-     * @depends test_setting___construct
      * @param mixed $node
      * @return mixed
      */
+    #[\PHPUnit\Framework\Attributes\Depends('test_setting___construct')]
     public function test_setting__initialise($node): settings_navigation {
         $this->resetAfterTest(false);
 
@@ -57,10 +57,10 @@ final class settings_navigation_test extends \advanced_testcase {
 
 
     /**
-     * @depends test_setting__initialise
      * @param mixed $node
      * @return mixed
      */
+    #[\PHPUnit\Framework\Attributes\Depends('test_setting__initialise')]
     public function test_setting_in_alternative_role($node): void {
         $this->resetAfterTest();
 

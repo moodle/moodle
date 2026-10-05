@@ -24,10 +24,10 @@ namespace mod_bigbluebuttonbn;
  * @copyright  2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_bigbluebuttonbn_generator::class, 'create_instance')]
 final class generator_test extends \advanced_testcase {
     /**
      * Test the creation of a bigbluebuttonbn instance.
-     * @covers \mod_bigbluebuttonbn_generator::create_instance
      */
     public function test_create_instance(): void {
         $db = \core\di::get(\moodle_database::class);
@@ -55,9 +55,8 @@ final class generator_test extends \advanced_testcase {
      * @param string|int $closing The closing time as a timestamp or human-readable date
      * @param int $expectedopening The expected opening time as a timestamp.
      * @param int $expectedclosing The expected closing time as a timestamp.
-     * @covers \mod_bigbluebuttonbn_generator::create_instance
-     * @dataProvider provider_create_instance_with_name
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_create_instance_with_name')]
     public function test_create_instance_with_dates(
         string|int $opening,
         string|int $closing,

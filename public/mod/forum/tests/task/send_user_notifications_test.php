@@ -40,12 +40,11 @@ use RuntimeException;
  * @copyright   2024 Waleed ul hassan <waleed.hassan@catalyst-eu.net>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_forum\task\send_user_notifications::class)]
 final class send_user_notifications_test extends \advanced_testcase {
     /**
      * Testcase to check send notification for post via email
      *
-     * @covers \mod_forum\task\send_user_notifications
-     * @dataProvider send_user_notifications_cases
      * @param array $userdata Test user for the case.
      * @param string $expectedstring Expected string during the test case.
      * @param array $expecteddebuggingstrings Expected debugging strings array.
@@ -55,6 +54,7 @@ final class send_user_notifications_test extends \advanced_testcase {
      * @throws RuntimeException If the notification fails to send.
      * @throws Exception For any other general errors.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('send_user_notifications_cases')]
     public function test_send_user_notifications(
         array $userdata,
         string $expectedstring,

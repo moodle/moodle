@@ -25,8 +25,8 @@ use question_bank;
  * @copyright  2022 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \qbank_history\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_history\helper::class)]
 final class helper_test extends \advanced_testcase {
     /**
      * @var bool|\context|\context_course $context
@@ -74,8 +74,6 @@ final class helper_test extends \advanced_testcase {
 
     /**
      * Test the history action url from the helper class.
-     *
-     * @covers ::question_history_url
      */
     public function test_question_history_url(): void {
         $this->resetAfterTest();
@@ -98,8 +96,6 @@ final class helper_test extends \advanced_testcase {
 
     /**
      * Test the history action url when the filter parameter is null.
-     *
-     * @covers ::question_history_url
      */
     public function test_question_history_url_null_filter(): void {
         $this->resetAfterTest();

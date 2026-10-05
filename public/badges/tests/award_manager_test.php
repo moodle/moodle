@@ -31,10 +31,13 @@ require_once($CFG->libdir . '/badgeslib.php');
  * Unit tests for award_manager class.
  *
  * @package     core_badges
- * @covers      \core_badges\award_manager
  * @copyright   2025 Dai Nguyen Trong <ngtrdai@hotmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\award_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_badges\award_manager::class, 'process_manual_award')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_badges\award_manager::class, 'process_manual_revoke')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_badges\classes\award_manager::class, 'process_manual_revoke')]
 final class award_manager_test extends badges_testcase {
     /**
      * Create a simple test environment.
@@ -91,11 +94,10 @@ final class award_manager_test extends badges_testcase {
     /**
      * Test successful manual badge award.
      *
-     * @dataProvider badge_types_provider
-     * @covers       \core_badges\award_manager::process_manual_award
      * @param int $badgetype The type of badge to test.
      * @param mixed $courseid Course ID configuration.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('badge_types_provider')]
     public function test_process_manual_award_success(int $badgetype, $courseid): void {
         global $DB;
 
@@ -142,11 +144,10 @@ final class award_manager_test extends badges_testcase {
     /**
      * Test duplicate manual badge award prevention.
      *
-     * @dataProvider badge_types_provider
-     * @covers       \core_badges\award_manager::process_manual_award
      * @param int $badgetype The type of badge to test.
      * @param mixed $courseid Course ID configuration.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('badge_types_provider')]
     public function test_process_manual_award_duplicate_prevention(int $badgetype, $courseid): void {
         global $DB;
 
@@ -186,11 +187,10 @@ final class award_manager_test extends badges_testcase {
     /**
      * Test successful manual badge revocation.
      *
-     * @dataProvider badge_types_provider
-     * @covers       \core_badges\award_manager::process_manual_revoke
      * @param int $badgetype The type of badge to test.
      * @param mixed $courseid Course ID configuration.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('badge_types_provider')]
     public function test_process_manual_revoke_success(int $badgetype, $courseid): void {
         global $DB;
 
@@ -255,11 +255,10 @@ final class award_manager_test extends badges_testcase {
     /**
      * Test manual badge revocation when award record doesn't exist.
      *
-     * @dataProvider badge_types_provider
-     * @covers       \core_badges\classes\award_manager::process_manual_revoke
      * @param int $badgetype The type of badge to test.
      * @param mixed $courseid Course ID configuration.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('badge_types_provider')]
     public function test_process_manual_revoke_nonexistent_award(int $badgetype, $courseid): void {
         $this->resetAfterTest();
 
@@ -285,11 +284,10 @@ final class award_manager_test extends badges_testcase {
     /**
      * Test manual badge revocation with partial database failure.
      *
-     * @dataProvider badge_types_provider
-     * @covers       \core_badges\classes\award_manager::process_manual_revoke
      * @param int $badgetype The type of badge to test.
      * @param mixed $courseid Course ID configuration.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('badge_types_provider')]
     public function test_process_manual_revoke_partial_failure(int $badgetype, $courseid): void {
         global $DB;
 

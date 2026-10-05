@@ -24,8 +24,8 @@ use enrol_lti\local\ltiadvantage\repository\legacy_consumer_repository;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\migration_claim
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\entity\migration_claim::class)]
 final class migration_claim_test extends \advanced_testcase {
     /**
      * Setup run for each test case.
@@ -48,7 +48,6 @@ final class migration_claim_test extends \advanced_testcase {
     /**
      * Test instantiation and getters of the migration_claim.
      *
-     * @dataProvider migration_claim_provider
      * @param array $lti1p1migrationclaim the lti1p1 migration claim.
      * @param string $deploymentid string id of the tool deployment.
      * @param string $platform string url of the issuer.
@@ -57,8 +56,8 @@ final class migration_claim_test extends \advanced_testcase {
      * @param string $nonce nonce.
      * @param bool $stublegacyconsumerrepo Whether the legacy consumer repo is a stub
      * @param array $expected array containing expectation data.
-     * @covers ::__construct
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('migration_claim_provider')]
     public function test_migration_claim(
         array $lti1p1migrationclaim,
         string $deploymentid,

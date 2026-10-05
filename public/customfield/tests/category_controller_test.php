@@ -25,8 +25,8 @@ use core_customfield_generator;
  * @category   test
  * @copyright  2018 Toni Barbera <toni@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_customfield\category_controller
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_customfield\category_controller::class)]
 final class category_controller_test extends \advanced_testcase {
     /**
      * Get generator.

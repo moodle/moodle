@@ -30,8 +30,8 @@ require_once($CFG->libdir . '/form/select.php');
  * @category  test
  * @copyright 2024 the Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \MoodleQuickForm_select
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\MoodleQuickForm_select::class)]
 final class select_test extends \advanced_testcase {
 
     /**

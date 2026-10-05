@@ -29,9 +29,9 @@ use Slim\Routing\RouteContext;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\parameters\path_component
- * @covers     \core\router\schema\parameters\path_parameter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\parameters\path_component::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\parameters\path_parameter::class)]
 final class path_component_test extends route_testcase {
     /**
      * Test that the parameter is valid when the component is not specified.
@@ -65,8 +65,8 @@ final class path_component_test extends route_testcase {
      * Test valid components.
      *
      * @param string $component
-     * @dataProvider valid_components
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_components')]
     public function test_valid_value(string $component): void {
         $param = new path_component();
 
@@ -88,8 +88,8 @@ final class path_component_test extends route_testcase {
      * Test invalid components.
      *
      * @param string $component
-     * @dataProvider invalid_components
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_components')]
     public function test_invalid_value(string $component): void {
         $this->resetAfterTest();
         $param = new path_component();

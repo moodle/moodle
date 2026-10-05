@@ -33,6 +33,8 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
  * @copyright  2017 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_userscompletion_structure_step::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_userscompletion_structure_step::class)]
 final class restore_stepslib_date_test extends \restore_date_testcase {
 
     /**
@@ -320,8 +322,6 @@ final class restore_stepslib_date_test extends \restore_date_testcase {
     /**
      * Checking that the user completion of an activity relating to the view field does not change
      * when doing a course restore.
-     * @covers \backup_userscompletion_structure_step
-     * @covers \restore_userscompletion_structure_step
      */
     public function test_usercompletion_view_restore(): void {
         global $DB;

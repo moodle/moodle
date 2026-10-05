@@ -32,8 +32,12 @@ use core_badges\local\backpack\ob_factory;
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_badges\local\backpack\ob_factory
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\local\backpack\ob_factory::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_assertion_exporter_from_hash')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_badge_exporter_from_id')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_badge_exporter_from_hash')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_issuer_exporter_from_id')]
 final class ob_factory_test extends \advanced_testcase {
     /**
      * Test create_assertion_exporter_from_hash().
@@ -41,9 +45,8 @@ final class ob_factory_test extends \advanced_testcase {
      * @param mixed $obversion Open Badges version to test.
      * @param string $expectedclassvalid Expected class for a valid assertion hash or 'exception' to expect an exception.
      * @param string $expectedclassinvalid Expected class for an invalid assertion hash or 'exception' to expect an exception.
-     * @dataProvider create_assertion_exporter_from_hash_provider
-     * @covers ::create_assertion_exporter_from_hash
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_assertion_exporter_from_hash_provider')]
     public function test_create_assertion_exporter_from_hash(
         $obversion,
         string $expectedclassvalid,
@@ -119,9 +122,8 @@ final class ob_factory_test extends \advanced_testcase {
      * @param mixed $obversion Open Badges version to test.
      * @param string $expectedclassvalid Expected class for a valid assertion hash or 'exception' to expect an exception.
      * @param string $expectedclassinvalid Expected class for an invalid assertion hash or 'exception' to expect an exception.
-     * @dataProvider create_badge_exporter_from_id_provider
-     * @covers ::create_badge_exporter_from_id
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_badge_exporter_from_id_provider')]
     public function test_create_badge_exporter_from_id(
         $obversion,
         string $expectedclassvalid,
@@ -192,9 +194,8 @@ final class ob_factory_test extends \advanced_testcase {
      * @param mixed $obversion Open Badges version to test.
      * @param string $expectedclassvalid Expected class for a valid assertion hash or 'exception' to expect an exception.
      * @param string $expectedclassinvalid Expected class for an invalid assertion hash or 'exception' to expect an exception.
-     * @dataProvider create_badge_exporter_from_hash_provider
-     * @covers ::create_badge_exporter_from_hash
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_badge_exporter_from_hash_provider')]
     public function test_create_badge_exporter_from_hash(
         $obversion,
         string $expectedclassvalid,
@@ -267,9 +268,8 @@ final class ob_factory_test extends \advanced_testcase {
      * @param mixed $obversion Open Badges version to test.
      * @param string $expectedclassvalid Expected class for a valid assertion hash or 'exception' to expect an exception.
      * @param string $expectedclassinvalid Expected class for an invalid assertion hash or 'exception' to expect an exception.
-     * @dataProvider create_issuer_exporter_from_id_provider
-     * @covers ::create_issuer_exporter_from_id
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_issuer_exporter_from_id_provider')]
     public function test_create_issuer_exporter_from_id(
         $obversion,
         string $expectedclassvalid,
@@ -310,9 +310,8 @@ final class ob_factory_test extends \advanced_testcase {
      * @param mixed $obversion Open Badges version to test.
      * @param string $expectedclassvalid Expected class for a valid assertion hash or 'exception' to expect an exception.
      * @param string $expectedclassinvalid Ignored (not used) for this test.
-     * @dataProvider create_issuer_exporter_from_id_provider
-     * @covers ::create_issuer_exporter_from_id
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_issuer_exporter_from_id_provider')]
     public function test_create_issuer_exporter_from_id_with_null_badge(
         $obversion,
         string $expectedclassvalid,

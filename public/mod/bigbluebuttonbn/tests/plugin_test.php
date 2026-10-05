@@ -24,14 +24,12 @@ use moodle_exception;
  * @package   mod_bigbluebuttonbn
  * @copyright 2021 Andrew Lyons <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_bigbluebuttonbn\plugin
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\plugin::class)]
 final class plugin_test extends advanced_testcase {
 
     /**
      * Test html2text
-     *
-     * @covers ::html2text
      */
     public function test_html2text(): void {
         $this->assertEquals('My text is in HTML', plugin::html2text('<p>My text is&nbsp;in HTML</p>', 100));
@@ -40,8 +38,6 @@ final class plugin_test extends advanced_testcase {
 
     /**
      * Test random_password
-     *
-     * @covers ::random_password
      */
     public function test_random_password(): void {
         $password = plugin::random_password(10);
@@ -52,8 +48,6 @@ final class plugin_test extends advanced_testcase {
 
     /**
      * Test generate_guest_meeting_credentials
-     *
-     * @covers ::generate_guest_meeting_credentials
      */
     public function test_generate_guest_meeting_credentials(): void {
         [$guestlinkuid, $password] = plugin::generate_guest_meeting_credentials();

@@ -34,12 +34,12 @@ final class helper_test extends \repository_googledocs_testcase {
     /**
      * Test build_node_path().
      *
-     * @dataProvider build_node_path_provider
      * @param string $id The ID of the node
      * @param string $name The name of the node
      * @param string $rootpath The path to append the node on
      * @param string $expected The expected node path
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('build_node_path_provider')]
     public function test_build_node_path(string $id, string $name, string $rootpath, string $expected): void {
         // Assert that the returned node path is equal to the expected one.
         $this->assertEquals($expected, helper::build_node_path($id, $name, $rootpath));
@@ -91,10 +91,10 @@ final class helper_test extends \repository_googledocs_testcase {
     /**
      * Test explode_node_path().
      *
-     * @dataProvider explode_node_path_provider
      * @param string $node The node string to extract information from
      * @param array $expected The expected array containing the information about the node
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('explode_node_path_provider')]
     public function test_explode_node_path(string $node, array $expected): void {
         // Assert that the returned array is equal to the expected one.
         $this->assertEquals($expected, helper::explode_node_path($node));
@@ -136,10 +136,10 @@ final class helper_test extends \repository_googledocs_testcase {
     /**
      * Test get_browser().
      *
-     * @dataProvider get_browser_provider
      * @param string $nodepath The node path string
      * @param string $expected The expected browser class
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_browser_provider')]
     public function test_get_browser(string $nodepath, string $expected): void {
         // The service (rest API) object is required by get_browser(), but not being used to determine which browser
         // object should be returned. Therefore, we can simply mock this object in this test.
@@ -188,10 +188,10 @@ final class helper_test extends \repository_googledocs_testcase {
     /**
      * Test get_node().
      *
-     * @dataProvider get_node_provider
      * @param \stdClass $gdcontent The Google Drive content (file/folder) object
      * @param string $expected The expected content node class
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_node_provider')]
     public function test_get_node(\stdClass $gdcontent, string $expected): void {
         // The path is required by get_content_node(), but not being used to determine which content node
         // object should be returned. Therefore, we can just generate a dummy path.
@@ -227,10 +227,10 @@ final class helper_test extends \repository_googledocs_testcase {
     /**
      * Test request() when an exception is thrown by the API call.
      *
-     * @dataProvider request_exception_provider
      * @param \Exception $exception The exception thrown by the API call
      * @param \Exception $expected The expected exception thrown by request()
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('request_exception_provider')]
     public function test_request_exception(\Exception $exception, \Exception $expected): void {
         // Mock the service object.
         $servicemock = $this->createMock(rest::class);

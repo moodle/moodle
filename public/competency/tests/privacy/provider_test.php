@@ -46,8 +46,8 @@ use core_competency\privacy\provider;
  * @copyright  2018 Frédéric Massart
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_competency\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_competency\privacy\provider::class)]
 final class provider_test extends provider_testcase {
 
     public function setUp(): void {

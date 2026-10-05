@@ -489,10 +489,10 @@ final class external_test extends \core_external\tests\externallib_testcase {
      * We're just checking the module context level here to test the WS function.
      * More testing is done in \tool_dataprivacy_api_testcase::test_set_context_defaults().
      *
-     * @dataProvider get_options_provider
      * @param bool $modulelevel Whether defaults are to be applied on the module context level or for an activity only.
      * @param bool $override Whether to override instances.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_options_provider')]
     public function test_set_context_defaults($modulelevel, $override): void {
         $this->resetAfterTest();
 
@@ -577,10 +577,10 @@ final class external_test extends \core_external\tests\externallib_testcase {
     /**
      * Test for \tool_dataprivacy\external::get_category_options().
      *
-     * @dataProvider get_options_provider
      * @param bool $includeinherit Whether "Inherit" would be included to the options.
      * @param bool $includenotset Whether "Not set" would be included to the options.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_options_provider')]
     public function test_get_category_options($includeinherit, $includenotset): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -639,10 +639,10 @@ final class external_test extends \core_external\tests\externallib_testcase {
     /**
      * Test for \tool_dataprivacy\external::get_purpose_options().
      *
-     * @dataProvider get_options_provider
      * @param bool $includeinherit Whether "Inherit" would be included to the options.
      * @param bool $includenotset Whether "Not set" would be included to the options.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_options_provider')]
     public function test_get_purpose_options($includeinherit, $includenotset): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -706,11 +706,11 @@ final class external_test extends \core_external\tests\externallib_testcase {
     /**
      * Test for \tool_dataprivacy\external::get_activity_options().
      *
-     * @dataProvider get_activity_options_provider
      * @param bool $inheritcategory Whether the category would be set to "Inherit".
      * @param bool $inheritpurpose Whether the purpose would be set to "Inherit".
      * @param bool $nodefaults Whether to fetch only activities that don't have defaults.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_activity_options_provider')]
     public function test_get_activity_options($inheritcategory, $inheritpurpose, $nodefaults): void {
         $this->resetAfterTest();
         $this->setAdminUser();

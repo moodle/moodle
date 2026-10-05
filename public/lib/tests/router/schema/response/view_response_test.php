@@ -25,8 +25,8 @@ use GuzzleHttp\Psr7\ServerRequest;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\response\view_response
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\response\view_response::class)]
 final class view_response_test extends route_testcase {
     public function test_defaults(): void {
         $response = new response();

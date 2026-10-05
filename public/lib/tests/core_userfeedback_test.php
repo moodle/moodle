@@ -23,8 +23,8 @@ namespace core;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_userfeedback
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_userfeedback::class)]
 final class core_userfeedback_test extends \advanced_testcase {
     public function test_footer_not_added_if_disabled(): void {
         $this->resetAfterTest();

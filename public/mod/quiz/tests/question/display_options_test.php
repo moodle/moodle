@@ -28,8 +28,8 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @category   test
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz\question\display_options
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\question\display_options::class)]
 final class display_options_test extends \basic_testcase {
     public function test_num_attempts_access_rule(): void {
         $quiz = new \stdClass();

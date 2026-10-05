@@ -27,9 +27,8 @@ namespace core_files\redactor\services;
  * @package   core_files
  * @copyright Meirza <meirza.arson@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \core_files\redactor\services\exifremover_service
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_files\redactor\services\exifremover_service::class)]
 final class exifremover_service_test extends \advanced_testcase {
     /**
      * Tests the `exifremover_service` functionality using PHP GD.
@@ -70,11 +69,11 @@ final class exifremover_service_test extends \advanced_testcase {
     /**
      * Tests the `exifremover_service` functionality to flip orientation.
      *
-     * @dataProvider exifremover_service_flip_orientation_provider
      * @param string $sourcepath the path to the source image.
      * @param string $expectedpath the path to the expected image.
      * @param bool $expectedresult the expected result of the comparison.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('exifremover_service_flip_orientation_provider')]
     public function test_exifremover_service_flip_orientation_with_gd(
         string $sourcepath,
         string $expectedpath,

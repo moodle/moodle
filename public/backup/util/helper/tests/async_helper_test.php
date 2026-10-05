@@ -30,10 +30,10 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * Asyncronhous helper tests.
  *
  * @package    core_backup
- * @covers     \async_helper
  * @copyright  2018 Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\async_helper::class)]
 final class async_helper_test extends \advanced_testcase {
 
     /**

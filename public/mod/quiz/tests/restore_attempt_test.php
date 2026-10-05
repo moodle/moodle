@@ -28,6 +28,7 @@ use restore_dbops;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_quiz_activity_structure_step::class)]
 final class restore_attempt_test extends \advanced_testcase {
 
     /**
@@ -42,8 +43,6 @@ final class restore_attempt_test extends \advanced_testcase {
 
     /**
      * Test restore dates.
-     *
-     * @covers \restore_quiz_activity_structure_step
      */
     public function test_restore_question_attempts_missing_users(): void {
         global $DB, $USER;

@@ -36,6 +36,12 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_get_course_users::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('enrol_check_plugins')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('enrol_selfenrol_available')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_plugin::class, 'validate_enrol_plugin_data')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_plugin::class, 'update_enrol_plugin_data')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_plugin::class, 'send_course_welcome_message_to_user')]
 final class enrollib_test extends advanced_testcase {
 
     public function test_enrol_get_all_users_courses(): void {
@@ -301,10 +307,10 @@ final class enrollib_test extends advanced_testcase {
      * When a value for user id is present, the method should make sure the user has the proper capability to
      * un-enrol users before removing the enrolment data. If the capabilities are missing the data should not be removed.
      *
-     * @dataProvider enrol_course_delete_with_userid_provider
      * @param array $excludedcapabilities The capabilities that should be excluded from the user's role
      * @param bool $expected The expected results
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('enrol_course_delete_with_userid_provider')]
     public function test_enrol_course_delete_with_userid($excludedcapabilities, $expected): void {
         global $DB;
 
@@ -1061,9 +1067,8 @@ final class enrollib_test extends advanced_testcase {
      * @param int|null $timestartoffset Null for 0, otherwise offset from current time
      * @param int|null $timeendoffset Null for 0, otherwise offset from current time
      * @param bool $expectreturn
-     *
-     * @dataProvider enrol_get_my_courses_by_time_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('enrol_get_my_courses_by_time_provider')]
     public function test_enrol_get_my_courses_by_time(?int $timestartoffset, ?int $timeendoffset, bool $expectreturn): void {
         $this->resetAfterTest();
 
@@ -1120,7 +1125,6 @@ final class enrollib_test extends advanced_testcase {
     /**
      * test_course_users in groups
      *
-     * @covers \enrol_get_course_users()
      * @return void
      */
     public function test_course_users_in_groups(): void {
@@ -1301,7 +1305,6 @@ final class enrollib_test extends advanced_testcase {
     /**
      * Test the get_enrolled_courses_by_timeline_classification function.
      *
-     * @dataProvider get_enrol_get_my_courses_sort_by_last_access_test_cases
      * @param array $enrolledcoursesdata Courses to create and enrol the user in
      * @param array $unenrolledcoursesdata Courses to create nut not enrol the user in
      * @param string $sort Sort string for the enrol function
@@ -1309,6 +1312,7 @@ final class enrollib_test extends advanced_testcase {
      * @param int $offset Offset the courses result set by this amount
      * @param array $expectedcourses Expected courses in result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_enrol_get_my_courses_sort_by_last_access_test_cases')]
     public function test_enrol_get_my_courses_sort_by_last_access(
         $enrolledcoursesdata,
         $unenrolledcoursesdata,
@@ -1451,12 +1455,12 @@ final class enrollib_test extends advanced_testcase {
     /**
      * Test get_enrolled_with_capabilities_join cannotmatchanyrows attribute.
      *
-     * @dataProvider get_enrolled_with_capabilities_join_cannotmatchanyrows_data
      * @param string $capability the tested capability
      * @param bool $useprohibit if the capability must be assigned to prohibit
      * @param int $expectedmatch expected cannotmatchanyrows value
      * @param int $expectedcount expceted count value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_enrolled_with_capabilities_join_cannotmatchanyrows_data')]
     public function test_get_enrolled_with_capabilities_join_cannotmatchanyrows(
         string $capability,
         bool $useprohibit,
@@ -1523,7 +1527,6 @@ final class enrollib_test extends advanced_testcase {
 
     /**
      * Test last_time_enrolments_synced not recorded with "force" option for enrol_check_plugins.
-     * @covers ::enrol_check_plugins
      */
     public function test_enrol_check_plugins_with_forced_option(): void {
         $this->resetAfterTest();
@@ -1551,11 +1554,10 @@ final class enrollib_test extends advanced_testcase {
     /**
      * Test that empty 'enrolments_sync_interval' is treated as forced option for enrol_check_plugins.
      *
-     * @dataProvider empty_config_data_provider
-     * @covers ::enrol_check_plugins
      *
      * @param mixed $config Config value.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('empty_config_data_provider')]
     public function test_enrol_check_plugins_with_empty_config_value($config): void {
         global $CFG;
 
@@ -1570,7 +1572,6 @@ final class enrollib_test extends advanced_testcase {
 
     /**
      * Test last_time_enrolments_synced is recorded without "force" option for enrol_check_plugins.
-     * @covers ::enrol_check_plugins
      */
     public function test_last_time_enrolments_synced_is_set_if_not_forced(): void {
         $this->resetAfterTest();
@@ -1591,7 +1592,6 @@ final class enrollib_test extends advanced_testcase {
 
     /**
      * Test last_time_enrolments_synced is recorded correctly without "force" option for enrol_check_plugins.
-     * @covers ::enrol_check_plugins
      */
     public function test_last_time_enrolments_synced_is_set_if_not_forced_if_have_not_passed_interval(): void {
         global $CFG;
@@ -1615,8 +1615,6 @@ final class enrollib_test extends advanced_testcase {
 
     /**
      * Test enrol_selfenrol_available function behavior.
-     *
-     * @covers ::enrol_selfenrol_available
      */
     public function test_enrol_selfenrol_available(): void {
         global $DB, $CFG;
@@ -1746,8 +1744,6 @@ final class enrollib_test extends advanced_testcase {
 
     /**
      * Test the behaviour of validate_enrol_plugin_data().
-     *
-     * @covers \enrol_plugin::validate_enrol_plugin_data
      */
     public function test_validate_enrol_plugin_data(): void {
         $this->resetAfterTest();
@@ -1768,8 +1764,6 @@ final class enrollib_test extends advanced_testcase {
 
     /**
      * Test the behaviour of update_enrol_plugin_data().
-     *
-     * @covers \enrol_plugin::update_enrol_plugin_data
      */
     public function test_update_enrol_plugin_data(): void {
         global $DB;
@@ -1838,8 +1832,6 @@ final class enrollib_test extends advanced_testcase {
 
     /**
      * Test case for checking the email greetings in various user notification emails.
-     *
-     * @covers \enrol_plugin::send_course_welcome_message_to_user
      */
     public function test_email_greetings(): void {
         global $DB;

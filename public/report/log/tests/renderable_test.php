@@ -26,6 +26,9 @@ use core_user;
  * @copyright  2023 Stephan Robotta <stephan.robotta@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\report_log_renderable::class, 'get_user_list')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\report_log_renderable::class, 'get_group_list')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\report_log_renderable::class, 'setup_table')]
 final class renderable_test extends \advanced_testcase {
     /**
      * @var int The course with separate groups.
@@ -314,10 +317,9 @@ final class renderable_test extends \advanced_testcase {
      * @param string $username
      * @param array $expectedusers
      * @param string|null $groupname
-     * @covers       \report_log_renderable::get_user_list
-     * @dataProvider get_user_visibility_list_provider
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_user_visibility_list_provider')]
     public function test_get_user_list(int $courseindex, string $username, array $expectedusers,
         ?string $groupname = null): void {
         global $PAGE, $CFG;
@@ -368,10 +370,9 @@ final class renderable_test extends \advanced_testcase {
     /**
      * Test report_log_renderable::get_group_list().
      *
-     * @covers       \report_log_renderable::get_group_list
-     * @dataProvider get_group_list_provider
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_group_list_provider')]
     public function test_get_group_list($courseindex, $username, $expectedcount): void {
         global $PAGE;
         $PAGE->set_url('/report/log/index.php?id=' . $this->courses[$courseindex]->id);
@@ -388,10 +389,9 @@ final class renderable_test extends \advanced_testcase {
      * @param string $username
      * @param array $expectedusers
      * @param string|null $groupname
-     * @covers       \report_log_renderable::get_user_list
-     * @dataProvider get_user_visibility_list_provider
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_user_visibility_list_provider')]
     public function test_get_table_logs(int $courseindex, string $username, array $expectedusers, ?string $groupname = null): void {
         global $DB, $PAGE;
         $this->preventResetByRollback(); // This is to ensure that we can actually trigger event and record them in the log store.
@@ -441,7 +441,6 @@ final class renderable_test extends \advanced_testcase {
     /**
      * Test getting logs for deleted courses.
      *
-     * @covers \report_log_renderable::setup_table
      * @return void
      */
     public function test_get_deleted_course_logs(): void {

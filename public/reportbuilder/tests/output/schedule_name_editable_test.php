@@ -27,10 +27,11 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests for the schedule name editable class
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\output\schedule_name_editable
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\output\schedule_name_editable::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('core_reportbuilder_inplace_editable')]
 final class schedule_name_editable_test extends advanced_testcase {
 
     /**
@@ -78,8 +79,6 @@ final class schedule_name_editable_test extends advanced_testcase {
 
     /**
      * Test update method via component callback
-     *
-     * @covers ::core_reportbuilder_inplace_editable
      */
     public function test_update_callback(): void {
         $this->resetAfterTest();

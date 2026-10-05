@@ -31,9 +31,9 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @package   mod_quiz
  * @copyright 2023 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \backup_quiz_activity_structure_step
- * @covers    \restore_quiz_activity_structure_step
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_quiz_activity_structure_step::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_quiz_activity_structure_step::class)]
 final class restore_quiz_grade_items_test extends restore_date_testcase {
 
     public function test_restore_quiz_grade_items(): void {

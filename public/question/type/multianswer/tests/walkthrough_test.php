@@ -37,6 +37,7 @@ require_once($CFG->dirroot . '/question/type/multianswer/questiontype.php');
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\qtype_multianswer_renderer::class, 'subquestion')]
 final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     protected function get_contains_subq_status(question_state $state) {
@@ -537,8 +538,6 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * Test corrupted question display.
-     *
-     * @covers \qtype_multianswer_renderer::subquestion
      */
     public function test_corrupted_question(): void {
         global $DB;

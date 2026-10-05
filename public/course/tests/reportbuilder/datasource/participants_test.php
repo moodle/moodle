@@ -31,10 +31,10 @@ use grade_item;
  * Course participants datasource tests
  *
  * @package     core_course
- * @covers      \core_course\reportbuilder\datasource\participants
  * @copyright   2022 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_course\reportbuilder\datasource\participants::class)]
 final class participants_test extends core_reportbuilder_testcase {
 
     /**
@@ -465,9 +465,8 @@ final class participants_test extends core_reportbuilder_testcase {
      * @param string $filter
      * @param array $filtervalues
      * @param string[] $expected
-     *
-     * @dataProvider datasource_filters_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('datasource_filters_provider')]
     public function test_datasource_filters(string $filter, array $filtervalues, array $expected): void {
         global $DB;
         $this->resetAfterTest();

@@ -22,8 +22,8 @@ namespace core_ai\external;
  * @package    core_ai
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\external\set_provider_order
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_ai\external\set_provider_order::class)]
 final class provider_order_test extends \advanced_testcase {
     /**
      * Test set provider order.

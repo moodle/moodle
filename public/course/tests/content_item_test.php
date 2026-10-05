@@ -29,8 +29,8 @@ use core_course\local\entity\string_title;
  * @subpackage course
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_course\local\entity\content_item
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_course\local\entity\content_item::class)]
 final class content_item_test extends \advanced_testcase {
 
     /**

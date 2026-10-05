@@ -29,11 +29,10 @@ require_once(__DIR__ . '/testcase_helper_trait.php');
  * @package    aiprovider_deepseek
  * @copyright  2025 Yusuf Wibisono <yusuf.wibisono@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers     \aiprovider_deepseek\provider
- * @covers     \aiprovider_deepseek\process_summarise_text
- * @covers     \aiprovider_deepseek\abstract_processor
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_deepseek\provider::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_deepseek\process_summarise_text::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_deepseek\abstract_processor::class)]
 final class process_summarise_text_test extends \advanced_testcase {
     use testcase_helper_trait;
 

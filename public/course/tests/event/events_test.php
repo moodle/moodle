@@ -31,6 +31,7 @@ namespace core_course\event;
  * @copyright  2016 Stephen Bourget
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\course_overview_viewed::class)]
 final class events_test extends \advanced_testcase {
 
     /**
@@ -143,8 +144,6 @@ final class events_test extends \advanced_testcase {
      *
      * There is no external API for viewing course information so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
-     *
-     * @covers \core\event\course_overview_viewed
      */
     public function test_course_overview_viewed_event(): void {
 

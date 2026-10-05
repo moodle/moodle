@@ -24,21 +24,21 @@ use mod_h5pactivity\local\manager;
  *
  * @package    mod_h5pactivity
  * @category   external
- * @covers     \mod_h5pactivity\external\log_report_viewed
  * @since      Moodle 3.11
  * @copyright  2021 Ilya Tregubov <ilya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_h5pactivity\external\log_report_viewed::class)]
 final class log_report_viewed_test extends \core_external\tests\externallib_testcase {
     /**
      * Test the behaviour of log_report_viewed.
      *
-     * @dataProvider execute_data
      * @param int $enabletracking the activity tracking enable
      * @param int $reviewmode the activity review mode
      * @param string $loginuser the user which calls the webservice
      * @param string|null $participant the user to log the data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_data')]
     public function test_execute(int $enabletracking, int $reviewmode, string $loginuser, ?string $participant): void {
         $this->resetAfterTest();
         $this->setAdminUser();

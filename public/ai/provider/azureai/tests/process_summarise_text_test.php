@@ -26,10 +26,10 @@ use GuzzleHttp\Psr7\Response;
  * @package    aiprovider_azureai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiprovider_azureai\provider
- * @covers     \aiprovider_azureai\process_summarise_text
- * @covers     \aiprovider_azureai\abstract_processor
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_azureai\provider::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_azureai\process_summarise_text::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_azureai\abstract_processor::class)]
 final class process_summarise_text_test extends \advanced_testcase {
     /** @var string A successful response in JSON format. */
     protected string $responsebodyjson;

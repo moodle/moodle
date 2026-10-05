@@ -39,8 +39,8 @@ require_once(__DIR__.'/fixtures/read_replica_moodle_database_mock_pgsql.php');
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \pgsql_native_moodle_database
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\pgsql_native_moodle_database::class)]
 final class dml_pgsql_read_replica_test extends \advanced_testcase {
     /**
      * Test correct database handles are used for cursors

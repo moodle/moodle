@@ -333,11 +333,11 @@ final class targets_test extends \advanced_testcase {
     /**
      * Test the conditions of a valid analysable, both common and specific to this target (course_completion).
      *
-     * @dataProvider analysable_provider
      * @param mixed $courseparams Course data
      * @param true|string $isvalid True when analysable is valid, string when it is not
      * @param bool $fortraining True if the course is for training the model
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('analysable_provider')]
     public function test_core_target_course_completion_analysable($courseparams, $isvalid, $fortraining = true): void {
         global $DB;
 
@@ -386,7 +386,6 @@ final class targets_test extends \advanced_testcase {
     /**
      * Test the conditions of a valid sample, both common and specific to this target (course_completion).
      *
-     * @dataProvider sample_provider
      * @param int $coursestart Course start date
      * @param int $courseend Course end date
      * @param int $timestart Enrol start date
@@ -394,6 +393,7 @@ final class targets_test extends \advanced_testcase {
      * @param bool $isvalidfortraining True when sample is valid for training, false when it is not
      * @param bool $isvalidforprediction True when sample is valid for prediction, false when it is not
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sample_provider')]
     public function test_core_target_course_completion_samples($coursestart, $courseend, $timestart, $timeend,
             $isvalidfortraining, $isvalidforprediction): void {
 
@@ -425,13 +425,13 @@ final class targets_test extends \advanced_testcase {
     /**
      * Test the conditions of a valid calculation (course_completion).
      *
-     * @dataProvider active_during_analysis_time_provider
      * @param int $starttime Analysis start time
      * @param int $endtime Analysis end time
      * @param int $timestart Enrol start date
      * @param int $timeend Enrol end date
      * @param bool $nullcalculation Whether the calculation should be null or not
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('active_during_analysis_time_provider')]
     public function test_core_target_course_completion_active_during_analysis_time($starttime, $endtime, $timestart, $timeend,
             $nullcalculation): void {
 

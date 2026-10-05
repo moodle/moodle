@@ -26,8 +26,8 @@ use core\context\system as context_system;
  * @package    filter_tex
  * @copyright  2014 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_tex\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_tex\text_filter::class)]
 final class text_filter_test extends \advanced_testcase {
     /**
      * Test the delimeter support.
@@ -35,8 +35,8 @@ final class text_filter_test extends \advanced_testcase {
      * @param string $start
      * @param string $end
      * @param bool $filtershouldrun
-     * @dataProvider delimiter_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('delimiter_provider')]
     public function test_delimiter_support(
         string $start,
         string $end,

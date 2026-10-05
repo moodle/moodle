@@ -26,12 +26,12 @@ use editor_tiny\plugininfo\tiny;
  * Unit tests for the editor_tiny\external get_configuration class.
  *
  * @package     editor_tiny
- * @covers      \editor_tiny\external\get_configuration
- * @covers      \editor_tiny\manager::get_plugin_configuration_for_external
- * @covers      \editor_tiny\plugin::is_enabled_for_external
  * @copyright   2025 Moodle Pty Ltd
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\editor_tiny\external\get_configuration::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\editor_tiny\manager::class, 'get_plugin_configuration_for_external')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\editor_tiny\plugin::class, 'is_enabled_for_external')]
 final class get_configuration_test extends advanced_testcase {
 
     /**
@@ -57,11 +57,11 @@ final class get_configuration_test extends advanced_testcase {
     /**
      * Test the external function.
      *
-     * @dataProvider execute_provider
      * @param string $contextlevel Context level: system, course or module.
      * @param ?string $role Role name to assign to use. If null, no role is assigned.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_provider')]
     public function test_execute(string $contextlevel, ?string $role): void {
         global $CFG;
 

@@ -23,8 +23,8 @@ namespace filter_mediaplugin;
  * @category   test
  * @copyright  2011 Rossiani Wijaya <rwijaya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_mediaplugin\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_mediaplugin\text_filter::class)]
 final class filter_test extends \advanced_testcase {
     public function test_text_filter_link(): void {
         $this->resetAfterTest(true);

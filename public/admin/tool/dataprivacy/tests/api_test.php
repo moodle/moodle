@@ -27,10 +27,10 @@ use tool_dataprivacy\task\initiate_data_request_task;
  * API tests.
  *
  * @package    tool_dataprivacy
- * @covers     \tool_dataprivacy\api
  * @copyright  2018 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_dataprivacy\api::class)]
 final class api_test extends \advanced_testcase {
 
     /**
@@ -677,7 +677,6 @@ final class api_test extends \advanced_testcase {
     /**
      * Test for api::create_data_request()
      *
-     * @dataProvider data_request_creation_provider
      * @param bool $asprivacyofficer Whether the request is made as the Privacy Officer or the user itself.
      * @param string $type The data request type.
      * @param string $setting The automatic approval setting.
@@ -691,6 +690,7 @@ final class api_test extends \advanced_testcase {
      * @throws coding_exception
      * @throws invalid_persistent_exception
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_request_creation_provider')]
     public function test_create_data_request(
         $asprivacyofficer,
         $type,
@@ -836,11 +836,11 @@ final class api_test extends \advanced_testcase {
     /**
      * Test for api::get_data_requests()
      *
-     * @dataProvider get_data_requests_provider
      * @param string $usertype The type of the user logging in.
      * @param boolean $fetchall Whether to fetch all records.
      * @param int[] $statuses Status filters.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_data_requests_provider')]
     public function test_get_data_requests($usertype, $fetchall, $statuses): void {
         $this->resetAfterTest();
 
@@ -1017,10 +1017,10 @@ final class api_test extends \advanced_testcase {
     /**
      * Test for api::has_ongoing_request()
      *
-     * @dataProvider status_provider
      * @param int $status The request status.
      * @param bool $expected The expected result.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('status_provider')]
     public function test_has_ongoing_request($status, $expected): void {
         $this->resetAfterTest();
 
@@ -1041,10 +1041,10 @@ final class api_test extends \advanced_testcase {
     /**
      * Test for api::is_active()
      *
-     * @dataProvider status_provider
      * @param int $status The request status
      * @param bool $expected The expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('status_provider')]
     public function test_is_active($status, $expected): void {
         // Check if this request is ongoing.
         $result = api::is_active($status);
@@ -1102,12 +1102,12 @@ final class api_test extends \advanced_testcase {
     /**
      * Test for api::notify_dpo()
      *
-     * @dataProvider notify_dpo_provider
      * @param bool $byadmin Whether the admin requests data on behalf of the user
      * @param int $type The request type
      * @param string $typestringid The request lang string identifier
      * @param string $comments The requestor's message to the DPO.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('notify_dpo_provider')]
     public function test_notify_dpo($byadmin, $type, $typestringid, $comments): void {
         $this->resetAfterTest();
 
@@ -1361,9 +1361,9 @@ final class api_test extends \advanced_testcase {
     /**
      * Ensure that fetching the effective value for context levels is only available to system, and user context levels.
      *
-     * @dataProvider invalid_effective_contextlevel_provider
      * @param   int $contextlevel
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_effective_contextlevel_provider')]
     public function test_set_contextlevel_invalid_contextlevels($contextlevel): void {
 
         $this->expectException(\coding_exception::class);
@@ -1421,9 +1421,9 @@ final class api_test extends \advanced_testcase {
     /**
      * Ensure that fetching the effective value for context levels is only available to system, and user context levels.
      *
-     * @dataProvider invalid_effective_contextlevel_provider
      * @param   int $contextlevel
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_effective_contextlevel_provider')]
     public function test_effective_contextlevel_invalid_contextlevels($contextlevel): void {
         $this->resetAfterTest();
 
@@ -2033,13 +2033,13 @@ final class api_test extends \advanced_testcase {
     /**
      * Test for \tool_dataprivacy\api::set_context_defaults()
      *
-     * @dataProvider set_context_defaults_provider
      * @param int $contextlevel The context level
      * @param bool $inheritcategory Whether to set category value as INHERIT.
      * @param bool $inheritpurpose Whether to set purpose value as INHERIT.
      * @param bool $foractivity Whether to set defaults for an activity.
      * @param bool $override Whether to override instances.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_context_defaults_provider')]
     public function test_set_context_defaults($contextlevel, $inheritcategory, $inheritpurpose, $foractivity, $override): void {
         $this->resetAfterTest();
 
@@ -2487,9 +2487,9 @@ final class api_test extends \advanced_testcase {
     /**
      * Test for \tool_dataprivacy\api::queue_data_request_task().
      *
-     * @dataProvider queue_data_request_task_provider
      * @param bool $withuserid
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('queue_data_request_task_provider')]
     public function test_queue_data_request_task(bool $withuserid): void {
         $this->resetAfterTest();
 
@@ -2540,12 +2540,12 @@ final class api_test extends \advanced_testcase {
     /**
      * Test for \tool_dataprivacy\api::is_automatic_request_approval_on().
      *
-     * @dataProvider automatic_request_approval_setting_provider
      * @param string $setting The automatic approval setting.
      * @param int $type The data request type.
      * @param bool $value The setting's value.
      * @param bool $expected The expected result.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('automatic_request_approval_setting_provider')]
     public function test_is_automatic_request_approval_on($setting, $type, $value, $expected): void {
         $this->resetAfterTest();
 

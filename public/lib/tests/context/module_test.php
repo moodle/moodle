@@ -26,13 +26,15 @@ use core\context, core\context_helper;
  * @package   core
  * @copyright Petr Skoda
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\context\module
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\context\module::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\context::class, 'instance_by_id')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\context_helper::class, 'resolve_behat_reference')]
 final class module_test extends \advanced_testcase {
     /**
      * Tests legacy class.
-     * @coversNothing
      */
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_legacy_classname(): void {
         $this->resetAfterTest();
 
@@ -46,8 +48,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered methods.
-     * @covers ::instance
-     * @covers \core\context::instance_by_id
      */
     public function test_factory_methods(): void {
         $this->resetAfterTest();
@@ -66,7 +66,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_short_name
      */
     public function test_get_short_name(): void {
         $this->assertSame('module', module::get_short_name());
@@ -74,8 +73,8 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests context level.
-     * @coversNothing
      */
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_level(): void {
         $this->assertSame(70, module::LEVEL);
         $this->assertSame(CONTEXT_MODULE, module::LEVEL);
@@ -83,7 +82,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_level_name
      */
     public function test_get_level_name(): void {
         $this->assertSame('Activity module', module::get_level_name());
@@ -91,7 +89,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_context_name
      */
     public function test_get_context_name(): void {
         $this->resetAfterTest();
@@ -109,7 +106,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_url
      */
     public function test_get_url(): void {
         $this->resetAfterTest();
@@ -126,9 +122,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered methods.
-     * @covers ::get_instance_table()
-     * @covers ::get_behat_reference_columns()
-     * @covers \core\context_helper::resolve_behat_reference
      */
     public function test_resolve_behat_reference(): void {
         global $DB;
@@ -157,7 +150,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_compatible_role_archetypes
      */
     public function test_get_compatible_role_archetypes(): void {
         global $DB;
@@ -175,7 +167,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_possible_parent_levels
      */
     public function test_get_possible_parent_levels(): void {
         $this->assertSame([course::LEVEL], module::get_possible_parent_levels());
@@ -183,7 +174,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_capabilities
      */
     public function test_get_capabilities(): void {
         $this->resetAfterTest();
@@ -207,7 +197,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::create_level_instances
      */
     public function test_create_level_instances(): void {
         global $DB;
@@ -224,7 +213,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_child_contexts
      */
     public function test_get_child_contexts(): void {
         $this->resetAfterTest();
@@ -239,7 +227,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_cleanup_sql
      */
     public function test_get_cleanup_sql(): void {
         global $DB;
@@ -258,7 +245,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::build_paths
      */
     public function test_build_paths(): void {
         global $DB;
@@ -284,7 +270,6 @@ final class module_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::set_locked
      */
     public function test_set_locked(): void {
         global $DB;

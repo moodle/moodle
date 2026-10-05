@@ -27,8 +27,8 @@ use GuzzleHttp\Psr7\Response;
  * @category   test
  * @copyright  2025 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \smsgateway_modica\gateway
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\smsgateway_modica\gateway::class)]
 final class gateway_test extends \advanced_testcase {
     public function test_send(): void {
         $this->resetAfterTest();

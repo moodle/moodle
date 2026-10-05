@@ -29,12 +29,11 @@ require_once($CFG->dirroot . '/grade/import/xml/lib.php');
  * @copyright  2026 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('gradeimport_xml_fetch_and_commit')]
 final class lib_test extends \advanced_testcase {
 
     /**
      * Ensure inaccessible URL download throws a Moodle exception.
-     *
-     * @covers ::gradeimport_xml_fetch_and_commit
      */
     public function test_grade_import_xml_throws_on_inaccessible_url(): void {
         $this->resetAfterTest();
@@ -52,8 +51,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Ensure invalid XML content throws import failure exception.
-     *
-     * @covers ::gradeimport_xml_fetch_and_commit
      */
     public function test_grade_import_xml_throws_on_unexpected_xml_structure(): void {
         $this->resetAfterTest();

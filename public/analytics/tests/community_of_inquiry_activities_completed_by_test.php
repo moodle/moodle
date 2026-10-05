@@ -25,10 +25,10 @@ use stdClass;
  * Unit tests for activities completed by classification.
  *
  * @package   core_analytics
- * @covers    \core_analytics\local\indicator\community_of_inquiry_activity
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_analytics\local\indicator\community_of_inquiry_activity::class)]
 final class community_of_inquiry_activities_completed_by_test extends advanced_testcase {
 
     /**
@@ -46,10 +46,10 @@ final class community_of_inquiry_activities_completed_by_test extends advanced_t
     /**
      * test_get_activities_with_availability
      *
-     * @dataProvider availability_levels
      * @param string $availabilitylevel
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('availability_levels')]
     public function test_get_activities_with_availability($availabilitylevel): void {
 
         list($course, $stu1) = $this->setup_course();

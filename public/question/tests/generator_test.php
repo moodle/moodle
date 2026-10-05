@@ -31,6 +31,8 @@ namespace core_question;
  * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_question_generator::class, 'create_question')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_question_generator::class, 'update_question')]
 final class generator_test extends \advanced_testcase {
     public function test_create(): void {
         global $DB;
@@ -81,9 +83,6 @@ final class generator_test extends \advanced_testcase {
 
     /**
      * Tests for create_question() to correctly applies tags and stores them.
-     *
-     * @covers \core_question_generator::create_question
-     * @covers \core_question_generator::update_question
      */
     public function test_update_question_with_tags(): void {
         $this->resetAfterTest();

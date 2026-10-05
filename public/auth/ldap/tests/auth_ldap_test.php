@@ -81,10 +81,10 @@ final class auth_ldap_test extends \advanced_testcase {
     /**
      * General auth_ldap testcase
      *
-     * @dataProvider auth_ldap_provider
      * @param int $pagesize Value to be configured in settings controlling page size.
      * @param int $subcontext Value to be configured in settings controlling searching in subcontexts.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('auth_ldap_provider')]
     public function test_auth_ldap(int $pagesize, int $subcontext): void {
         global $DB;
 

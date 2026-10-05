@@ -21,9 +21,9 @@ namespace gradereport_overview;
  *
  * @package gradereport_overview
  * @copyright 2023 The Open University
- * @covers \grade_report_overview
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\grade_report_overview::class)]
 final class lib_test extends \advanced_testcase {
 
     /**
@@ -56,9 +56,9 @@ final class lib_test extends \advanced_testcase {
      * do the progress bar/continue button (which can't be tested from here because it calls exit)
      * because these courses are small.
      *
-     * @dataProvider true_or_false
      * @param bool $frontend True to use the front-end parameter to the function under test
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('true_or_false')]
     public function test_regrade_all_courses_if_needed(bool $frontend): void {
         global $DB;
         $this->resetAfterTest(true);

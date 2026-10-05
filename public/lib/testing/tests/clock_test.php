@@ -26,11 +26,11 @@ use incrementing_clock;
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\incrementing_clock::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\frozen_clock::class)]
 final class clock_test extends \advanced_testcase {
     /**
      * Test the incrementing mock clock.
-     *
-     * @covers \incrementing_clock
      */
     public function test_clock_with_incrementing(): void {
         require_once(__DIR__ . '/../classes/incrementing_clock.php');
@@ -66,8 +66,6 @@ final class clock_test extends \advanced_testcase {
 
     /**
      * Test the incrementing mock clock.
-     *
-     * @covers \frozen_clock
      */
     public function test_mock_clock_with_frozen(): void {
         require_once(__DIR__ . '/../classes/frozen_clock.php');

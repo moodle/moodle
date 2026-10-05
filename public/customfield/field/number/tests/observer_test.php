@@ -23,13 +23,13 @@ use customfield_number\task\recalculate;
 /**
  * Testing event observers
  *
- * @covers     \customfield_number\observer
- * @covers     \customfield_number\task\recalculate
  * @package    customfield_number
  * @category   test
  * @copyright  Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\customfield_number\observer::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\customfield_number\task\recalculate::class)]
 final class observer_test extends \advanced_testcase {
 
     /**

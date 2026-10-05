@@ -25,8 +25,8 @@ use core_editor\privacy\provider;
  * @package    core_editor
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_editor\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_editor\privacy\provider::class)]
 final class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * When no preference exists, there should be no export.

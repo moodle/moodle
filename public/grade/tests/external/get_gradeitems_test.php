@@ -26,8 +26,8 @@ use grade_item;
  * @package    core_grades
  * @category   external
  * @copyright  2023 Mathew May <Mathew.solutions>
- * @covers     \core_grades\external\get_gradeitems
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_grades\external\get_gradeitems::class)]
 final class get_gradeitems_test extends \core_external\tests\externallib_testcase {
     public function test_execute(): void {
         $this->resetAfterTest();

@@ -23,16 +23,16 @@ namespace filter_mathjaxloader;
  * @category  test
  * @copyright 2017 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_mathjaxloader\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_mathjaxloader\text_filter::class)]
 final class text_filter_test extends \advanced_testcase {
     /**
      * Test the functionality of {@see text_filter::map_language_code()}.
      *
      * @param string $moodlelangcode the user's current language
      * @param string $mathjaxlangcode the mathjax language to be used for the moodle language
-     * @dataProvider map_language_code_expected_mappings
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('map_language_code_expected_mappings')]
     public function test_map_language_code($moodlelangcode, $mathjaxlangcode): void {
         $filter = new text_filter(\context_system::instance(), []);
         $this->assertEquals($mathjaxlangcode, $filter->map_language_code($moodlelangcode));

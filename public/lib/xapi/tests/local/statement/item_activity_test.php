@@ -74,10 +74,10 @@ final class item_activity_test extends advanced_testcase {
     /**
      * Test item creation from string.
      *
-     * @dataProvider create_from_id_provider
      * @param string $id Object string ID (IRI or not)
      * @param bool $usedefinition if a valir definition must be attached or not
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_from_id_provider')]
     public function test_create_from_id(string $id, bool $usedefinition): void {
 
         $definition = null;
@@ -133,10 +133,10 @@ final class item_activity_test extends advanced_testcase {
     /**
      * Test for invalid structures.
      *
-     * @dataProvider invalid_data_provider
      * @param string  $type objectType attribute
      * @param string  $id activity ID
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_data_provider')]
     public function test_invalid_data(string $type, string $id): void {
 
         $data = (object) [

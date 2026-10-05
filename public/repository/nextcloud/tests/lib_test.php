@@ -35,10 +35,11 @@ require_once($CFG->libdir . '/webdavlib.php');
 
 /**
  * Class repository_nextcloud_lib_testcase
- * @group repository_nextcloud
  * @copyright  2017 Project seminar (Learnweb, University of Münster)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('search')]
+#[\PHPUnit\Framework\Attributes\Group('repository_nextcloud')]
 final class lib_test extends \advanced_testcase {
 
     /** @var null|\repository_nextcloud the repository_nextcloud object, which the tests are run on. */
@@ -947,12 +948,12 @@ XML;
     /**
      * Testing sync_reference
      *
-     * @dataProvider sync_reference_provider
      * @param array $storedfileargs
      * @param array $mockfunctions
      * @param bool $expectedresult
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sync_reference_provider')]
     public function test_sync_reference(array $storedfileargs, $mockfunctions, bool $expectedresult): void {
         $this->resetAfterTest(true);
 
@@ -1094,12 +1095,11 @@ XML;
     /**
      * Test search functionality with various inputs using the WebDAV search endpoint.
      *
-     * @dataProvider search_provider
      * @param string $searchtext The text to search for
      * @param array|bool $mockresponse The mock response from the webdav search method
      * @param array $expectedlist The expected result list
-     * @covers ::search
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('search_provider')]
     public function test_search(string $searchtext, array|bool $mockresponse, array $expectedlist): void {
         $expected = $this->get_initialised_return_array();
         $expected['list'] = $expectedlist;
@@ -1132,14 +1132,13 @@ XML;
     /**
      * Test search error handling scenarios.
      *
-     * @dataProvider search_error_provider
      * @param string $searchtext The search query to test
      * @param array|null $userinfo OAuth userinfo to mock (null for no client)
      * @param string $expecteddebugging Expected debugging message
      * @param bool $openreturn Whether WebDAV open should succeed
      * @param bool $expectsearch Whether search method should be called
-     * @covers ::search
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('search_error_provider')]
     public function test_search_errors(string $searchtext, array|null $userinfo, string $expecteddebugging,
             bool $openreturn = true, bool $expectsearch = true): void {
         $this->resetAfterTest(true);

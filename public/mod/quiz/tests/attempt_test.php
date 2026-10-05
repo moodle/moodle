@@ -34,8 +34,12 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @category  test
  * @copyright 2014 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz\quiz_attempt
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\quiz_attempt::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\quiz_attempt::class, 'check_page_access')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('quiz_start_new_attempt')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('quiz_start_attempt_built_on_last')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('quiz_start_new_attempt')]
 final class attempt_test extends \advanced_testcase {
 
     /**
@@ -418,7 +422,6 @@ final class attempt_test extends \advanced_testcase {
 
     /**
      * Test check_page_access function
-     * @covers \quiz_attempt::check_page_access
      */
     public function test_check_page_access(): void {
         $timenow = time();
@@ -473,7 +476,6 @@ final class attempt_test extends \advanced_testcase {
     /**
      * Starting a new attempt with a question in draft status should throw an exception.
      *
-     * @covers ::quiz_start_new_attempt()
      * @return void
      */
     public function test_start_new_attempt_with_draft(): void {
@@ -506,7 +508,6 @@ final class attempt_test extends \advanced_testcase {
     /**
      * Starting a new attempt built on last with a question in draft status should throw an exception.
      *
-     * @covers ::quiz_start_attempt_built_on_last()
      * @return void
      */
     public function test_quiz_start_attempt_built_on_last_with_draft(): void {
@@ -579,7 +580,6 @@ final class attempt_test extends \advanced_testcase {
      *
      * @return void
      * @throws \coding_exception
-     * @covers ::quiz_start_new_attempt
      */
     public function test_step_timecreated_unset_when_starting_quiz_attempt(): void {
         $attempt = $this->create_quiz_and_attempt_with_layout('1');
@@ -593,7 +593,6 @@ final class attempt_test extends \advanced_testcase {
      * Test that enabling shuffle on the first quiz section randomizes question order between attempts.
      *
      * @return void
-     * @covers ::quiz_start_new_attempt
      */
     public function test_question_shuffle(): void {
         $this->resetAfterTest();

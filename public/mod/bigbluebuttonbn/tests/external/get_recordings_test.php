@@ -29,8 +29,9 @@ use require_login_exception;
  * @copyright  2021 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @covers \mod_bigbluebuttonbn\external\get_recordings
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\external\get_recordings::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_bigbluebuttonbn\external\get_recordings::class, 'execute')]
 final class get_recordings_test extends \core_external\tests\externallib_testcase {
     use testcase_helper_trait;
 
@@ -206,7 +207,6 @@ final class get_recordings_test extends \core_external\tests\externallib_testcas
 
     /**
      * Check we can see all recording from a course in a room only instance
-     * @covers \mod_bigbluebuttonbn\external\get_recordings::execute
      */
     public function test_get_recordings_room_only(): void {
         $this->resetAfterTest();
@@ -249,7 +249,6 @@ final class get_recordings_test extends \core_external\tests\externallib_testcas
 
     /**
      * Check if we can see the imported recording in a new instance
-     * @covers \mod_bigbluebuttonbn\external\get_recordings::execute
      */
     public function test_get_recordings_imported(): void {
         $this->resetAfterTest();
@@ -312,7 +311,6 @@ final class get_recordings_test extends \core_external\tests\externallib_testcas
 
     /**
      * Check we can see only imported recordings in a recordings only instance when "Show only imported links" enabled.
-     * @covers \mod_bigbluebuttonbn\external\get_recordings::execute
      */
     public function test_get_imported_recordings_only(): void {
         $this->resetAfterTest();
@@ -370,10 +368,8 @@ final class get_recordings_test extends \core_external\tests\externallib_testcas
      * @param array $recordingsdata
      * @param array $test
      * @param int $coursemode
-     *
-     * @covers   \mod_bigbluebuttonbn\external\get_recordings::execute
-     * @dataProvider recording_group_test_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('recording_group_test_data')]
     public function test_get_recordings_groups($type, $groups, $users, $recordingsdata, $test, $coursemode): void {
         $this->resetAfterTest();
         $dataset = compact('type', 'groups', 'users', 'recordingsdata', 'test', 'coursemode');

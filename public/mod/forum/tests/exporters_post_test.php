@@ -50,10 +50,10 @@ final class exporters_post_test extends \advanced_testcase {
     /**
      * Test the export function returns expected values.
      *
-     * @dataProvider export_post_provider
      * @param bool $istimed True if this is a timed post
      * @param int $addtime Seconds to be added to the current time
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_post_provider')]
     public function test_export_post($istimed = false, $addtime = 0): void {
         global $CFG, $PAGE;
         $this->resetAfterTest();

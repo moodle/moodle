@@ -34,11 +34,10 @@ require_once($CFG->dirroot . '/admin/tool/installaddon/lib.php');
 /**
  * Test installaddon lib functions.
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('tool_installaddon_custom_chooser_footer')]
 final class lib_test extends \advanced_testcase {
     /**
      * Tests chooser footer generation for marketplace link content.
-     *
-     * @covers ::tool_installaddon_custom_chooser_footer
      */
     public function test_tool_installaddon_custom_chooser_footer(): void {
         $this->resetAfterTest();

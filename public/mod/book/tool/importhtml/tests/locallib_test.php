@@ -37,6 +37,7 @@ require_once($CFG->dirroot.'/mod/book/tool/importhtml/locallib.php');
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('toolbook_importhtml_import_chapters')]
 final class locallib_test extends \advanced_testcase {
 
     /** @var object */
@@ -64,7 +65,6 @@ final class locallib_test extends \advanced_testcase {
 
     /**
      * Tests the events within toolbook_importhtml_import_chapters
-     * @covers ::toolbook_importhtml_import_chapters
      */
     public function test_import_chapters_events(): void {
 
@@ -92,7 +92,6 @@ final class locallib_test extends \advanced_testcase {
 
     /**
      * Tests the conversion of (anchored) links within toolbook_importhtml_import_chapters
-     * @covers ::toolbook_importhtml_import_chapters
      */
     public function test_import_chapters_links(): void {
         global $DB;

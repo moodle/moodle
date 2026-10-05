@@ -26,8 +26,8 @@ use assign;
  * @category   test
  * @copyright  2022 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_assign\downloader
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\downloader::class)]
 final class downloader_test extends \advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
@@ -40,8 +40,6 @@ final class downloader_test extends \advanced_testcase {
     /**
      * Test for load_filelist method.
      *
-     * @covers ::load_filelist
-     * @dataProvider load_filelist_provider
      *
      * @param bool $teamsubmission if the assign must have team submissions
      * @param array $groupmembers the groups definition
@@ -50,6 +48,7 @@ final class downloader_test extends \advanced_testcase {
      * @param bool $downloadasfolder if the download as folder preference is set
      * @param array $expected the expected file list
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('load_filelist_provider')]
     public function test_load_filelist(
         bool $teamsubmission,
         array $groupmembers,

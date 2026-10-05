@@ -27,8 +27,8 @@ require_once($CFG->libdir . '/testing/classes/incrementing_clock.php');
  * @package    core_ai
  * @copyright  2024 Matt Porritt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\rate_limiter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_ai\rate_limiter::class)]
 final class rate_limiter_test extends \advanced_testcase {
     /**
      * Set up before tests.

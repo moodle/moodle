@@ -22,13 +22,10 @@ namespace core;
  * @package   core
  * @copyright 2023 Andrew Nicols <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\formatting
- * @coversDefaultClass \core\formatting
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\formatting::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\formatting::class)]
 final class formatting_test extends \advanced_testcase {
-    /**
-     * @covers ::format_string
-     */
     public function test_format_string_striptags_cfg(): void {
         global $CFG;
 
@@ -48,9 +45,6 @@ final class formatting_test extends \advanced_testcase {
         $this->assertSame('x &lt; 1 and x &gt; 0', $formatting->format_string('x < 1 and x > 0'));
     }
 
-    /**
-     * @covers ::format_string
-     */
     public function test_format_string_striptags_prop(): void {
         $formatting = new formatting();
 
@@ -67,12 +61,11 @@ final class formatting_test extends \advanced_testcase {
     }
 
     /**
-     * @covers ::format_string
-     * @dataProvider format_string_provider
      * @param string $expected
      * @param mixed $input
      * @param array $options
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_string_provider')]
     public function test_format_string_values(
         string $expected,
         array $params,
@@ -225,10 +218,8 @@ final class formatting_test extends \advanced_testcase {
 
     /**
      * Test trust option of format_text().
-     *
-     * @covers ::format_text
-     * @dataProvider format_text_trusted_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_text_trusted_provider')]
     public function test_format_text_trusted(
         $expected,
         int $enabletrusttext,
@@ -568,10 +559,10 @@ final class formatting_test extends \advanced_testcase {
     /**
      * Test adding blank target attribute to links
      *
-     * @dataProvider format_text_blanktarget_testcases
      * @param string $link The link to add target="_blank" to
      * @param string $expected The expected filter value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_text_blanktarget_testcases')]
     public function test_format_text_blanktarget($link, $expected): void {
         $formatter = new formatting();
         $actual = $formatter->format_text(
@@ -642,12 +633,12 @@ final class formatting_test extends \advanced_testcase {
     /**
      * Test ability to force cleaning of otherwise non-cleaned content.
      *
-     * @dataProvider format_text_cleaning_testcases
      *
      * @param string $input Input text
      * @param string $nocleaned Expected output of format_text() with noclean=true
      * @param string $cleaned Expected output of format_text() with noclean=false
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_text_cleaning_testcases')]
     public function test_format_text_cleaning($input, $nocleaned, $cleaned): void {
         $formatter = new formatting();
 

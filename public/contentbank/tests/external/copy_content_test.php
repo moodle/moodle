@@ -31,13 +31,11 @@ use core_external\external_api;
  * @package    core_contentbank
  * @copyright  2023 Daniel Neis Araujo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_contentbank\external\copy_content
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_contentbank\external\copy_content::class)]
 final class copy_content_test extends \core_external\tests\externallib_testcase {
     /**
      * Test the behaviour of copy_content() for users with permission.
-     *
-     * @covers ::execute
      */
     public function test_copy_content_with_permission(): void {
         global $CFG, $DB;
@@ -80,8 +78,6 @@ final class copy_content_test extends \core_external\tests\externallib_testcase 
 
     /**
      * Test the behaviour of copy_content() for users with and without permission.
-     *
-     * @covers ::execute
      */
     public function test_copy_content(): void {
         global $CFG, $DB;

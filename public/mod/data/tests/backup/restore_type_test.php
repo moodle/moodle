@@ -24,6 +24,7 @@ namespace mod_data\backup;
  * @copyright  2024 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_data_activity_structure_step::class)]
 final class restore_type_test extends \advanced_testcase {
 
     /**
@@ -53,10 +54,8 @@ final class restore_type_test extends \advanced_testcase {
      *
      * @param string $type The type of the field.
      * @param string $expected The expected type of the field after duplication.
-     *
-     * @covers       \restore_data_activity_structure_step
-     * @dataProvider restore_format_test_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('restore_format_test_provider')]
     public function test_duplicating_data_remove_unwanted_types(string $type, string $expected): void {
         global $DB;
         $this->resetAfterTest();

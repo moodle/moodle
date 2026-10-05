@@ -28,6 +28,12 @@ use enrol_meta_plugin;
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_meta_handler::class, 'sync_with_parent_course')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('enrol_meta_sync')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('fill_enrol_custom_fields')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('validate_enrol_plugin_data')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('find_instance')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_instance_name_for_management_page')]
 final class plugin_test extends \advanced_testcase {
 
     protected function enable_plugin() {
@@ -600,9 +606,6 @@ final class plugin_test extends \advanced_testcase {
 
     /**
      * Test enrolling users in a course, where the customint2 (group) property of the instance points to an invalid group
-     *
-     * @covers \enrol_meta_handler::sync_with_parent_course
-     * @covers ::enrol_meta_sync
      */
     public function test_add_to_group_invalid(): void {
         $this->resetAfterTest();
@@ -1093,8 +1096,6 @@ final class plugin_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of fill_enrol_custom_fields().
-     *
-     * @covers ::fill_enrol_custom_fields
      */
     public function test_fill_enrol_custom_fields(): void {
         $this->resetAfterTest();
@@ -1146,8 +1147,6 @@ final class plugin_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of validate_enrol_plugin_data().
-     *
-     * @covers ::validate_enrol_plugin_data
      */
     public function test_validate_enrol_plugin_data(): void {
         $this->resetAfterTest();
@@ -1220,8 +1219,6 @@ final class plugin_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of find_instance().
-     *
-     * @covers ::find_instance
      */
     public function test_find_instance(): void {
         global $DB;
@@ -1262,7 +1259,6 @@ final class plugin_test extends \advanced_testcase {
     /**
      * Test the display name is linked to the meta course depending on permissions.
      *
-     * @covers ::get_instance_name_for_management_page
      * @return void
      */
     public function test_get_instance_name_for_management_page(): void {

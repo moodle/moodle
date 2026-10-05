@@ -23,13 +23,13 @@ namespace core_question;
  * @copyright  2025 onwards Catalyst IT {@link http://www.catalyst-eu.net/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Conn Warwicker <conn.warwicker@catalyst-eu.net>
- * @covers     \core_question\question_reference_manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\question_reference_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_question\question_reference_manager::class, 'convert_legacy_set_reference_filter_condition')]
 final class legacy_question_set_conversion_test extends \advanced_testcase {
 
     /**
      * Test the conversion of the old formatted `filtercondition` value to the newer format.
-     * @covers \core_question\question_reference_manager::convert_legacy_set_reference_filter_condition
      * @return void
      */
     public function test_legacy_question_set_conversion(): void {
@@ -79,7 +79,6 @@ final class legacy_question_set_conversion_test extends \advanced_testcase {
      * Verifies that a legacy tag filter re-uses an existing tag that
      * lives in the default collection and does not create a duplicate.
      *
-     * @covers \core_question\question_reference_manager::convert_legacy_set_reference_filter_condition
      * @return void
      */
     public function test_tag_conversion_uses_existing_tag_in_default_collection(): void {
@@ -106,7 +105,6 @@ final class legacy_question_set_conversion_test extends \advanced_testcase {
      * Verifies that a legacy tag filter respects a custom collection after
      * the *question* tag-area has been moved there.
      *
-     * @covers \core_question\question_reference_manager::convert_legacy_set_reference_filter_condition
      * @return void
      */
     public function test_tag_conversion_respects_custom_collection(): void {

@@ -106,13 +106,13 @@ final class dates_test extends advanced_testcase {
     /**
      * Test for get_dates_for_module().
      *
-     * @dataProvider get_dates_for_module_provider
      * @param int|null $submissionstart The 'Open for submissions from' value of the workshop.
      * @param int|null $submissionend The 'Submissions deadline' value of the workshop.
      * @param int|null $assessmentstart The 'Open for assessment from' value of the workshop.
      * @param int|null $assessmentend The 'Deadline for assessment' value of the workshop.
      * @param array $expected The expected value of calling get_dates_for_module()
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_dates_for_module_provider')]
     public function test_get_dates_for_module(?int $submissionstart, ?int $submissionend,
             ?int $assessmentstart, ?int $assessmentend,
             array $expected): void {

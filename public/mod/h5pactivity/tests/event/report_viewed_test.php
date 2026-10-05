@@ -43,12 +43,12 @@ final class report_viewed_test extends advanced_testcase {
     /**
      * Test report_viewed event.
      *
-     * @dataProvider report_viewed_data
      * @param bool $usea if a (instanceid) will be used in the event
      * @param bool $useattemptid if attemptid will be used in the event
      * @param bool $useuserid if user id will be used in the event
      * @param bool $exception if exception is expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('report_viewed_data')]
     public function test_report_viewed(bool $usea, bool $useattemptid, bool $useuserid, bool $exception): void {
 
         $this->resetAfterTest();

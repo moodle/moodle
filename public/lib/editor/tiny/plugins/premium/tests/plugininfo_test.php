@@ -24,10 +24,10 @@ use advanced_testcase;
  * Unit tests for the \tiny_premium\plugininfo class.
  *
  * @package     tiny_premium
- * @covers      \tiny_premium\plugininfo::get_plugin_configuration_for_external
  * @copyright   2025 Moodle Pty Ltd
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tiny_premium\plugininfo::class, 'get_plugin_configuration_for_external')]
 final class plugininfo_test extends advanced_testcase {
     /**
      * Basic setup for tests.

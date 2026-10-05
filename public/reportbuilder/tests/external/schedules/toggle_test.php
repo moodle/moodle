@@ -27,10 +27,10 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests of external class for toggling report schedules
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\external\schedules\toggle
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\external\schedules\toggle::class)]
 final class toggle_test extends \core_external\tests\externallib_testcase {
     /**
      * Text execute method

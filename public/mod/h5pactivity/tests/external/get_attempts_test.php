@@ -30,13 +30,13 @@ final class get_attempts_test extends \core_external\tests\externallib_testcase 
     /**
      * Test the behaviour of get_attempts.
      *
-     * @dataProvider execute_data
      * @param int $grademethod the activity grading method
      * @param string $loginuser the user which calls the webservice
      * @param string|null $participant the user to get the data
      * @param bool $createattempts if the student user has attempts created
      * @param int|null $count the expected number of attempts returned (null for exception)
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_data')]
     public function test_execute(int $grademethod, string $loginuser, ?string $participant,
             bool $createattempts, ?int $count): void {
 
@@ -342,12 +342,12 @@ final class get_attempts_test extends \core_external\tests\externallib_testcase 
     /**
      * Test the behaviour of get_attempts getting more than one user at once.
      *
-     * @dataProvider execute_multipleusers_data
      * @param string $loginuser the user which calls the webservice
      * @param string[] $participants the users to get the data
      * @param string[] $warnings the expected users with warnings
      * @param string[] $resultusers expected users in the resultusers
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_multipleusers_data')]
     public function test_execute_multipleusers(string $loginuser, array $participants,
             array $warnings, array $resultusers): void {
 

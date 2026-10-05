@@ -17,27 +17,26 @@
 namespace core\task;
 
 // phpcs:disable moodle.PHPUnit.TestCaseProvider.dataProviderSyntaxMethodNotFound
-
 /**
  * Detect common problems in plugin tasks.
  *
- * @group     plugin_checks
  * @package   core
  * @copyright 2025 Petr Skoda
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\Group('plugin_checks')]
 final class plugin_checks_test extends \core\tests\plugin_checks_testcase {
     /**
      * Verify plugin all plugin tasks.
      *
-     * @dataProvider all_plugins_provider
-     * @coversNothing
      *
      * @param string $component
      * @param string $plugintype
      * @param string $pluginname
      * @param string $dir
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('all_plugins_provider')]
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_db_tasks_file(string $component, string $plugintype, string $pluginname, string $dir): void {
         $file = "$dir/db/tasks.php";
         $tasks = $this->fetch_array_from_file($file, 'tasks');

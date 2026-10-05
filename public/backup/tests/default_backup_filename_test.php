@@ -34,6 +34,8 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
  * @copyright  2025 Matthew Hilton <matthewhilton@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\backup_plan_dbops::class, 'get_default_backup_filename')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\backup_plan_dbops::class, 'get_default_backup_filename_template_syntax_errors')]
 final class default_backup_filename_test extends advanced_testcase {
     /**
      * Provides backup filename scenarios.
@@ -551,9 +553,8 @@ final class default_backup_filename_test extends advanced_testcase {
      * @param array $params parameters to pass into get_default_backup_filename.
      * @param array $customtemplates array of key value pairs of config values, for setting the custom template config.
      * @param string $expectedfilename the filename expected to be generated.
-     * @dataProvider get_default_backup_filename_provider
-     * @covers \backup_plan_dbops::get_default_backup_filename
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_default_backup_filename_provider')]
     public function test_get_default_backup_filename(
         array $generate,
         array $params,
@@ -610,8 +611,6 @@ final class default_backup_filename_test extends advanced_testcase {
 
     /**
      * Tests getting syntax errors in template.
-     *
-     * @covers \backup_plan_dbops::get_default_backup_filename_template_syntax_errors
      */
     public function test_get_default_backup_filename_syntax_errors(): void {
         $this->assertEmpty(backup_plan_dbops::get_default_backup_filename_template_syntax_errors("this is ok {{test}}"));

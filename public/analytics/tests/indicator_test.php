@@ -35,9 +35,9 @@ final class indicator_test extends \advanced_testcase {
      *
      * @param string $indicatorclass
      * @param array $returnedvalue
-     * @dataProvider validate_calculated_value
      * @return null
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validate_calculated_value')]
     public function test_validate_calculated_value($indicatorclass, $returnedvalue): void {
         $indicator = new $indicatorclass();
         list($values, $unused) = $indicator->calculate([1], 'notrelevanthere');
@@ -62,9 +62,9 @@ final class indicator_test extends \advanced_testcase {
      *
      * @param string $indicatorclass
      * @param string $willreturn
-     * @dataProvider validate_calculated_value_exceptions
      * @return null
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validate_calculated_value_exceptions')]
     public function test_validate_calculated_value_exceptions($indicatorclass, $willreturn): void {
 
         $indicator = new $indicatorclass();

@@ -24,8 +24,8 @@ use advanced_testcase;
  * @package core
  * @copyright 2020 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers  \core\encryption
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\encryption::class)]
 final class encryption_test extends advanced_testcase {
 
     protected function setUp(): void {
@@ -48,8 +48,8 @@ final class encryption_test extends advanced_testcase {
      * Tests the create_keys and get_key functions.
      *
      * @param string $method Encryption method
-     * @dataProvider encryption_method_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('encryption_method_provider')]
     public function test_create_key(string $method): void {
         encryption::create_key($method);
         $key = testable_encryption::get_key($method);
@@ -71,8 +71,8 @@ final class encryption_test extends advanced_testcase {
      * Tests encryption when the keys weren't created yet.
      *
      * @param string $method Encryption method
-     * @dataProvider encryption_method_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('encryption_method_provider')]
     public function test_encrypt_nokeys(string $method): void {
         global $CFG;
 
@@ -93,9 +93,9 @@ final class encryption_test extends advanced_testcase {
     /**
      * Tests decryption when not enough data is supplied to get the IV and some data.
      *
-     * @dataProvider encryption_method_provider
      * @param string $method Encryption method
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('encryption_method_provider')]
     public function test_decrypt_tooshort(string $method): void {
         switch ($method) {
             case encryption::METHOD_SODIUM:
@@ -112,9 +112,9 @@ final class encryption_test extends advanced_testcase {
     /**
      * Tests decryption when data is not valid base64.
      *
-     * @dataProvider encryption_method_provider
      * @param string $method Encryption method
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('encryption_method_provider')]
     public function test_decrypt_notbase64(string $method): void {
         $this->expectExceptionMessage('Invalid base64 data');
         encryption::decrypt($method . ':' . chr(160));
@@ -123,9 +123,9 @@ final class encryption_test extends advanced_testcase {
     /**
      * Tests decryption when the keys weren't created yet.
      *
-     * @dataProvider encryption_method_provider
      * @param string $method Encryption method
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('encryption_method_provider')]
     public function test_decrypt_nokeys(string $method): void {
         global $CFG;
 
@@ -139,9 +139,9 @@ final class encryption_test extends advanced_testcase {
     /**
      * Test automatic generation of keys when needed.
      *
-     * @dataProvider encryption_method_provider
      * @param string $method Encryption method
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('encryption_method_provider')]
     public function test_auto_key_generation(string $method): void {
 
         // Allow automatic generation (default).
@@ -152,9 +152,9 @@ final class encryption_test extends advanced_testcase {
     /**
      * Checks that invalid key causes failures.
      *
-     * @dataProvider encryption_method_provider
      * @param string $method Encryption method
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('encryption_method_provider')]
     public function test_invalid_key(string $method): void {
         global $CFG;
 
@@ -175,9 +175,9 @@ final class encryption_test extends advanced_testcase {
     /**
      * Checks that modified data causes failures.
      *
-     * @dataProvider encryption_method_provider
      * @param string $method Encryption method
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('encryption_method_provider')]
     public function test_modified_data(string $method): void {
         $encrypted = encryption::encrypt('frogs', $method);
         $mainbit = base64_decode(substr($encrypted, strlen($method) + 1));
@@ -190,9 +190,9 @@ final class encryption_test extends advanced_testcase {
     /**
      * Tests encryption and decryption for real.
      *
-     * @dataProvider encryption_method_provider
      * @param string $method Encryption method
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('encryption_method_provider')]
     public function test_encrypt_and_decrypt_realdata(string $method): void {
 
         // Encrypt short string.

@@ -115,7 +115,6 @@ final class entities_discussion_test extends \advanced_testcase {
      * Test the display period settings for discussions.
      * This covers each individual date function as well as the combination of the 2.
      *
-     * @dataProvider diplay_period_options_provider
      * @param string $testdescription A basic description of the base assertions.
      * @param int $startoffset Start time offset with current time in seconds.
      * @param int $endoffset End time offset with current time in seconds.
@@ -123,6 +122,7 @@ final class entities_discussion_test extends \advanced_testcase {
      * @param bool $timeendresult Expected result from the has_ended function
      * @param bool $isvisible Expected result from the is_timed_discussion_visible function
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('diplay_period_options_provider')]
     public function test_display_period_settings($testdescription, $startoffset, $endoffset,
                                                  $timestartresult, $timeendresult, $isvisible): void {
         global $CFG;

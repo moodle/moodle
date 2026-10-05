@@ -25,10 +25,10 @@ use core\context\system;
  * Unit tests for user entity
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\entities\user
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\entities\user::class)]
 final class user_test extends advanced_testcase {
 
     /**
@@ -144,9 +144,8 @@ final class user_test extends advanced_testcase {
      *
      * @param string $fullnamedisplay
      * @param string[] $expecteduserfields
-     *
-     * @dataProvider get_name_fields_select_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_name_fields_select_provider')]
     public function test_get_name_fields_select(string $fullnamedisplay, array $expecteduserfields): void {
         global $DB;
 

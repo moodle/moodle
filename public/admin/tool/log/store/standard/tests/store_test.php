@@ -38,8 +38,8 @@ final class store_test extends \advanced_testcase {
      * Tests log writing.
      *
      * @param bool $jsonformat True to test with JSON format
-     * @dataProvider log_writing_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('log_writing_provider')]
     public function test_log_writing(bool $jsonformat): void {
         global $DB;
         $this->resetAfterTest();
@@ -370,8 +370,8 @@ final class store_test extends \advanced_testcase {
      * Tests the decode_other function can cope with both JSON and PHP serialized format.
      *
      * @param mixed $value Value to encode and decode
-     * @dataProvider decode_other_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('decode_other_provider')]
     public function test_decode_other($value): void {
         $this->assertEquals($value, \logstore_standard\log\store::decode_other(serialize($value)));
         $this->assertEquals($value, \logstore_standard\log\store::decode_other(json_encode($value)));
@@ -402,8 +402,8 @@ final class store_test extends \advanced_testcase {
      * Checks that backup and restore of log data works correctly.
      *
      * @param bool $jsonformat True to test with JSON format
-     * @dataProvider log_writing_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('log_writing_provider')]
     public function test_backup_restore(bool $jsonformat): void {
         global $DB;
         $this->resetAfterTest();

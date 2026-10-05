@@ -323,11 +323,11 @@ final class login_lib_test extends \advanced_testcase {
     /**
      * Test for core_login_validate_forgot_password_data().
      *
-     * @dataProvider forgot_password_data_provider
      * @param array $data Key-value array containing username and email data.
      * @param array $errors Key-value array containing error messages for the username and email fields.
      * @param array $options Options for $CFG->protectusernames, $CFG->allowaccountssameemail and $user->confirmed.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('forgot_password_data_provider')]
     public function test_core_login_validate_forgot_password_data($data, $errors = [], $options = []): void {
         $this->resetAfterTest();
 

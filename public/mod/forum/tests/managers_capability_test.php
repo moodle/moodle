@@ -32,8 +32,8 @@ require_once(__DIR__ . '/generator_trait.php');
  * @package    mod_forum
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_forum\local\managers\capability
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_forum\local\managers\capability::class)]
 final class managers_capability_test extends \advanced_testcase {
     // Make use of the test generator trait.
     use mod_forum_tests_generator_trait;
@@ -157,8 +157,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_subscribe_to_forum.
-     *
-     * @covers ::can_subscribe_to_forum
      */
     public function test_can_subscribe_to_forum(): void {
         $this->resetAfterTest();
@@ -173,8 +171,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_create_discussions.
-     *
-     * @covers ::can_create_discussions
      */
     public function test_can_create_discussions(): void {
         $this->resetAfterTest();
@@ -254,8 +250,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_access_all_groups.
-     *
-     * @covers ::can_access_all_groups
      */
     public function test_can_access_all_groups(): void {
         $this->resetAfterTest();
@@ -273,8 +267,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_access_group.
-     *
-     * @covers ::can_access_group
      */
     public function test_can_access_group(): void {
         $this->resetAfterTest();
@@ -297,8 +289,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_view_discussions.
-     *
-     * @covers ::can_view_discussions
      */
     public function test_can_view_discussions(): void {
         $this->resetAfterTest();
@@ -316,8 +306,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_move_discussions.
-     *
-     * @covers ::can_move_discussions
      */
     public function test_can_move_discussions(): void {
         $this->resetAfterTest();
@@ -340,8 +328,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_pin_discussions.
-     *
-     * @covers ::can_pin_discussions
      */
     public function test_can_pin_discussions(): void {
         $this->resetAfterTest();
@@ -359,8 +345,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_split_discussions.
-     *
-     * @covers ::can_split_discussions
      */
     public function test_can_split_discussions(): void {
         $this->resetAfterTest();
@@ -383,8 +367,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_export_discussions.
-     *
-     * @covers ::can_export_discussions
      */
     public function test_can_export_discussions(): void {
         global $CFG;
@@ -408,8 +390,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_manually_control_post_read_status.
-     *
-     * @covers ::can_manually_control_post_read_status
      */
     public function test_can_manually_control_post_read_status(): void {
         global $CFG, $DB;
@@ -437,8 +417,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test must_post_before_viewing_discussion.
-     *
-     * @covers ::must_post_before_viewing_discussion
      */
     public function test_must_post_before_viewing_discussion(): void {
         $this->resetAfterTest();
@@ -468,8 +446,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_subscribe_to_discussion.
-     *
-     * @covers ::can_subscribe_to_discussion
      */
     public function test_can_subscribe_to_discussion(): void {
         $this->resetAfterTest();
@@ -485,8 +461,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_move_discussion.
-     *
-     * @covers ::can_move_discussion
      */
     public function test_can_move_discussion(): void {
         $this->resetAfterTest();
@@ -510,8 +484,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_pin_discussion.
-     *
-     * @covers ::can_pin_discussion
      */
     public function test_can_pin_discussion(): void {
         $this->resetAfterTest();
@@ -530,8 +502,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_post_in_discussion.
-     *
-     * @covers ::can_post_in_discussion
      */
     public function test_can_post_in_discussion(): void {
         $this->resetAfterTest();
@@ -648,8 +618,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_edit_post.
-     *
-     * @covers ::can_edit_post
      */
     public function test_can_edit_post(): void {
         global $CFG;
@@ -746,8 +714,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_delete_post.
-     *
-     * @covers ::can_delete_post
      */
     public function test_can_delete_post(): void {
         global $CFG;
@@ -823,8 +789,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_split_post.
-     *
-     * @covers ::can_split_post
      */
     public function test_can_split_post(): void {
         $this->resetAfterTest();
@@ -874,8 +838,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_reply_to_post.
-     *
-     * @covers ::can_reply_to_post
      */
     public function test_can_reply_to_post(): void {
         $this->resetAfterTest();
@@ -1035,8 +997,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Ensure that can_reply_privately_to_post works as expected.
-     *
-     * @covers ::can_reply_privately_to_post
      */
     public function test_can_reply_privately_to_post(): void {
         $this->resetAfterTest();
@@ -1066,8 +1026,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Ensure that can_view_post works as expected.
-     *
-     * @covers ::can_view_post
      */
     public function test_can_view_post(): void {
         $this->resetAfterTest();
@@ -1092,8 +1050,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Ensure that can_view_post_shell considers private replies correctly.
-     *
-     * @covers ::can_view_post_shell
      */
     public function test_can_view_post_shell(): void {
         $this->resetAfterTest();
@@ -1145,8 +1101,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_export_post.
-     *
-     * @covers ::can_export_post
      */
     public function test_can_export_post(): void {
         global $CFG;
@@ -1183,8 +1137,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_view_participants.
-     *
-     * @covers ::can_view_participants
      */
     public function test_can_view_participants(): void {
         $this->resetAfterTest();
@@ -1224,8 +1176,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_view_hidden_posts.
-     *
-     * @covers ::can_view_hidden_posts
      */
     public function test_can_view_hidden_posts(): void {
         $this->resetAfterTest();
@@ -1243,8 +1193,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_manage_forum.
-     *
-     * @covers ::can_manage_forum
      */
     public function test_can_manage_forum(): void {
         $this->resetAfterTest();
@@ -1262,8 +1210,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Test can_manage_tags.
-     *
-     * @covers ::can_manage_tags
      */
     public function test_can_manage_tags(): void {
         global $DB;
@@ -1284,8 +1230,6 @@ final class managers_capability_test extends \advanced_testcase {
 
     /**
      * Ensure that the can_view_any_private_reply works as expected.
-     *
-     * @covers ::can_view_any_private_reply
      */
     public function test_can_view_any_private_reply(): void {
         $this->resetAfterTest();

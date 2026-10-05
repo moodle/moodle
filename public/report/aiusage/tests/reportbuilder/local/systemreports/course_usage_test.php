@@ -26,8 +26,8 @@ use core_reportbuilder\exception\report_access_exception;
  * @package    report_aiusage
  * @copyright  2026 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \report_aiusage\reportbuilder\local\systemreports\course_usage
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\report_aiusage\reportbuilder\local\systemreports\course_usage::class)]
 final class course_usage_test extends \advanced_testcase {
     /** @var int Counter used to keep actionid unique across ai_action_register test rows. */
     private static int $nextactionid = 0;

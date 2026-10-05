@@ -39,6 +39,7 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright 2013 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\quiz_statistics\task\recalculate::class, 'execute')]
 final class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
 
     /** @var question_engine_data_mapper */
@@ -338,8 +339,6 @@ final class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_
 
     /**
      * Test that a Quiz with only description questions wont break \quiz_statistics\task\recalculate.
-     *
-     * @covers \quiz_statistics\task\recalculate::execute
      */
     public function test_quiz_with_description_questions_recalculate_statistics(): void {
         $this->resetAfterTest();

@@ -30,19 +30,17 @@ use coding_exception;
 
 /**
  * Unit tests for the `icon_system` class.
- *
- * @coversDefaultClass \core\output\icon_system
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\icon_system::class)]
 final class icon_system_test extends advanced_testcase {
     /**
      * Check whether the supplied classes are valid icon subsystems of the supplied one.
      *
-     * @covers ::is_valid_system
-     * @dataProvider is_valid_subsystem_provider
      * @param   string $parent The class to call ::is_valid_system() on
      * @param   string $system The class to request
      * @param   bool $expected Whether the supplied relationship is valid
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_valid_subsystem_provider')]
     public function test_is_valid_subsystem(string $parent, string $system, bool $expected): void {
         $this->assertEquals($expected, $parent::is_valid_system($system));
     }
@@ -51,11 +49,10 @@ final class icon_system_test extends advanced_testcase {
      * Ensure that the ::instance() function throws an appropriate Exception when an inappropriate relationship is
      * specified.
      *
-     * @covers ::instance
-     * @dataProvider invalid_instance_provider
      * @param   string $parent The class to call ::instance() on
      * @param   string $system The class to request
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_instance_provider')]
     public function test_invalid_instance(string $parent, string $system): void {
         $this->expectException(coding_exception::class);
         $this->expectExceptionMessage("Invalid icon system requested '{$system}'");
@@ -67,11 +64,10 @@ final class icon_system_test extends advanced_testcase {
      * Ensure that the ::instance() function returns an instance of the supplied system for a valid icon system
      * relationship.
      *
-     * @covers ::instance
-     * @dataProvider valid_instance_provider
      * @param   string $parent The class to call ::instance() on
      * @param   string $system The class to request
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_instance_provider')]
     public function test_valid_instance(string $parent, string $system): void {
         $instance = $parent::instance($system);
         $this->assertInstanceOf($parent, $instance);
@@ -80,8 +76,6 @@ final class icon_system_test extends advanced_testcase {
 
     /**
      * Ensure that subsequent calls without arguments to ::instance() return the exact same instance.
-     *
-     * @covers ::instance
      */
     public function test_instance_singleton(): void {
         $singleton = icon_system::instance();
@@ -92,8 +86,6 @@ final class icon_system_test extends advanced_testcase {
 
     /**
      * Ensure thaat subsequent calls with an argument to ::instance() return the exact same instance.
-     *
-     * @covers ::instance
      */
     public function test_instance_singleton_named_default(): void {
         global $PAGE;
@@ -107,11 +99,10 @@ final class icon_system_test extends advanced_testcase {
      * Ensure that ::instance() returns an instance of the correct icon system when requested on the core icon_system
      * class.
      *
-     * @covers ::instance
-     * @dataProvider valid_instance_provider
      * @param   string $parent The class to call ::instance() on
      * @param   string $child The class to request
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_instance_provider')]
     public function test_instance_singleton_named(string $parent, string $child): void {
         $iconsystem = icon_system::instance($child);
         $this->assertInstanceOf($child, $iconsystem);
@@ -120,11 +111,10 @@ final class icon_system_test extends advanced_testcase {
     /**
      * Ensure that ::instance() returns an instance of the correct icon system when called on a named parent class.
      *
-     * @covers ::instance
-     * @dataProvider valid_instance_provider
      * @param   string $parent The class to call ::instance() on
      * @param   string $child The class to request
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_instance_provider')]
     public function test_instance_singleton_named_child(string $parent, string $child): void {
         $iconsystem = $parent::instance($child);
         $this->assertInstanceOf($parent, $iconsystem);
@@ -134,9 +124,6 @@ final class icon_system_test extends advanced_testcase {
     /**
      * Ensure that the ::reset_caches() function resets the stored instance such that ::instance() returns a new
      * instance in subsequent calls.
-     *
-     * @covers ::instance
-     * @covers ::reset_caches
      */
     public function test_instance_singleton_reset(): void {
         $singleton = icon_system::instance();

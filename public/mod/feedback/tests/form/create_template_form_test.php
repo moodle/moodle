@@ -68,8 +68,8 @@ final class create_template_form_test extends \advanced_testcase {
      * @param bool $accessallowed
      * @param bool $public
      * @param bool $expectedispublicvalue
-     * @dataProvider createtemplate_form_with_modified_capabilities_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('createtemplate_form_with_modified_capabilities_provider')]
     public function test_createtemplate_form_with_modified_capabilities(array $unassignedroles, bool $accessallowed,
             bool $public = false, bool $expectedispublicvalue = false): void {
         global $DB;
@@ -131,8 +131,8 @@ final class create_template_form_test extends \advanced_testcase {
      * @param string $loginas
      * @param bool $public
      * @param bool $accessallowed
-     * @dataProvider createtemplate_form_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('createtemplate_form_provider')]
     public function test_createtemplate_form(string $loginas, bool $public,
             bool $accessallowed = true): void {
         global $DB;

@@ -36,10 +36,10 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \backup_questions_structure_step
- * @covers \backup_question_dbops
- * @covers \backup_quiz_activity_structure_step
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_questions_structure_step::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_question_dbops::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_quiz_activity_structure_step::class)]
 final class backup_question_selection_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 

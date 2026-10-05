@@ -29,8 +29,8 @@ require_once(__DIR__ . '/../test_helper_trait.php');
  * @author     Andrew Madden <andrewmadden@catalyst-au.net>
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \quizaccess_seb\external\validate_quiz_access
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\quizaccess_seb\external\validate_quiz_access::class)]
 final class validate_quiz_access_test extends \advanced_testcase {
     use \quizaccess_seb_test_helper_trait;
 
@@ -96,9 +96,8 @@ final class validate_quiz_access_test extends \advanced_testcase {
      * @param mixed $url Page URL.
      * @param mixed $configkey SEB config key.
      * @param mixed $messageregex Error message regex to check.
-     *
-     * @dataProvider bad_parameters_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('bad_parameters_provider')]
     public function test_invalid_parameters($cmid, $url, $configkey, $messageregex): void {
         $params = [];
         if (!empty($cmid)) {

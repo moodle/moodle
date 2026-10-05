@@ -75,10 +75,10 @@ test
     /**
      * Test the custom user menu.
      *
-     * @dataProvider custom_user_menu_data
      * @param string $input The menu text to test
      * @param int $entrycount The numbers of entries expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('custom_user_menu_data')]
     public function test_custom_user_menu($data, $entrycount, $dividercount): void {
         global $CFG, $OUTPUT, $USER, $PAGE;
 

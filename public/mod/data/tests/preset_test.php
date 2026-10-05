@@ -27,14 +27,12 @@ use zip_archive;
  * @category   test
  * @copyright  2022 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_data\preset
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\preset::class)]
 final class preset_test extends \advanced_testcase {
 
     /**
      * Test for static create_from_plugin method.
-     *
-     * @covers ::create_from_plugin
      */
     public function test_create_from_plugin(): void {
         $this->resetAfterTest();
@@ -59,8 +57,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for static create_from_storedfile method.
-     *
-     * @covers ::create_from_storedfile
      */
     public function test_create_from_storedfile(): void {
         global $USER;
@@ -111,8 +107,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for static create_from_instance method.
-     *
-     * @covers ::create_from_instance
      */
     public function test_create_from_instance(): void {
         $this->resetAfterTest();
@@ -158,8 +152,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for static create_from_fullname method.
-     *
-     * @covers ::create_from_fullname
      */
     public function test_create_from_fullname(): void {
         $this->resetAfterTest();
@@ -205,8 +197,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for the save a preset method when the preset hasn't been saved before.
-     *
-     * @covers ::save
      */
     public function test_save_new_preset(): void {
         $this->resetAfterTest();
@@ -261,8 +251,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for the save a preset method when is an existing preset that has been saved before.
-     *
-     * @covers ::save
      */
     public function test_save_existing_preset(): void {
         $this->resetAfterTest();
@@ -348,8 +336,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for the export a preset method.
-     *
-     * @covers ::export
      */
     public function test_export(): void {
         $this->resetAfterTest();
@@ -408,8 +394,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for get_userid().
-     *
-     * @covers ::get_userid
      */
     public function test_get_userid(): void {
         $this->resetAfterTest();
@@ -442,8 +426,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for get_path().
-     *
-     * @covers ::get_path
      */
     public function test_get_path(): void {
         $this->resetAfterTest();
@@ -477,11 +459,10 @@ final class preset_test extends \advanced_testcase {
     /**
      * Test for is_directory_a_preset().
      *
-     * @dataProvider is_directory_a_preset_provider
-     * @covers ::is_directory_a_preset
      * @param string $directory
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_directory_a_preset_provider')]
     public function test_is_directory_a_preset(string $directory, bool $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -516,8 +497,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for get_name_from_plugin().
-     *
-     * @covers ::get_name_from_plugin
      */
     public function test_get_name_from_plugin(): void {
         $this->resetAfterTest();
@@ -535,8 +514,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for get_description_from_plugin().
-     *
-     * @covers ::get_description_from_plugin
      */
     public function test_get_description_from_plugin(): void {
         $this->resetAfterTest();
@@ -555,11 +532,10 @@ final class preset_test extends \advanced_testcase {
     /**
      * Test for generate_preset_xml().
      *
-     * @covers ::generate_preset_xml
-     * @dataProvider generate_preset_xml_provider
      * @param array $params activity config settings
      * @param string|null $description preset description
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('generate_preset_xml_provider')]
     public function test_generate_preset_xml(array $params, ?string $description): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -636,8 +612,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for get_file().
-     *
-     * @covers ::get_file
      */
     public function test_get_file(): void {
         $this->resetAfterTest();
@@ -668,8 +642,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for can_manage().
-     *
-     * @covers ::can_manage
      */
     public function test_can_manage(): void {
         $this->resetAfterTest();
@@ -724,8 +696,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for delete().
-     *
-     * @covers ::delete
      */
     public function test_delete(): void {
         $this->resetAfterTest();
@@ -784,8 +754,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for the get_fields method.
-     *
-     * @covers ::get_fields
      */
     public function test_get_fields(): void {
         $this->resetAfterTest();
@@ -834,8 +802,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for the get_sample_entries method.
-     *
-     * @covers ::get_sample_entries
      */
     public function test_get_sample_entries(): void {
         $this->resetAfterTest();
@@ -878,8 +844,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for the get_template_content method.
-     *
-     * @covers ::get_template_content
      */
     public function test_get_template_content(): void {
         $this->resetAfterTest();
@@ -935,8 +899,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Test for the get_fullname method.
-     *
-     * @covers ::get_fullname
      */
     public function test_get_fullname(): void {
         $this->resetAfterTest();

@@ -29,9 +29,9 @@ final class event_times_test extends \advanced_testcase {
     /**
      * Test event times class getters.
      *
-     * @dataProvider getters_testcases
      * @param array $constructorparams Associative array of constructor parameters.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getters_testcases')]
     public function test_getters($constructorparams): void {
         $eventtimes = new event_times(
             $constructorparams['start_time'],

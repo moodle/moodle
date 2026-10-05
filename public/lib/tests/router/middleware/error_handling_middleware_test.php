@@ -29,8 +29,8 @@ use Psr\Http\Message\ResponseInterface;
  * @category   test
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\router\middleware\error_handling_middleware
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\middleware\error_handling_middleware::class)]
 final class error_handling_middleware_test extends route_testcase {
     /**
      * When no errors, the error handle is not called.

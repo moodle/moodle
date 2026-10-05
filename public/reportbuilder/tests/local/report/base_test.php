@@ -31,10 +31,10 @@ use ReflectionClass;
  * Unit tests for report base class
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\report\base
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\report\base::class)]
 final class base_test extends advanced_testcase {
 
     /**

@@ -43,9 +43,9 @@ require_once($CFG->dirroot . '/search/engine/solr/tests/fixtures/testable_engine
  * @category    test
  * @copyright   2015 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @runTestsInSeparateProcesses
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\search_solr\check\connection::class)]
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class engine_test extends \advanced_testcase {
     /**
      * @var \core_search\manager
@@ -194,9 +194,7 @@ final class engine_test extends \advanced_testcase {
                 (object)['q' => 'message'], (object)['everything' => true]));
     }
 
-    /**
-     * @dataProvider file_indexing_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('file_indexing_provider')]
     public function test_index($fileindexing): void {
         global $DB;
 
@@ -222,10 +220,10 @@ final class engine_test extends \advanced_testcase {
     /**
      * Better keep this not very strict about which or how many results are returned as may depend on solr engine config.
      *
-     * @dataProvider file_indexing_provider
      *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('file_indexing_provider')]
     public function test_search($fileindexing): void {
         global $USER, $DB;
 
@@ -305,9 +303,7 @@ final class engine_test extends \advanced_testcase {
         $this->assertCount(0, $this->search->search($querydata));
     }
 
-    /**
-     * @dataProvider file_indexing_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('file_indexing_provider')]
     public function test_delete($fileindexing): void {
         $this->engine->test_set_config('fileindexing', $fileindexing);
 
@@ -325,9 +321,7 @@ final class engine_test extends \advanced_testcase {
         $this->assertCount(0, $this->search->search($querydata));
     }
 
-    /**
-     * @dataProvider file_indexing_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('file_indexing_provider')]
     public function test_alloweduserid($fileindexing): void {
         $this->engine->test_set_config('fileindexing', $fileindexing);
 
@@ -400,9 +394,7 @@ final class engine_test extends \advanced_testcase {
         $this->assertEquals($originalid, $results[0]->get('id'));
     }
 
-    /**
-     * @dataProvider file_indexing_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('file_indexing_provider')]
     public function test_highlight($fileindexing): void {
         global $PAGE;
 
@@ -645,9 +637,8 @@ final class engine_test extends \advanced_testcase {
 
     /**
      * Test that expected results are returned, even with low check_access success rate.
-     *
-     * @dataProvider file_indexing_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('file_indexing_provider')]
     public function test_solr_filling($fileindexing): void {
         $this->engine->test_set_config('fileindexing', $fileindexing);
 
@@ -728,9 +719,8 @@ final class engine_test extends \advanced_testcase {
 
     /**
      * Test that counts are what we expect.
-     *
-     * @dataProvider file_indexing_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('file_indexing_provider')]
     public function test_get_query_total_count($fileindexing): void {
         $this->engine->test_set_config('fileindexing', $fileindexing);
 
@@ -761,9 +751,8 @@ final class engine_test extends \advanced_testcase {
 
     /**
      * Test that paged results are what we expect.
-     *
-     * @dataProvider file_indexing_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('file_indexing_provider')]
     public function test_manager_paged_search($fileindexing): void {
         $this->engine->test_set_config('fileindexing', $fileindexing);
 
@@ -1474,8 +1463,6 @@ final class engine_test extends \advanced_testcase {
     /**
      * Tests that the get_status function works OK on the real server (there are more detailed
      * tests for this function in {@see mock_engine_test}).
-     *
-     * @covers \search_solr\check\connection
      */
     public function test_get_status(): void {
         $status = $this->engine->get_status(5);

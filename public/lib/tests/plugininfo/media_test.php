@@ -24,10 +24,10 @@ use advanced_testcase;
  * Unit tests for the media plugininfo class.
  *
  * @package     core
- * @covers      \core\plugininfo\media
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\plugininfo\media::class)]
 final class media_test extends advanced_testcase {
 
     /**
@@ -51,9 +51,9 @@ final class media_test extends advanced_testcase {
     /**
      * Test the is_uninstall_allowed method.
      *
-     * @dataProvider is_uninstall_allowed_provider
      * @param string $plugin
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_uninstall_allowed_provider')]
     public function test_is_uninstall_allowed(
         string $plugin,
     ): void {
@@ -79,12 +79,12 @@ final class media_test extends advanced_testcase {
     /**
      * Ensure that change_plugin_order() changes the order of the plugins.
      *
-     * @dataProvider change_plugin_order_provider
      * @param string $initialorder
      * @param string $pluginname
      * @param int $direction
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('change_plugin_order_provider')]
     public function test_change_plugin_order(
         array $initialorder,
         string $pluginname,

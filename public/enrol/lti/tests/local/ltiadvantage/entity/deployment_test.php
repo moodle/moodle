@@ -22,18 +22,17 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\deployment
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\entity\deployment::class)]
 final class deployment_test extends \advanced_testcase {
 
     /**
      * Test creation of the object instances.
      *
-     * @dataProvider instantiation_data_provider
      * @param array $args the arguments to the creation method.
      * @param array $expectations various expectations for the test cases.
-     * @covers ::create
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('instantiation_data_provider')]
     public function test_creation(array $args, array $expectations): void {
         if (!$expectations['valid']) {
             $this->expectException($expectations['exception']);
@@ -138,8 +137,6 @@ final class deployment_test extends \advanced_testcase {
 
     /**
      * Test verifying that a context can only be created from a deployment that has an id.
-     *
-     * @covers ::add_context
      */
     public function test_add_context(): void {
         $deploymentwithid = deployment::create(123, 'deploymentid123', 'Global tool deployment', 55);
@@ -155,8 +152,6 @@ final class deployment_test extends \advanced_testcase {
 
     /**
      * Test verifying that a resource_link can only be created from a deployment that has an id.
-     *
-     * @covers ::add_resource_link
      */
     public function test_add_resource_link(): void {
         $deploymentwithid = deployment::create(123, 'deploymentid123', 'Global tool deployment', 55);
@@ -175,8 +170,6 @@ final class deployment_test extends \advanced_testcase {
 
     /**
      * Test the setter set_legacy_consumer_key.
-     *
-     * @covers ::set_legacy_consumer_key
      */
     public function test_set_legacy_consumer_key(): void {
         $deployment = deployment::create(12, 'deploy-id-123', 'Global tool deployment');

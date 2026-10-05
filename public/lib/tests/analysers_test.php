@@ -33,9 +33,8 @@ require_once(__DIR__ . '/../../lib/enrollib.php');
  * @category  test
  * @copyright 2017 David Monllaó {@link http://www.davidmonllao.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers    \core\analytics\analyser\courses
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\analytics\analyser\courses::class)]
 final class analysers_test extends \advanced_testcase {
 
     /**

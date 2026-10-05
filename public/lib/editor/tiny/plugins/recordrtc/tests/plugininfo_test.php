@@ -24,11 +24,11 @@ use advanced_testcase;
  * Unit tests for the \tiny_recordrtc\plugininfo class.
  *
  * @package     tiny_recordrtc
- * @covers      \tiny_recordrtc\plugininfo::is_enabled_for_external
- * @covers      \tiny_recordrtc\plugininfo::get_plugin_configuration_for_external
  * @copyright   2025 Moodle Pty Ltd
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tiny_recordrtc\plugininfo::class, 'is_enabled_for_external')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tiny_recordrtc\plugininfo::class, 'get_plugin_configuration_for_external')]
 final class plugininfo_test extends advanced_testcase {
     /**
      * Basic setup for tests.
@@ -41,12 +41,12 @@ final class plugininfo_test extends advanced_testcase {
     /**
      * Test the is_enabled_for_external and get_plugin_configuration_for_external methods.
      *
-     * @dataProvider for_external_provider
      * @param bool $guest Use a guest user.
      * @param bool $expectedenabled Expected result for is_enabled_for_external.
      * @param array $expectedconfiguration Expected result for get_plugin_configuration_for_external.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('for_external_provider')]
     public function test_for_external(bool $guest, bool $expectedenabled, array $expectedconfiguration): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();

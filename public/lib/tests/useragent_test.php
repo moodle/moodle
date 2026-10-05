@@ -13,15 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * User agent test suite.
  *
  * @package    core
  * @copyright  2013 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_useragent
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_useragent::class)]
 final class useragent_test extends advanced_testcase {
 
     /**
@@ -1153,9 +1152,7 @@ final class useragent_test extends advanced_testcase {
         $this->assertInstanceOf('core_useragent', core_useragent::instance(true));
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_edge($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1184,9 +1181,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_ie($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1234,9 +1229,7 @@ final class useragent_test extends advanced_testcase {
 
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_msword($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1249,9 +1242,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_supports($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1275,9 +1266,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_webkit($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1308,9 +1297,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_webkit_android($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1344,9 +1331,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_chrome($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1381,9 +1366,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_safari($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1418,9 +1401,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_ios_safari($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1455,9 +1436,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_ios($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1476,9 +1455,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_gecko($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1520,9 +1497,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_firefox($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1561,9 +1536,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_opera($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1598,9 +1571,7 @@ final class useragent_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_get_device_type($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1614,9 +1585,7 @@ final class useragent_test extends advanced_testcase {
             "Device Type was not correctly identified");
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_get_browser_version_classes($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1628,9 +1597,7 @@ final class useragent_test extends advanced_testcase {
         $this->assertCount(count($tests['versionclasses']), $actual);
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_web_crawler($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);
@@ -1639,9 +1606,7 @@ final class useragent_test extends advanced_testcase {
         $this->assertSame($expectation, core_useragent::is_web_crawler());
     }
 
-    /**
-     * @dataProvider user_agents_providers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_agents_providers')]
     public function test_useragent_moodle_app($useragent, $tests): void {
         // Setup the core_useragent instance.
         core_useragent::instance(true, $useragent);

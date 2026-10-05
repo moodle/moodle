@@ -106,7 +106,6 @@ final class generator_test extends \advanced_testcase {
     /**
      * Test to create H5P attempts
      *
-     * @dataProvider create_attempt_data
      *
      * @param array $tracks the attempt tracks objects
      * @param int $attempts the final registered attempts
@@ -114,6 +113,7 @@ final class generator_test extends \advanced_testcase {
      * @param bool $exception if an exception is expected
      *
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_attempt_data')]
     public function test_create_attempt(array $tracks, int $attempts, int $results, bool $exception): void {
         global $DB;
         $this->resetAfterTest();
@@ -300,11 +300,11 @@ final class generator_test extends \advanced_testcase {
     /**
      * Test exceptions when creating an invalid attempt.
      *
-     * @dataProvider create_attempt_exceptions_data
      *
      * @param bool $validmod if the activity id is provided
      * @param bool $validuser if the user id is provided
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_attempt_exceptions_data')]
     public function test_create_attempt_exceptions(bool $validmod, bool $validuser): void {
         global $DB;
         $this->resetAfterTest();

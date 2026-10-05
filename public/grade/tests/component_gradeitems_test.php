@@ -96,10 +96,10 @@ namespace core_grades {
         /**
          * Ensure that a component implementing advanced grading returns the correct areas.
          *
-         * @dataProvider is_valid_itemname_provider
          * @param string $itemname
          * @param bool $isadvanced
          */
+        #[\PHPUnit\Framework\Attributes\DataProvider('is_valid_itemname_provider')]
         public function test_is_valid_itemname(string $itemname, bool $isadvanced): void {
             $this->assertEquals(
                 $isadvanced,
@@ -193,10 +193,10 @@ namespace core_grades {
         /**
          * Ensure that a component implementing advanced grading returns the correct areas.
          *
-         * @dataProvider is_advancedgrading_itemname_provider
          * @param string $itemname
          * @param bool $isadvanced
          */
+        #[\PHPUnit\Framework\Attributes\DataProvider('is_advancedgrading_itemname_provider')]
         public function test_is_advancedgrading_itemname(string $itemname, bool $isadvanced): void {
             $this->assertEquals(
                 $isadvanced,
@@ -237,11 +237,11 @@ namespace core_grades {
         /**
          * Ensure that valid field names are correctly mapped for a valid component.
          *
-         * @dataProvider get_field_name_for_itemnumber_provider
          * @param int $itemnumber The item itemnumber to test
          * @param string $fieldname The field name being translated
          * @param string $expected The expected value
          */
+        #[\PHPUnit\Framework\Attributes\DataProvider('get_field_name_for_itemnumber_provider')]
         public function test_get_field_name_for_itemnumber(int $itemnumber, string $fieldname, string $expected): void {
             $component = 'tests\core_grades\component_gradeitems\valid';
             $this->assertEquals($expected, component_gradeitems::get_field_name_for_itemnumber($component, $itemnumber, $fieldname));
@@ -329,11 +329,11 @@ namespace core_grades {
         /**
          * Ensure that valid field names are correctly mapped for a valid component.
          *
-         * @dataProvider get_field_name_for_itemname_provider
          * @param string $itemname The item itemname to test
          * @param string $fieldname The field name being translated
          * @param string $expected The expected value
          */
+        #[\PHPUnit\Framework\Attributes\DataProvider('get_field_name_for_itemname_provider')]
         public function test_get_field_name_for_itemname(string $itemname, string $fieldname, string $expected): void {
             $component = 'tests\core_grades\component_gradeitems\valid';
             $this->assertEquals($expected, component_gradeitems::get_field_name_for_itemname($component, $itemname, $fieldname));
@@ -409,10 +409,10 @@ namespace core_grades {
         /**
          * Ensure that item names are correctly mapped for a valid component.
          *
-         * @dataProvider get_itemname_from_itemnumber_provider
          * @param int $itemnumber The item itemnumber to test
          * @param string $expected The expected value
          */
+        #[\PHPUnit\Framework\Attributes\DataProvider('get_itemname_from_itemnumber_provider')]
         public function test_get_itemname_from_itemnumber(int $itemnumber, string $expected): void {
             $component = 'tests\core_grades\component_gradeitems\valid';
             $this->assertEquals($expected, component_gradeitems::get_itemname_from_itemnumber($component, $itemnumber));
@@ -491,10 +491,10 @@ namespace core_grades {
         /**
          * Ensure that valid item names are correctly mapped for a valid component.
          *
-         * @dataProvider get_itemnumber_from_itemname_provider
          * @param string $itemname The item itemname to test
          * @param int $expected The expected value
          */
+        #[\PHPUnit\Framework\Attributes\DataProvider('get_itemnumber_from_itemname_provider')]
         public function test_get_itemnumber_from_itemname(string $itemname, int $expected): void {
             $component = 'tests\core_grades\component_gradeitems\valid';
             $this->assertEquals($expected, component_gradeitems::get_itemnumber_from_itemname($component, $itemname));

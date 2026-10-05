@@ -25,10 +25,10 @@ use context_system;
  * Unit tests for custom report audience cards exporter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\external\custom_report_audience_cards_exporter
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\external\custom_report_audience_cards_exporter::class)]
 final class custom_report_audience_cards_exporter_test extends advanced_testcase {
 
     /**

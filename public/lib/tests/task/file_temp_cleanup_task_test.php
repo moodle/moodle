@@ -25,8 +25,8 @@ use stdClass;
  * @category  test
  * @copyright 2013 Tim Gusak <tim.gusak@remote-learner.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\task\file_temp_cleanup_task
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\task\file_temp_cleanup_task::class)]
 final class file_temp_cleanup_task_test extends \basic_testcase {
     /**
      * Data provider for cron_delete_from_temp.
@@ -132,10 +132,10 @@ final class file_temp_cleanup_task_test extends \basic_testcase {
     /**
      * Test removing files and directories from tempdir.
      *
-     * @dataProvider cron_delete_from_temp_provider
      * @param array $nodes List of files and directories
      * @param array $expected The expected results
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('cron_delete_from_temp_provider')]
     public function test_cron_delete_from_temp($nodes, $expected): void {
         global $CFG;
 

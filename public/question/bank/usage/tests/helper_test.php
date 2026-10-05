@@ -30,8 +30,8 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \qbank_usage\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_usage\helper::class)]
 final class helper_test extends \advanced_testcase {
 
     use \quiz_question_helper_test_trait;
@@ -105,8 +105,6 @@ final class helper_test extends \advanced_testcase {
 
     /**
      * Test question attempt count.
-     *
-     * @covers ::get_question_attempts_count_in_quiz
      */
     public function test_get_question_attempts_count_in_quiz(): void {
         $this->attempt_quiz();
@@ -119,8 +117,6 @@ final class helper_test extends \advanced_testcase {
 
     /**
      * Test test usage data.
-     *
-     * @covers ::get_question_entry_usage_count
      */
     public function test_get_question_entry_usage_count(): void {
         foreach ($this->questions as $question) {
@@ -133,7 +129,6 @@ final class helper_test extends \advanced_testcase {
     /**
      * If a question has been included via a random question attempt, this should be counted as a usage.
      *
-     * @covers ::get_question_entry_usage_count
      * @return void
      */
     public function test_get_random_question_attempts_usage_count(): void {
@@ -157,7 +152,6 @@ final class helper_test extends \advanced_testcase {
      *
      * When checking usage of separate versions, the new version should show usages but the original version should not.
      *
-     * @covers ::get_question_entry_usage_count
      * @return void
      */
     public function test_edited_question_usage_counts(): void {
@@ -190,7 +184,6 @@ final class helper_test extends \advanced_testcase {
      *
      * When checking usage of separate versions, both versions should show usage.
      *
-     * @covers ::get_question_entry_usage_count
      * @return void
      */
     public function test_edited_attempted_question_usage_counts(): void {
@@ -226,7 +219,6 @@ final class helper_test extends \advanced_testcase {
      *
      * When checking usage of separate versions, the original version should still show usage but the new version should not.
      *
-     * @covers ::get_question_entry_usage_count
      * @return void
      */
     public function test_edited_attempted_random_question_usage_count(): void {

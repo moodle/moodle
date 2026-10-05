@@ -28,8 +28,8 @@ use tool_brickfield\area_test_base;
  * @package     tool_brickfield
  * @copyright   2020 onward: Brickfield Education Labs, https://www.brickfield.ie
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_brickfield\local\areas\core_question\base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_brickfield\local\areas\core_question\base::class)]
 final class questiontext_test extends area_test_base {
     /**
      * Set up before class.
@@ -73,8 +73,6 @@ final class questiontext_test extends area_test_base {
 
     /**
      * Test get course and category.
-     *
-     * @covers ::get_course_and_category
      */
     public function test_get_course_and_category(): void {
         $this->resetAfterTest();

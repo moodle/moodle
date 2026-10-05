@@ -37,6 +37,7 @@ use core\activity_dates;
  * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_quiz\dates::class, 'get_dates')]
 final class dates_test extends advanced_testcase {
     /**
      * Data provider for get_dates_for_module().
@@ -115,9 +116,7 @@ final class dates_test extends advanced_testcase {
     /**
      * Test for get_dates_for_module().
      *
-     * @covers \mod_quiz\dates::get_dates
      *
-     * @dataProvider get_dates_for_module_provider
      * @param int|null $timeopen Time of opening the quiz.
      * @param int|null $timeclose Time of closing the quiz.
      * @param int|null $duedate Due date of the quiz.
@@ -129,6 +128,7 @@ final class dates_test extends advanced_testcase {
      * @param int|null $groupduedate The group override for duedate of the quiz.
      * @param array $expected The expected value of calling get_dates_for_module()
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_dates_for_module_provider')]
     public function test_get_dates_for_module(
         ?int $timeopen,
         ?int $timeclose,

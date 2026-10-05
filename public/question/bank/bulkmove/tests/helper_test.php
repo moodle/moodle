@@ -30,8 +30,8 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \qbank_bulkmove\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_bulkmove\helper::class)]
 final class helper_test extends \advanced_testcase {
 
     /**
@@ -169,8 +169,6 @@ final class helper_test extends \advanced_testcase {
 
     /**
      * Test bulk move of questions.
-     *
-     * @covers ::bulk_move_questions
      */
     public function test_bulk_move_questions(): void {
         global $DB;
@@ -195,7 +193,6 @@ final class helper_test extends \advanced_testcase {
      * Test the question processing and return the question list.
      *
      * @return mixed
-     * @covers ::process_question_ids
      */
     protected function process_question_ids_test() {
         // Test the raw data processing.
@@ -207,8 +204,6 @@ final class helper_test extends \advanced_testcase {
 
     /**
      * Test the question displaydata.
-     *
-     * @covers ::get_displaydata
      */
     public function test_get_displaydata(): void {
         $this->helper_setup();

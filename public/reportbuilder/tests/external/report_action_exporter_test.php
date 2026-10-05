@@ -26,10 +26,10 @@ use core_reportbuilder\output\report_action;
  * Unit tests for report action exporter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\external\report_action_exporter
  * @copyright   2025 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\external\report_action_exporter::class)]
 final class report_action_exporter_test extends advanced_testcase {
 
     /**

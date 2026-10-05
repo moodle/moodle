@@ -30,8 +30,8 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @copyright 2021 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @covers \mod_bigbluebuttonbn\completion\custom_completion
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\completion\custom_completion::class)]
 final class completion_test extends \advanced_testcase {
     use testcase_helper_trait;
 
@@ -239,8 +239,8 @@ final class completion_test extends \advanced_testcase {
      * @param array $customcompletionrules
      * @param array $events
      * @param int $expectedstate
-     * @dataProvider custom_completion_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('custom_completion_data_provider')]
     public function test_get_completion_with_events(array $customcompletionrules, array $events, int $expectedstate): void {
         $this->resetAfterTest();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance(

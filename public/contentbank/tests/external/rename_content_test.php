@@ -40,8 +40,8 @@ use core_external\external_api;
  * @package    core_contentbank
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_contentbank\external\rename_content
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_contentbank\external\rename_content::class)]
 final class rename_content_test extends \core_external\tests\externallib_testcase {
     /**
      * Data provider for test_rename_content.
@@ -65,13 +65,12 @@ final class rename_content_test extends \core_external\tests\externallib_testcas
     /**
      * Test the behaviour of rename_content() for users with permission.
      *
-     * @dataProvider    rename_content_provider
      * @param   string  $newname    The name to set
      * @param   string   $expectedname   The name result
      * @param   bool   $expectedresult   The bolean result expected when renaming
      *
-     * @covers ::execute
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('rename_content_provider')]
     public function test_rename_content_with_permission(string $newname, string $expectedname, bool $expectedresult): void {
         global $DB;
         $this->resetAfterTest();
@@ -106,8 +105,6 @@ final class rename_content_test extends \core_external\tests\externallib_testcas
 
     /**
      * Test the behaviour of rename_content() for users with permission.
-     *
-     * @covers ::execute
      */
     public function test_rename_content_without_permission(): void {
         global $DB;

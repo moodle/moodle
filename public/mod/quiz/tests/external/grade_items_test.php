@@ -28,11 +28,11 @@ use required_capability_exception;
  * @category  external
  * @copyright 2023 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz\external\create_grade_items
- * @covers \mod_quiz\external\delete_grade_items
- * @covers \mod_quiz\external\update_grade_items
- * @covers \mod_quiz\structure
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\external\create_grade_items::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\external\delete_grade_items::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\external\update_grade_items::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\structure::class)]
 final class grade_items_test extends \core_external\tests\externallib_testcase {
     public function test_create_grade_items_service_works(): void {
         $quizobj = $this->create_quiz_with_two_grade_items();

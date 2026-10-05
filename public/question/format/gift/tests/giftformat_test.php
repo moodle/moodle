@@ -270,11 +270,11 @@ final class giftformat_test extends \question_testcase {
     /**
      * Test import of multichoice question in GIFT format
      *
-     * @dataProvider numberingstyle_provider
      *
      * @param string $numberingstyle multichoice numbering style to set for qtype_multichoice
      *
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('numberingstyle_provider')]
     public function test_import_multichoice($numberingstyle): void {
         $this->resetAfterTest(true);
 
@@ -1351,11 +1351,11 @@ FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
     /**
      * Test extract_idnumber_and_tags_from_comment.
      *
-     * @dataProvider extract_idnumber_and_tags_from_comment_testcases
      * @param string $expectedidnumber the expected idnumber.
      * @param array $expectedtags the expected tags.
      * @param string $comment the comment to parse.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('extract_idnumber_and_tags_from_comment_testcases')]
     public function test_extract_idnumber_and_tags_from_comment(
             string $expectedidnumber, array $expectedtags, string $comment): void {
         $importer = new qformat_gift();

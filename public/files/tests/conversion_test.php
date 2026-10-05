@@ -23,6 +23,7 @@ namespace core_files;
  * @copyright  2017 Andrew nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_files\conversion::class, 'get_conversions_for_file')]
 final class conversion_test extends \advanced_testcase {
 
     /**
@@ -79,8 +80,6 @@ final class conversion_test extends \advanced_testcase {
      * Ensure that get_conversions_for_file returns an existing conversion
      * record with matching sourcefileid and targetformat when a file with the same
      * contenthash is uploaded several times.
-     *
-     * @covers \core_files\conversion::get_conversions_for_file
      */
     public function test_get_conversions_for_multiple_files_existing_conversion_incomplete(): void {
         $this->resetAfterTest();

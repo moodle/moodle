@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/rating/lib.php');
  * @category   test
  * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \rating
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\rating::class)]
 final class rating_test extends \advanced_testcase {
 
     protected $syscontext;
@@ -342,9 +342,8 @@ final class rating_test extends \advanced_testcase {
 
     /**
      * Test the value returned by get_aggregate_string().
-     *
-     * @dataProvider get_aggregate_string_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_aggregate_string_provider')]
     public function test_get_aggregate_string($method, $aggregate, $isnumeric, $scaleitems, $expectation): void {
         $options = new \stdClass();
         $options->aggregate = $aggregate;

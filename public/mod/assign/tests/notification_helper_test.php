@@ -30,8 +30,8 @@ use mod_assign\task\send_assignment_overdue_notification_to_user;
  * @category   test
  * @copyright  2024 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_assign\notification_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\notification_helper::class)]
 final class notification_helper_test extends \advanced_testcase {
 
     use task_trait;

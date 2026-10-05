@@ -30,6 +30,7 @@ namespace core;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('markdown_to_html')]
 final class markdown_test extends \basic_testcase {
 
     public function test_paragraphs(): void {
@@ -67,8 +68,6 @@ final class markdown_test extends \basic_testcase {
      * filter_codehighlighter (Prism.js) recognises: a "language-*" class on the
      * <pre> element followed by a bare <code>. The filter's trigger pattern is
      * /<pre.+?class=".*?language-.*?"><code>/i.
-     *
-     * @covers ::markdown_to_html
      */
     public function test_fenced_code_block_uses_language_class_on_pre(): void {
         $backticks = "\u{0060}\u{0060}\u{0060}";
@@ -84,8 +83,6 @@ final class markdown_test extends \basic_testcase {
      * "language-none" class so filter_codehighlighter still styles it as a code
      * block. Prism has no grammar for "none", so it applies the generic
      * code-block styling without any language-specific highlighting.
-     *
-     * @covers ::markdown_to_html
      */
     public function test_fenced_code_block_without_language_maps_to_none(): void {
         $backticks = "\u{0060}\u{0060}\u{0060}";
@@ -100,8 +97,6 @@ final class markdown_test extends \basic_testcase {
     /**
      * Existing raw HTML code blocks must not be rewritten. Only fenced blocks
      * without a language token should become "language-none".
-     *
-     * @covers ::markdown_to_html
      */
     public function test_existing_pre_code_markup_is_not_rewritten(): void {
         $backticks = "\u{0060}\u{0060}\u{0060}";

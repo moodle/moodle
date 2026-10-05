@@ -24,8 +24,8 @@ use enrol_lti\local\ltiadvantage\entity\application_registration;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\resource_link_repository
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\repository\resource_link_repository::class)]
 final class resource_link_repository_test extends \advanced_testcase {
     /**
      * Helper to generate a new resource_link instance.
@@ -115,8 +115,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Tests adding a resource_link to the store.
-     *
-     * @covers ::save
      */
     public function test_save_new(): void {
         $this->resetAfterTest();
@@ -131,8 +129,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Test that we cannot add two resource_links with the same resourcelinkid for a given deploymentid.
-     *
-     * @covers ::save
      */
     public function test_add_uniqueness_constraints(): void {
         $this->resetAfterTest();
@@ -147,8 +143,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Test fetching an object from the store.
-     *
-     * @covers ::find
      */
     public function test_find(): void {
         $this->resetAfterTest();
@@ -164,8 +158,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Test finding a collection of resource links by resource.
-     *
-     * @covers ::find_by_resource
      */
     public function test_find_by_resource(): void {
         $this->resetAfterTest();
@@ -193,8 +185,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Test finding a collection of resource links by resource and user.
-     *
-     * @covers ::find_by_resource_and_user
      */
     public function test_find_by_resource_and_user(): void {
         global $CFG;
@@ -252,8 +242,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Test deletion from the store.
-     *
-     * @covers ::delete
      */
     public function test_delete(): void {
         global $CFG;
@@ -291,8 +279,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Test deleting a group of resource links by resource.
-     *
-     * @covers ::delete_by_resource
      */
     public function test_delete_by_resource(): void {
         global $CFG;
@@ -336,8 +322,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Test deleting a resource links by their deployment container.
-     *
-     * @covers ::delete_by_deployment
      */
     public function test_delete_by_deployment(): void {
         global $CFG;
@@ -375,8 +359,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Test checking existence in the store.
-     *
-     * @covers ::exists
      */
     public function test_exists(): void {
         $this->resetAfterTest();
@@ -390,8 +372,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Test update of an existing resource_link.
-     *
-     * @covers ::save
      */
     public function test_save_existing(): void {
         $this->resetAfterTest();
@@ -408,8 +388,6 @@ final class resource_link_repository_test extends \advanced_testcase {
 
     /**
      * Test update with a stale object which is no longer present in the store.
-     *
-     * @covers ::save
      */
     public function test_update_stale(): void {
         $this->resetAfterTest();

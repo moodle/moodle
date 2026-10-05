@@ -26,8 +26,8 @@ use Slim\Routing\RoutingResults;
  * @category   test
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\route_loader
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\route_loader::class)]
 final class route_loader_test extends route_testcase {
     /**
      * Ensure that the abstract loader implements the interface.

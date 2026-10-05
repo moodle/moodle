@@ -33,8 +33,8 @@ final class store_test extends \advanced_testcase {
      * Tests log writing.
      *
      * @param bool $jsonformat True to test with JSON format
-     * @dataProvider log_writing_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('log_writing_provider')]
     public function test_log_writing(bool $jsonformat): void {
         global $DB, $CFG;
         $this->resetAfterTest();

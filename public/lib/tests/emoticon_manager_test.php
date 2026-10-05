@@ -24,10 +24,10 @@ use ReflectionMethod;
  * Unit tests for emoticon manager
  *
  * @package     core
- * @covers      \core\emoticon_manager
  * @copyright   2024 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\emoticon_manager::class)]
 final class emoticon_manager_test extends advanced_testcase {
 
     /**
@@ -48,9 +48,8 @@ final class emoticon_manager_test extends advanced_testcase {
      * @param bool $selectable
      * @param string[] $expected
      * @param string[] $excluded
-     *
-     * @dataProvider get_emoticons_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_emoticons_provider')]
     public function test_get_emoticons(
         bool $selectable,
         array $expected,

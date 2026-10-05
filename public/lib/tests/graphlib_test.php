@@ -24,11 +24,11 @@ require_once("$CFG->libdir/graphlib.php");
 /**
  * Tests for Graphlib.
  *
- * @coversDefaultClass \graph
  * @package    core
  * @copyright  2023 Meirza (meirza.arson@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\graph::class)]
 final class graphlib_test extends \basic_testcase {
 
     /**
@@ -119,11 +119,10 @@ final class graphlib_test extends \basic_testcase {
     /**
      * Test graphlib.
      *
-     * @dataProvider create_data
-     * @covers ::output
      * @param array $mock
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_data')]
     public function test_graphlib($mock): void {
         $graph = new \graph(300, 200);
         ob_start();

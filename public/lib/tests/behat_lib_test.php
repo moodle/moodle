@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * Unit tests for parts of /lib/behat/lib.php.
  *
@@ -22,7 +21,6 @@
  * @copyright  2021 Université Rennes 2 {@link https://www.univ-rennes2.fr}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 /**
  * Unit tests for parts of /lib/behat/lib.php.
  *
@@ -31,6 +29,7 @@
  * @copyright  2021 Université Rennes 2 {@link https://www.univ-rennes2.fr}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('behat_is_requested_url')]
 final class behat_lib_test extends advanced_testcase {
 
     /**
@@ -52,13 +51,12 @@ final class behat_lib_test extends advanced_testcase {
     /**
      * Tests for behat_is_requested_url() function.
      *
-     * @dataProvider url_provider
-     * @covers ::behat_is_requested_url
      *
      * @param string $url           URL used with behat_is_requested_url() function.
      * @param bool   $expectedvalue Expected value returned by behat_is_requested_url() function.
      * @param array  $environment   Values to override $_SERVER global variable.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('url_provider')]
     public function test_behat_is_requested_url($url, $expectedvalue, $environment): void {
         // Save $_SERVER variable.
         $server = $_SERVER;

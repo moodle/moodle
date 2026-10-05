@@ -31,9 +31,9 @@ use stdClass;
  * @category  external
  * @copyright 2023 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz\external\reopen_attempt
- * @covers \mod_quiz\external\get_reopen_attempt_confirmation
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\external\reopen_attempt::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\external\get_reopen_attempt_confirmation::class)]
 final class reopen_attempt_test extends \core_external\tests\externallib_testcase {
     /** @var stdClass|null if we make a quiz attempt, we store the student object here. */
     protected $student;

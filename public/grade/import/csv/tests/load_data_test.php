@@ -283,12 +283,12 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /**
      * Check that the user matches a user in the system.
      *
-     * @dataProvider check_user_exists_provider
      * @param string $field The field to use for the query.
      * @param string|boolean $value The field value. When fetching by ID, set true to fetch valid user ID, false otherwise.
      * @param boolean $successexpected Whether we expect for a user to be found or not.
      * @param int $allowaccountssameemail Value for $CFG->allowaccountssameemail
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('check_user_exists_provider')]
     public function test_check_user_exists($field, $value, $successexpected, $allowaccountssameemail = 0): void {
         $this->resetAfterTest();
 

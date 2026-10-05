@@ -32,14 +32,13 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package   qtype_ordering
  * @copyright 2023 Ilya Tregubov <ilya.a.tregubov@gmail.com.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \qtype_ordering\output\renderable_base
- * @covers    \qtype_ordering\output\specific_grade_detail_feedback
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering\output\renderable_base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering\output\specific_grade_detail_feedback::class)]
 final class specific_grade_detail_feedback_test extends advanced_testcase {
     /**
      * Test the exported data for the template that renders the specific grade detail feedback test to a given question attempt.
      *
-     * @dataProvider export_for_template_provider
      * @param array $answeritems The array of ordered answers.
      * @param int $gradingtype Grading type.
      * @param string $layouttype The type of the layout.
@@ -47,6 +46,7 @@ final class specific_grade_detail_feedback_test extends advanced_testcase {
      * @param int $selecttype The type of the select.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_for_template_provider')]
     public function test_export_for_template(array $answeritems, int $gradingtype, string $layouttype, array $expected,
             int $selecttype): void {
         global $PAGE;

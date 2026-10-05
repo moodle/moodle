@@ -24,8 +24,8 @@ use core\tests\router\route_testcase;
  * @package    core
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\response\exception_response
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\response\exception_response::class)]
 final class exception_response_test extends route_testcase {
     public function test_basics(): void {
         $instance = new class extends exception_response { // phpcs:ignore

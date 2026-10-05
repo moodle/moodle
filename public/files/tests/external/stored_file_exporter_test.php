@@ -23,10 +23,10 @@ use context_user;
  * Unit tests for stored file exporter
  *
  * @package     core_files
- * @covers      \core_files\external\stored_file_exporter
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_files\external\stored_file_exporter::class)]
 final class stored_file_exporter_test extends advanced_testcase {
 
     /**
@@ -97,9 +97,8 @@ final class stored_file_exporter_test extends advanced_testcase {
      *
      * @param string $filename
      * @param string $expected
-     *
-     * @dataProvider export_filenameshort_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_filenameshort_provider')]
     public function test_export_filenameshort(string $filename, string $expected): void {
         global $PAGE, $USER;
 

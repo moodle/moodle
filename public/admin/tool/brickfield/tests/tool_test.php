@@ -150,10 +150,10 @@ EOF;
 
     /**
      * Test base 64 image provider.
-     * @dataProvider base64_img_provider
      * @param string $content
      * @param bool $expectation
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('base64_img_provider')]
     public function test_base64_img_detected(string $content, bool $expectation): void {
         $this->assertEquals(
             $expectation,

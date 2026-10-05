@@ -90,9 +90,8 @@ final class cron_test extends \advanced_testcase {
 
     /**
      * Test that when a feed has an error the skip time is increased correctly.
-     *
-     * @dataProvider    skip_time_increase_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('skip_time_increase_provider')]
     public function test_error($skiptime, $skipuntil, $newvalue): void {
         global $DB, $CFG;
         $this->resetAfterTest();

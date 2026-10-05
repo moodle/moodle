@@ -23,21 +23,20 @@ namespace core_adminpresets;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_adminpresets\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_adminpresets\helper::class)]
 final class helper_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of create_preset() method.
      *
-     * @covers ::create_preset
-     * @dataProvider create_preset_provider
      *
      * @param string|null $name Preset name field.
      * @param string|null $comments Preset comments field.
      * @param int|null $iscore Preset iscore field.
      * @param int|null $iscoreresult Expected iscore value for the result preset.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_preset_provider')]
     public function test_create_preset(?string $name = null, ?string $comments = null, ?int $iscore = null,
            ?int $iscoreresult = null): void {
         global $CFG, $DB, $USER;
@@ -123,8 +122,6 @@ final class helper_test extends \advanced_testcase {
     /**
      * Test the behaviour of add_item() method.
      *
-     * @covers ::add_item
-     * @dataProvider add_item_provider
      *
      * @param string $name Item name.
      * @param string $value Item value.
@@ -132,6 +129,7 @@ final class helper_test extends \advanced_testcase {
      * @param string|null $advname If the item is an advanced setting, the name of the advanced setting should be specified here.
      * @param string|null $advvalue If the item is an advanced setting, the value of the advanced setting should be specified here.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_item_provider')]
     public function test_add_item(string $name, string $value, ?string $plugin = 'none', ?string $advname = null,
             ?string $advvalue = null): void {
         global $DB;
@@ -201,13 +199,12 @@ final class helper_test extends \advanced_testcase {
     /**
      * Test the behaviour of add_plugin() method.
      *
-     * @covers ::add_plugin
-     * @dataProvider add_plugin_provider
      *
      * @param string $type Plugin type.
      * @param string $name Plugin name.
      * @param mixed $enabled Whether the plugin will be enabled or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_plugin_provider')]
     public function test_add_plugin(string $type, string $name, $enabled = 0): void {
         global $DB;
 
@@ -272,13 +269,12 @@ final class helper_test extends \advanced_testcase {
     /**
      * Test the behaviour of change_default_preset() method.
      *
-     * @covers ::change_default_preset
-     * @dataProvider change_default_preset_provider
      *
      * @param string $preset The preset name to apply or the path to the XML to be imported and applied.
      * @param array|null $settings A few settings to check (with their expected values).
      * @param array|null $plugins A few module plugins to check (with their expected values for the visibility).
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('change_default_preset_provider')]
     public function test_change_default_preset(string $preset, ?array $settings = null, ?array $plugins = null): void {
         $this->resetAfterTest();
         $this->setAdminUser();

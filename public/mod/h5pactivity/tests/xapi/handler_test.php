@@ -33,8 +33,8 @@ use stdClass;
  * @category   test
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_h5pactivity\xapi\handler
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_h5pactivity\xapi\handler::class)]
 final class handler_test extends \advanced_testcase {
 
     /**
@@ -133,7 +133,6 @@ final class handler_test extends \advanced_testcase {
     /**
      * Testing wrong statements scenarios.
      *
-     * @dataProvider xapi_handler_errors_data
      * @param bool $hasverb valid verb
      * @param bool $hasdefinition generate definition
      * @param bool $hasresult generate result
@@ -141,6 +140,7 @@ final class handler_test extends \advanced_testcase {
      * @param bool $hasuser valid user
      * @param bool $generateattempt if generates an empty attempt
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('xapi_handler_errors_data')]
     public function test_xapi_handler_errors(bool $hasverb, bool $hasdefinition, bool $hasresult,
             bool $hascontext, bool $hasuser, bool $generateattempt): void {
         global $DB, $CFG;

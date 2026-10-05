@@ -41,10 +41,10 @@ defined('MOODLE_INTERNAL') || die();
  * Unit tests for base datasource
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\datasource
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\datasource::class)]
 final class datasource_test extends advanced_testcase {
     /**
      * Data provider for {@see test_add_columns_from_entity}
@@ -91,9 +91,8 @@ final class datasource_test extends advanced_testcase {
      * @param string[] $include
      * @param string[] $exclude
      * @param string[] $expectedcolumns
-     *
-     * @dataProvider add_columns_from_entity_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_columns_from_entity_provider')]
     public function test_add_columns_from_entity(
         array $include,
         array $exclude,
@@ -206,9 +205,8 @@ final class datasource_test extends advanced_testcase {
      * @param string[] $include
      * @param string[] $exclude
      * @param string[] $expectedfilters
-     *
-     * @dataProvider add_filters_from_entity_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_filters_from_entity_provider')]
     public function test_add_filters_from_entity(
         array $include,
         array $exclude,
@@ -320,9 +318,8 @@ final class datasource_test extends advanced_testcase {
      * @param string[] $include
      * @param string[] $exclude
      * @param string[] $expectedconditions
-     *
-     * @dataProvider add_conditions_from_entity_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_conditions_from_entity_provider')]
     public function test_add_conditions_from_entity(
         array $include,
         array $exclude,
@@ -533,9 +530,8 @@ final class datasource_test extends advanced_testcase {
      * @param string[] $expectedcolumns
      * @param string[] $expectedfilters
      * @param string[] $expectedconditions
-     *
-     * @dataProvider add_all_from_entities_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_all_from_entities_provider')]
     public function test_add_all_from_entities(
         array $entitynames,
         array $expectedcolumns,

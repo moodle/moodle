@@ -31,8 +31,11 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  * @category   test
  * @copyright  2013 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \assignfeedback_editpdf\page_editor
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\assignfeedback_editpdf\page_editor::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\assignfeedback_editpdf\task\convert_submission::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_files\conversion::class, 'get_conversions_for_file')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\assignfeedback_editpdf\event\observer::class)]
 final class feedback_test extends \advanced_testcase {
 
     // Use the generator helper.
@@ -206,8 +209,6 @@ final class feedback_test extends \advanced_testcase {
 
     /**
      * Test the annotations and comments for marker files and that they are successfully retrieved.
-     *
-     * @covers ::set_annotations, ::set_comments, ::get_annotations, ::get_comments, ::has_annotations_or_comments
      */
     public function test_page_editor_markers(): void {
         $this->resetAfterTest();
@@ -481,8 +482,6 @@ final class feedback_test extends \advanced_testcase {
 
     /**
      * Test Convert submission ad-hoc task.
-     *
-     * @covers \assignfeedback_editpdf\task\convert_submission
      */
     public function test_conversion_task(): void {
         $this->require_ghostscript();
@@ -669,8 +668,6 @@ final class feedback_test extends \advanced_testcase {
 
     /**
      * Test that overwriting a submission file deletes any associated conversions.
-     *
-     * @covers \core_files\conversion::get_conversions_for_file
      */
     public function test_submission_file_overridden(): void {
         $this->resetAfterTest();
@@ -725,8 +722,6 @@ final class feedback_test extends \advanced_testcase {
 
     /**
      * Tests that when the plugin is not enabled for an assignment it does not create conversion tasks.
-     *
-     * @covers \assignfeedback_editpdf\event\observer
      */
     public function test_submission_not_enabled(): void {
         $this->require_ghostscript();

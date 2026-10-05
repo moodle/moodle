@@ -36,19 +36,18 @@ require_once(__DIR__ . '/../lti_advantage_testcase.php');
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\service\tool_launch_service
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\service\tool_launch_service::class)]
 final class tool_launch_service_test extends \lti_advantage_testcase {
 
     /**
      * Test the use case "A user launches a tool so they can view an external resource/activity".
      *
-     * @dataProvider user_launch_provider
      * @param array|null $legacydata array detailing what legacy information to create, or null if not required.
      * @param array|null $launchdata array containing details of the launch, including user and migration claim.
      * @param array $expected the array detailing expectations.
-     * @covers ::user_launches_tool
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_launch_provider')]
     public function test_user_launches_tool(?array $legacydata, ?array $launchdata, array $expected): void {
         $this->resetAfterTest();
         // Setup.
@@ -269,8 +268,6 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
 
     /**
      * Test confirming that an exception is thrown if trying to launch a published resource without a custom id.
-     *
-     * @covers ::user_launches_tool
      */
     public function test_user_launches_tool_missing_custom_id(): void {
         $this->resetAfterTest();
@@ -287,8 +284,6 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
 
     /**
      * Test confirming that an exception is thrown if trying to launch a published resource that doesn't exist.
-     *
-     * @covers ::user_launches_tool
      */
     public function test_user_launches_tool_invalid_custom_id(): void {
         $this->resetAfterTest();
@@ -305,8 +300,6 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
 
     /**
      * Test confirming that an exception is thrown if trying to launch the tool where no application can be found.
-     *
-     * @covers ::user_launches_tool
      */
     public function test_user_launches_tool_missing_registration(): void {
         $this->resetAfterTest();
@@ -338,8 +331,6 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
 
     /**
      * Test confirming that an exception is thrown if trying to launch the tool where no deployment can be found.
-     *
-     * @covers ::user_launches_tool
      */
     public function test_user_launches_tool_missing_deployment(): void {
         $this->resetAfterTest();
@@ -371,8 +362,6 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
 
     /**
      * Test the mapping from IMS roles to Moodle roles during a launch.
-     *
-     * @covers ::user_launches_tool
      */
     public function test_user_launches_tool_role_mapping(): void {
         $this->resetAfterTest();
@@ -426,8 +415,6 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
 
     /**
      * Test verifying that a user launch can result in updates to some user fields.
-     *
-     * @covers ::user_launches_tool
      */
     public function test_user_launches_tool_user_fields_updated(): void {
         $this->resetAfterTest();
@@ -473,8 +460,6 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
 
     /**
      * Test the launch when a module has an enrolment start date.
-     *
-     * @covers ::user_launches_tool
      */
     public function test_user_launches_tool_max_enrolment_start_restriction(): void {
         $this->resetAfterTest();
@@ -491,8 +476,6 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
 
     /**
      * Test the Moodle-specific custom param 'forceembed' during user launches.
-     *
-     * @covers ::user_launches_tool
      */
     public function test_user_launches_tool_force_embedding_custom_param(): void {
         $this->resetAfterTest();
@@ -526,9 +509,8 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @param mixed $aud the aud value to test
      * @param array $expected the array of expectations to check
-     * @dataProvider aud_data_provider
-     * @covers ::user_launches_tool
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('aud_data_provider')]
     public function test_user_launches_tool_aud_variations($aud, array $expected): void {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();
@@ -615,9 +597,8 @@ final class tool_launch_service_test extends \lti_advantage_testcase {
      * @param array $agsclaim1 the lti-ags claim data to use in the first launch.
      * @param array $agsclaim2 the lti-ags claim data to use in the second launch.
      * @param array $expected the array of test case expectations.
-     * @dataProvider ags_claim_provider
-     * @covers ::user_launches_tool
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ags_claim_provider')]
     public function test_user_launches_tool_ags_claim_handling(array $agsclaim1, array $agsclaim2, array $expected): void {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();

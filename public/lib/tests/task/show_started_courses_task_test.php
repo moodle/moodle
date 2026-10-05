@@ -26,20 +26,19 @@ use core\tests\courses_tasks_testcase;
  * @package   core
  * @copyright 2023 Sara Arjona <sara@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\task\show_started_courses_task
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\task\show_started_courses_task::class)]
 final class show_started_courses_task_test extends courses_tasks_testcase {
     /**
      * Test show_started_courses cron task.
      *
-     * @dataProvider get_courses_provider
-     * @covers ::execute
      *
      * @param int $lastweek Number of courses with the start date set to last week to be created.
      * @param int $yesterday Number of courses with the start date set to yesterday to be created.
      * @param int $tomorrow Number of courses with the start date set to tomorrow to be created.
      * @param bool $createvisible Whether visible courses should be created or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_courses_provider')]
     public function test_show_started_courses(
         int $lastweekcount,
         int $yesterdaycount,

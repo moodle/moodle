@@ -25,9 +25,9 @@ use core_h5p\local\library\autoloader;
  * @category   test
  * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @runTestsInSeparateProcesses
- * @covers     \core_h5p_generator
 */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_h5p_generator::class)]
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class generator_test extends \advanced_testcase {
 
     /**
@@ -155,10 +155,10 @@ final class generator_test extends \advanced_testcase {
      * Test the behaviour of generate_h5p_data(). Test whether library files are created or not
      * on filesystem depending what the method defines.
      *
-     * @dataProvider generate_h5p_data_files_creation_provider
      * @param bool $createlibraryfiles Whether to create library files on the filesystem
      * @param bool $expected The expectation whether the files have been created or not
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('generate_h5p_data_files_creation_provider')]
     public function test_generate_h5p_data_files_creation(bool $createlibraryfiles, bool $expected): void {
         global $DB;
 
@@ -212,9 +212,9 @@ final class generator_test extends \advanced_testcase {
      * Test the returned data of generate_h5p_data() when the method requests
      * creation of H5P file and xAPI states.
      *
-     * @dataProvider generate_h5p_data_xapistates_provider
      * @param array|null $filerecord
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('generate_h5p_data_xapistates_provider')]
     public function test_generate_h5p_data_xapistates(?array $filerecord): void {
         global $DB;
 
@@ -365,10 +365,10 @@ final class generator_test extends \advanced_testcase {
      * Test the behaviour of create_h5p_record(). Test whather the h5p content data is
      * properly saved in the database.
      *
-     * @dataProvider create_h5p_record_provider
      * @param array $h5pdata The h5p content data
      * @param \stdClass $expected The expected saved data
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_h5p_record_provider')]
     public function test_create_h5p_record(array $h5pdata, \stdClass $expected): void {
         global $DB;
 
@@ -488,10 +488,10 @@ final class generator_test extends \advanced_testcase {
      * Test the behaviour of create_contents_libraries_record(). Test whether the contents libraries
      * are properly saved in the database.
      *
-     * @dataProvider create_contents_libraries_record_provider
      * @param array $contentslibrariestdata The h5p contents libraries data.
      * @param \stdClass $expected The expected saved data.
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_contents_libraries_record_provider')]
     public function test_create_contents_libraries_record(array $contentslibrariestdata, \stdClass $expected): void {
         global $DB;
 
@@ -548,10 +548,10 @@ final class generator_test extends \advanced_testcase {
      * Test the behaviour of create_library_dependency_record(). Test whether the contents libraries
      * are properly saved in the database.
      *
-     * @dataProvider create_library_dependency_record_provider
      * @param array $librarydependencydata The library dependency data.
      * @param \stdClass $expected The expected saved data.
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_library_dependency_record_provider')]
     public function test_create_library_dependency_record(array $librarydependencydata, \stdClass $expected): void {
         global $DB;
 
@@ -603,10 +603,10 @@ final class generator_test extends \advanced_testcase {
     /**
      * Test the behaviour of create_content_file(). Test whether a file belonging to a content is created.
      *
-     * @dataProvider create_content_file_provider
      * @param array $filedata Data from the file to be created.
      * @param array $expecteddata Data expected.Data from the file to be created.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_content_file_provider')]
     public function test_create_content_file($filedata, $expecteddata): void {
         $this->resetAfterTest();
 

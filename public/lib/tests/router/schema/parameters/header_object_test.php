@@ -29,8 +29,8 @@ use ValueError;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\parameters\header_object
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\parameters\header_object::class)]
 final class header_object_test extends route_testcase {
     public function test_validate(): void {
         $param = new header_object(

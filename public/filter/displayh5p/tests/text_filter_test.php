@@ -31,16 +31,16 @@ namespace filter_displayh5p;
  * @package filter_displayh5p
  * @copyright 2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_displayh5p\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_displayh5p\text_filter::class)]
 final class text_filter_test extends \advanced_testcase {
     /**
      * Check that h5p tags with urls from allowed domains are filtered.
      *
      * @param string $text Original text
      * @param string $filteredtextpattern Text pattern after display H5P filter
-     * @dataProvider texts_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('texts_provider')]
     public function test_filter_urls($text, $filteredtextpattern): void {
         $this->resetAfterTest(true);
 

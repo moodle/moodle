@@ -25,11 +25,11 @@ require_once($CFG->libdir . '/badgeslib.php');
  *
  * Unit test for the badges tertiary navigation
  *
- * @coversDefaultClass \core_badges\output\manage_badge_action_bar
  * @package     core_badges
  * @copyright   2021 onwards Peter Dias
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\output\manage_badge_action_bar::class)]
 final class manage_badge_action_bar_test extends \advanced_testcase {
     /**
      * Data provider for test_generate_badge_navigation
@@ -77,11 +77,10 @@ final class manage_badge_action_bar_test extends \advanced_testcase {
     /**
      * Test the generate_badge_navigation function
      *
-     * @dataProvider generate_badge_navigation_provider
      * @param string $role
      * @param array $expected
-     * @covers ::generate_badge_navigation
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('generate_badge_navigation_provider')]
     public function test_generate_badge_navigation(string $role, array $expected): void {
         global $DB;
         $this->resetAfterTest();

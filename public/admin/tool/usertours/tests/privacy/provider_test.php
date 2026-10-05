@@ -28,8 +28,8 @@ use tool_usertours\privacy\provider;
  * @category   test
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \tool_usertours\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\privacy\provider::class)]
 final class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Helper method for creating a tour

@@ -23,10 +23,10 @@ namespace tool_usertours;
  * @category   test
  * @copyright  2022 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \tool_usertours\helper
- * @covers \tool_usertours\hook\before_serverside_filter_fetch
- * @covers \tool_usertours\hook\before_clientside_filter_fetch
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\helper::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\hook\before_serverside_filter_fetch::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\hook\before_clientside_filter_fetch::class)]
 final class helper_test extends \advanced_testcase {
     /**
      * Data Provider for get_string_from_input.
@@ -65,10 +65,10 @@ final class helper_test extends \advanced_testcase {
     /**
      * Ensure that the get_string_from_input function returns langstring strings correctly.
      *
-     * @dataProvider get_string_from_input_provider
      * @param string $string The string to test
      * @param string $expected The expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_string_from_input_provider')]
     public function test_get_string_from_input($string, $expected): void {
         $this->assertEquals($expected, helper::get_string_from_input($string));
     }

@@ -30,8 +30,8 @@ use ZipArchive;
  * @category    test
  * @copyright   2020 Simey Lameze <simey@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @covers      \core\content\export\zipwriter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\content\export\zipwriter::class)]
 final class zipwriter_test extends advanced_testcase {
 
     /**

@@ -31,14 +31,12 @@ require_once(__DIR__ . '/../lti_advantage_testcase.php');
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\task\sync_grades
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\task\sync_grades::class)]
 final class sync_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test confirming task name.
-     *
-     * @covers ::get_name
      */
     public function test_get_name(): void {
         $this->assertEquals(get_string('tasksyncgrades', 'enrol_lti'), (new sync_grades())->get_name());
@@ -46,8 +44,6 @@ final class sync_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test grade sync when the resource has syncgrades disabled.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_gradesync_disabled(): void {
         $this->resetAfterTest();
@@ -67,8 +63,6 @@ final class sync_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test the grade sync task when the auth_lti plugin is disabled.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_auth_plugin_disabled(): void {
         $this->resetAfterTest();
@@ -88,8 +82,6 @@ final class sync_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test the grade sync task when the enrol_lti plugin is disabled.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_enrol_plugin_disabled(): void {
         $this->resetAfterTest();

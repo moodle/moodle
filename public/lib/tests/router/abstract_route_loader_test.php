@@ -26,8 +26,8 @@ namespace core\router;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\abstract_route_loader
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\abstract_route_loader::class)]
 final class abstract_route_loader_test extends \advanced_testcase {
     /**
      * Ensure that the abstract loader does not implement the interface. That would defeat the point.
@@ -67,10 +67,10 @@ final class abstract_route_loader_test extends \advanced_testcase {
     /**
      * Test tha the normalise_component_path method works as expected.
      *
-     * @dataProvider normalise_component_path_provider
      * @param string $input
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('normalise_component_path_provider')]
     public function test_normalise_component_path(
         string $input,
         string $expected,

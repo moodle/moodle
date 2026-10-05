@@ -92,8 +92,8 @@ abstract class attempt_walkthrough_testcase extends \advanced_testcase {
      * @param array $quizsettings of settings read from csv file quizzes.csv
      * @param array $csvdata of data read from csv file "questionsXX.csv", "stepsXX.csv" and "resultsXX.csv".
      * // phpcs:ignore moodle.Commenting.ValidTags.Invalid
-     * @dataProvider get_data_for_walkthrough
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_data_for_walkthrough')]
     public function test_walkthrough_from_csv($quizsettings, $csvdata): void {
         // CSV data files for these tests were generated using:
         // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/responsegenerator.

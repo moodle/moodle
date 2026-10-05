@@ -30,10 +30,10 @@ use stdClass;
  *
  * @package    core_xapi
  * @since      Moodle 3.9
- * @covers     \core_xapi\handler
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_xapi\handler::class)]
 final class handler_test extends advanced_testcase {
 
     /**

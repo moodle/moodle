@@ -29,10 +29,10 @@ require_once(__DIR__ . '/testcase_helper_trait.php');
  * @package    aiprovider_ollama
  * @copyright  2025 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiprovider_ollama\provider
- * @covers     \aiprovider_ollama\process_explain_text
- * @covers     \aiprovider_ollama\abstract_processor
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_ollama\provider::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_ollama\process_explain_text::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_ollama\abstract_processor::class)]
 final class process_explain_text_test extends \advanced_testcase {
 
     use testcase_helper_trait;

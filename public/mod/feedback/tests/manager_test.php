@@ -25,8 +25,9 @@ use advanced_testcase;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright 2025 Laurent David <laurent.david@moodle.com>
  * @package   mod_feedback
- * @covers \mod_feedback\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_feedback\manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('can_see_others_in_groups')]
 final class manager_test extends advanced_testcase {
     /**
      * Data provider for test_can_see_others_in_groups.
@@ -80,10 +81,8 @@ final class manager_test extends advanced_testcase {
      * @param int $mode The group mode.
      * @param string $username The username of the user to test.
      * @param bool $expected The expected result.
-     *
-     * @covers ::can_see_others_in_groups
-     * @dataProvider can_see_others_in_groups_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_see_others_in_groups_provider')]
     public function test_can_see_others_in_groups(int $mode, string $username, bool $expected): void {
         $this->resetAfterTest();
 

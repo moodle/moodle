@@ -28,8 +28,8 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  * @category   test
  * @copyright  2022 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \assignfeedback_editpdf\document_services
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\assignfeedback_editpdf\document_services::class)]
 final class document_services_test extends \advanced_testcase {
     use \mod_assign_test_generator;
 

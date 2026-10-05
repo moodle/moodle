@@ -32,6 +32,8 @@ require_once($CFG->dirroot . '/lib/csvlib.class.php');
  * @copyright  2012 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\csv_import_reader::class, 'load_csv_content')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\csv_import_reader::class, 'next')]
 final class csvclass_test extends \advanced_testcase {
 
     protected $testdata = array();
@@ -157,9 +159,6 @@ final class csvclass_test extends \advanced_testcase {
      * Regression test for MDL-87794: csv_import_reader::load_csv_content() was re-serialising
      * parsed data via csv_export_writer::print_array() which applies escape_spreadsheet_formula(),
      * prepending a "'" to values starting with =, +, -, or @.
-     *
-     * @covers \csv_import_reader::load_csv_content
-     * @covers \csv_import_reader::next
      */
     public function test_import_preserves_formula_characters(): void {
         // CSV with values starting with each of the four formula trigger characters.

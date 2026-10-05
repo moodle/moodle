@@ -26,10 +26,10 @@ require_once(__DIR__ . '/fixtures/testable_core_media_player_native.php');
  *
  * @package   core
  * @category  test
- * @covers    \core_media_player_native
  * @copyright 2019 Ruslan Kabalin
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_media_player_native::class)]
 final class core_media_player_native_test extends \advanced_testcase {
 
     /**

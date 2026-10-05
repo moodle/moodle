@@ -31,6 +31,8 @@ use tool_uploaduser\local\text_progress_tracker;
  * @copyright  2020 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tool_uploadusers::class, 'process')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tool_uploaduser\process::class, 'process_line')]
 final class upload_users_test extends advanced_testcase {
 
     /**
@@ -45,7 +47,6 @@ final class upload_users_test extends advanced_testcase {
 
     /**
      * Test upload users, enrol and role assignation
-     * @covers \tool_uploadusers::process
      */
     public function test_user_can_upload_with_course_enrolment(): void {
 
@@ -107,7 +108,6 @@ EOF;
 
     /**
      * Test upload users, enrol and assign default role from manual enrol plugin.
-     * @covers \tool_uploadusers::process
      */
     public function test_user_can_upload_with_course_enrolment_default_role(): void {
 
@@ -246,8 +246,6 @@ EOF;
      * - Duplicate values within the same CSV are rejected (only first is created).
      * - Values that already exist in the database are rejected.
      * - Updating a user with their own existing unique value is not rejected as a duplicate.
-     *
-     * @covers \tool_uploaduser\process::process_line
      */
     public function test_upload_users_unique_profile_field_no_duplicates(): void {
         global $DB;

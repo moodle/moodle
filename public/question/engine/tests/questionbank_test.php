@@ -35,6 +35,7 @@ require_once(__DIR__ . '/../lib.php');
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\question_finder::class, 'get_questions_from_categories')]
 final class questionbank_test extends \advanced_testcase {
 
     public function test_sort_qtype_array(): void {
@@ -102,7 +103,6 @@ final class questionbank_test extends \advanced_testcase {
     /**
      * Test get_questions_from_categories.
      *
-     * @covers \question_finder::get_questions_from_categories
      *
      * @return void
      */

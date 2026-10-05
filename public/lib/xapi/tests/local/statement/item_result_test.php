@@ -74,11 +74,11 @@ final class item_result_test extends advanced_testcase {
     /**
      * Test for duration values.
      *
-     * @dataProvider duration_values_data
      * @param string|null $duration specified duration
      * @param int|null $seconds calculated seconds
      * @param bool $exception if exception is expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('duration_values_data')]
     public function test_duration_values(?string $duration, ?int $seconds, bool $exception): void {
 
         if ($exception) {

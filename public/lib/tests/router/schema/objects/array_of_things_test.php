@@ -27,10 +27,10 @@ use core\tests\router\route_testcase;
  * @package    core
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\objects\array_of_things
- * @covers     \core\router\schema\objects\type_base
- * @covers     \core\router\schema\openapi_base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\objects\array_of_things::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\objects\type_base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\openapi_base::class)]
 final class array_of_things_test extends route_testcase {
     public function test_referenced_object(): void {
         $object = new class ( // phpcs:ignore
@@ -87,10 +87,10 @@ final class array_of_things_test extends route_testcase {
     /**
      * Test tha the validate_data method successfully validates content.
      *
-     * @dataProvider successful_validation_provider
      * @param param|string|type_base|null $valueparamtype
      * @param mixed $data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('successful_validation_provider')]
     public function test_validation_success(
         param|string|type_base|null $valueparamtype,
         mixed $data,
@@ -148,10 +148,10 @@ final class array_of_things_test extends route_testcase {
     /**
      * Test tha the validate_data method throws an exception when the data is invalid.
      *
-     * @dataProvider failed_validation_provider
      * @param param|string|type_base|null $valueparamtype
      * @param mixed $data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('failed_validation_provider')]
     public function test_validation_failures(
         param|string|type_base|null $valueparamtype,
         mixed $data,

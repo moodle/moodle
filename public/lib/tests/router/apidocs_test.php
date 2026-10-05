@@ -25,8 +25,8 @@ use Psr\Http\Message\ResponseInterface;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\apidocs
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\apidocs::class)]
 final class apidocs_test extends \advanced_testcase {
     public function test_openapi_docs(): void {
         $apidocs = new apidocs();

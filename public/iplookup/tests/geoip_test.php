@@ -24,6 +24,7 @@ namespace core;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('iplookup_find_location')]
 final class geoip_test extends \advanced_testcase {
     #[\Override]
     public static function setUpBeforeClass(): void {
@@ -45,8 +46,6 @@ final class geoip_test extends \advanced_testcase {
 
     /**
      * Test that iplookup_find_location doesn't throw up GeoIp2 exceptions.
-     *
-     * @covers ::iplookup_find_location
      */
     public function test_not_found_ip(): void {
         $this->resetAfterTest();
@@ -67,9 +66,9 @@ final class geoip_test extends \advanced_testcase {
     /**
      * Test the format of data returned in the iplookup_find_location function.
      *
-     * @dataProvider ip_provider
      * @param   string  $ip The IP to test
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ip_provider')]
     public function test_ip($ip): void {
         global $CFG;
         if (!defined('TEST_GEOIP_APIKEY') || empty(TEST_GEOIP_APIKEY)) {

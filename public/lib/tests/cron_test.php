@@ -24,8 +24,11 @@ use core\task\manager;
  * @package     core
  * @copyright   2023 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\cron
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\cron::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\cron::class, 'run_inner_adhoc_task')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\task\manager::class, 'adhoc_task_delayed')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\task\manager::class, 'adhoc_task_complete')]
 final class cron_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
@@ -168,13 +171,11 @@ final class cron_test extends \advanced_testcase {
      * in the DB (not deleted), with fail_delay reset to 0, attemptsavailable decremented,
      * and nextruntime advanced by the requested delay.
      *
-     * @covers \core\cron::run_inner_adhoc_task
-     * @covers \core\task\manager::adhoc_task_delayed
-     * @dataProvider run_inner_adhoc_task_delayed_provider
      * @param int|null $softretrydelay Soft retry delay, or null for exponential backoff.
      * @param int $now Frozen clock value.
      * @param int $expectednextruntime Expected nextruntime stored in the DB after the delay.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('run_inner_adhoc_task_delayed_provider')]
     public function test_run_inner_adhoc_task_routes_to_delayed_when_soft_retry_set(
         ?int $softretrydelay,
         int $now,
@@ -259,9 +260,6 @@ final class cron_test extends \advanced_testcase {
      * Test that run_inner_adhoc_task() routes to adhoc_task_complete() when the task
      * executes successfully WITHOUT calling set_soft_retry_delay(), and that the task
      * is deleted from the DB (not kept for retry).
-     *
-     * @covers \core\cron::run_inner_adhoc_task
-     * @covers \core\task\manager::adhoc_task_complete
      */
     public function test_run_inner_adhoc_task_routes_to_complete_when_no_soft_retry(): void {
         global $CFG, $DB;

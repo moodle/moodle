@@ -23,6 +23,7 @@ namespace core_user;
  * @copyright 2014 The Open University
  * @licensehttp://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('profile_get_user_field')]
 final class profilelib_test extends \advanced_testcase {
 
     /**
@@ -300,9 +301,8 @@ final class profilelib_test extends \advanced_testcase {
      * @param string $shortnamesearch
      * @param bool $casesensitive
      * @param bool $expectmatch
-     *
-     * @dataProvider profile_get_custom_field_data_by_shortname_case_sensitivity_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('profile_get_custom_field_data_by_shortname_case_sensitivity_provider')]
     public function test_profile_get_custom_field_data_by_shortname_case_sensitivity(
         string $shortname,
         string $shortnamesearch,
@@ -330,8 +330,6 @@ final class profilelib_test extends \advanced_testcase {
 
     /**
      * Test profile field loading via profile_get_user_field helper
-     *
-     * @covers ::profile_get_user_field
      */
     public function test_profile_get_user_field(): void {
         $this->resetAfterTest();

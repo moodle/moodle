@@ -119,7 +119,6 @@ final class output_email_test extends \advanced_testcase {
     /**
      * Test for the forum email renderable postdate.
      *
-     * @dataProvider postdate_provider
      *
      * @param array  $globalconfig      The configuration to set on $CFG
      * @param array  $forumconfig       The configuration for this forum
@@ -127,6 +126,7 @@ final class output_email_test extends \advanced_testcase {
      * @param array  $discussionconfig  The configuration for this discussion
      * @param string $expectation       The expected date
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('postdate_provider')]
     public function test_postdate($globalconfig, $forumconfig, $postconfig, $discussionconfig, $expectation): void {
         global $CFG, $DB;
         $this->resetAfterTest(true);

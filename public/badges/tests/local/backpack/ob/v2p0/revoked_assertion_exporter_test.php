@@ -25,8 +25,9 @@ use core_badges\local\backpack\ob_factory;
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_badges\local\backpack\ob\v2p0\badge_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\local\backpack\ob\v2p0\badge_exporter::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_json')]
 class revoked_assertion_exporter_test extends \advanced_testcase {
     #[\Override]
     public static function setUpBeforeClass(): void {
@@ -78,8 +79,6 @@ class revoked_assertion_exporter_test extends \advanced_testcase {
 
     /**
      * Test get_json method.
-     *
-     * @covers ::get_json
      */
     public function test_get_json(): void {
         $this->resetAfterTest();

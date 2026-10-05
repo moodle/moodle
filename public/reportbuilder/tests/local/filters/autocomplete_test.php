@@ -25,11 +25,11 @@ use core_reportbuilder\local\report\filter;
  * Unit tests for course selector filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\base
- * @covers      \core_reportbuilder\local\filters\autocomplete
  * @copyright   2022 Nathan Nguyen <nathannguyen@catalyst-au.net>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\autocomplete::class)]
 final class autocomplete_test extends advanced_testcase {
 
     /**
@@ -50,9 +50,8 @@ final class autocomplete_test extends advanced_testcase {
      *
      * @param array $shortnames list of course short name
      * @param array $expected list of course full name
-     *
-     * @dataProvider get_sql_filter_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_provider')]
     public function test_get_sql_filter(array $shortnames, array $expected): void {
         global $DB;
 

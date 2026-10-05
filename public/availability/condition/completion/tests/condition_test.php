@@ -28,6 +28,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\availability_completion\condition::class, 'load_course_structure')]
 final class condition_test extends \advanced_testcase {
 
     /**
@@ -381,7 +382,6 @@ final class condition_test extends \advanced_testcase {
     /**
      * Tests the is_available and get_description functions for previous activity option.
      *
-     * @dataProvider previous_activity_data
      * @param int $grade the current assign grade (0 for none)
      * @param int $condition true for complete, false for incomplete
      * @param string $mark activity to mark as complete
@@ -390,6 +390,7 @@ final class condition_test extends \advanced_testcase {
      * @param bool $resultnot if it must be available when the condition is inverted
      * @param string $description the availabiklity text to check
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('previous_activity_data')]
     public function test_previous_activity(int $grade, int $condition, string $mark, string $activity,
             bool $result, bool $resultnot, string $description): void {
         global $CFG, $DB;
@@ -562,7 +563,6 @@ final class condition_test extends \advanced_testcase {
      * Tests the is_available and get_description functions for
      * previous activity option in course sections.
      *
-     * @dataProvider section_previous_activity_data
      * @param int $condition condition value
      * @param bool $mark if Page 1 must be mark as completed
      * @param string $section section to add the availability
@@ -570,6 +570,7 @@ final class condition_test extends \advanced_testcase {
      * @param bool $resultnot expected negated result
      * @param string $description description to match
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('section_previous_activity_data')]
     public function test_section_previous_activity(int $condition, bool $mark, string $section,
                 bool $result, bool $resultnot, string $description): void {
         global $CFG, $DB;
@@ -849,9 +850,8 @@ final class condition_test extends \advanced_testcase {
      * @param string $testtype Test type
      * @param string $activity Activity key
      * @param string $expectedprevious Expected previous activity key
-     * @dataProvider subsection_previous_activity_data
-     * @covers \availability_completion\condition::load_course_structure
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('subsection_previous_activity_data')]
     public function test_subsection_previous_activity_context(
         string $testtype,
         string $activity,

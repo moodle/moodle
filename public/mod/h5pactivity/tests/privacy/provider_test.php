@@ -40,8 +40,8 @@ use stdClass;
  * @category   test
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_h5pactivity\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_h5pactivity\privacy\provider::class)]
 final class provider_test extends provider_testcase {
 
     /** @var stdClass User without any attempt. */

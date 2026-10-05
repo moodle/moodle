@@ -30,13 +30,14 @@ use Slim\Exception\HttpNotFoundException;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\route_controller
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\route_controller::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('redirect')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\router\route_controller::class, 'get_param')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\router\route_controller::class, 'redirect_to_callable')]
 final class route_controller_test extends route_testcase {
     /**
      * Test that the redirect method works as expected.
-     *
-     * @covers ::redirect
      */
     public function test_redirect(): void {
         $helper = new class (\core\di::get_container()) {
@@ -73,8 +74,6 @@ final class route_controller_test extends route_testcase {
 
     /**
      * Test that get_param works as expected.
-     *
-     * @covers \core\router\route_controller::get_param
      */
     public function test_get_param(): void {
         $request = (new \GuzzleHttp\Psr7\ServerRequest('GET', '/test'))
@@ -106,8 +105,6 @@ final class route_controller_test extends route_testcase {
 
     /**
      * Test that it is possible to redirect to a callable.
-     *
-     * @covers \core\router\route_controller::redirect_to_callable
      */
     public function test_redirect_to_callable(): void {
         self::load_fixture('core', '/router/route_on_class.php');

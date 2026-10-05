@@ -140,12 +140,12 @@ final class attempt_test extends \advanced_testcase {
     /**
      * Test saving statements.
      *
-     * @dataProvider save_statement_data
      * @param string $subcontent subcontent identifier
      * @param bool $hasdefinition generate definition
      * @param bool $hasresult generate result
      * @param array $results 0 => insert ok, 1 => maxscore, 2 => rawscore, 3 => count
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('save_statement_data')]
     public function test_save_statement(string $subcontent, bool $hasdefinition, bool $hasresult, array $results): void {
 
         list($cm, $student) = $this->generate_testing_scenario();
@@ -261,10 +261,10 @@ final class attempt_test extends \advanced_testcase {
     /**
      * Test delete all attempts.
      *
-     * @dataProvider delete_all_attempts_data
      * @param bool $hasstudent if user is specificed
      * @param int[] 0-3 => statements count results, 4-5 => totals
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('delete_all_attempts_data')]
     public function test_delete_all_attempts(bool $hasstudent, array $results): void {
         global $DB;
 
@@ -363,11 +363,11 @@ final class attempt_test extends \advanced_testcase {
     /**
      * Test set_duration method.
      *
-     * @dataProvider basic_setters_data
      * @param string $attribute the stribute to test
      * @param int $oldvalue attribute old value
      * @param int $newvalue attribute new expected value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('basic_setters_data')]
     public function test_basic_setters(string $attribute, int $oldvalue, int $newvalue): void {
         global $DB;
 

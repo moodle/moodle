@@ -71,13 +71,13 @@ final class custom_completion_test extends advanced_testcase {
     /**
      * Test for get_state().
      *
-     * @dataProvider get_state_provider
      * @param string $rule The custom completion rule.
      * @param int $available Whether this rule is available.
      * @param int $entries The number of entries.
      * @param int|null $status Expected status.
      * @param string|null $exception Expected exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_state_provider')]
     public function test_get_state(string $rule, int $available, int $entries, ?int $status, ?string $exception): void {
         global $DB;
 
@@ -185,10 +185,10 @@ final class custom_completion_test extends advanced_testcase {
     /**
      * Test for get_available_custom_rules().
      *
-     * @dataProvider get_available_custom_rules_provider
      * @param int $status
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_available_custom_rules_provider')]
     public function test_get_available_custom_rules(int $status, array $expected): void {
         $customdataval = [
             'customcompletionrules' => [

@@ -36,14 +36,14 @@ require_once($CFG->dirroot . '/question/type/calculatedsimple/edit_calculatedsim
  * @copyright  2007 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
- * @covers \question_type
- * @covers \qtype_calculatedsimple
- * @covers \question_wizard_form
- * @covers \question_edit_form
- * @covers \qtype_calculated_edit_form
- * @covers \qtype_calculatedsimple_edit_form
  *
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_type::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_calculatedsimple::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_wizard_form::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_edit_form::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_calculated_edit_form::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_calculatedsimple_edit_form::class)]
 final class question_type_test extends \advanced_testcase {
     protected $qtype;
 

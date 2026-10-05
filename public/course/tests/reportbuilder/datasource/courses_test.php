@@ -27,10 +27,10 @@ use core_reportbuilder\tests\core_reportbuilder_testcase;
  * Unit tests for courses datasources
  *
  * @package     core_course
- * @covers      \core_course\reportbuilder\datasource\courses
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_course\reportbuilder\datasource\courses::class)]
 final class courses_test extends core_reportbuilder_testcase {
 
     /**
@@ -389,9 +389,8 @@ final class courses_test extends core_reportbuilder_testcase {
      * @param string $filtername
      * @param array $filtervalues
      * @param bool $expectmatch
-     *
-     * @dataProvider datasource_filters_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('datasource_filters_provider')]
     public function test_datasource_filters(string $filtername, array $filtervalues, bool $expectmatch): void {
         $this->resetAfterTest();
 

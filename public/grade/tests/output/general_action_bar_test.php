@@ -28,6 +28,7 @@ use moodle_url;
  * @copyright  2021 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\output\general_action_bar::class, 'export_for_template')]
 final class general_action_bar_test extends advanced_testcase {
 
     /**
@@ -58,12 +59,11 @@ final class general_action_bar_test extends advanced_testcase {
     /**
      * Test the exported data for the general action bar for different user roles and settings.
      *
-     * @dataProvider export_for_template_provider
      * @param string $userrole The user role to test
      * @param bool $enableoutcomes Whether to enable outcomes
      * @param array $expectedoptions The expected options returned in the general action selector
-     * @covers \core_grades\output\general_action_bar::export_for_template
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_for_template_provider')]
     public function test_export_for_template(string $userrole, bool $enableoutcomes, array $expectedoptions): void {
         global $PAGE;
 

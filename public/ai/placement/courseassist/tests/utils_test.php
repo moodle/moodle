@@ -27,8 +27,9 @@ require_once(__DIR__ . '/../../../tests/ai_test_trait.php');
  * @package    aiplacement_courseassist
  * @copyright  2024 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiplacement_courseassist\utils
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiplacement_courseassist\utils::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\aiplacement_courseassist\placement::class, 'is_available_in_context')]
 final class utils_test extends \advanced_testcase {
     use ai_test_trait;
 
@@ -101,8 +102,6 @@ final class utils_test extends \advanced_testcase {
 
     /**
      * Test the contexts where the placement is available.
-     *
-     * @covers \aiplacement_courseassist\placement::is_available_in_context
      */
     public function test_is_available_in_context(): void {
         $this->assertTrue(placement::is_available_in_context($this->context));
@@ -114,8 +113,8 @@ final class utils_test extends \advanced_testcase {
      *
      * @param array $actionstouse The actions to use.
      * @param int $expectedcount Expected count of actions.
-     * @dataProvider course_assist_actions_available_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('course_assist_actions_available_provider')]
     public function test_get_actions_available(
         array $actionstouse,
         int $expectedcount,

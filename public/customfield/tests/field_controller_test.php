@@ -30,8 +30,8 @@ use customfield_textarea;
  * @category   test
  * @copyright  2018 Ruslan Kabalin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_customfield\field_controller
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_customfield\field_controller::class)]
 final class field_controller_test extends \advanced_testcase {
     /**
      * Get generator.

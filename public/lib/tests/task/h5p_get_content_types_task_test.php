@@ -25,9 +25,8 @@ use core_h5p\h5p_test_factory;
  * @package   core
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @runTestsInSeparateProcesses
  */
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class h5p_get_content_types_task_test extends \advanced_testcase {
 
     protected function setup(): void {

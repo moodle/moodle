@@ -29,6 +29,11 @@ require_once($CFG->dirroot . '/user/lib.php');
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\user::class, 'get_user_details_courses')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\user::class, 'create_user')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('user_get_user_navigation_info')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\user::class, 'get_user_details')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\user::class, 'get_name_placeholders')]
 final class userlib_test extends \advanced_testcase {
     /**
      * Test user_get_user_details_courses
@@ -133,8 +138,6 @@ final class userlib_test extends \advanced_testcase {
 
     /**
      * Tests that the user fields returned by the method can be limited.
-     *
-     * @covers \core\user::get_user_details_courses
      */
     public function test_user_get_user_details_courses_limit_return(): void {
         $this->resetAfterTest();
@@ -331,8 +334,6 @@ final class userlib_test extends \advanced_testcase {
 
     /**
      * Test that creating users populates default values
-     *
-     * @covers \core\user::create_user
      */
     public function test_user_create_user_default_values(): void {
         global $CFG;
@@ -362,10 +363,10 @@ final class userlib_test extends \advanced_testcase {
     /**
      * Test that {@see \core\user::create_user()} throws exception when invalid username is provided.
      *
-     * @dataProvider data_create_user_invalid_username
      * @param string $username Invalid username
      * @param string $expectmessage Expected exception message
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_create_user_invalid_username')]
     public function test_create_user_invalid_username($username, $expectmessage): void {
         global $CFG;
 
@@ -652,8 +653,6 @@ final class userlib_test extends \advanced_testcase {
 
     /**
      * Test that user_get_user_navigation_info includes the user's first name in metadata.
-     *
-     * @covers ::user_get_user_navigation_info
      */
     public function test_user_navigation_info_includes_userfirstname(): void {
         global $PAGE;
@@ -951,7 +950,6 @@ final class userlib_test extends \advanced_testcase {
 
     /**
      * Test user_get_user_details_permissions.
-     * @covers \core\user::get_user_details
      */
     public function test_user_get_user_details_permissions(): void {
         global $CFG;
@@ -1030,7 +1028,6 @@ final class userlib_test extends \advanced_testcase {
 
     /**
      * Test user_get_user_details_groups.
-     * @covers \core\user::get_user_details
      */
     public function test_user_get_user_details_groups(): void {
         $this->resetAfterTest();
@@ -1097,8 +1094,6 @@ final class userlib_test extends \advanced_testcase {
     /**
      * Verifies that the get_name_placeholders function correctly generates
      * an array of name placeholders for a given user object.
-     *
-     * @covers \core\user::get_name_placeholders
      */
     public function test_get_name_placeholders(): void {
         $this->resetAfterTest();

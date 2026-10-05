@@ -43,9 +43,9 @@ final class item_definition_test extends advanced_testcase {
     /**
      * Test item_definition creation.
      *
-     * @dataProvider creation_provider
      * @param string  $interactiontype
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('creation_provider')]
     public function test_creation(string  $interactiontype): void {
 
         // Activity without interactionType.

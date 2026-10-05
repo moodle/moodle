@@ -26,10 +26,10 @@ use core_user;
  * Unit tests for the database helper class
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\helpers\database
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\helpers\database::class)]
 final class database_test extends advanced_testcase {
 
     /**

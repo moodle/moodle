@@ -26,12 +26,11 @@ use grade_outcome;
  * @copyright 2026 David Woloszyn <david.woloszyn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_outcome::class, 'get_modules_mapped_to_course_outcomes')]
 final class learning_outcomes_test extends \advanced_testcase {
     /**
      * Only the activities actually mapped to an outcome are returned, whether the outcome
      * is scaled (mapped via a grade item) or scale-less (mapped via grade_outcomes_modules).
-     *
-     * @covers \grade_outcome::get_modules_mapped_to_course_outcomes
      */
     public function test_multiple_modules_mapped_to_multiple_course_outcomes(): void {
         global $CFG;
@@ -81,8 +80,6 @@ final class learning_outcomes_test extends \advanced_testcase {
     /**
      * A single activity mapped to multiple outcomes (scaled and scale-less) is returned
      * for each outcome it is mapped to.
-     *
-     * @covers \grade_outcome::get_modules_mapped_to_course_outcomes
      */
     public function test_singular_module_mapped_to_multiple_course_outcomes(): void {
         global $CFG;

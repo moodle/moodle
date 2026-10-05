@@ -29,13 +29,11 @@ require_once(__DIR__ . '/../../../../../lib/adminlib.php');
  * @copyright 2025 Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
- * @covers    \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(setting_configmultiselect_tags::class)]
 final class setting_configmultiselect_tags_test extends advanced_testcase {
     /**
      * Test the constructor and basic properties.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::__construct
      */
     public function test_constructor(): void {
         $this->resetAfterTest();
@@ -61,8 +59,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test load_choices method with stored custom values.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::load_choices
      */
     public function test_load_choices_with_custom_values(): void {
         $this->resetAfterTest();
@@ -97,8 +93,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test load_choices removes empty keys.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::load_choices
      */
     public function test_load_choices_removes_empty_keys(): void {
         $this->resetAfterTest();
@@ -129,8 +123,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test write_setting with valid data.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::write_setting
      */
     public function test_write_setting_with_valid_data(): void {
         $this->resetAfterTest();
@@ -161,8 +153,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test write_setting normalizes values to lowercase.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::write_setting
      */
     public function test_write_setting_normalizes_to_lowercase(): void {
         $this->resetAfterTest();
@@ -190,8 +180,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test write_setting removes duplicates.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::write_setting
      */
     public function test_write_setting_removes_duplicates(): void {
         $this->resetAfterTest();
@@ -219,8 +207,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test write_setting preserves order of existing values.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::write_setting
      */
     public function test_write_setting_preserves_order(): void {
         $this->resetAfterTest();
@@ -251,8 +237,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test write_setting appends new values.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::write_setting
      */
     public function test_write_setting_appends_new_values(): void {
         $this->resetAfterTest();
@@ -283,8 +267,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test write_setting filters empty values.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::write_setting
      */
     public function test_write_setting_filters_empty_values(): void {
         $this->resetAfterTest();
@@ -312,8 +294,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test write_setting with non-array data.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::write_setting
      */
     public function test_write_setting_with_non_array(): void {
         $this->resetAfterTest();
@@ -337,8 +317,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test resolve_label with existing language string.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::resolve_label
      */
     public function test_resolve_label_with_existing_string(): void {
         $this->resetAfterTest();
@@ -368,8 +346,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test resolve_label with custom format.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::resolve_label
      */
     public function test_resolve_label_with_custom_format(): void {
         $this->resetAfterTest();
@@ -404,8 +380,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test resolve_label with empty value.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::resolve_label
      */
     public function test_resolve_label_with_empty_value(): void {
         $this->resetAfterTest();
@@ -436,9 +410,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test integration: setting and retrieving custom formats.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::write_setting
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::load_choices
      */
     public function test_integration_custom_formats(): void {
         $this->resetAfterTest();
@@ -480,8 +451,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
 
     /**
      * Test that the setting works correctly with the actual config name used in production.
-     *
-     * @covers \mod_bigbluebuttonbn\local\admin\setting_configmultiselect_tags::write_setting
      */
     public function test_production_config_name(): void {
         $this->resetAfterTest();

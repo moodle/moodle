@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @category   test
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_quiz\local\structure\slot_random
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\local\structure\slot_random::class)]
 final class local_structure_slot_random_test extends \advanced_testcase {
 
     use \quiz_question_helper_test_trait;

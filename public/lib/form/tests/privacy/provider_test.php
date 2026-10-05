@@ -49,10 +49,10 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that the recently selected filepicker view mode is exported.
      *
-     * @dataProvider data_filemanager_recentviewmode
      * @param string $val Value of the preference filemanager_recentviewmode
      * @param string $desc Text describing the preference
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_filemanager_recentviewmode')]
     public function test_filemanager_recentviewmode(string $val, string $desc): void {
         $this->resetAfterTest();
 

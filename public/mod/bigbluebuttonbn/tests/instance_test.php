@@ -32,8 +32,9 @@ use moodle_exception;
  * @package   mod_bigbluebuttonbn
  * @copyright 2021 Andrew Lyons <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_bigbluebuttonbn\instance
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\instance::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_bigbluebuttonbn\instance::class, 'get_user_id')]
 final class instance_test extends advanced_testcase {
 
     /**
@@ -41,10 +42,8 @@ final class instance_test extends advanced_testcase {
      *
      * @param string $function
      * @param string $field
-     * @dataProvider get_from_location_provider
-     * @covers ::get_from_instanceid
-     * @covers ::get_from_cmid
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_from_location_provider')]
     public function test_get_from(string $function, string $field): void {
         $this->resetAfterTest();
 
@@ -74,7 +73,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Get an instance from a cmid.
-     * @covers ::get_from_cmid
      */
     public function test_get_from_cmid(): void {
         $this->resetAfterTest();
@@ -93,7 +91,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * If the instance was not found, and exception should be thrown.
-     * @covers ::get_from_cmid
      */
     public function test_get_from_cmid_not_found(): void {
         $this->assertNull(instance::get_from_cmid(100));
@@ -101,7 +98,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * If the instance was not found, and exception should be thrown.
-     * @covers ::get_from_instanceid
      */
     public function test_get_from_instance_not_found(): void {
         $this->assertNull(instance::get_from_instanceid(100));
@@ -109,8 +105,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Get from meeting id
-     *
-     * @covers ::get_from_meetingid
      */
     public function test_get_from_meetingid(): void {
         $this->resetAfterTest();
@@ -135,8 +129,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Get the get_from_meetingid() function where the meetingid includes a groupid.
-     *
-     * @covers ::get_from_meetingid
      */
     public function test_get_from_meetingid_group(): void {
         $this->resetAfterTest();
@@ -159,8 +151,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Test getting Meeting ID from log as Log field (meetingid) is the full meeting id (with courseid, and bigbluebuttonid).
-     *
-     * @covers ::get_from_meetingid
      */
     public function test_get_from_meetingid_from_log(): void {
         global $DB;
@@ -190,10 +180,9 @@ final class instance_test extends advanced_testcase {
     /**
      * Ensure that invalid meetingids throw an appropriate exception.
      *
-     * @dataProvider invalid_meetingid_provider
      * @param string $meetingid
-     * @covers ::get_from_meetingid
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_meetingid_provider')]
     public function test_get_from_meetingid_invalid(string $meetingid): void {
         $this->expectException(moodle_exception::class);
         instance::get_from_meetingid($meetingid);
@@ -216,8 +205,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Test the get_all_instances_in_course function.
-     *
-     * @covers ::get_all_instances_in_course
      */
     public function test_get_all_instances_in_course(): void {
         $this->resetAfterTest();
@@ -259,8 +246,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Test the get_meeting_id function for a meeting configured for a group.
-     *
-     * @covers ::get_meeting_id
      */
     public function test_get_meeting_id_with_groups(): void {
         $this->resetAfterTest();
@@ -289,8 +274,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Test the get_meeting_id function for a meeting configured for a group.
-     *
-     * @covers ::get_meeting_id
      */
     public function test_get_meeting_id_without_groups(): void {
         $this->resetAfterTest();
@@ -330,12 +313,11 @@ final class instance_test extends advanced_testcase {
     /**
      * Check instance currently open
      *
-     * @dataProvider is_currently_open_provider
      * @param null|int $openingtime
      * @param null|int $closingtime
      * @param bool $expected
-     * @covers ::is_currently_open
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_currently_open_provider')]
     public function test_is_currently_open(?int $openingtime, ?int $closingtime, bool $expected): void {
         $stub = $this->getMockBuilder(instance::class)
             ->onlyMethods(['get_instance_var'])
@@ -364,13 +346,12 @@ final class instance_test extends advanced_testcase {
     /**
      * Ensure that the user_must_wait_to_join function works as expectd.
      *
-     * @dataProvider user_must_wait_to_join_provider
      * @param bool $isadmin
      * @param bool $ismoderator
      * @param bool $haswaitingroom
      * @param bool $expected
-     * @covers ::user_must_wait_to_join
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_must_wait_to_join_provider')]
     public function test_user_must_wait_to_join(bool $isadmin, bool $ismoderator, bool $haswaitingroom, bool $expected): void {
         $stub = $this->getMockBuilder(instance::class)
             ->onlyMethods([
@@ -407,12 +388,11 @@ final class instance_test extends advanced_testcase {
     /**
      * Ensure that the does_current_user_count_towards_user_limit function works as expectd.
      *
-     * @dataProvider does_current_user_count_towards_user_limit_provider
      * @param bool $isadmin
      * @param bool $ismoderator
      * @param bool $expected
-     * @covers ::does_current_user_count_towards_user_limit
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('does_current_user_count_towards_user_limit_provider')]
     public function test_does_current_user_count_towards_user_limit(
         bool $isadmin,
         bool $ismoderator,
@@ -448,12 +428,11 @@ final class instance_test extends advanced_testcase {
     /**
      * Ensure that the does_current_user_count_towards_user_limit function works as expectd.
      *
-     * @dataProvider get_current_user_password_provider
      * @param bool $isadmin
      * @param bool $ismoderator
      * @param bool $expectedmodpassword
-     * @covers ::get_current_user_password
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_current_user_password_provider')]
     public function test_get_current_user_password(bool $isadmin, bool $ismoderator, bool $expectedmodpassword): void {
         $stub = $this->getMockBuilder(instance::class)
             ->onlyMethods([
@@ -493,12 +472,11 @@ final class instance_test extends advanced_testcase {
     /**
      * Ensure that the get_current_user_role function works as expected.
      *
-     * @dataProvider get_current_user_role_provider
      * @param bool $isadmin
      * @param bool $ismoderator
      * @param bool $expectedmodrole
-     * @covers ::get_current_user_role
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_current_user_role_provider')]
     public function test_get_current_user_role(bool $isadmin, bool $ismoderator, bool $expectedmodrole): void {
         $stub = $this->getMockBuilder(instance::class)
             ->onlyMethods([
@@ -534,12 +512,11 @@ final class instance_test extends advanced_testcase {
     /**
      * Tests for the allow_recording_start_stop function.
      *
-     * @dataProvider allow_recording_start_stop_provider
      * @param bool $isrecorded
      * @param bool $showbuttons
      * @param bool $expected
-     * @covers ::allow_recording_start_stop
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('allow_recording_start_stop_provider')]
     public function test_allow_recording_start_stop(
         bool $isrecorded,
         bool $showbuttons,
@@ -575,7 +552,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Test get user id (guest or current user)
-     * @covers \mod_bigbluebuttonbn\instance::get_user_id
      */
     public function test_get_user_id(): void {
         $this->resetAfterTest();
@@ -590,8 +566,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Test guest access URL
-     *
-     * @covers ::get_guest_access_url
      */
     public function test_get_guest_access_url(): void {
         global $CFG;
@@ -604,8 +578,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Test guest allowed flag
-     *
-     * @covers ::is_guest_allowed
      */
     public function test_is_guest_allowed(): void {
         global $CFG;
@@ -620,8 +592,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Test private method get_instance_info_retriever
-     *
-     * @covers ::get_instance_info_retriever
      */
     public function test_get_instance_info_retriever(): void {
         $this->resetAfterTest();
@@ -639,8 +609,6 @@ final class instance_test extends advanced_testcase {
 
     /**
      * Test guest access password
-     *
-     * @covers ::get_guest_access_password
      */
     public function get_guest_access_password() {
         global $CFG;

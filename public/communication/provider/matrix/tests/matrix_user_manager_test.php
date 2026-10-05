@@ -25,8 +25,8 @@ use moodle_exception;
  * @category   test
  * @copyright  2023 Stevani Andolo <stevani.andolo@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \communication_matrix\matrix_user_manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\communication_matrix\matrix_user_manager::class)]
 final class matrix_user_manager_test extends \advanced_testcase {
     /**
      * Test fetcihing a users matrix userid from Moodle.
@@ -80,11 +80,11 @@ final class matrix_user_manager_test extends \advanced_testcase {
     /**
      * Test fetch of a formatted matrix userid.
      *
-     * @dataProvider get_formatted_matrix_userid_provider
      * @param string $server
      * @param string $username The moodle username to turn into a Matrix username
      * @param string $expecteduserid The expected matrix user id
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_formatted_matrix_userid_provider')]
     public function test_get_formatted_matrix_userid(
         ?string $servername,
         string $server,
@@ -170,9 +170,9 @@ final class matrix_user_manager_test extends \advanced_testcase {
     /**
      * Test setting of a user's matrix userid in Moodle.
      *
-     * @dataProvider set_matrix_userid_in_moodle_provider
      * @param string $expectedusername
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_matrix_userid_in_moodle_provider')]
     public function test_set_matrix_userid_in_moodle(
         string $expectedusername,
     ): void {
@@ -191,10 +191,10 @@ final class matrix_user_manager_test extends \advanced_testcase {
     /**
      * Test for getting a formatted matrix home server id.
      *
-     * @dataProvider get_formatted_matrix_home_server_provider
      * @param string $input
      * @param string $expectedoutput
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_formatted_matrix_home_server_provider')]
     public function test_get_formatted_matrix_home_server(
         string $input,
         string $expectedoutput

@@ -21,17 +21,16 @@ use core_calendar\output\humandate;
 /**
  * Tests for calendar
  *
- * @covers     \core_calendar\external\humandate_exporter
  * @package    core_calendar
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_calendar\external\humandate_exporter::class)]
 final class humandate_exporter_test extends \advanced_testcase {
     /**
      * Test exporting human-readable dates for external use.
      *
-     * @dataProvider provider_export
      * @param int $addseconds The number of seconds to add to the current time.
      * @param bool $userelatives Whether to use relative dates.
      * @param string|null $date For relative dates, the expected string (Tomorrow, Today, Yesterday).
@@ -40,6 +39,7 @@ final class humandate_exporter_test extends \advanced_testcase {
      * @param bool $isnear Whether the date is near.
      * @param string $userdateformat The user date expected format.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_export')]
     public function test_export(
         int $addseconds,
         bool $userelatives,

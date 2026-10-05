@@ -106,9 +106,8 @@ final class property_list_test extends \advanced_testcase {
      * @param string $xml XML to create PList.
      * @param string $key Key of element to try and update.
      * @param mixed $value Value to try to update with.
-     *
-     * @dataProvider good_update_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('good_update_data_provider')]
     public function test_updating_element_value($xml, $key, $value): void {
         $xml = $this->get_plist_xml_header()
             . $xml
@@ -126,9 +125,8 @@ final class property_list_test extends \advanced_testcase {
      * @param mixed $value Bad value to try to update with.
      * @param mixed $expected Expected value of element after update is called.
      * @param string $exceptionmessage Message of exception expected to be thrown.
-
-     * @dataProvider bad_update_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('bad_update_data_provider')]
     public function test_updating_element_value_with_bad_data(string $xml, string $key, $value, $expected, $exceptionmessage): void {
         $xml = $this->get_plist_xml_header()
             . $xml
@@ -219,9 +217,8 @@ final class property_list_test extends \advanced_testcase {
      *
      * @param string $xml PList XML used to generate CFPropertyList.
      * @param string $expectedjson Expected JSON output.
-     *
-     * @dataProvider json_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('json_data_provider')]
     public function test_export_to_json($xml, $expectedjson): void {
         $xml = $this->get_plist_xml_header()
             . $xml

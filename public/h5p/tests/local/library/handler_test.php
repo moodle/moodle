@@ -39,11 +39,11 @@ final class handler_test extends advanced_testcase {
     /**
      * Test the behaviour of get_h5p_string().
      *
-     * @dataProvider get_h5p_string_provider
      * @param  string $identifier      The key identifier for the localized string.
      * @param  string $expectedresult  Expected result.
      * @param  string $lang            Language to get the localized string.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_h5p_string_provider')]
     public function test_get_h5p_string(string $identifier, ?string $expectedresult, ?string $lang = 'en'): void {
         $result = autoloader::get_h5p_string($identifier, $lang);
         $this->assertEquals($expectedresult, $result);

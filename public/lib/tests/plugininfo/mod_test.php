@@ -24,10 +24,10 @@ use advanced_testcase;
  * Unit tests for the mod plugininfo class
  *
  * @package     core
- * @covers      \core\plugininfo\mod
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\plugininfo\mod::class)]
 final class mod_test extends advanced_testcase {
     public function test_get_enabled_plugins(): void {
         $this->resetAfterTest();

@@ -26,8 +26,8 @@ use Psr\Http\Message\ServerRequestInterface;
  * @category   test
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\router\parameters\header_language
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\parameters\header_language::class)]
 final class header_language_test extends route_testcase {
     /**
      * Test that the parameter is valid when the component is not specified.
@@ -55,8 +55,8 @@ final class header_language_test extends route_testcase {
      * Test valid components.
      *
      * @param string $component
-     * @dataProvider valid_values
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_values')]
     public function test_valid_value(string $component): void {
         $param = new header_language();
 
@@ -74,8 +74,8 @@ final class header_language_test extends route_testcase {
      * Test invalid components.
      *
      * @param string $component
-     * @dataProvider invalid_values
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_values')]
     public function test_invalid_value(string $component): void {
         $param = new header_language();
 

@@ -23,6 +23,7 @@ namespace core;
  * @copyright  2015 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('core_myprofile_navigation')]
 final class myprofilelib_test extends \advanced_testcase {
 
     /**
@@ -243,9 +244,8 @@ final class myprofilelib_test extends \advanced_testcase {
      * @param string $usertimezone Timezone identifier or '99' (Use server default)
      * @param string|null $expectresult
      * @return bool
-     *
-     * @dataProvider core_myprofile_navigation_contact_timezone_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('core_myprofile_navigation_contact_timezone_provider')]
     public function test_core_myprofile_navigation_contact_timezone(string $hiddenuserfields, string $forcetimezone,
             string $usertimezone, ?string $expectresult = null): void {
 
@@ -308,8 +308,6 @@ final class myprofilelib_test extends \advanced_testcase {
 
     /**
      * Tests the Tags link is present in the profile navigation when tags are enabled.
-     *
-     * @covers ::core_myprofile_navigation
      */
     public function test_core_myprofile_navigation_tags_link_enabled(): void {
         set_config('usetags', 1);
@@ -330,8 +328,6 @@ final class myprofilelib_test extends \advanced_testcase {
 
     /**
      * Tests the Tags link is not present in the profile navigation when tags are disabled.
-     *
-     * @covers ::core_myprofile_navigation
      */
     public function test_core_myprofile_navigation_tags_link_disabled(): void {
         set_config('usetags', 0);

@@ -136,8 +136,8 @@ final class httpsreplace_test extends \advanced_testcase {
      * @param string $content Example content that we'll attempt to replace.
      * @param string $outputregex Regex for what output we expect.
      * @param string $expectedcontent What content we are expecting afterwards.
-     * @dataProvider upgrade_http_links_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('upgrade_http_links_provider')]
     public function test_upgrade_http_links($content, $outputregex, $expectedcontent): void {
         global $DB;
 
@@ -210,8 +210,8 @@ final class httpsreplace_test extends \advanced_testcase {
      * @param string $content Example content that we'll attempt to replace.
      * @param string $domain The domain we will check was replaced.
      * @param string $expectedcount Number of urls from that domain that we expect to be replaced.
-     * @dataProvider http_link_stats_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('http_link_stats_provider')]
     public function test_http_link_stats($content, $domain, $expectedcount): void {
         $this->resetAfterTest();
 

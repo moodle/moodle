@@ -22,9 +22,8 @@ namespace aiprovider_deepseek;
  * @package    aiprovider_deepseek
  * @copyright  2025 Yusuf Wibisono <yusuf.wibisono@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers     \aiprovider_deepseek\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_deepseek\provider::class)]
 final class provider_test extends \advanced_testcase {
     /** @var \core_ai\manager */
     private $manager;

@@ -22,8 +22,8 @@ namespace filter_activitynames;
  * @package filter_activitynames
  * @copyright 2018 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_activitynames\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_activitynames\text_filter::class)]
 final class text_filter_test extends \advanced_testcase {
     public function test_links(): void {
         $this->resetAfterTest(true);
@@ -155,11 +155,11 @@ final class text_filter_test extends \advanced_testcase {
     /**
      * Test that links can be matched with various whitespace combinations.
      *
-     * @dataProvider links_with_whitespace_provider
      * @param string $activityname
      * @param string $html
      * @param bool $expectedresult
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('links_with_whitespace_provider')]
     public function test_links_with_whitespace(string $activityname, string $html, bool $expectedresult): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();

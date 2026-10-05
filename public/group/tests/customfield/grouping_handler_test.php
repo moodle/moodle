@@ -26,11 +26,11 @@ use core_customfield\field_controller;
  * Unit tests for grouping custom field handler.
  *
  * @package   core_group
- * @covers    \core_group\customfield\group_handler
  * @author    Tomo Tsuyuki <tomotsuyuki@catalyst-au.net>
  * @copyright 2023 Catalyst IT Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_group\customfield\group_handler::class)]
 final class grouping_handler_test extends advanced_testcase {
     /**
      * Test custom field handler.

@@ -23,8 +23,8 @@ use stdClass;
  * Tests for the devicekey class.
  *
  * @package core_user
- * @covers \core_user\external\update_user_device_public_key
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_user\external\update_user_device_public_key::class)]
 final class update_user_device_public_key_test extends \advanced_testcase {
     /**
      * Helper to create a device record.

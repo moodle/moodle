@@ -25,6 +25,7 @@ namespace core;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\PHPUnit\Framework\Attributes\CoversFunction('format_backtrace')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('require_phpunit_isolation')]
 final class setuplib_test extends \advanced_testcase {
     /**
      * Test get_docs_url_standard in the normal case when we should link to Moodle docs.
@@ -451,11 +452,11 @@ final class setuplib_test extends \advanced_testcase {
     /**
      * Test the get_real_size() function.
      *
-     * @dataProvider data_for_test_get_real_size
      *
      * @param string $input the input for get_real_size()
      * @param int $expectedbytes the expected bytes
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_for_test_get_real_size')]
     public function test_get_real_size($input, $expectedbytes): void {
         $this->assertEquals($expectedbytes, get_real_size($input));
     }
@@ -521,8 +522,6 @@ final class setuplib_test extends \advanced_testcase {
 
     /**
      * Test require_phpunit_isolation in a test which is not isolated.
-     *
-     * @covers ::require_phpunit_isolation
      */
     public function test_require_phpunit_isolation(): void {
         // A unit test which is not isolated will throw a coding_exception when the function is called.
@@ -532,10 +531,8 @@ final class setuplib_test extends \advanced_testcase {
 
     /**
      * Test require_phpunit_isolation in a test which is isolated.
-     *
-     * @covers ::require_phpunit_isolation
-     * @runInSeparateProcess
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_require_phpunit_isolation_isolated(): void {
         $this->expectNotToPerformAssertions();
         require_phpunit_isolation();

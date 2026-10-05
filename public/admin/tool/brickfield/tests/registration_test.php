@@ -26,8 +26,8 @@ namespace tool_brickfield;
 
 /**
  * Unit tests for {@registration tool_brickfield\registration.php}.
- * @group tool_brickfield
  */
+#[\PHPUnit\Framework\Attributes\Group('tool_brickfield')]
 final class registration_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;

@@ -31,8 +31,8 @@ use mod_data\manager;
  * @category   external
  * @copyright  2022 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_data\external\get_mapping_information
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\external\get_mapping_information::class)]
 final class get_mapping_information_test extends \advanced_testcase {
 
     /**
@@ -126,8 +126,6 @@ final class get_mapping_information_test extends \advanced_testcase {
     /**
      * Test for get_mapping_information method.
      *
-     * @dataProvider get_mapping_information_provider
-     * @covers ::execute
      *
      * @param array $currentfields Fields of the current activity.
      * @param array $newfields Fields to be imported.
@@ -135,6 +133,7 @@ final class get_mapping_information_test extends \advanced_testcase {
      * @param string $fieldstocreate Expected fields on $fieldstocreate.
      * @param string $fieldstoremove Expected fields on $fieldstoremove.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_mapping_information_provider')]
     public function test_get_mapping_information(
         array $currentfields,
         array $newfields,
@@ -188,7 +187,6 @@ final class get_mapping_information_test extends \advanced_testcase {
     /**
      * Test for get_mapping_information method for wrong presets.
      *
-     * @covers ::execute
      *
      */
     public function test_get_mapping_information_for_wrong_preset(): void {

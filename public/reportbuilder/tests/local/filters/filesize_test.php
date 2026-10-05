@@ -27,10 +27,10 @@ use lang_string;
  * Unit tests for filesize report filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\filesize
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\filesize::class)]
 final class filesize_test extends advanced_testcase {
 
     /**
@@ -63,9 +63,8 @@ final class filesize_test extends advanced_testcase {
      * @param bool $expected
      * @param float $value
      * @param int $unit
-     *
-     * @dataProvider get_sql_filter_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_provider')]
     public function test_get_sql_filter(
         int $operator,
         bool $expected,

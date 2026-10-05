@@ -33,8 +33,8 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package   qtype_match
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qtype_match_question
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_match_question::class)]
 final class question_test extends \advanced_testcase {
 
     public function test_get_expected_data(): void {

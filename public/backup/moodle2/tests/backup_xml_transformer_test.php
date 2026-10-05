@@ -79,10 +79,10 @@ final class backup_xml_transformer_test extends \advanced_testcase {
     /**
      * Test that backup_xml_transformer replaces file php links to $@FILEPHP@$.
      *
-     * @dataProvider filephp_links_replace_data_provider
      * @param string $content Testing content.
      * @param string $expected Expected result.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filephp_links_replace_data_provider')]
     public function test_filephp_links_replace($content, $expected): void {
         global $CFG;
 

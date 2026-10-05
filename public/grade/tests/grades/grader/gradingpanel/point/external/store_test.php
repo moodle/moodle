@@ -266,10 +266,10 @@ final class store_test extends advanced_testcase {
     /**
      * Ensure that an out-of-range value is rejected.
      *
-     * @dataProvider execute_out_of_range_provider
      * @param int $maxvalue The max value of the forum
      * @param int $suppliedvalue The value that was submitted
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_out_of_range_provider')]
     public function test_execute_store_out_of__range(int $maxvalue, float $suppliedvalue): void {
         $this->resetAfterTest();
 

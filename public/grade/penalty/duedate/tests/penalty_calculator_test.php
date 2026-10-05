@@ -31,8 +31,8 @@ use gradepenalty_duedate\tests\penalty_testcase;
  * @package   gradepenalty_duedate
  * @copyright 2024 Catalyst IT Australia Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \gradepenalty_duedate\penalty_calculator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\gradepenalty_duedate\penalty_calculator::class)]
 final class penalty_calculator_test extends penalty_testcase {
     /**
      * Data provider for test_calculate_penalty.
@@ -66,12 +66,12 @@ final class penalty_calculator_test extends penalty_testcase {
     /**
      * Test calculate penalty.
      *
-     * @dataProvider calculate_penalty_provider
      *
      * @param int $submissiondate The submission date.
      * @param int $duedate The due date.
      * @param int $expectedgrade The expected grade.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('calculate_penalty_provider')]
     public function test_calculate_penalty(int $submissiondate, int $duedate, int $expectedgrade): void {
         $this->resetAfterTest();
 

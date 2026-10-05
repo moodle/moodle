@@ -37,20 +37,20 @@ defined('MOODLE_INTERNAL') || die();
  * @package    core_h5p
  * @copyright  2020 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_h5p\api
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_h5p\api::class)]
 final class api_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of delete_library().
      *
-     * @dataProvider  delete_library_provider
      * @param  string $libraryname          Machine name of the library to delete.
      * @param  int    $expectedh5p          Total of H5P contents expected after deleting the library.
      * @param  int    $expectedlibraries    Total of H5P libraries expected after deleting the library.
      * @param  int    $expectedcontents     Total of H5P content_libraries expected after deleting the library.
      * @param  int    $expecteddependencies Total of H5P library dependencies expected after deleting the library.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('delete_library_provider')]
     public function test_delete_library(string $libraryname, int $expectedh5p, int $expectedlibraries,
             int $expectedcontents, int $expecteddependencies): void {
         global $DB;
@@ -162,10 +162,10 @@ final class api_test extends \advanced_testcase {
     /**
      * Test the behaviour of get_dependent_libraries().
      *
-     * @dataProvider  get_dependent_libraries_provider
      * @param  string $libraryname     Machine name of the library to delete.
      * @param  int    $expectedvalue   Total of H5P required libraries expected.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_dependent_libraries_provider')]
     public function test_get_dependent_libraries(string $libraryname, int $expectedvalue): void {
         global $DB;
 
@@ -220,10 +220,10 @@ final class api_test extends \advanced_testcase {
     /**
      * Test the behaviour of get_library().
      *
-     * @dataProvider  get_library_provider
      * @param  string $libraryname     Machine name of the library to delete.
      * @param  bool   $emptyexpected   Wether the expected result is empty or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_library_provider')]
     public function test_get_library(string $libraryname, bool $emptyexpected): void {
         global $DB;
 
@@ -339,8 +339,6 @@ final class api_test extends \advanced_testcase {
     /**
      * Test that a guest user is refused access to H5P content stored in CONTEXT_SYSTEM, matching the access
      * level enforced by core's own contentbank handling for the original .h5p package.
-     *
-     * @covers ::get_content_from_pluginfile_url
      */
     public function test_get_content_from_pluginfile_url_system_context_guest(): void {
         $this->setRunTestInSeparateProcess(true);
@@ -377,8 +375,6 @@ final class api_test extends \advanced_testcase {
     /**
      * Test that an ordinary logged-in user (not a guest, not an admin) is allowed access to H5P content
      * stored in CONTEXT_SYSTEM.
-     *
-     * @covers ::get_content_from_pluginfile_url
      */
     public function test_get_content_from_pluginfile_url_system_context_logged_in_user(): void {
         $this->setRunTestInSeparateProcess(true);
@@ -417,8 +413,6 @@ final class api_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of get_original_content_from_pluginfile_url().
-     *
-     * @covers ::get_original_content_from_pluginfile_url
      */
     public function test_get_original_content_from_pluginfile_url(): void {
         $this->setRunTestInSeparateProcess(true);
@@ -521,8 +515,6 @@ final class api_test extends \advanced_testcase {
      *
      * The extracted content files of an H5P package are always stored in the system context, so access to them
      * must be resolved against the context of the original .h5p package instead.
-     *
-     * @covers ::can_access_content
      */
     public function test_can_access_content(): void {
         $this->setRunTestInSeparateProcess(true);
@@ -569,8 +561,6 @@ final class api_test extends \advanced_testcase {
 
     /**
      * Test that can_access_content() returns false, instead of throwing an error, for an unknown H5P content id.
-     *
-     * @covers ::can_access_content
      */
     public function test_can_access_content_unknown_id(): void {
         $this->resetAfterTest();
@@ -580,8 +570,6 @@ final class api_test extends \advanced_testcase {
     /**
      * Test the behaviour of can_edit_content().
      *
-     * @covers ::can_edit_content
-     * @dataProvider can_edit_content_provider
      *
      * @param string $currentuser User who will call the method.
      * @param string $fileauthor Author of the file to check.
@@ -591,6 +579,7 @@ final class api_test extends \advanced_testcase {
      *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_edit_content_provider')]
     public function test_can_edit_content(string $currentuser, string $fileauthor, string $filecomponent, bool $expected,
             $filearea = 'unittest'): void {
         global $USER, $DB;
@@ -1061,13 +1050,12 @@ final class api_test extends \advanced_testcase {
     /**
      * Test the behaviour of set_library_enabled().
      *
-     * @covers ::set_library_enabled
-     * @dataProvider set_library_enabled_provider
      *
      * @param string $libraryname Library name to enable/disable.
      * @param string $action Action to be done with the library. Supported values: enable, disable.
      * @param int $expected Expected value for the enabled library field. -1 will be passed if the library doesn't exist.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_library_enabled_provider')]
     public function test_set_library_enabled(string $libraryname, string $action, int $expected): void {
         global $DB;
 
@@ -1155,8 +1143,6 @@ final class api_test extends \advanced_testcase {
     /**
      * Test the behaviour of is_library_enabled().
      *
-     * @covers ::is_library_enabled
-     * @dataProvider is_library_enabled_provider
      *
      * @param string $libraryname Library name to check.
      * @param bool $expected Expected result after calling the method.
@@ -1164,6 +1150,7 @@ final class api_test extends \advanced_testcase {
      * @param bool $useid Whether to use id for calling is_library_enabled method.
      * @param bool $uselibraryname Whether to use libraryname for calling is_library_enabled method.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_library_enabled_provider')]
     public function test_is_library_enabled(string $libraryname, bool $expected, bool $exception = false,
         bool $useid = false, bool $uselibraryname = true): void {
         global $DB;
@@ -1298,10 +1285,7 @@ final class api_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of is_valid_package().
-     * @runInSeparateProcess
      *
-     * @covers ::is_valid_package
-     * @dataProvider is_valid_package_provider
      *
      * @param string $filename The H5P content to validate.
      * @param bool $expected Expected result after calling the method.
@@ -1309,6 +1293,8 @@ final class api_test extends \advanced_testcase {
      * @param bool $onlyupdatelibs Whether new libraries can be installed or only the existing ones can be updated.
      * @param bool $skipcontent Should the content be skipped (so only the libraries will be saved)?
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_valid_package_provider')]
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_is_valid_package(string $filename, bool $expected, bool $isadmin = false, bool $onlyupdatelibs = false,
             bool $skipcontent = false): void {
         global $USER;

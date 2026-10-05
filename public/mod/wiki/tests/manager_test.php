@@ -21,8 +21,14 @@ namespace mod_wiki;
  * @package    mod_wiki
  * @copyright  2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_wiki\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_wiki\manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_wiki\manager::class, 'create_from_instance')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_wiki\manager::class, 'create_from_coursemodule')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_wiki\manager::class, 'get_wiki_mode')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_wiki\manager::class, 'get_all_entries_count')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_wiki\manager::class, 'get_user_entries_count')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_wiki\manager::class, 'get_main_wiki_pageid')]
 final class manager_test extends \advanced_testcase {
 
     /**
@@ -172,8 +178,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test creating a manager instance from an instance record.
-     *
-     * @covers \mod_wiki\manager::create_from_instance
      */
     public function test_create_manager_instance_from_instance_record(): void {
         $this->resetAfterTest();
@@ -263,8 +267,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test creating a manager instance from a course module.
-     *
-     * @covers \mod_wiki\manager::create_from_coursemodule
      */
     public function test_create_manager_instance_from_coursemodule(): void {
         $this->resetAfterTest();
@@ -279,10 +281,8 @@ final class manager_test extends \advanced_testcase {
      *
      * @param string $mode the mode of the wiki instance.
      * @param wiki_mode $expected the expected wiki mode.
-     *
-     * @covers       \mod_wiki\manager::get_wiki_mode
-     * @dataProvider get_wiki_mode_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_wiki_mode_provider')]
     public function test_wiki_mode(string $mode, wiki_mode $expected): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -298,10 +298,8 @@ final class manager_test extends \advanced_testcase {
      * @param int $coursegroupmode the group mode of the course.
      * @param wiki_mode $wikimode the wiki mode of the instance.
      * @param int $expectedcount the expected count of answers for the user.
-     *
-     * @covers       \mod_wiki\manager::get_all_entries_count
-     * @dataProvider get_all_entries_count_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_all_entries_count_provider')]
     public function test_get_all_entries_count(
         string $username,
         int $coursegroupmode,
@@ -323,10 +321,8 @@ final class manager_test extends \advanced_testcase {
      *
      * @param string $username the username of the user to retrieve entries count for.
      * @param int $expectedcount the expected count of answers for the user.
-     *
-     * @covers       \mod_wiki\manager::get_user_entries_count
-     * @dataProvider get_user_entries_count_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_user_entries_count_provider')]
     public function test_get_user_entries_count(string $username, int $expectedcount): void {
         ['users' => $users, 'instance' => $instance] = $this->setup_users_and_activity();
         $manager = manager::create_from_instance($instance);
@@ -341,10 +337,8 @@ final class manager_test extends \advanced_testcase {
      * @param int $groupmode
      * @param wiki_mode $wikimode the wiki mode of the instance.
      * @param string|null $expectedpage the expected page id for the user.
-     *
-     * @covers       \mod_wiki\manager::get_main_wiki_pageid
-     * @dataProvider get_main_wiki_pageid_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_main_wiki_pageid_data_provider')]
     public function test_get_main_wiki_pageid(string $username, int $groupmode, wiki_mode $wikimode, ?string $expectedpage): void {
         $this->resetAfterTest();
         ['users' => $users, 'instance' => $instance, 'pages' => $pages] = $this->setup_users_and_activity($groupmode, $wikimode);

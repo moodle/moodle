@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * A collection of tests for accesslib::has_capability().
  *
@@ -21,15 +20,14 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 /**
  * Unit tests tests for has_capability.
  *
  * @package    core
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers ::has_capability
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('has_capability')]
 final class accesslib_has_capability_test extends \advanced_testcase {
 
     /**
@@ -38,10 +36,10 @@ final class accesslib_has_capability_test extends \advanced_testcase {
      * Note: We only check the admin user here.
      * If the admin cannot do it, then no-one can.
      *
-     * @dataProvider locked_context_provider
      * @param   string[]    $lockedcontexts The list of contexts, by name, to mark as locked
      * @param   string[]    $blocked The list of contexts which will be 'blocked' by has_capability
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('locked_context_provider')]
     public function test_locked_contexts($lockedcontexts, $blocked): void {
         global $DB;
 
@@ -203,10 +201,10 @@ final class accesslib_has_capability_test extends \advanced_testcase {
      * Note: We only check the admin user here.
      * If the admin cannot do it, then no-one can.
      *
-     * @dataProvider locked_context_provider
      * @param   string[]    $lockedcontexts The list of contexts, by name, to mark as locked
      * @param   string[]    $blocked The list of contexts which will be 'blocked' by has_capability
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('locked_context_provider')]
     public function test_locked_contexts_for_admin_with_config($lockedcontexts, $blocked): void {
         global $DB;
 
@@ -512,10 +510,10 @@ final class accesslib_has_capability_test extends \advanced_testcase {
      *
      * An administrator logged in as another user assumes all of their capabilities.
      *
-     * @dataProvider    login_as_provider
      * @param   string $loginascontext
      * @param   array  $testcontexts
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('login_as_provider')]
     public function test_login_as_admin(string $loginascontext, array $testcontexts): void {
         $this->resetAfterTest();
 
@@ -536,10 +534,10 @@ final class accesslib_has_capability_test extends \advanced_testcase {
     /**
      * Test that the log in as functionality works as expected for a regulr user.
      *
-     * @dataProvider    login_as_provider
      * @param   string $loginascontext
      * @param   array  $testcontexts
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('login_as_provider')]
     public function test_login_as_user(string $loginascontext, array $testcontexts): void {
         $this->resetAfterTest();
 

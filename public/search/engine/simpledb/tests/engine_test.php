@@ -30,6 +30,7 @@ require_once($CFG->dirroot . '/search/tests/fixtures/mock_search_area.php');
  * @copyright   2016 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('execute_query')]
 final class engine_test extends \advanced_testcase {
 
     /**
@@ -441,11 +442,10 @@ final class engine_test extends \advanced_testcase {
     /**
      * Tests fulltext matching behaviour for course names across supported DB families.
      *
-     * @covers ::execute_query
-     * @dataProvider prefix_matching_using_fulltext_search_provider
      * @param string $query Query text to search for
      * @param int $expectedcount Expected result count
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('prefix_matching_using_fulltext_search_provider')]
     public function test_prefix_matching_using_fulltext_search(
         string $query,
         int $expectedcount
@@ -505,10 +505,10 @@ final class engine_test extends \advanced_testcase {
      * the query as an AND of per-term required matches meant any stopword in the query collapsed
      * the whole search to zero results, even though the rest of the phrase was present.
      *
-     * @dataProvider stopword_query_provider
      * @param string $query Query text to search for
      * @param int $expectedcount Expected result count
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('stopword_query_provider')]
     public function test_stopword_terms_are_excluded_from_fulltext_search(
         string $query,
         int $expectedcount

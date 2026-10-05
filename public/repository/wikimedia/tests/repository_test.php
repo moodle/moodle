@@ -40,8 +40,8 @@ require_once($CFG->dirroot . '/repository/wikimedia/lib.php');
  * @package    repository_wikimedia
  * @copyright  2026 Andi Permana
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \repository_wikimedia
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\repository_wikimedia::class)]
 final class repository_test extends \advanced_testcase {
     /** @var \repository_wikimedia|null Repository instance */
     private $repo = null;

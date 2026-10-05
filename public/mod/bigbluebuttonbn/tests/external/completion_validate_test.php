@@ -29,8 +29,8 @@ use require_login_exception;
  * @copyright  2021 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @covers \mod_bigbluebuttonbn\external\completion_validate
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\external\completion_validate::class)]
 final class completion_validate_test extends \core_external\tests\externallib_testcase {
     use testcase_helper_trait;
 

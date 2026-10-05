@@ -23,8 +23,8 @@ namespace contenttype_h5p;
  * @category   test
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \contenttype_h5p\contenttype
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\contenttype_h5p\contenttype::class)]
 final class contenttype_h5p_test extends \advanced_testcase {
 
     /**
@@ -70,8 +70,6 @@ final class contenttype_h5p_test extends \advanced_testcase {
 
     /**
      * Tests can_upload behavior.
-     *
-     * @covers ::can_upload
      */
     public function test_can_upload(): void {
         $this->resetAfterTest();
@@ -101,8 +99,6 @@ final class contenttype_h5p_test extends \advanced_testcase {
 
     /**
      * Tests get_icon result.
-     *
-     * @covers ::get_icon
      */
     public function test_get_icon(): void {
         global $CFG;
@@ -143,8 +139,6 @@ final class contenttype_h5p_test extends \advanced_testcase {
 
     /**
      * Tests get_download_url result.
-     *
-     * @covers ::get_download_url
      */
     public function test_get_download_url(): void {
         global $CFG;

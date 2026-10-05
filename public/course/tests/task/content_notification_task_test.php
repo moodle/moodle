@@ -25,10 +25,10 @@ use core_availability\tree;
  *
  * @package    core
  * @subpackage course
- * @covers     \core_course\task\content_notification_task
  * @copyright  2021 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_course\task\content_notification_task::class)]
 final class content_notification_task_test extends \advanced_testcase {
 
     /**

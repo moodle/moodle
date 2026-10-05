@@ -34,9 +34,9 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
- * @covers \mod_bigbluebuttonbn\recording
- * @coversDefaultClass \mod_bigbluebuttonbn\recording
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\recording::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\recording::class)]
 final class recording_test extends \advanced_testcase {
     use testcase_helper_trait;
 
@@ -52,9 +52,8 @@ final class recording_test extends \advanced_testcase {
      * Test for bigbluebuttonbn_get_allrecordings status refresh.
      *
      * @param int $status
-     * @dataProvider get_status_provider
-     * @covers ::get
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_status_provider')]
     public function test_get_allrecordings_status_refresh(int $status): void {
         $this->resetAfterTest();
         ['recordings' => $recordings] = $this->create_activity_with_recordings(
@@ -68,8 +67,6 @@ final class recording_test extends \advanced_testcase {
 
     /**
      * Get name
-     *
-     * @covers ::get_name
      */
     public function test_get_name(): void {
         $this->resetAfterTest();
@@ -84,8 +81,6 @@ final class recording_test extends \advanced_testcase {
 
     /**
      * Test get description
-     *
-     * @covers ::get_description
      */
     public function test_get_description(): void {
         $this->resetAfterTest();
@@ -114,9 +109,8 @@ final class recording_test extends \advanced_testcase {
      * Test for bigbluebuttonbn_get_allrecordings()
      *
      * @param int $type The activity type
-     * @dataProvider get_allrecordings_types_provider
-     * @covers ::get_recordings_for_instance
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_allrecordings_types_provider')]
     public function test_get_allrecordings(int $type): void {
         $this->resetAfterTest();
         $recordingcount = 2; // Two recordings only.
@@ -155,8 +149,8 @@ final class recording_test extends \advanced_testcase {
      * Test for bigbluebuttonbn_get_allrecordings().
      *
      * @param int $type
-     * @dataProvider get_allrecordings_types_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_allrecordings_types_provider')]
     public function test_get_recording_for_group($type): void {
         $this->resetAfterTest();
 
@@ -216,8 +210,8 @@ final class recording_test extends \advanced_testcase {
      * Test that we can get recordings from a deleted activity
      *
      * @param int $type
-     * @dataProvider get_allrecordings_types_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_allrecordings_types_provider')]
     public function test_get_recordings_from_deleted_activity($type): void {
         $this->resetAfterTest(true);
         $this->initialise_mock_server();

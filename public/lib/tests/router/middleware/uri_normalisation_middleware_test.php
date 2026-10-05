@@ -25,16 +25,16 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\router\middleware\uri_normalisation_middleware
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\middleware\uri_normalisation_middleware::class)]
 final class uri_normalisation_middleware_test extends \advanced_testcase {
     /**
      * Test the normalisation of URIs.
      *
-     * @dataProvider data_provider
      * @param string $input The input URI.
      * @param string $expected The expected output URI.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_provider')]
     public function test_normalisation(
         string $input,
         string $expected,

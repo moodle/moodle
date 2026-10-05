@@ -23,8 +23,8 @@ namespace core\external;
  * @category   test
  * @copyright  2025 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\external\action_link_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\external\action_link_exporter::class)]
 final class action_link_exporter_test extends \advanced_testcase {
     /**
      * Test the export returns the right structure when the content is a string.

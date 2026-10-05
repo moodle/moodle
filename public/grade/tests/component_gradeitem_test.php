@@ -36,14 +36,12 @@ use mod_forum\local\entities\forum as forum_entity;
  * @category  test
  * @copyright 2021 Mark Nelson <marknelson@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @coversDefaultClass \core_grades\component_gradeitem
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_grades\component_gradeitem::class)]
 final class component_gradeitem_test extends advanced_testcase {
 
     /**
      * Test get_formatted_grade_for_user with points.
-     *
-     * @covers ::get_formatted_grade_for_user
      */
     public function test_get_formatted_grade_for_user_with_points(): void {
         $grade = $this->initialise_test_and_get_grade_item(5, 4);
@@ -55,8 +53,6 @@ final class component_gradeitem_test extends advanced_testcase {
 
     /**
      * Test get_formatted_grade_for_user with letters.
-     *
-     * @covers ::get_formatted_grade_for_user
      */
     public function test_get_formatted_grade_for_user_with_letters(): void {
         $grade = $this->initialise_test_and_get_grade_item(5, 4, GRADE_DISPLAY_TYPE_LETTER);
@@ -68,8 +64,6 @@ final class component_gradeitem_test extends advanced_testcase {
 
     /**
      * Test get_formatted_grade_for_user with percentage.
-     *
-     * @covers ::get_formatted_grade_for_user
      */
     public function test_get_formatted_grade_for_user_with_percentage(): void {
         $grade = $this->initialise_test_and_get_grade_item(5, 4, GRADE_DISPLAY_TYPE_PERCENTAGE);
@@ -81,8 +75,6 @@ final class component_gradeitem_test extends advanced_testcase {
 
     /**
      * Test get_formatted_grade_for_user with points and letter.
-     *
-     * @covers ::get_formatted_grade_for_user
      */
     public function test_get_formatted_grade_for_user_with_points_letter(): void {
         $grade = $this->initialise_test_and_get_grade_item(5, 4, GRADE_DISPLAY_TYPE_REAL_LETTER);
@@ -94,8 +86,6 @@ final class component_gradeitem_test extends advanced_testcase {
 
     /**
      * Test get_formatted_grade_for_user with scales.
-     *
-     * @covers ::get_formatted_grade_for_user
      */
     public function test_get_formatted_grade_for_user_with_scales(): void {
         $grade = $this->initialise_test_and_get_grade_item(-2, 2);
@@ -107,8 +97,6 @@ final class component_gradeitem_test extends advanced_testcase {
 
     /**
      * Test get_formatted_grade_for_user with rubric.
-     *
-     * @covers ::get_formatted_grade_for_user
      */
     public function test_get_formatted_grade_for_user_with_rubric(): void {
         $this->resetAfterTest();
@@ -160,8 +148,6 @@ final class component_gradeitem_test extends advanced_testcase {
 
     /**
      * Test get_formatted_grade_for_user with a marking guide.
-     *
-     * @covers ::get_formatted_grade_for_user
      */
     public function test_get_formatted_grade_for_user_with_marking_guide(): void {
         $this->resetAfterTest();

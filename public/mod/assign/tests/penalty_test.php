@@ -36,6 +36,11 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  * @copyright  2024 Catalyst IT Australia Pty Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('assign_supports')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_assign\penalty\helper::class, 'apply_penalty_to_submission')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_assign\penalty\helper::class, 'apply_penalty_to_user')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_item::class, 'update_raw_grade')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\assign::class, 'calculate_penalised_grade')]
 final class penalty_test extends \advanced_testcase {
     // Use the generator helper.
     use mod_assign_test_generator;
@@ -72,8 +77,6 @@ final class penalty_test extends \advanced_testcase {
 
     /**
      * Test penalty support.
-     *
-     * @covers ::assign_supports
      */
     public function test_penalty_support(): void {
         $this->resetAfterTest();
@@ -124,9 +127,7 @@ final class penalty_test extends \advanced_testcase {
     /**
      * Test for hook_listener class.
      *
-     * @dataProvider apply_penalty_provider
      *
-     * @covers \mod_assign\penalty\helper::apply_penalty_to_submission
      *
      * @param float $usergrade the grade given to user.
      * @param int $submissiondate The submission date.
@@ -138,6 +139,7 @@ final class penalty_test extends \advanced_testcase {
      * @param float $expectedgrade The expected final grade.
      *
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('apply_penalty_provider')]
     public function test_apply_penalty(
         $usergrade,
         $submissiondate,
@@ -218,7 +220,6 @@ final class penalty_test extends \advanced_testcase {
     /**
      * Test recalculation.
      *
-     * @covers \mod_assign\penalty\helper::apply_penalty_to_submission
      *
      */
     public function test_recalculate_penalty(): void {
@@ -280,9 +281,6 @@ final class penalty_test extends \advanced_testcase {
     /**
      * Test that the penalty in assign_grades is calculated from rawgrade,
      * and that opening a new attempt preserves the existing penalty.
-     *
-     * @covers \mod_assign\penalty\helper::apply_penalty_to_user
-     * @covers \grade_item::update_raw_grade
      */
     public function test_assign_grades_penalty_uses_rawgrade(): void {
         global $DB, $USER;
@@ -387,8 +385,6 @@ final class penalty_test extends \advanced_testcase {
      * Test that calculate_penalised_grade applies grade-item multfactor/plusfactor,
      * both when a penalty is deducted and when the submission is on time.
      *
-     * @dataProvider calculate_penalised_grade_provider
-     * @covers \assign::calculate_penalised_grade
      *
      * @param int $submissiontime Submission timemodified (controls late vs on-time).
      * @param array $debugmessages Expected debugging messages from the penalty plugin.
@@ -396,6 +392,7 @@ final class penalty_test extends \advanced_testcase {
      * @param float $expectedfinalgrade Expected gradebook finalgrade.
      * @param float $expecteddeducted Expected deducted mark returned by calculate_penalised_grade.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('calculate_penalised_grade_provider')]
     public function test_calculate_penalised_grade(
         int $submissiontime,
         array $debugmessages,
@@ -489,8 +486,6 @@ final class penalty_test extends \advanced_testcase {
      *
      * A course-level freeze can contain both legacy and correctly calculated grades, so correctly
      * calculated grades must continue to use the normal factor application.
-     *
-     * @covers \assign::calculate_penalised_grade
      */
     public function test_calculate_penalised_grade_applies_factors_for_verified_grade_while_frozen(): void {
         global $DB;

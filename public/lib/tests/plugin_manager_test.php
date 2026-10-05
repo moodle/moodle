@@ -29,8 +29,9 @@ use testable_plugininfo_base;
  * @category  test
  * @copyright 2013 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_plugin_manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_plugin_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\plugininfo\orphaned::class, 'get_plugins')]
 final class plugin_manager_test extends \advanced_testcase {
 
     use fake_plugins_test_trait;
@@ -201,8 +202,6 @@ final class plugin_manager_test extends \advanced_testcase {
 
     /**
      * Tests that orphaned plugin info has a component.
-     *
-     * @covers \core\plugininfo\orphaned::get_plugins
      */
     public function test_orphaned_plugininfo_has_component(): void {
         $this->resetAfterTest();
@@ -626,13 +625,13 @@ final class plugin_manager_test extends \advanced_testcase {
     /**
      * Tests for check_explicitly_supported function to ensure that versions are correctly reported.
      *
-     * @dataProvider check_explicitly_supported_provider
      * @param array|null $supported Supported versions to inject
      * @param string|int|null $incompatible Incompatible version to inject.
      * @param int $version Version to test
      * @param int $expected
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('check_explicitly_supported_provider')]
     public function test_explicitly_supported($supported, $incompatible, $version, $expected): void {
         $pluginman = testable_core_plugin_manager::instance();
 
@@ -737,9 +736,7 @@ final class plugin_manager_test extends \advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider is_deleted_standard_plugin_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_deleted_standard_plugin_provider')]
     public function test_is_deleted_standard_plugin(
         mixed $type,
         mixed $name,
@@ -779,9 +776,7 @@ final class plugin_manager_test extends \advanced_testcase {
         $this->assertFalse($plugins);
     }
 
-    /**
-     * @dataProvider standard_plugins_list_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('standard_plugins_list_provider')]
     public function test_standard_plugins_list(
         string $type,
         array $expectedplugins,
@@ -822,9 +817,9 @@ final class plugin_manager_test extends \advanced_testcase {
     /**
      * Test core_plugin_manager when dealing with deprecated plugin (not subplugin) types.
      *
-     * @runInSeparateProcess
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_plugin_manager_deprecated_plugintype(): void {
         $this->resetAfterTest();
 
@@ -886,9 +881,9 @@ final class plugin_manager_test extends \advanced_testcase {
     /**
      * Test core_plugin_manager when dealing with deprecated subplugin types.
      *
-     * @runInSeparateProcess
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_plugin_manager_deprecated_subplugintype(): void {
         $this->resetAfterTest();
 
@@ -963,9 +958,9 @@ final class plugin_manager_test extends \advanced_testcase {
     /**
      * Test core_plugin_manager when dealing with deleted plugin (not subplugin) types.
      *
-     * @runInSeparateProcess
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_plugin_manager_deleted_plugintype(): void {
         $this->resetAfterTest();
 
@@ -1027,9 +1022,9 @@ final class plugin_manager_test extends \advanced_testcase {
     /**
      * Test core_plugin_manager when dealing with deleted subplugin types.
      *
-     * @runInSeparateProcess
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_plugin_manager_deleted_subplugintype(): void {
         $this->resetAfterTest();
 

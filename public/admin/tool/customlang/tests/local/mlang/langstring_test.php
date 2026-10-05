@@ -44,13 +44,13 @@ final class langstring_test extends advanced_testcase {
      * - all ' and " must be escaped
      * - all single % must be converted into %% for backwards compatibility
      *
-     * @dataProvider fix_syntax_data
      * @param string $text the text to test
      * @param int $version the lang package version (1 or 2)
      * @param int|null $fromversion the version to convert (null for none)
      * @param string $expected the expected result
      *
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('fix_syntax_data')]
     public function test_fix_syntax(string $text, int $version, ?int $fromversion, string $expected): void {
         $this->assertEquals(langstring::fix_syntax($text, $version, $fromversion), $expected);
     }

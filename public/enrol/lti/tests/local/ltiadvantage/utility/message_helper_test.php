@@ -22,18 +22,17 @@ namespace enrol_lti\local\ltiadvantage\utility;
  * @package    enrol_lti
  * @copyright  2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\utility\message_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\utility\message_helper::class)]
 final class message_helper_test extends \base_testcase {
 
     /**
      * Test the static helper is_instructor_launch.
      *
-     * @dataProvider message_roles_provider
      * @param array $jwtdata the mock JWT data from a launch.
      * @param bool $expected the expected return of is_instructor_launch() given the JWT data.
-     * @covers ::is_instructor_launch
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('message_roles_provider')]
     public function test_is_instructor_launch(array $jwtdata, bool $expected): void {
         $this->assertEquals($expected, message_helper::is_instructor_launch($jwtdata));
     }

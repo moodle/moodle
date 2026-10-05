@@ -25,10 +25,10 @@ use advanced_testcase;
  *
  * @package    core_xapi
  * @since      Moodle 4.2
- * @covers     \core_xapi\state_store
  * @copyright  2023 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_xapi\state_store::class)]
 final class state_store_test extends advanced_testcase {
 
     /**
@@ -43,11 +43,11 @@ final class state_store_test extends advanced_testcase {
     /**
      * Testing delete method.
      *
-     * @dataProvider states_provider
      * @param array $info Array of overriden state data.
      * @param bool $expected Expected results.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('states_provider')]
     public function test_state_store_delete(array $info, bool $expected): void {
         global $DB;
 
@@ -80,11 +80,11 @@ final class state_store_test extends advanced_testcase {
     /**
      * Testing get method.
      *
-     * @dataProvider states_provider
      * @param array $info Array of overriden state data.
      * @param bool $expected Expected results.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('states_provider')]
     public function test_state_store_get(array $info, bool $expected): void {
         $this->resetAfterTest();
 
@@ -138,11 +138,11 @@ final class state_store_test extends advanced_testcase {
     /**
      * Testing put method.
      *
-     * @dataProvider put_states_provider
      * @param array $info Array of overriden state data.
      * @param string $expected Expected results.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('put_states_provider')]
     public function test_state_store_put(array $info, string $expected): void {
         global $DB;
 
@@ -222,11 +222,11 @@ final class state_store_test extends advanced_testcase {
     /**
      * Testing reset method.
      *
-     * @dataProvider reset_wipe_states_provider
      * @param array $info Array of overriden state data.
      * @param int $expected The states that will be reset.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('reset_wipe_states_provider')]
     public function test_state_store_reset(array $info, int $expected): void {
         global $DB;
 
@@ -278,11 +278,11 @@ final class state_store_test extends advanced_testcase {
     /**
      * Testing wipe method.
      *
-     * @dataProvider reset_wipe_states_provider
      * @param array $info Array of overriden state data.
      * @param int $expected The removed states.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('reset_wipe_states_provider')]
     public function test_state_store_wipe(array $info, int $expected): void {
         global $DB;
 
@@ -443,7 +443,6 @@ final class state_store_test extends advanced_testcase {
     /**
      * Testing get_state_ids method.
      *
-     * @dataProvider get_state_ids_provider
      * @param string $component
      * @param string|null $itemid
      * @param string|null $registration
@@ -451,6 +450,7 @@ final class state_store_test extends advanced_testcase {
      * @param array $expected the expected result
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_state_ids_provider')]
     public function test_get_state_ids(
         string $component,
         ?string $itemid,
@@ -561,10 +561,10 @@ final class state_store_test extends advanced_testcase {
      *
      * The default state store only allows integer itemids.
      *
-     * @dataProvider invalid_activityid_format_provider
      * @param string $operation the method to execute
      * @param bool $usestate if the param is a state or the activity id
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_activityid_format_provider')]
     public function test_invalid_activityid_format(string $operation, bool $usestate = false): void {
         $this->resetAfterTest();
         $this->setAdminUser();

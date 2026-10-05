@@ -27,8 +27,8 @@ use core\activity_dates;
  * @package   mod_bigbluebuttonbn
  * @copyright 2025 Laurent David <laurent.david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_bigbluebuttonbn\dates
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\dates::class)]
 final class dates_test extends advanced_testcase {
     use \mod_bigbluebuttonbn\test\testcase_helper_trait;
 
@@ -126,9 +126,8 @@ final class dates_test extends advanced_testcase {
      * @param int|null $open Opening time in the BigBlueButton.
      * @param int|null $close Closing time in the BigBlueButton.
      * @param array $expected The expected value of calling get_dates_for_module()
-     * @covers ::get_dates_for_module
-     * @dataProvider get_dates_for_module_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_dates_for_module_provider')]
     public function test_get_dates_for_module(
         ?int $open,
         ?int $close,
@@ -148,9 +147,8 @@ final class dates_test extends advanced_testcase {
      *
      * @param int|null $open Opening time in the BigBlueButton.
      * @param int|null $close Closing time in the BigBlueButton.
-     * @covers ::get_open_date
-     * @dataProvider get_dates_for_module_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_dates_for_module_provider')]
     public function test_get_open_date(
         ?int $open,
         ?int $close,
@@ -169,9 +167,8 @@ final class dates_test extends advanced_testcase {
      *
      * @param int|null $open Opening time in the BigBlueButton.
      * @param int|null $close Closing time in the BigBlueButton.
-     * @covers ::get_close_date
-     * @dataProvider get_dates_for_module_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_dates_for_module_provider')]
     public function test_get_close_date(
         ?int $open,
         ?int $close,

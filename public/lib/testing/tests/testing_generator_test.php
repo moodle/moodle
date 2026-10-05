@@ -23,8 +23,9 @@ namespace core;
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \testing_data_generator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\testing_data_generator::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_course')]
 final class testing_generator_test extends \advanced_testcase {
     public function test_get_plugin_generator_good_case(): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -185,8 +186,6 @@ final class testing_generator_test extends \advanced_testcase {
      * This method tests the behavior of creating a course with initialized sections.
      * It checks that the sections are renamed to "Section x" when `initsections` is true,
      * and that the sections are not renamed when `initsections` is false.
-     *
-     * @covers ::create_course
      */
     public function test_create_course_initsections(): void {
         global $DB;

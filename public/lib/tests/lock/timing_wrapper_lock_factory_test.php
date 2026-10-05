@@ -19,11 +19,11 @@ namespace core\lock;
 /**
  * Unit tests for the lock factory.
  *
- * @covers \core\lock\timing_wrapper_lock_factory
  * @package core
  * @copyright 2022 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\lock\timing_wrapper_lock_factory::class)]
 final class timing_wrapper_lock_factory_test extends \advanced_testcase {
 
     /**

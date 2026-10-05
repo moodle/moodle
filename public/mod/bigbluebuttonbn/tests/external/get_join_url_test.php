@@ -31,8 +31,8 @@ use moodle_exception;
  * @copyright  2021 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @covers \mod_bigbluebuttonbn\external\get_join_url
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\external\get_join_url::class)]
 final class get_join_url_test extends \core_external\tests\externallib_testcase {
     use testcase_helper_trait;
 

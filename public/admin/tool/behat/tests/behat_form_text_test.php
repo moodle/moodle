@@ -42,10 +42,9 @@ require_once($CFG->libdir . '/behat/form_field/behat_form_text.php');
  * @category   test
  * @copyright  2022 onwards Eloy Lafuente (stronk7) {@link https://stronk7.com}
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \behat_form_text
- * @covers \behat_form_field
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\behat_form_text::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\behat_form_field::class)]
 final class behat_form_text_test extends \basic_testcase {
 
     /**
@@ -68,8 +67,8 @@ final class behat_form_text_test extends \basic_testcase {
      *
      * @param mixed $value value to be set.
      * @param mixed $expectation value to be checked.
-     * @dataProvider provider_test_set_get_value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_set_get_value')]
     public function test_set_get_value($value, $expectation): void {
         $session = $this->createMock(Session::class);
         $node = $this->createMock(NodeElement::class);
@@ -113,8 +112,8 @@ final class behat_form_text_test extends \basic_testcase {
      * @param mixed $value value to be set.
      * @param mixed $match value to be matched.
      * @param bool  $result expected return status of the function.
-     * @dataProvider provider_test_matches
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_matches')]
     public function test_matches($decsep, $value, $match, $result): void {
         global $CFG;
 

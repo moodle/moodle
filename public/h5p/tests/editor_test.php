@@ -40,9 +40,8 @@ use Moodle\H5PCore;
  * @package    core_h5p
  * @copyright  2020 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @runTestsInSeparateProcesses
  */
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class editor_test extends advanced_testcase {
 
     /**

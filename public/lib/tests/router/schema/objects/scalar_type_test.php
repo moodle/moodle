@@ -28,8 +28,8 @@ use invalid_parameter_exception;
  * @package    core
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\objects\scalar_type
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\objects\scalar_type::class)]
 final class scalar_type_test extends route_testcase {
     public function test_referenced_object(): void {
         $object = new class (

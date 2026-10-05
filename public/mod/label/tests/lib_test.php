@@ -28,6 +28,7 @@ use PHPUnit\Framework\Attributes\CoversFunction;
  */
 #[CoversFunction('label_generate_image_from_details')]
 #[CoversFunction('label_dndupload_handle')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\get_label_name::class)]
 final class lib_test extends \advanced_testcase {
 
     /**
@@ -218,9 +219,8 @@ final class lib_test extends \advanced_testcase {
      * @param string $format
      * @param string $expectedname
      * @return void
-     * @covers       \get_label_name
-     * @dataProvider label_get_name_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('label_get_name_data_provider')]
     public function test_label_get_label_name(string $name, string $content, string $format, string $expectedname): void {
         $course = $this->getDataGenerator()->create_course();
         // When creating the module, get_label_name is called and fills label->name.

@@ -29,11 +29,11 @@ require_once($CFG->dirroot . '/mod/data/locallib.php');
  * @copyright  2022 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('data_search_entries')]
 final class locallib_test extends \advanced_testcase {
 
     /**
      * Confirms that search is working
-     * @covers ::data_search_entries
      */
     public function test_data_search_entries(): void {
         $this->resetAfterTest();
@@ -98,7 +98,6 @@ final class locallib_test extends \advanced_testcase {
 
     /**
      * Confirms that search is working with groups
-     * @covers ::data_search_entries
      */
     public function test_data_search_entries_with_groups(): void {
         $this->resetAfterTest();

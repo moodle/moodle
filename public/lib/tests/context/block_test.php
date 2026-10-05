@@ -26,12 +26,13 @@ use core\context, core\context_helper;
  * @package   core
  * @copyright Petr Skoda
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\context\block
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\context\block::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\context_block::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\context::class, 'instance_by_id')]
 final class block_test extends \advanced_testcase {
     /**
      * Tests legacy class name.
-     * @covers \context_block
      */
     public function test_legacy_classname(): void {
         $this->resetAfterTest();
@@ -45,8 +46,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered methods.
-     * @covers ::instance
-     * @covers \core\context::instance_by_id
      */
     public function test_factory_methods(): void {
         $this->resetAfterTest();
@@ -64,7 +63,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_short_name
      */
     public function test_get_short_name(): void {
         $this->assertSame('block', block::get_short_name());
@@ -72,8 +70,8 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests levels.
-     * @coversNothing
      */
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_level(): void {
         $this->assertSame(80, block::LEVEL);
         $this->assertSame(CONTEXT_BLOCK, block::LEVEL);
@@ -81,7 +79,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_level_name
      */
     public function test_get_level_name(): void {
         $this->assertSame('Block', block::get_level_name());
@@ -89,7 +86,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_context_name
      */
     public function test_get_context_name(): void {
         $this->resetAfterTest();
@@ -106,7 +102,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_url
      */
     public function test_get_url(): void {
         $this->resetAfterTest();
@@ -122,7 +117,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_compatible_role_archetypes
      */
     public function test_get_compatible_role_archetypes(): void {
         global $DB;
@@ -136,7 +130,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_possible_parent_levels
      */
     public function test_get_possible_parent_levels(): void {
         $result = block::get_possible_parent_levels();
@@ -155,7 +148,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_capabilities
      */
     public function test_get_capabilities(): void {
         $this->resetAfterTest();
@@ -176,7 +168,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::create_level_instances
      */
     public function test_create_level_instances(): void {
         global $DB;
@@ -192,7 +183,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_child_contexts
      */
     public function test_get_child_contexts(): void {
         $this->resetAfterTest();
@@ -206,7 +196,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_cleanup_sql
      */
     public function test_get_cleanup_sql(): void {
         global $DB;
@@ -223,7 +212,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::build_paths
      */
     public function test_build_paths(): void {
         global $DB;
@@ -245,7 +233,6 @@ final class block_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::set_locked
      */
     public function test_set_locked(): void {
         global $DB;

@@ -23,20 +23,19 @@ namespace tool_admin_presets\local\action;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_admin_presets\local\action\base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_admin_presets\local\action\base::class)]
 final class base_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of log() method.
      *
-     * @covers ::log
-     * @dataProvider log_provider
      *
      * @param string $action Action to log.
      * @param string $mode Mode to log.
      * @param string|null $expectedclassname The expected classname or null if no event is expected.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('log_provider')]
     public function test_base_log(string $action, string $mode, ?string $expectedclassname): void {
         $this->resetAfterTest();
         $this->setAdminUser();

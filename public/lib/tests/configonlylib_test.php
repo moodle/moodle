@@ -29,6 +29,9 @@ require_once(__DIR__ . '/../configonlylib.php');
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('min_get_minimum_revision')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('min_get_maximum_revision')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('min_is_revision_valid_and_current')]
 final class configonlylib_test extends \advanced_testcase {
 
     /**
@@ -146,8 +149,6 @@ final class configonlylib_test extends \advanced_testcase {
 
     /**
      * Test the min_get_minimum_version function.
-     *
-     * @covers ::min_get_minimum_revision
      */
     public function test_min_get_minimum_version(): void {
         // This is fairly hard to write a test for, but we can at least check that it returns a number
@@ -160,8 +161,6 @@ final class configonlylib_test extends \advanced_testcase {
 
     /**
      * Test the min_get_maximum_version function.
-     *
-     * @covers ::min_get_maximum_revision
      */
     public function test_min_get_maximum_version(): void {
         // The maximum version should be set to a time in the near future.
@@ -173,10 +172,8 @@ final class configonlylib_test extends \advanced_testcase {
 
     /**
      * Test the min_is_revision_valid_and_current function.
-     *
-     * @covers ::min_is_revision_valid_and_current
-     * @dataProvider min_is_revision_valid_and_current_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('min_is_revision_valid_and_current_provider')]
     public function test_min_is_revision_valid_and_current(int $revision, bool $expected): void {
         $this->assertEquals($expected, min_is_revision_valid_and_current($revision));
     }
@@ -206,8 +203,6 @@ final class configonlylib_test extends \advanced_testcase {
      * Test the min_is_revision_valid_and_current function with close times.
      *
      * Note: These tests are incompatible with data providers.
-     *
-     * @covers ::min_is_revision_valid_and_current
      */
     public function test_min_is_revision_valid_and_current_close_proximity(): void {
         // A time in the near future.

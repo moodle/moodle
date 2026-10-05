@@ -22,8 +22,8 @@ namespace core\output;
  * @package   core
  * @copyright 2019 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\output\mustache_helper_collection
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\mustache_helper_collection::class)]
 final class mustache_helper_collection_test extends \advanced_testcase {
 
     /**
@@ -123,11 +123,11 @@ final class mustache_helper_collection_test extends \advanced_testcase {
 
     /**
      * Test that the mustache_helper_collection class correctly strips
-     * @dataProvider get_strip_disallowed_helpers_testcases
      * @param string[] $disallowed The list of helpers to strip
      * @param string $input The input string for the helper
      * @param string $expected The expected output of the string after disallowed strip
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_strip_disallowed_helpers_testcases')]
     public function test_strip_disallowed_helpers($disallowed, $input, $expected): void {
         $collection = new mustache_helper_collection(null, $disallowed);
         $this->assertEquals($expected, $collection->strip_disallowed_helpers($disallowed, $input));

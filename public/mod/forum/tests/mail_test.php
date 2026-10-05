@@ -1088,9 +1088,9 @@ final class mail_test extends \advanced_testcase {
     /**
      * Verify forum emails body using templates to generate the expected results.
      *
-     * @dataProvider forum_post_email_templates_provider
      * @param array $data provider samples.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('forum_post_email_templates_provider')]
     public function test_forum_post_email_templates($data): void {
         global $DB;
 

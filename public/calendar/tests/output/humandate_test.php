@@ -21,12 +21,12 @@ use DateTime;
 /**
  * Tests for humandate class.
  *
- * @covers     \core_calendar\output\humandate
  * @package    core_calendar
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_calendar\output\humandate::class)]
 final class humandate_test extends \advanced_testcase {
 
     /**
@@ -42,7 +42,6 @@ final class humandate_test extends \advanced_testcase {
     /**
      * Test export_for_template() method.
      *
-     * @dataProvider provider_export_for_template
      * @param int $addseconds The number of seconds to add to the current time.
      * @param bool $userelatives Whether to use relative dates.
      * @param string|null $date For relative dates, the expected string (Tomorrow, Today, Yesterday).
@@ -51,6 +50,7 @@ final class humandate_test extends \advanced_testcase {
      * @param bool $isnear Whether the date is near.
      * @param string $userdateformat The user date expected format.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_export_for_template')]
     public function test_export_for_template(
         int $addseconds,
         bool $userelatives,

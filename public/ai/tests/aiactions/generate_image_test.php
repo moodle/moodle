@@ -25,8 +25,8 @@ use core_ai\aiactions\generate_image;
  * @package    core_ai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\aiactions\base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_ai\aiactions\base::class)]
 final class generate_image_test extends \advanced_testcase {
 
     /**

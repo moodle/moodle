@@ -21,11 +21,11 @@ namespace mod_book;
  * @copyright  2023 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_book\helper::class, 'is_last_visible_chapter')]
 final class helper_test extends \advanced_testcase {
 
     /**
      * Test view_book
-     * @covers \mod_book\helper::is_last_visible_chapter
      */
     public function test_is_last_chapter(): void {
         $this->resetAfterTest(true);

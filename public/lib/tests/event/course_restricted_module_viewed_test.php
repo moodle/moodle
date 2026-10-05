@@ -25,10 +25,10 @@ use moodle_url;
  * Tests for base course module viewed event.
  *
  * @package    core
- * @covers     \core\event\course_restricted_module_viewed
  * @copyright  2026 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\course_restricted_module_viewed::class)]
 final class course_restricted_module_viewed_test extends advanced_testcase {
     /**
      * Test event properties and methods.

@@ -34,6 +34,9 @@ require_once($CFG->dirroot . '/mod/feedback/lib.php');
  * @copyright  2016 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('feedback_get_receivemail_users')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('feedback_get_completeds')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('feedback_get_completeds_count')]
 final class lib_test extends \advanced_testcase {
 
     public function test_feedback_initialise(): void {
@@ -1172,7 +1175,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test that if a teacher (non editing) is not part of any group in separate group mode he will not receive notification emails.
-     * @covers ::feedback_get_receivemail_users
      */
     public function test_feedback_get_receivemail_users(): void {
         $this->resetAfterTest();
@@ -1219,14 +1221,12 @@ final class lib_test extends \advanced_testcase {
     /**
      * Test feedback_get_completeds().
      *
-     * @covers ::feedback_get_completeds
-     * @covers ::feedback_get_completeds_count
-     * @dataProvider provider_feedback_get_completeds
      *
      * @param int $groupmode The group mode of the course.
      * @param array $selectedgroups The groups selected for filtering.
      * @param int $expectedcount The expected number of completeds.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_feedback_get_completeds')]
     public function test_feedback_get_completeds(
         int $groupmode,
         array $selectedgroups,

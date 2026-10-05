@@ -35,8 +35,9 @@ require_once("$CFG->dirroot/mod/assign/tests/externallib_advanced_testcase.php")
  *
  * @copyright  2024 Daniel Ureña <durenadev@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_assign\external\remove_submission
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\external\remove_submission::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('execute')]
 final class remove_submission_test extends \mod_assign\externallib_advanced_testcase {
     // Use the generator helper.
     use mod_assign_test_generator;
@@ -66,7 +67,6 @@ final class remove_submission_test extends \mod_assign\externallib_advanced_test
 
     /**
      * Test remove submission by WS with invalid assign id.
-     * @covers ::execute
      */
     public function test_remove_submission_with_invalid_assign_id(): void {
         $this->resetAfterTest();
@@ -77,7 +77,6 @@ final class remove_submission_test extends \mod_assign\externallib_advanced_test
 
     /**
      * Test remove submission by WS with invalid user id.
-     * @covers ::execute
      */
     public function test_remove_submission_with_invalid_user_id(): void {
         $this->resetAfterTest();
@@ -90,7 +89,6 @@ final class remove_submission_test extends \mod_assign\externallib_advanced_test
 
     /**
      * Test teacher can't remove student submissions by WS.
-     * @covers ::execute
      */
     public function test_teacher_remove_submissions(): void {
         $this->resetAfterTest();
@@ -110,7 +108,6 @@ final class remove_submission_test extends \mod_assign\externallib_advanced_test
 
     /**
      * Test teacher can remove student submissions by WS if they have added capability.
-     * @covers ::execute
      */
     public function test_teacher_editothersubmission_remove_submissions(): void {
         global $DB;
@@ -138,7 +135,6 @@ final class remove_submission_test extends \mod_assign\externallib_advanced_test
 
     /**
      * Test user can't remove their own non-existent submission.
-     * @covers ::execute
      */
     public function test_remove_own_notexists_submission(): void {
         $this->resetAfterTest();
@@ -153,7 +149,6 @@ final class remove_submission_test extends \mod_assign\externallib_advanced_test
 
     /**
      * Test user can remove their own existing submission.
-     * @covers ::execute
      */
     public function test_remove_own_submission(): void {
         global $DB;
@@ -181,7 +176,6 @@ final class remove_submission_test extends \mod_assign\externallib_advanced_test
 
     /**
      * Test user can remove their own reopened submission.
-     * @covers ::execute
      */
     public function test_remove_own_submission_reopened(): void {
         global $DB, $USER;

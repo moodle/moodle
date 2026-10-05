@@ -33,6 +33,16 @@ require_once($CFG->dirroot . '/calendar/tests/helpers.php');
 /**
  * Tests various classes and functions in upgradelib.php library.
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('check_mod_assignment')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('upgrade_add_item_to_usermenu')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('moodle_needs_upgrading')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('upgrade_started')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('upgrade_set_timeout')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('upgrade_change_binary_column_to_int')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('check_aurora_version')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('moodlenet_migrate_profile_field')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('upgrade_migrate_classic_theme_to_boost')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('upgrade_penalty_calculation_freeze')]
 final class upgradelib_test extends advanced_testcase {
 
     /**
@@ -777,11 +787,11 @@ final class upgradelib_test extends advanced_testcase {
     /**
      * Test that objects in serialized strings will be changed over to stdClass.
      *
-     * @dataProvider serialized_strings_dataprovider
      * @param string $initialstring The initial serialized setting.
      * @param bool $expectededited If the string is expected to be edited.
      * @param string $expectedresult The expected serialized setting to be returned.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('serialized_strings_dataprovider')]
     public function test_upgrade_fix_serialized_objects($initialstring, $expectededited, $expectedresult): void {
         list($edited, $resultstring) = upgrade_fix_serialized_objects($initialstring);
         $this->assertEquals($expectededited, $edited);
@@ -1357,7 +1367,6 @@ final class upgradelib_test extends advanced_testcase {
     /**
      * Test the check_mod_assignment check if mod_assignment is still used.
      *
-     * @covers ::check_mod_assignment
      * @return void
      */
     public function test_check_mod_assignment_is_used(): void {
@@ -1424,10 +1433,8 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test the functionality of the {@link upgrade_add_item_to_usermenu()} function.
-     *
-     * @covers ::upgrade_add_item_to_usermenu
-     * @dataProvider usermenu_items_dataprovider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('usermenu_items_dataprovider')]
     public function test_upgrade_add_item_to_usermenu(string $initialmenu, string $newmenuitem, string $expectedmenu): void {
         global $CFG;
 
@@ -1507,8 +1514,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test the upgrade status check alongside the outageless flags.
-     *
-     * @covers ::moodle_needs_upgrading
      */
     public function test_moodle_upgrade_check_outageless(): void {
         global $CFG;
@@ -1530,8 +1535,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test the upgrade status check alongside the outageless flags.
-     *
-     * @covers ::upgrade_started
      */
     public function test_moodle_start_upgrade_outageless(): void {
         global $CFG;
@@ -1554,8 +1557,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test the upgrade timeout setter alongside the outageless flags.
-     *
-     * @covers ::upgrade_set_timeout
      */
     public function test_moodle_set_upgrade_timeout_outageless(): void {
         global $CFG;
@@ -1578,10 +1579,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test the components of the upgrade process being run outageless.
-     *
-     * @covers ::moodle_needs_upgrading
-     * @covers ::upgrade_started
-     * @covers ::upgrade_set_timeout
      */
     public function test_upgrade_components_with_outageless(): void {
         global $CFG;
@@ -1640,14 +1637,13 @@ calendar,core_calendar|/calendar/view.php?view=month',
     /**
      * Unit test for {@see upgrade_change_binary_column_to_int()}.
      *
-     * @dataProvider upgrade_change_binary_column_to_int_provider
-     * @covers ::upgrade_change_binary_column_to_int()
      * @param int $type The field type.
      * @param string|null $length The field length.
      * @param bool $expectedresult Whether the conversion succeeded.
      * @param bool $expecexception Whether to expect an exception.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('upgrade_change_binary_column_to_int_provider')]
     public function test_upgrade_change_binary_column_to_int(
         int $type,
         ?string $length,
@@ -1706,8 +1702,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test for upgrade script replacing full urls with relative urls in defaulthomepage setting
-     *
-     * @covers ::upgrade_change_binary_column_to_int()
      */
     public function test_upgrade_store_relative_url_sitehomepage(): void {
         global $CFG;
@@ -1734,8 +1728,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test the check_aurora_version check when the Moodle instance is not using Amazon Aurora as a database architecture.
-     *
-     * @covers ::check_aurora_version
      */
     public function test_check_aurora_version_is_not_used(): void {
         global $CFG;
@@ -1749,8 +1741,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test the check_aurora_version check when the Moodle instance is using Amazon Aurora as a database architecture.
-     *
-     * @covers ::check_aurora_version
      */
     public function test_check_aurora_version_is_used(): void {
         global $CFG;
@@ -1766,8 +1756,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test moodlenet_migrate_profile_field creates category, field and migrates data.
-     *
-     * @covers ::moodlenet_migrate_profile_field
      */
     public function test_moodlenet_migrate_profile_field(): void {
         global $DB;
@@ -1843,8 +1831,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test migration of compatible Classic settings and files to Boost.
-     *
-     * @covers ::upgrade_migrate_classic_theme_to_boost
      */
     public function test_upgrade_migrate_classic_theme_to_boost(): void {
         $this->resetAfterTest();
@@ -1933,8 +1919,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test that Boost settings and files are kept when Classic was never customised.
-     *
-     * @covers ::upgrade_migrate_classic_theme_to_boost
      */
     public function test_upgrade_migrate_classic_theme_to_boost_unmodified_classic(): void {
         $this->resetAfterTest();
@@ -1980,8 +1964,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test migration helper no-op behaviour when Classic is not the active site theme.
-     *
-     * @covers ::upgrade_migrate_classic_theme_to_boost
      */
     public function test_upgrade_migrate_classic_theme_to_boost_non_classic_theme(): void {
         $this->resetAfterTest();
@@ -2021,8 +2003,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
 
     /**
      * Test that courses affected by MDL-88407 are frozen during upgrade.
-     *
-     * @covers ::upgrade_penalty_calculation_freeze
      */
     public function test_upgrade_penalty_calculation_freeze(): void {
         global $CFG;
@@ -2175,8 +2155,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
      *
      * This covers the case where comparing rawgrade with the authoritative mark alone would miss a
      * legacy-corrupted grade.
-     *
-     * @covers ::upgrade_penalty_calculation_freeze
      */
     public function test_upgrade_penalty_calculation_freeze_assignment_precision(): void {
         global $CFG;
@@ -2240,8 +2218,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
      *
      * Overridden grades are skipped by grade_item::regrade_final_grades(), so a mismatch between
      * finalgrade and the fixed calculation cannot cause a grade change during regrading.
-     *
-     * @covers ::upgrade_penalty_calculation_freeze
      */
     public function test_upgrade_penalty_calculation_freeze_skips_overridden_grade(): void {
         global $CFG, $DB;
@@ -2273,8 +2249,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
     /**
      * Test that a scale-graded Assignment item does not cause its course to be frozen, even when its
      * stored rawgrade differs from the authoritative mark.
-     *
-     * @covers ::upgrade_penalty_calculation_freeze
      */
     public function test_upgrade_penalty_calculation_freeze_skips_non_value_gradetype(): void {
         global $CFG, $DB;
@@ -2306,8 +2280,6 @@ calendar,core_calendar|/calendar/view.php?view=month',
     /**
      * Test that an Assignment grade with no finalgrade yet does not cause its course to be frozen,
      * even when its stored rawgrade differs from the authoritative mark.
-     *
-     * @covers ::upgrade_penalty_calculation_freeze
      */
     public function test_upgrade_penalty_calculation_freeze_skips_null_finalgrade(): void {
         global $CFG, $DB;

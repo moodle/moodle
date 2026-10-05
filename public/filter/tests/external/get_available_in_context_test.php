@@ -26,8 +26,9 @@ use core_external\external_api;
  * @copyright  2017 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.4
- * @covers \core_filters\external\get_available_in_context
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_filters\external\get_available_in_context::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_filters\external\get_all_states::class, 'execute')]
 final class get_available_in_context_test extends \core_external\tests\externallib_testcase {
     /**
      * Test execute
@@ -187,7 +188,6 @@ final class get_available_in_context_test extends \core_external\tests\externall
 
     /**
      * Test get_all_states
-     * @covers \core_filters\external\get_all_states::execute
      */
     public function test_get_all_states(): void {
         $this->resetAfterTest(true);

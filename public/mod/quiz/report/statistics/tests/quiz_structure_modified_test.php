@@ -31,8 +31,8 @@ use mod_quiz\quiz_settings;
  * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \quiz_statistics\quiz_structure_modified
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\quiz_statistics\quiz_structure_modified::class)]
 final class quiz_structure_modified_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 

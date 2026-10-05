@@ -30,13 +30,12 @@ use RedisException;
  * define('TEST_SESSION_REDIS_HOST', '127.0.0.1');
  *
  * @package   core
- * @covers    \core\session\redis
  * @author    Russell Smith <mr-russ@smith2001.net>
  * @copyright 2016 Russell Smith
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @runClassInSeparateProcess
- * @covers \core\session\redis
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\session\redis::class)]
+#[\PHPUnit\Framework\Attributes\RunClassInSeparateProcess]
 final class redis_test extends \advanced_testcase {
     /** @var string $keyprefix This key prefix used when testing Redis */
     protected string $keyprefix = '';

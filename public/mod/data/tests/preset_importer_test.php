@@ -26,8 +26,8 @@ use mod_data\local\importer\preset_importer;
  * @category   test
  * @copyright  2022 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_data\local\importer\preset_importer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\local\importer\preset_importer::class)]
 final class preset_importer_test extends \advanced_testcase {
     /**
      * Data provider for build providers for test_needs_mapping and test_set_affected_fields.
@@ -124,14 +124,13 @@ final class preset_importer_test extends \advanced_testcase {
     /**
      * Test for needs_mapping method.
      *
-     * @dataProvider needs_mapping_provider
-     * @covers ::needs_mapping
      *
      * @param array $currentfields Fields of the current activity.
      * @param array $newfields Fields to be imported.
      * @param string $pluginname The plugin preset to be imported.
      * @param bool $expectedresult Expected exception.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('needs_mapping_provider')]
     public function test_needs_mapping(
         array $currentfields,
         array $newfields,
@@ -222,8 +221,6 @@ final class preset_importer_test extends \advanced_testcase {
     /**
      * Test for set_affected_fields method.
      *
-     * @dataProvider set_affected_provider
-     * @covers ::set_affected_fields
      *
      * @param array $currentfields Fields of the current activity.
      * @param array $newfields Fields to be imported.
@@ -232,6 +229,7 @@ final class preset_importer_test extends \advanced_testcase {
      * @param int $fieldstoremove Expected number of fields on $fieldstoremove.
      * @param int $fieldstoupdate Expected number of fields on $fieldstoupdate.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_affected_provider')]
     public function test_set_affected_fields(
         array $currentfields,
         array $newfields,
@@ -284,8 +282,6 @@ final class preset_importer_test extends \advanced_testcase {
     /**
      * Test for get_mapping_information method.
      *
-     * @dataProvider set_affected_provider
-     * @covers ::get_mapping_information
      *
      * @param array $currentfields Fields of the current activity.
      * @param array $newfields Fields to be imported.
@@ -294,6 +290,7 @@ final class preset_importer_test extends \advanced_testcase {
      * @param int $fieldstoremove Expected number of fields on $fieldstoremove.
      * @param int $fieldstoupdate Expected number of fields on $fieldstoupdate.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_affected_provider')]
     public function test_get_mapping_information(
         array $currentfields,
         array $newfields,
@@ -377,12 +374,11 @@ final class preset_importer_test extends \advanced_testcase {
     /**
      * Test for get_field_names method.
      *
-     * @dataProvider get_field_names_provider
-     * @covers ::get_field_names
      *
      * @param array $fields List of fields to get the names from.
      * @param string $expected The list of field names expected.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_field_names_provider')]
     public function test_get_field_names(array $fields, string $expected): void {
         global $USER;
 
@@ -414,7 +410,6 @@ final class preset_importer_test extends \advanced_testcase {
     /**
      * Test for create_from_plugin_or_directory creation static method.
      *
-     * @covers ::create_from_plugin_or_directory
      *
      */
     public function test_create_from_plugin_or_directory(): void {

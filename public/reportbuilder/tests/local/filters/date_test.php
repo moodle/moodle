@@ -27,11 +27,11 @@ use core_reportbuilder\local\report\filter;
  * Unit tests for date report filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\base
- * @covers      \core_reportbuilder\local\filters\date
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\date::class)]
 final class date_test extends advanced_testcase {
 
     /** @var clock $clock */
@@ -63,9 +63,8 @@ final class date_test extends advanced_testcase {
      *
      * @param int $operator
      * @param bool $expectuser
-     *
-     * @dataProvider get_sql_filter_simple_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_simple_provider')]
     public function test_get_sql_filter_simple(int $operator, bool $expectuser): void {
         global $DB;
 
@@ -143,9 +142,8 @@ final class date_test extends advanced_testcase {
      * the current time is always within the current week regardless of calendar configuration/preferences
      *
      * @param int $startweekday
-     *
-     * @dataProvider get_sql_filter_current_week_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_current_week_provider')]
     public function test_get_sql_filter_current_week(int $startweekday): void {
         global $DB;
 
@@ -197,9 +195,8 @@ final class date_test extends advanced_testcase {
      *
      * @param int $startweekday
      * @param string $timecreated Relative time suitable for passing to {@see strtotime}
-     *
-     * @dataProvider get_sql_filter_current_week_no_match_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_current_week_no_match_provider')]
     public function test_get_sql_filter_current_week_no_match(int $startweekday, string $timecreated): void {
         global $DB;
 
@@ -305,9 +302,8 @@ final class date_test extends advanced_testcase {
      * @param int|null $unitvalue
      * @param int|null $unit
      * @param string|null $timecreated Relative time suitable for passing to {@see strtotime} (or null for current time)
-     *
-     * @dataProvider get_sql_filter_relative_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_relative_provider')]
     public function test_get_sql_filter_relative(int $operator, ?int $unitvalue, ?int $unit, ?string $timecreated = null): void {
         global $DB;
 

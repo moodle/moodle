@@ -28,8 +28,8 @@ use context;
  * @package tool_usertours
  * @copyright 2025 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \tool_usertours\local\filter\category
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\local\filter\category::class)]
 final class category_filter_test extends \advanced_testcase {
     /** @var \core_course_category */
     private \core_course_category $category1;
@@ -83,11 +83,11 @@ final class category_filter_test extends \advanced_testcase {
     /**
      * Test the filter_matches method.
      *
-     * @dataProvider filter_matches_provider
      * @param array $tourconfig Tour configuration
      * @param string $contextinfo Context information
      * @param bool $expected Expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_matches_provider')]
     public function test_filter_matches(array $tourconfig, string $contextinfo, bool $expected): void {
         $this->resetAfterTest();
 

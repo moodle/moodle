@@ -33,8 +33,8 @@ require_once(__DIR__ . '/../manage_category_test_base.php');
  * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qbank_managecategories\external\move_category
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_managecategories\external\move_category::class)]
 final class move_category_test extends \qbank_managecategories\manage_category_test_base {
 
     /**

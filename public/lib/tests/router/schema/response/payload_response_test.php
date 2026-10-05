@@ -28,9 +28,9 @@ use Psr\Http\Message\ResponseInterface;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\response\payload_response
- * @covers     \core\router\schema\response\abstract_response
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\response\payload_response::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\response\abstract_response::class)]
 final class payload_response_test extends route_testcase {
     public function test_get_payload(): void {
         $request = new ServerRequest('GET', 'http://example.com/example/endpoint');

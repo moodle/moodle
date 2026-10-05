@@ -30,6 +30,8 @@ require_once(__DIR__ . '/..//test_helper_trait.php');
  * @copyright  2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\quizaccess_seb\event\access_prevented::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\quizaccess_seb\event\template_created::class)]
 final class events_test extends \advanced_testcase {
     use \quizaccess_seb_test_helper_trait;
 
@@ -45,8 +47,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test creating the access_prevented event.
-     *
-     * @covers \quizaccess_seb\event\access_prevented
      */
     public function test_event_access_prevented(): void {
         $this->resetAfterTest();
@@ -95,8 +95,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test creating the access_prevented event with provided SEB keys.
-     *
-     * @covers \quizaccess_seb\event\access_prevented
      */
     public function test_event_access_prevented_with_keys(): void {
         $this->resetAfterTest();
@@ -143,8 +141,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test creating the template_created event.
-     *
-     * @covers \quizaccess_seb\event\template_created
      */
     public function test_event_create_template(): void {
         $this->resetAfterTest();

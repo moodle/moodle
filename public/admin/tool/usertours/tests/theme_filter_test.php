@@ -22,8 +22,8 @@ namespace tool_usertours;
  * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \tool_usertours\local\filter\theme
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\local\filter\theme::class)]
 final class theme_filter_test extends \advanced_testcase {
     /**
      * Data Provider for filter_matches function.
@@ -68,11 +68,11 @@ final class theme_filter_test extends \advanced_testcase {
     /**
      * Test the filter_matches function.
      *
-     * @dataProvider    filter_matches_provider
      * @param   array       $filtervalues   The filter values
      * @param   string      $currenttheme   The name of the current theme
      * @param   boolean     $expected       Whether the tour is expected to match
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_matches_provider')]
     public function test_filter_matches($filtervalues, $currenttheme, $expected): void {
         global $PAGE;
 

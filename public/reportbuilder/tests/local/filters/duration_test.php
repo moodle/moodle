@@ -26,11 +26,11 @@ use core_reportbuilder\local\report\filter;
  * Unit tests for duration report filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\base
- * @covers      \core_reportbuilder\local\filters\duration
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\duration::class)]
 final class duration_test extends advanced_testcase {
 
     /**
@@ -88,9 +88,8 @@ final class duration_test extends advanced_testcase {
      * @param bool $expectuser
      * @param float $value
      * @param int $unit
-     *
-     * @dataProvider get_sql_filter_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_provider')]
     public function test_get_sql_filter(int $operator, bool $expectuser, float $value = 0, int $unit = MINSECS): void {
         global $DB;
 

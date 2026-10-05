@@ -73,10 +73,10 @@ final class integer_filter_test extends advanced_testcase {
     /**
      * Ensure that the add_filter_value function rejects invalid types.
      *
-     * @dataProvider add_filter_value_invalid_types_provider
      * @param mixed $value
      * @param string $type
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_filter_value_invalid_types_provider')]
     public function test_add_filter_value_type_invalid($value, string $type): void {
         $filter = new integer_filter('example');
 

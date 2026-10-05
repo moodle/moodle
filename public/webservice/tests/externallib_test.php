@@ -28,11 +28,11 @@ require_once($CFG->dirroot . '/webservice/externallib.php');
  * External course functions unit tests
  *
  * @package    core_webservice
- * @covers     \core_webservice_external::get_site_info
  * @category   external
  * @copyright  2012 Paul Charsley
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_webservice_external::class, 'get_site_info')]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     #[\Override]
     public function setUp(): void {

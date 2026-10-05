@@ -24,17 +24,17 @@ namespace core_grades\external;
  * @copyright  2023 Kevin Percy <kevin.percy@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 4.2
- * @covers \core_grades\external\get_feedback
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_grades\external\get_feedback::class)]
 final class get_feedback_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_feedback.
      *
-     * @dataProvider get_feedback_provider
      * @param string|null $feedback The feedback text added for the grade item.
      * @param array $expected The expected feedback data.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_feedback_provider')]
     public function test_get_feedback(?string $feedback, array $expected): void {
 
         $this->resetAfterTest(true);
@@ -96,12 +96,12 @@ final class get_feedback_test extends \core_external\tests\externallib_testcase 
     /**
      * Test get_feedback with invalid requests.
      *
-     * @dataProvider get_feedback_invalid_request_provider
      * @param string $loggeduserrole The role of the logged user.
      * @param bool $feedbacknotincourse Whether to request a feedback for a grade item which is not a part of the course.
      * @param array $expectedexception The expected exception.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_feedback_invalid_request_provider')]
     public function test_get_feedback_invalid_request(string $loggeduserrole, bool $feedbacknotincourse,
             array $expectedexception = []): void {
 

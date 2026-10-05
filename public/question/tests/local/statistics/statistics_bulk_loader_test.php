@@ -34,8 +34,9 @@ use ReflectionMethod;
  * @package   core_question
  * @copyright 2021 Catalyst IT Australia Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_question\local\statistics\statistics_bulk_loader
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\local\statistics\statistics_bulk_loader::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_all_places_where_questions_were_attempted')]
 final class statistics_bulk_loader_test extends advanced_testcase {
     use \mod_quiz\tests\question_helper_test_trait;
 
@@ -47,8 +48,6 @@ final class statistics_bulk_loader_test extends advanced_testcase {
 
     /**
      * Test quizzes that contain a specified question.
-     *
-     * @covers ::get_all_places_where_questions_were_attempted
      */
     public function test_get_all_places_where_questions_were_attempted(): void {
         global $DB;
@@ -333,7 +332,6 @@ final class statistics_bulk_loader_test extends advanced_testcase {
     /**
      * Test question facility
      *
-     * @dataProvider load_question_facility_provider
      *
      * @param array $quiz1attempts quiz 1 attempts
      * @param array $expectedquiz1facilities expected quiz 1 facilities
@@ -341,6 +339,7 @@ final class statistics_bulk_loader_test extends advanced_testcase {
      * @param array $expectedquiz2facilities  expected quiz 2 facilities
      * @param array $expectedaveragefacilities expected average facilities
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('load_question_facility_provider')]
     public function test_load_question_facility(
         array $quiz1attempts,
         array $expectedquiz1facilities,
@@ -436,7 +435,6 @@ final class statistics_bulk_loader_test extends advanced_testcase {
     /**
      * Test discriminative efficiency
      *
-     * @dataProvider load_question_discriminative_efficiency_provider
      *
      * @param array $quiz1attempts quiz 1 attempts
      * @param array $expectedquiz1discriminativeefficiency expected quiz 1 discriminative efficiency
@@ -444,6 +442,7 @@ final class statistics_bulk_loader_test extends advanced_testcase {
      * @param array $expectedquiz2discriminativeefficiency expected quiz 2 discriminative efficiency
      * @param array $expectedaveragediscriminativeefficiency expected average discriminative efficiency
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('load_question_discriminative_efficiency_provider')]
     public function test_load_question_discriminative_efficiency(
         array $quiz1attempts,
         array $expectedquiz1discriminativeefficiency,
@@ -571,7 +570,6 @@ final class statistics_bulk_loader_test extends advanced_testcase {
     /**
      * Test discrimination index
      *
-     * @dataProvider load_question_discrimination_index_provider
      *
      * @param array $quiz1attempts quiz 1 attempts
      * @param array $expectedquiz1discriminationindex expected quiz 1 discrimination index
@@ -579,6 +577,7 @@ final class statistics_bulk_loader_test extends advanced_testcase {
      * @param array $expectedquiz2discriminationindex expected quiz 2 discrimination index
      * @param array $expectedaveragediscriminationindex expected average discrimination index
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('load_question_discrimination_index_provider')]
     public function test_load_question_discrimination_index(
         array $quiz1attempts,
         array $expectedquiz1discriminationindex,

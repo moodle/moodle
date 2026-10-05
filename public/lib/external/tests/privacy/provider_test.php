@@ -41,6 +41,12 @@ use core_privacy\tests\provider_testcase;
  * @author     Frédéric Massart <fred@branchup.tech>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\privacy\provider::class, 'get_contexts_for_userid')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\privacy\provider::class, 'delete_data_for_user')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\privacy\provider::class, 'delete_data_for_all_users_in_context')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\privacy\provider::class, 'export_user_data')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\privacy\provider::class, 'get_users_in_context')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\privacy\provider::class, 'delete_data_for_users')]
 final class provider_test extends provider_testcase {
     public function setUp(): void {
         parent::setUp();
@@ -49,8 +55,6 @@ final class provider_test extends provider_testcase {
 
     /**
      * Test the external service get_contexts_for_userid function.
-     *
-     * @covers \core_external\privacy\provider::get_contexts_for_userid
      */
     public function test_get_contexts_for_userid(): void {
         $dg = $this->getDataGenerator();
@@ -92,8 +96,6 @@ final class provider_test extends provider_testcase {
 
     /**
      * Test delete_data_for_user
-     *
-     * @covers \core_external\privacy\provider::delete_data_for_user
      */
     public function test_delete_data_for_user(): void {
         global $DB;
@@ -133,8 +135,6 @@ final class provider_test extends provider_testcase {
 
     /**
      * Test delete_data_for_all_users_in_context
-     *
-     * @covers \core_external\privacy\provider::delete_data_for_all_users_in_context
      */
     public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
@@ -173,7 +173,6 @@ final class provider_test extends provider_testcase {
 
     /**
      * Test the export_user_data function.
-     * @covers \core_external\privacy\provider::export_user_data
      */
     public function test_export_data_for_user(): void {
         global $DB;
@@ -255,8 +254,6 @@ final class provider_test extends provider_testcase {
 
     /**
      * Test that only users with a user context are fetched.
-     *
-     * @covers \core_external\privacy\provider::get_users_in_context
      */
     public function test_get_users_in_context(): void {
 
@@ -341,8 +338,6 @@ final class provider_test extends provider_testcase {
 
     /**
      * Test that data for users in approved userlist is deleted.
-     *
-     * @covers \core_external\privacy\provider::delete_data_for_users
      */
     public function test_delete_data_for_users(): void {
 

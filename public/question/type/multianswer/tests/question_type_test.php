@@ -39,8 +39,9 @@ require_once($CFG->dirroot . '/question/type/multianswer/edit_multianswer_form.p
  * @package   qtype_multianswer
  * @copyright 2011 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \qtype_multianswer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_multianswer::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\qtype_multianswer::class, 'get_question_options')]
 final class question_type_test extends \advanced_testcase {
     /** @var qtype_multianswer instance of the question type class to test. */
     protected $qtype;
@@ -556,8 +557,6 @@ final class question_type_test extends \advanced_testcase {
 
     /**
      * Test get_question_options.
-     *
-     * @covers \qtype_multianswer::get_question_options
      */
     public function test_get_question_options(): void {
         global $DB;

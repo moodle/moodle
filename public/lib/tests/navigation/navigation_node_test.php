@@ -30,6 +30,7 @@ use core\tests\navigation\navigation_testcase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(navigation_node::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\navigation_node::class, 'add_attribute')]
 final class navigation_node_test extends navigation_testcase {
     public function test_node__construct(): void {
         $node = $this->setup_node();
@@ -134,7 +135,6 @@ final class navigation_node_test extends navigation_testcase {
 
     /**
      * Test the add_attribute method.
-     * @covers \navigation_node::add_attribute
      */
     public function test_node_add_attribute(): void {
         $node = $this->setup_node();
@@ -367,9 +367,8 @@ final class navigation_node_test extends navigation_testcase {
      *
      * @param navigation_node $node The sample navigation node
      * @param bool $expected Whether the navigation node contains an action link
-     * @dataProvider is_action_link_provider
-     * @covers navigation_node::is_action_link
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_action_link_provider')]
     public function test_is_action_link(navigation_node $node, bool $expected): void {
         $this->assertEquals($node->is_action_link(), $expected);
     }
@@ -403,9 +402,8 @@ final class navigation_node_test extends navigation_testcase {
      * Test the action_link_actions method.
      *
      * @param navigation_node $node The sample navigation node
-     * @dataProvider action_link_actions_provider
-     * @covers navigation_node::action_link_actions
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('action_link_actions_provider')]
     public function test_action_link_actions(navigation_node $node): void {
         // Get the formatted array of action link actions.
         $data = $node->action_link_actions();

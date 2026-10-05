@@ -25,8 +25,8 @@ use cache_config_testing;
  * @category   test
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_cache\administration_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_cache\administration_helper::class)]
 final class administration_helper_test extends \advanced_testcase {
     /**
      * Set things back to the default before each test.

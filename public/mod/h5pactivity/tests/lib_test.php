@@ -27,6 +27,11 @@ use mod_h5pactivity\local\manager;
  * @copyright  2021 Ilya Tregubov <ilya@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('h5pactivity_delete_instance')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('h5pactivity_print_recent_activity')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('h5pactivity_get_recent_mod_activity')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('h5pactivity_fetch_recent_activity')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('h5pactivity_reset_userdata')]
 final class lib_test extends advanced_testcase {
 
     /**
@@ -40,8 +45,6 @@ final class lib_test extends advanced_testcase {
 
     /**
      * Test that h5pactivity_delete_instance removes data.
-     *
-     * @covers ::h5pactivity_delete_instance
      */
     public function test_h5pactivity_delete_instance(): void {
         global $DB;
@@ -108,8 +111,6 @@ final class lib_test extends advanced_testcase {
 
     /**
      * Test that assign_print_recent_activity shows ungraded submitted assignments.
-     *
-     * @covers ::h5pactivity_print_recent_activity
      */
     public function test_print_recent_activity(): void {
         $this->resetAfterTest();
@@ -135,8 +136,6 @@ final class lib_test extends advanced_testcase {
 
     /**
      * Test that h5pactivity_print_recent_activity does not display any warnings when a custom fullname has been configured.
-     *
-     * @covers ::h5pactivity_print_recent_activity
      */
     public function test_print_recent_activity_fullname(): void {
         $this->resetAfterTest();
@@ -166,8 +165,6 @@ final class lib_test extends advanced_testcase {
 
     /**
      * Test that h5pactivity_get_recent_mod_activity fetches the h5pactivity correctly.
-     *
-     * @covers ::h5pactivity_get_recent_mod_activity
      */
     public function test_h5pactivity_get_recent_mod_activity(): void {
         $this->resetAfterTest();
@@ -206,8 +203,6 @@ final class lib_test extends advanced_testcase {
 
     /**
      * Test that h5pactivity_get_recent_mod_activity fetches activity correctly.
-     *
-     * @covers ::h5pactivity_fetch_recent_activity
      */
     public function test_h5pactivity_fetch_recent_activity(): void {
         global $DB;
@@ -333,8 +328,6 @@ final class lib_test extends advanced_testcase {
 
     /**
      * Test that h5pactivity_reset_userdata reset user data.
-     *
-     * @covers ::h5pactivity_reset_userdata
      */
     public function test_h5pactivity_reset_userdata(): void {
         global $DB;

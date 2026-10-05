@@ -33,10 +33,10 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests for privacy provider
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\privacy\provider
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\privacy\provider::class)]
 final class provider_test extends provider_testcase {
 
     /**

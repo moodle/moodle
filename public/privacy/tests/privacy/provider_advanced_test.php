@@ -66,11 +66,11 @@ final class provider_advanced_test extends \advanced_testcase {
     /**
      * Ensure that providers do not throw an error when processing a deleted user.
      *
-     * @group           plugin_checks
-     * @dataProvider    is_user_data_provider
-     * @coversNothing
      * @param   string  $component
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_user_data_provider')]
+    #[\PHPUnit\Framework\Attributes\Group('plugin_checks')]
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_component_understands_deleted_users($component): void {
         $this->resetAfterTest();
 

@@ -38,8 +38,13 @@ use mod_quiz\external\submit_question_version;
  * @category   phpunit
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz\external\submit_question_version
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\external\submit_question_version::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_quiz\quiz_attempt::class, 'process_grade_submission')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\event\quiz_grade_item_created::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\event\quiz_grade_item_updated::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\event\quiz_grade_item_deleted::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\event\slot_grade_item_updated::class)]
 final class events_test extends \advanced_testcase {
 
     /**
@@ -145,7 +150,6 @@ final class events_test extends \advanced_testcase {
      * The \mod_quiz\event\attempt_graded event should be fired when an attempt is graded.
      *
      * @return void
-     * @covers \mod_quiz\quiz_attempt::process_grade_submission
      */
     public function test_attempt_graded(): void {
 
@@ -1342,8 +1346,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test quiz_grade_item_created.
-     *
-     * @covers \mod_quiz\event\quiz_grade_item_created
      */
     public function test_quiz_grade_item_created(): void {
         global $USER;
@@ -1373,8 +1375,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test quiz_grade_item_updated.
-     *
-     * @covers \mod_quiz\event\quiz_grade_item_updated
      */
     public function test_quiz_grade_item_updated(): void {
         global $USER;
@@ -1406,8 +1406,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test quiz_grade_item_deleted.
-     *
-     * @covers \mod_quiz\event\quiz_grade_item_deleted
      */
     public function test_quiz_grade_item_deleted(): void {
         global $USER;
@@ -1439,8 +1437,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test slot_grade_item_updated.
-     *
-     * @covers \mod_quiz\event\slot_grade_item_updated
      */
     public function test_slot_grade_item_updated(): void {
         global $USER;

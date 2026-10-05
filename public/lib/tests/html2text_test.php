@@ -25,8 +25,8 @@ namespace core;
  * @category   test
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers ::html_to_text
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('html_to_text')]
 final class html2text_test extends \basic_testcase {
     /**
      * Data provider for general tests.
@@ -172,11 +172,11 @@ final class html2text_test extends \basic_testcase {
     /**
      * Test html2text with various examples.
      *
-     * @dataProvider examples_provider
      * @param string $expected
      * @param array $options
      * @param string $html
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('examples_provider')]
     public function test_runner(
         string $expected,
         array $options,

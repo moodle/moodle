@@ -27,6 +27,7 @@ use gradereport_user\external\user as user_external;
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\gradereport_user\external\user::class, 'get_grade_items')]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Loads some data to be used by the different tests
@@ -424,8 +425,6 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
     /**
      * Test gradereport_user_get_grade_items returns category names and parent category IDs.
-     *
-     * @covers \gradereport_user\external\user::get_grade_items
      */
     public function test_gradereport_user_get_grade_items_category_name(): void {
         global $DB;

@@ -24,11 +24,11 @@ use stdClass;
  * Functional test for customfield_select
  *
  * @package    customfield_select
- * @covers     \customfield_select\data_controller
- * @covers     \customfield_select\field_controller
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\customfield_select\data_controller::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\customfield_select\field_controller::class)]
 final class plugin_test extends \advanced_testcase {
 
     /** @var stdClass[]  */
@@ -201,9 +201,8 @@ final class plugin_test extends \advanced_testcase {
      *
      * @param string $value
      * @param int $expected
-     *
-     * @dataProvider parse_value_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('parse_value_provider')]
     public function test_parse_value(string $value, int $expected): void {
         $field = $this->get_generator()->create_field([
             'categoryid' => $this->cfcat->get('id'),

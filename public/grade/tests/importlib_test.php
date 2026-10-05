@@ -26,6 +26,8 @@ use grade_item;
  * @copyright 2015 Adrian Greeve <adrian@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('grade_import_commit')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_unenrolled_users_in_import')]
 final class importlib_test extends \advanced_testcase {
 
     /**
@@ -78,8 +80,6 @@ final class importlib_test extends \advanced_testcase {
 
     /**
      * Tests for importing grades from an external source.
-     *
-     * @covers ::grade_import_commit
      */
     public function test_grade_import_commit(): void {
         global $USER, $DB, $CFG;
@@ -210,8 +210,6 @@ final class importlib_test extends \advanced_testcase {
 
     /**
      * Test grade import commit for users who aren't enrolled on the target course
-     *
-     * @covers ::grade_import_commit
      */
     public function test_grade_import_commit_unenrolled_user(): void {
         $this->resetAfterTest();
@@ -246,8 +244,6 @@ final class importlib_test extends \advanced_testcase {
 
     /**
      * Test retrieving users included in impoty who aren't enrolled on the target course
-     *
-     * @covers ::get_unenrolled_users_in_import
      */
     public function test_get_unenrolled_users_in_import(): void {
         $this->resetAfterTest();

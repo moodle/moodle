@@ -27,6 +27,7 @@ use core_external\external_api;
  * @copyright 2015 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tool_lp\external::class, 'data_for_user_competency_summary_in_plan')]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /** @var \stdClass $creator User with enough permissions to create insystem context. */
     protected $creator = null;
@@ -427,7 +428,6 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
     /**
      * Evidence stored against a course module competency is deleted if the CM is deleted.
-     * @covers \tool_lp\external::data_for_user_competency_summary_in_plan
      */
     public function test_data_for_user_competency_summary_in_plan_deleted_cm(): void {
         $this->setUser($this->creator);

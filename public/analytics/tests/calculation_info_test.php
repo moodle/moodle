@@ -27,13 +27,13 @@ final class calculation_info_test extends \advanced_testcase {
     /**
      * test_calculation_info description
      *
-     * @dataProvider provider_test_calculation_info_add_pull
      * @param mixed $info1
      * @param mixed $info2
      * @param mixed $info3
      * @param mixed $info4
      * @return null
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_calculation_info_add_pull')]
     public function test_calculation_info_add_pull($info1, $info2, $info3, $info4): void {
         require_once(__DIR__ . '/fixtures/test_indicator_max.php');
         require_once(__DIR__ . '/fixtures/test_indicator_min.php');

@@ -50,12 +50,12 @@ final class field_value_validators_test extends \advanced_testcase {
     /**
      * Unit test for \tool_uploaduser\local\field_value_validators::validate_theme()
      *
-     * @dataProvider themes_provider
      * @param boolean $userthemesallowed Whether to allow user themes.
      * @param string $themename The theme name to be tested.
      * @param string $expectedstatus The expected status.
      * @param string $expectedmessage The expected validation message.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('themes_provider')]
     public function test_validate_theme($userthemesallowed, $themename, $expectedstatus, $expectedmessage): void {
         $this->resetAfterTest();
 

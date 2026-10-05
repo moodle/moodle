@@ -41,8 +41,18 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
  *
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \assign
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\assign::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('assign_reset_userdata')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\assign::class, 'count_submissions_with_status_and_groups')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('workflow_state_locked')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('grading_locked')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('apply_grade_to_user')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\assign::class, 'should_provide_intro_attachments')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\assign::class, 'is_attempt_in_progress')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\assign::class, 'is_userid_filtered')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\assign::class, 'get_error_messages')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\assign::class, 'gradebook_item_update')]
 final class locallib_test extends \advanced_testcase {
     // Use the generator helper.
     use mod_assign_test_generator;
@@ -178,10 +188,10 @@ final class locallib_test extends \advanced_testcase {
     /**
      * Test maxperpage
      *
-     * @dataProvider get_assign_perpage_provider
      * @param integer $maxperpage site config value
      * @param array $userprefs Array of user preferences and expected page sizes
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_assign_perpage_provider')]
     public function test_get_assign_perpage($maxperpage, $userprefs): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -616,9 +626,6 @@ final class locallib_test extends \advanced_testcase {
         $this->assertEquals(true, $assign->delete_instance());
     }
 
-    /**
-     * @covers ::assign_reset_userdata
-     */
     public function test_reset_userdata(): void {
         global $DB;
 
@@ -916,10 +923,10 @@ final class locallib_test extends \advanced_testcase {
      * We only test combinations of plugins here. Individual plugins are tested
      * in their respective test files.
      *
-     * @dataProvider new_submission_empty_testcases
      * @param string $data The file submission data
      * @param bool $expected The expected return value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('new_submission_empty_testcases')]
     public function test_new_submission_empty($data, $expected): void {
         $this->resetAfterTest();
 
@@ -1666,8 +1673,6 @@ final class locallib_test extends \advanced_testcase {
 
     /**
      * Tests that unenrolled users are not included in the count of submissions with status and groups.
-     *
-     * @covers \assign::count_submissions_with_status_and_groups
      */
     public function test_count_submissions_with_status_and_groups_unenrolled_users(): void {
         global $DB;
@@ -3293,9 +3298,8 @@ You can see it appended to your <a href="' . $assignurl .
 
     /**
      * Test reopen behavior when in "Automatic" mode.
-     *
-     * @coversNothing
      */
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_attempt_reopen_method_automatic(): void {
         global $PAGE;
 
@@ -3456,8 +3460,6 @@ You can see it appended to your <a href="' . $assignurl .
     /**
      * Test that workflow_state_locked() reports a workflow state as locking the grade/mark value
      * only once it is ready for release, or released - and never when marking workflow is disabled.
-     *
-     * @covers ::workflow_state_locked
      */
     public function test_workflow_state_locked(): void {
         global $DB;
@@ -3492,8 +3494,6 @@ You can see it appended to your <a href="' . $assignurl .
     /**
      * Test that grading_locked() looks up the given user's own current workflow state (from
      * assign_user_flags) and defers to workflow_state_locked() to decide if it is locked.
-     *
-     * @covers ::grading_locked
      */
     public function test_grading_locked(): void {
         $this->resetAfterTest();
@@ -3524,8 +3524,6 @@ You can see it appended to your <a href="' . $assignurl .
      * Test that a grade cannot be changed once it is released, even by a user (such as an
      * editingteacher) whose capability would otherwise let them set the workflow state to
      * released. Only the workflow state itself, not the grade value, should remain changeable.
-     *
-     * @covers ::apply_grade_to_user
      */
     public function test_grade_not_editable_once_released(): void {
         $this->resetAfterTest();
@@ -3757,11 +3755,11 @@ You can see it appended to your <a href="' . $assignurl .
     /**
      * Testing for submission comment plugin settings.
      *
-     * @dataProvider submission_plugin_settings_provider
      * @param   bool    $globalenabled
      * @param   array   $instanceconfig
      * @param   bool    $isenabled
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('submission_plugin_settings_provider')]
     public function test_submission_comment_plugin_settings($globalenabled, $instanceconfig, $isenabled): void {
         global $CFG;
 
@@ -3901,10 +3899,10 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
     /**
      * Testing for feedback comment plugin settings.
      *
-     * @dataProvider feedback_plugin_settings_provider
      * @param   array   $instanceconfig
      * @param   bool    $isenabled
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('feedback_plugin_settings_provider')]
     public function test_feedback_plugin_settings($instanceconfig, $isenabled): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
@@ -4730,8 +4728,8 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
      * Test fix_null_grades
      * @param number $grade The grade we should set in the assign grading table.
      * @param number $expectedcount The finalgrade we expect in the gradebook after fixing the grades.
-     * @dataProvider fix_null_grades_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('fix_null_grades_provider')]
     public function test_fix_null_grades($grade, $gradebookvalue): void {
         global $DB;
 
@@ -4857,12 +4855,12 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
     /**
      * Test assign->get_instance() for a number of cases, as defined in the data provider.
      *
-     * @dataProvider assign_get_instance_provider
      * @param array $courseconfig the config to use when creating the course.
      * @param array $assignconfig the config to use when creating the assignment.
      * @param array $enrolconfig the config to use when enrolling the user (this will be the active user).
      * @param array $expectedproperties an map containing the expected names and values for the assign instance data.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('assign_get_instance_provider')]
     public function test_assign_get_instance(
         array $courseconfig,
         array $assignconfig,
@@ -4943,12 +4941,12 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
     /**
      * Test assign->get_default_instance() for a number of cases, as defined in the date provider.
      *
-     * @dataProvider assign_get_default_instance_provider
      * @param array $courseconfig the config to use when creating the course.
      * @param array $assignconfig the config to use when creating the assignment.
      * @param array $enrolconfig the config to use when enrolling the user (this will be the active user).
      * @param array $expectedproperties an map containing the expected names and values for the assign instance data.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('assign_get_default_instance_provider')]
     public function test_assign_get_default_instance(
         array $courseconfig,
         array $assignconfig,
@@ -5065,8 +5063,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
     /**
      * Test that attachments should not be provided if \assign->show_intro returns false.
-     *
-     * @covers \assign::should_provide_intro_attachments
      */
     public function test_should_provide_intro_attachments_with_show_intro_disabled(): void {
         $this->resetAfterTest();
@@ -5080,8 +5076,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
     /**
      * Test that attachments should be provided if user has capability to manage activity.
-     *
-     * @covers \assign::should_provide_intro_attachments
      */
     public function test_should_provide_intro_attachments_with_bypass_capability(): void {
         $this->resetAfterTest();
@@ -5095,8 +5089,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
     /**
      * Test that attachments should be provided if submissionattachments is disabled.
-     *
-     * @covers \assign::should_provide_intro_attachments
      */
     public function test_should_provide_intro_attachments_with_submissionattachments_disabled(): void {
         $this->resetAfterTest();
@@ -5106,8 +5098,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
     /**
      * Test that attachments should not be provided if submissionattachments is enabled with no open submission.
-     *
-     * @covers \assign::should_provide_intro_attachments
      */
     public function test_should_provide_intro_attachments_with_submissionattachments_enabled_and_submissions_closed(): void {
         $this->resetAfterTest();
@@ -5122,8 +5112,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
     /**
      * Test that attachments should be provided if submissionattachments is enabled with an open submission.
-     *
-     * @covers \assign::should_provide_intro_attachments
      */
     public function test_should_provide_intro_attachments_submissionattachments_enabled_and_an_open_submission(): void {
         $this->resetAfterTest();
@@ -5141,8 +5129,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
     /**
      * Test that a submission using a time limit is currently open.
-     *
-     * @covers \assign::is_attempt_in_progress
      */
     public function test_is_attempt_in_progress_with_open_submission(): void {
         global $DB;
@@ -5160,8 +5146,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
     /**
      * Test that a submission using a time limit is started without a start time.
-     *
-     * @covers \assign::is_attempt_in_progress
      */
     public function test_is_attempt_in_progress_with_open_submission_and_no_timestarted(): void {
         $this->resetAfterTest();
@@ -5175,8 +5159,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
     /**
      * Test that a submission using a time limit is currently not open.
-     *
-     * @covers \assign::is_attempt_in_progress
      */
     public function test_is_attempt_in_progress_with_no_open_submission(): void {
         global $DB;
@@ -5262,8 +5244,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
     /**
      * Test user filtering by First name, Last name and Submission status.
-     *
-     * @covers \assign::is_userid_filtered
      */
     public function test_is_userid_filtered(): void {
         $this->resetAfterTest();
@@ -5329,8 +5309,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
     /**
      * Test get_error_messages like a public function.
-     *
-     * @covers \assign::get_error_messages
      */
     public function test_get_error_messages(): void {
         $this->resetAfterTest();
@@ -5361,7 +5339,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
     /**
      * Test that assignment grades are pushed to the gradebook when anonymous
      * submissions and marking workflow are enabled (MDL-83195).
-     * @covers \assign::gradebook_item_update
      */
     public function test_release_grade_anon(): void {
         $this->resetAfterTest();

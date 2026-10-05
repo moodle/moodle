@@ -35,13 +35,11 @@ use \core_privacy\local\request\writer;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_privacy\local\request\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_privacy\local\request\helper::class)]
 final class request_helper_test extends advanced_testcase {
     /**
      * Test that basic module data is returned.
-     *
-     * @covers ::get_context_data
      */
     public function test_get_context_data_context_module(): void {
         $this->resetAfterTest();
@@ -79,8 +77,6 @@ final class request_helper_test extends advanced_testcase {
 
     /**
      * Test that basic block data is returned.
-     *
-     * @covers ::get_context_data
      */
     public function test_get_context_data_context_block(): void {
         $this->resetAfterTest();
@@ -100,8 +96,6 @@ final class request_helper_test extends advanced_testcase {
 
     /**
      * Test that a course moudle with completion tracking enabled has the completion data returned.
-     *
-     * @covers ::get_context_data
      */
     public function test_get_context_data_context_module_completion(): void {
         $this->resetAfterTest();
@@ -135,8 +129,6 @@ final class request_helper_test extends advanced_testcase {
 
     /**
      * Test that when there are no files to export for a course module context, nothing is exported.
-     *
-     * @covers ::export_context_files
      */
     public function test_export_context_files_context_module_no_files(): void {
         $this->resetAfterTest();
@@ -161,8 +153,6 @@ final class request_helper_test extends advanced_testcase {
 
     /**
      * Test that when there are no files to export for a course context, nothing is exported.
-     *
-     * @covers ::export_context_files
      */
     public function test_export_context_files_context_course_no_files(): void {
         $this->resetAfterTest();
@@ -181,8 +171,6 @@ final class request_helper_test extends advanced_testcase {
 
     /**
      * Test that when there are files to export for a course context, the files are exported.
-     *
-     * @covers ::export_context_files
      */
     public function test_export_context_files_context_course_intro_files(): void {
         $this->resetAfterTest();

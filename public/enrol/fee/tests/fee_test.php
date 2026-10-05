@@ -22,8 +22,9 @@ namespace enrol_fee;
  * @package    enrol_fee
  * @copyright  2026 Andi Permana <andi.permana@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \enrol_fee_plugin
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_fee_plugin::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_fee_plugin::class, 'sync')]
 final class fee_test extends \advanced_testcase {
     /**
      * Enable the enrol_fee plugin.
@@ -69,8 +70,6 @@ final class fee_test extends \advanced_testcase {
      * - ENROL_EXT_REMOVED_KEEP: no changes to expired enrolments.
      * - ENROL_EXT_REMOVED_SUSPENDNOROLES: expired active enrolments are suspended and roles removed.
      * - ENROL_EXT_REMOVED_UNENROL: expired enrolments are fully removed from user_enrolments.
-     *
-     * @covers \enrol_fee_plugin::sync
      */
     public function test_expired(): void {
         global $DB;

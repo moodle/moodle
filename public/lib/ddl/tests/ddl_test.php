@@ -2273,10 +2273,10 @@ final class ddl_test extends \database_driver_testcase {
     /**
      * This is a test for sql_generator::getEncQuoted().
      *
-     * @dataProvider get_enc_quoted_provider
      * @param bool $reserved Whether the column name is reserved or not.
      * @param string $columnname The column name to be quoted, according to the value of $reserved.
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_enc_quoted_provider')]
     public function test_get_enc_quoted($reserved, $columnname): void {
         $DB = $this->tdb;
         $gen = $DB->get_manager()->generator;
@@ -2319,11 +2319,11 @@ final class ddl_test extends \database_driver_testcase {
     /**
      * This is a unit test for sql_generator::getRenameFieldSQL().
      *
-     * @dataProvider sql_generator_get_rename_field_sql_provider
      * @param bool $reserved Whether the column name is reserved or not.
      * @param string $oldcolumnname The column name to be renamed.
      * @param string $newcolumnname The new column name.
      **/
+    #[\PHPUnit\Framework\Attributes\DataProvider('sql_generator_get_rename_field_sql_provider')]
     public function test_sql_generator_get_rename_field_sql($reserved, $oldcolumnname, $newcolumnname): void {
         $DB = $this->tdb;
         $gen = $DB->get_manager()->generator;

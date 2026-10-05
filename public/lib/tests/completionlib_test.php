@@ -27,8 +27,18 @@ require_once($CFG->libdir.'/completionlib.php');
  * @copyright  2008 Sam Marshall
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \completion_info
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\completion_info::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\course_module_completion_updated::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\course_completed::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\course_completion_updated::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\completion_can_view_data::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aggregate_completions::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\completion_completion::class, '_save')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\completion_completion::class, 'mark_enrolled')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\completion_completion::class, 'mark_inprogress')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\completion_completion::class, 'mark_complete')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\completion_criteria_completion::class, 'mark_complete')]
 final class completionlib_test extends advanced_testcase {
     protected $course;
     protected $user;
@@ -94,10 +104,6 @@ final class completionlib_test extends advanced_testcase {
         parent::assertEquals($expected, $actual, $message, $delta, $maxDepth, $canonicalize, $ignoreCase);
     }
 
-    /**
-     * @covers ::is_enabled_for_site
-     * @covers ::is_enabled
-     */
     public function test_is_enabled(): void {
         global $CFG;
         $this->mock_setup();
@@ -133,9 +139,6 @@ final class completionlib_test extends advanced_testcase {
         $this->assertCompletionEquals(COMPLETION_TRACKING_AUTOMATIC, $c->is_enabled($cm));
     }
 
-    /**
-     * @covers ::update_state
-     */
     public function test_update_state(): void {
         global $DB;
         $this->mock_setup();
@@ -400,13 +403,12 @@ final class completionlib_test extends advanced_testcase {
     /**
      * Test for completion_info::get_state().
      *
-     * @dataProvider internal_get_state_provider
      * @param int $completionview
      * @param int $completionusegrade
      * @param string $unsetfield
      * @param int $expectedstate
-     * @covers ::internal_get_state
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('internal_get_state_provider')]
     public function test_internal_get_state(int $completionview, int $completionusegrade, string $unsetfield, int $expectedstate): void {
         $this->setup_data();
 
@@ -486,12 +488,11 @@ final class completionlib_test extends advanced_testcase {
     /**
      * Tests that the right completion state is being set based on the grade criteria.
      *
-     * @dataProvider internal_get_state_with_grade_criteria_provider
      * @param array $completioncriteria The completion criteria to use
      * @param int|null $studentgrade Grade to assign to student
      * @param int $expectedstate Expected completion state
-     * @covers ::internal_get_state
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('internal_get_state_with_grade_criteria_provider')]
     public function test_internal_get_state_with_grade_criteria(array $completioncriteria, ?int $studentgrade, int $expectedstate): void {
         $this->setup_data();
 
@@ -531,8 +532,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Covers the case where internal_get_state() is being called for a user different from the logged in user.
-     *
-     * @covers ::internal_get_state
      */
     public function test_internal_get_state_with_different_user(): void {
         $this->setup_data();
@@ -575,8 +574,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test for internal_get_state() for an activity that supports custom completion.
-     *
-     * @covers ::internal_get_state
      */
     public function test_internal_get_state_with_custom_completion(): void {
         $this->setup_data();
@@ -603,9 +600,6 @@ final class completionlib_test extends advanced_testcase {
         $this->assertCompletionEquals(COMPLETION_COMPLETE, $completion);
     }
 
-    /**
-     * @covers ::set_module_viewed
-     */
     public function test_set_module_viewed(): void {
         $this->mock_setup();
 
@@ -661,9 +655,6 @@ final class completionlib_test extends advanced_testcase {
         $c->set_module_viewed($cm, 1337);
     }
 
-    /**
-     * @covers ::count_user_data
-     */
     public function test_count_user_data(): void {
         global $DB;
         $this->mock_setup();
@@ -680,9 +671,6 @@ final class completionlib_test extends advanced_testcase {
         $this->assertCompletionEquals(666, $c->count_user_data($cm));
     }
 
-    /**
-     * @covers ::delete_all_state
-     */
     public function test_delete_all_state(): void {
         global $DB;
         $this->mock_setup();
@@ -700,9 +688,6 @@ final class completionlib_test extends advanced_testcase {
         $c->delete_all_state($cm);
     }
 
-    /**
-     * @covers ::reset_all_state
-     */
     public function test_reset_all_state(): void {
         global $DB;
         $this->mock_setup();
@@ -786,13 +771,12 @@ final class completionlib_test extends advanced_testcase {
     /**
      * Tests for completion_info::get_data().
      *
-     * @dataProvider get_data_provider
      * @param bool $wholecourse Whole course parameter for get_data().
      * @param bool $sameuser Whether the user calling get_data() is the user itself.
      * @param bool $hasrecord Whether to create a course_modules_completion record.
      * @param int $completion The completion state expected.
-     * @covers ::get_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_data_provider')]
     public function test_get_data(bool $wholecourse, bool $sameuser, bool $hasrecord, int $completion): void {
         global $DB;
 
@@ -861,9 +845,6 @@ final class completionlib_test extends advanced_testcase {
         }
     }
 
-    /**
-     * @covers ::get_data
-     */
     public function test_get_data_successive_calls(): void {
         global $DB;
 
@@ -931,8 +912,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Tests for get_completion_data().
-     *
-     * @covers ::get_completion_data
      */
     public function test_get_completion_data(): void {
         $this->setAdminUser();
@@ -990,8 +969,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Tests for completion_info::get_other_cm_completion_data().
-     *
-     * @covers ::get_other_cm_completion_data
      */
     public function test_get_other_cm_completion_data(): void {
         global $DB;
@@ -1064,9 +1041,6 @@ final class completionlib_test extends advanced_testcase {
         $this->assertEmpty($choice2completiondata);
     }
 
-    /**
-     * @covers ::internal_set_data
-     */
     public function test_internal_set_data(): void {
         global $DB;
         $this->setup_data();
@@ -1174,9 +1148,6 @@ final class completionlib_test extends advanced_testcase {
         $this->assertCompletionEquals($this->user->id, reset($actual)->userid);
     }
 
-    /**
-     * @covers ::get_progress_all
-     */
     public function test_get_progress_all_few(): void {
         global $DB;
         $this->mock_setup();
@@ -1211,9 +1182,6 @@ final class completionlib_test extends advanced_testcase {
             ), $c->get_progress_all(false));
     }
 
-    /**
-     * @covers ::get_progress_all
-     */
     public function test_get_progress_all_lots(): void {
         global $DB;
         $this->mock_setup();
@@ -1280,9 +1248,6 @@ final class completionlib_test extends advanced_testcase {
         $this->assertCount(count($tracked), $result);
     }
 
-    /**
-     * @covers ::inform_grade_changed
-     */
     public function test_inform_grade_changed(): void {
         $this->mock_setup();
 
@@ -1351,9 +1316,6 @@ final class completionlib_test extends advanced_testcase {
         $c->inform_grade_changed($cm, $item, $grade, true);
     }
 
-    /**
-     * @covers ::internal_get_grade_state
-     */
     public function test_internal_get_grade_state(): void {
         $this->mock_setup();
 
@@ -1420,9 +1382,6 @@ final class completionlib_test extends advanced_testcase {
             completion_info::internal_get_grade_state($item, $grade, true));
     }
 
-    /**
-     * @test ::get_activities
-     */
     public function test_get_activities(): void {
         global $CFG;
         $this->resetAfterTest();
@@ -1464,9 +1423,6 @@ final class completionlib_test extends advanced_testcase {
         $this->assertFalse(isset($activities[$data2->cmid]));
     }
 
-    /**
-     * @test ::has_activities
-     */
     public function test_has_activities(): void {
         global $CFG;
         $this->resetAfterTest();
@@ -1505,10 +1461,8 @@ final class completionlib_test extends advanced_testcase {
      * Test clearing criteria for current course
      *
      * @param bool $removetypecriteria
-     *
-     * @covers ::clear_criteria
-     * @dataProvider clear_criteria_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('clear_criteria_provider')]
     public function test_clear_criteria(bool $removetypecriteria): void {
         global $DB;
 
@@ -1551,10 +1505,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test that data is cleaned up when we delete courses that are set as completion criteria for other courses
-     *
-     * @covers ::clear_criteria
-     * @covers ::delete_course_completion_data
-     * @covers ::delete_all_completion_data
      */
     public function test_course_delete_prerequisite(): void {
         global $DB;
@@ -1590,8 +1540,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test course module completion update event.
-     *
-     * @covers \core\event\course_module_completion_updated
      */
     public function test_course_module_completion_updated_event(): void {
         global $USER, $CFG;
@@ -1628,8 +1576,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test course completed event.
-     *
-     * @covers \core\event\course_completed
      */
     public function test_course_completed_event(): void {
         global $USER;
@@ -1657,8 +1603,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test course completed message.
-     *
-     * @covers \core\event\course_completed
      */
     public function test_course_completed_message(): void {
         $this->setup_data();
@@ -1685,8 +1629,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test course completed event.
-     *
-     * @covers \core\event\course_completion_updated
      */
     public function test_course_completion_updated_event(): void {
         $this->setup_data();
@@ -1711,9 +1653,6 @@ final class completionlib_test extends advanced_testcase {
         $this->assertInstanceOf('moodle_url', $event->get_url());
     }
 
-    /**
-     * @covers \completion_can_view_data
-     */
     public function test_completion_can_view_data(): void {
         $this->setup_data();
 
@@ -1743,14 +1682,13 @@ final class completionlib_test extends advanced_testcase {
     /**
      * Test for \completion_info::get_grade_completion().
      *
-     * @dataProvider get_grade_completion_provider
      * @param bool $completionusegrade Whether the test activity has grade completion requirement.
      * @param bool $hasgrade Whether to set grade for the user in this activity.
      * @param int|null $passinggrade Passing grade to set for the test activity.
      * @param string|null $expectedexception Expected exception.
      * @param int|null $expectedresult The expected completion status.
-     * @covers ::get_grade_completion
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_grade_completion_provider')]
     public function test_get_grade_completion(bool $completionusegrade, bool $hasgrade, ?int $passinggrade,
         ?string $expectedexception, ?int $expectedresult): void {
         $this->setup_data();
@@ -1782,8 +1720,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test the return value for cases when the activity module does not have associated grade_item.
-     *
-     * @covers ::get_grade_completion
      */
     public function test_get_grade_completion_without_grade_item(): void {
         global $DB;
@@ -1822,8 +1758,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test for aggregate_completions().
-     *
-     * @covers \aggregate_completions
      */
     public function test_aggregate_completions(): void {
         global $DB, $CFG;
@@ -1919,8 +1853,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test for completion_completion::_save().
-     *
-     * @covers \completion_completion::_save
      */
     public function test_save(): void {
         global $DB;
@@ -1963,8 +1895,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test for completion_completion::mark_enrolled().
-     *
-     * @covers \completion_completion::mark_enrolled
      */
     public function test_mark_enrolled(): void {
         global $DB;
@@ -2006,8 +1936,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test for completion_completion::mark_inprogress().
-     *
-     * @covers \completion_completion::mark_inprogress
      */
     public function test_mark_inprogress(): void {
         global $DB;
@@ -2049,8 +1977,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test for completion_completion::mark_complete().
-     *
-     * @covers \completion_completion::mark_complete
      */
     public function test_mark_complete(): void {
         global $DB;
@@ -2091,8 +2017,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test for completion_criteria_completion::mark_complete().
-     *
-     * @covers \completion_criteria_completion::mark_complete
      */
     public function test_criteria_mark_complete(): void {
         global $DB;
@@ -2129,8 +2053,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Test that data is cleaned when we reset a course completion data
-     *
-     * @covers ::delete_all_completion_data
      */
     public function test_course_reset_completion(): void {
         global $DB;
@@ -2261,13 +2183,12 @@ final class completionlib_test extends advanced_testcase {
     /**
      * Test for count_modules_completed().
      *
-     * @dataProvider count_modules_completed_provider
      * @param bool $existinguser Whether the given user exists or not.
      * @param int $totalusers The amount of users to check completion.
      * @param array $modules The course modules with its completion state.
      * @param int $expectedcount Expected total of modules completed.
-     * @covers ::count_modules_completed
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('count_modules_completed_provider')]
     public function test_count_modules_completed(bool $existinguser, int $totalusers, array $modules,
         int $expectedcount): void {
         global $DB;
@@ -2326,8 +2247,6 @@ final class completionlib_test extends advanced_testcase {
 
     /**
      * Disabled activities are not returned.
-     *
-     * @covers ::get_criteria
      */
     public function test_disabled_activities_are_not_returned(): void {
         global $DB;

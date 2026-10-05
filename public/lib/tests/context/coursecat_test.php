@@ -26,13 +26,15 @@ use core\context, core\context_helper;
  * @package   core
  * @copyright Petr Skoda
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\context\coursecat
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\context\coursecat::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\context::class, 'instance_by_id')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\context_helper::class, 'resolve_behat_reference')]
 final class coursecat_test extends \advanced_testcase {
     /**
      * Tests legacy class name.
-     * @coversNothing
      */
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_legacy_classname(): void {
         $category = \core_course_category::get_default();
         $context = \context_coursecat::instance($category->id);
@@ -42,8 +44,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered methods.
-     * @covers ::instance
-     * @covers \core\context::instance_by_id
      */
     public function test_factory_methods(): void {
         $category = \core_course_category::get_default();
@@ -58,7 +58,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_short_name
      */
     public function test_get_short_name(): void {
         $this->assertSame('coursecat', coursecat::get_short_name());
@@ -66,8 +65,8 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests levels.
-     * @coversNothing
      */
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_level(): void {
         $this->assertSame(40, coursecat::LEVEL);
         $this->assertSame(CONTEXT_COURSECAT, coursecat::LEVEL);
@@ -75,7 +74,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_level_name
      */
     public function test_get_level_name(): void {
         $this->assertSame('Category', coursecat::get_level_name());
@@ -83,7 +81,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_context_name
      */
     public function test_get_context_name(): void {
         $category = \core_course_category::get_default();
@@ -97,7 +94,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_url
      */
     public function test_get_url(): void {
         $category = \core_course_category::get_default();
@@ -110,9 +106,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered methods.
-     * @covers ::get_instance_table()
-     * @covers ::get_behat_reference_columns()
-     * @covers \core\context_helper::resolve_behat_reference
      */
     public function test_resolve_behat_reference(): void {
         $this->resetAfterTest();
@@ -138,7 +131,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_compatible_role_archetypes
      */
     public function test_get_compatible_role_archetypes(): void {
         global $DB;
@@ -156,7 +148,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_possible_parent_levels
      */
     public function test_get_possible_parent_levels(): void {
         $this->assertSame([system::LEVEL, coursecat::LEVEL], coursecat::get_possible_parent_levels());
@@ -164,7 +155,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_capabilities
      */
     public function test_get_capabilities(): void {
         $category = \core_course_category::get_default();
@@ -180,7 +170,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::create_level_instances
      */
     public function test_create_level_instances(): void {
         global $DB;
@@ -196,7 +185,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_child_contexts
      */
     public function test_get_child_contexts(): void {
         $this->resetAfterTest();
@@ -216,7 +204,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::get_cleanup_sql
      */
     public function test_get_cleanup_sql(): void {
         global $DB;
@@ -233,7 +220,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::build_paths
      */
     public function test_build_paths(): void {
         global $DB;
@@ -255,7 +241,6 @@ final class coursecat_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::set_locked
      */
     public function test_set_locked(): void {
         global $DB;

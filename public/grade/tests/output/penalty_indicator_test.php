@@ -25,8 +25,8 @@ use grade_grade;
  * @package   core_grades
  * @copyright 2024 Catalyst IT Australia Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_grades\output\penalty_indicator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_grades\output\penalty_indicator::class)]
 final class penalty_indicator_test extends advanced_testcase {
     /**
      * Data provider for test_export_for_template.
@@ -99,7 +99,6 @@ final class penalty_indicator_test extends advanced_testcase {
     /**
      * Test penalty_indicator
      *
-     * @dataProvider export_for_template_provider
      *
      * @param array $expectedexport The expected export data
      * @param array $icon icon to display before the penalty
@@ -109,6 +108,7 @@ final class penalty_indicator_test extends advanced_testcase {
      * @param bool $showfinalgrade Whether to show the final grade
      * @param bool $showgrademax Whether to show the max grade
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_for_template_provider')]
     public function test_export_for_template(
         array $expectedexport,
         array $icon,

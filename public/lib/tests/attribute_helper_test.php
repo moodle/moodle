@@ -23,17 +23,15 @@ namespace core;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\attribute_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\attribute_helper::class)]
 final class attribute_helper_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . '/fixtures/attribute_helper_example.php');
         parent::setUpBeforeClass();
     }
 
-    /**
-     * @dataProvider get_attributes_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_attributes_provider')]
     public function test_get_attributes(
         int $expectedcount,
         array $args,

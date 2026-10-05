@@ -22,8 +22,8 @@ namespace aiprovider_awsbedrock;
  * @package    aiprovider_awsbedrock
  * @copyright  2025 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiprovider_awsbedrock\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_awsbedrock\provider::class)]
 final class provider_test extends \advanced_testcase {
     /** @var \core_ai\manager */
     private $manager;

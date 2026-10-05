@@ -31,6 +31,7 @@ require_once("{$CFG->dirroot}/mod/forum/lib.php");
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_forum\event\subscription_mode_updated::class)]
 final class subscriptions_test extends \advanced_testcase {
     // Include the mod_forum test helpers.
     // This includes functions to create forums, users, discussions, and posts.
@@ -62,8 +63,6 @@ final class subscriptions_test extends \advanced_testcase {
 
     /**
      * Test subscription modes modifications.
-     *
-     * @covers \mod_forum\event\subscription_mode_updated
      */
     public function test_subscription_modes(): void {
         global $DB;
@@ -1381,9 +1380,7 @@ final class subscriptions_test extends \advanced_testcase {
         return $data;
     }
 
-    /**
-     * @dataProvider is_subscribable_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_subscribable_provider')]
     public function test_is_subscribable_logged_out($options): void {
         $this->resetAfterTest(true);
 
@@ -1395,9 +1392,7 @@ final class subscriptions_test extends \advanced_testcase {
         $this->assertFalse(\mod_forum\subscriptions::is_subscribable($forum));
     }
 
-    /**
-     * @dataProvider is_subscribable_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_subscribable_provider')]
     public function test_is_subscribable_is_guest($options): void {
         global $DB;
         $this->resetAfterTest(true);
@@ -1434,9 +1429,7 @@ final class subscriptions_test extends \advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider is_subscribable_loggedin_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_subscribable_loggedin_provider')]
     public function test_is_subscribable_loggedin($options, $expect): void {
         $this->resetAfterTest(true);
 

@@ -106,7 +106,6 @@ final class dates_test extends advanced_testcase {
     /**
      * Test for get_dates_for_module().
      *
-     * @dataProvider get_dates_for_module_provider
      * @param int|null $available The 'available from' value of the lesson.
      * @param int|null $deadline The lesson's deadline.
      * @param int|null $useravailable The user override for opening the lesson.
@@ -115,6 +114,7 @@ final class dates_test extends advanced_testcase {
      * @param int|null $groupuserdeadline The group override for deadline of the lesson.
      * @param array $expected The expected value of calling get_dates_for_module()
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_dates_for_module_provider')]
     public function test_get_dates_for_module(?int $available, ?int $deadline,
             ?int $useravailable, ?int $userdeadline,
             ?int $groupavailable, ?int $groupuserdeadline,

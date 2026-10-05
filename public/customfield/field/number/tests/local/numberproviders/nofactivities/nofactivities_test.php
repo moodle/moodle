@@ -26,10 +26,10 @@ use customfield_number\provider_base;
  * Tests for the number of activities
  *
  * @package    customfield_number
- * @covers     \customfield_number\local\numberproviders\nofactivities
  * @copyright  2024 Ilya Tregubov <ilya.tregubov@proton.me>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\customfield_number\local\numberproviders\nofactivities::class)]
 final class nofactivities_test extends advanced_testcase {
 
     /**

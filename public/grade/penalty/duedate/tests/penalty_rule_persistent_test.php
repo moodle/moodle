@@ -26,8 +26,8 @@ use gradepenalty_duedate\tests\penalty_testcase;
  * @package   gradepenalty_duedate
  * @copyright 2024 Catalyst IT Australia Pty Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \gradepenalty_duedate\penalty_rule
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\gradepenalty_duedate\penalty_rule::class)]
 final class penalty_rule_persistent_test extends penalty_testcase {
     /**
      * Test get rules.

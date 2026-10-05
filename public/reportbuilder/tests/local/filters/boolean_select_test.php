@@ -26,11 +26,11 @@ use core_reportbuilder\local\report\filter;
  * Unit tests for boolean report filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\base
- * @covers      \core_reportbuilder\local\filters\boolean_select
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\boolean_select::class)]
 final class boolean_select_test extends advanced_testcase {
 
     /**
@@ -51,9 +51,8 @@ final class boolean_select_test extends advanced_testcase {
      *
      * @param int $operator
      * @param bool $expectuser
-     *
-     * @dataProvider get_sql_filter_simple_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_simple_provider')]
     public function test_get_sql_filter_simple(int $operator, bool $expectuser): void {
         global $DB;
 

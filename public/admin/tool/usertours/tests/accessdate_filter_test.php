@@ -24,8 +24,8 @@ use tool_usertours\local\filter\accessdate;
  * @package    tool_usertours
  * @copyright  2019 Tom Dickman <tomdickman@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \tool_usertours\local\filter\accessdate
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\local\filter\accessdate::class)]
 final class accessdate_filter_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
@@ -110,12 +110,12 @@ final class accessdate_filter_test extends \advanced_testcase {
     /**
      * Test filter matches.
      *
-     * @dataProvider    filter_matches_provider
      *
      * @param array $filtervalues the filter values set.
      * @param array $userstate any user state required for test.
      * @param bool $expected result expected.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_matches_provider')]
     public function test_filter_matches($filtervalues, $userstate, $expected): void {
         $course = $this->getDataGenerator()->create_course();
         $context = \context_course::instance($course->id);

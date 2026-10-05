@@ -28,8 +28,8 @@ use Behat\Gherkin\Node\StepNode;
  * @package tool_generator
  * @copyright 2023 Ferran Recio <ferran@moodel.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_generator\local\testscenario\steprunner
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_generator\local\testscenario\steprunner::class)]
 final class steprunner_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
@@ -85,11 +85,10 @@ final class steprunner_test extends \advanced_testcase {
 
     /**
      * Test for parse_feature.
-     * @covers ::is_valid
      * @param string $step the step to validate.
      * @param bool $expected if the step is expected to be valid.
-     * @dataProvider execute_steps_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_steps_provider')]
     public function test_is_valid(string $step, bool $expected): void {
         $validsteps = $this->get_valid_steps();
         $step = $this->get_step($step);
@@ -100,12 +99,10 @@ final class steprunner_test extends \advanced_testcase {
     /**
      * Test for execute step.
      *
-     * @covers ::is_executed
-     * @covers ::execute
      * @param string $step the step to execute.
      * @param bool $expected if the step is expected to be executed.
-     * @dataProvider execute_steps_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_steps_provider')]
     public function test_execute(string $step, bool $expected): void {
         global $DB;
 
@@ -168,9 +165,6 @@ final class steprunner_test extends \advanced_testcase {
 
     /**
      * Test for execute step.
-     * @covers ::is_executed
-     * @covers ::execute
-     * @covers ::get_error
      */
     public function test_execute_duplicated(): void {
         global $DB;
@@ -210,8 +204,6 @@ final class steprunner_test extends \advanced_testcase {
 
     /**
      * Test for parse_feature.
-     * @covers ::get_text
-     * @covers ::get_arguments_string
      */
     public function test_get_step_content(): void {
         $step = $this->get_step('Given the following "course" exists:

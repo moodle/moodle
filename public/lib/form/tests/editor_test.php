@@ -28,10 +28,10 @@ require_once("{$CFG->libdir}/form/editor.php");
  * Tests for the editor form element
  *
  * @package    core_form
- * @covers     \MoodleQuickForm_editor
  * @copyright  2026 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\MoodleQuickForm_editor::class)]
 final class editor_test extends advanced_testcase {
     /**
      * Test retrieving frozen HTML

@@ -91,10 +91,10 @@ final class converter_test extends \advanced_testcase {
     /**
      * Tests for the test_unoconv_path function.
      *
-     * @dataProvider provider_test_unoconv_path
      * @param   string $path The path to test
      * @param   int $status The expected status
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_unoconv_path')]
     public function test_test_unoconv_path($path, $status): void {
         global $CFG;
 

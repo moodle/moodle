@@ -27,24 +27,23 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Unit tests for {@see auth_server_config_reader}.
  *
- * @coversDefaultClass \core\oauth2\discovery\auth_server_config_reader
  * @package core
  * @copyright 2023 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\oauth2\discovery\auth_server_config_reader::class)]
 final class auth_server_config_reader_test extends \advanced_testcase {
 
     /**
      * Test reading the config for an auth server.
      *
-     * @covers ::read_configuration
-     * @dataProvider config_provider
      * @param string $issuerurl the auth server issuer URL.
      * @param ResponseInterface $httpresponse a stub HTTP response.
      * @param null|string $altwellknownsuffix an alternate value for the well known suffix to use in the reader.
      * @param array $expected test expectations.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('config_provider')]
     public function test_read_configuration(string $issuerurl, ResponseInterface $httpresponse, ?string $altwellknownsuffix = null,
             array $expected = []): void {
 

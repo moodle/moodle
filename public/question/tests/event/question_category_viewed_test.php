@@ -25,13 +25,12 @@ use context_module;
  * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_question\event\question_category_viewed
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\event\question_category_viewed::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_from_question_category_instance')]
 final class question_category_viewed_test extends \advanced_testcase {
     /**
      * Test creating and triggering an event from a category instance.
-     *
-     * @covers ::create_from_question_category_instance
      */
     public function test_create_from_question_category_instance(): void {
         $this->resetAfterTest();

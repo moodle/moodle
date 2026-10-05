@@ -23,14 +23,12 @@ namespace tool_admin_presets\local\action;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_admin_presets\local\action\load
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_admin_presets\local\action\load::class)]
 final class load_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of show() method when the preset id doesn't exist.
-     *
-     * @covers ::show
      */
     public function test_load_show_unexisting_preset(): void {
 
@@ -54,8 +52,6 @@ final class load_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of preview() method when the preset id doesn't exist.
-     *
-     * @covers ::preview
      */
     public function test_load_preview_unexisting_preset(): void {
 
@@ -80,8 +76,6 @@ final class load_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of execute() method.
-     *
-     * @covers ::execute
      */
     public function test_load_execute(): void {
         global $DB;

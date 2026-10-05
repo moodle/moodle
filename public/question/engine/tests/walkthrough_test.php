@@ -34,6 +34,9 @@ require_once(__DIR__ . '/helpers.php');
  * @copyright  2017 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\question_usage_by_activity::class, 'regrade_question')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\question_attempt::class, 'regrade')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\question_attempt::class, 'get_attempt_state_data_to_regrade_with_version')]
 final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     public function test_regrade_does_not_lose_flag(): void {
@@ -135,11 +138,6 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEquals(1, count($matches[0]));
     }
 
-    /**
-     * @covers \question_usage_by_activity::regrade_question
-     * @covers \question_attempt::regrade
-     * @covers \question_attempt::get_attempt_state_data_to_regrade_with_version
-     */
     public function test_regrading_an_interactive_attempt_while_in_progress(): void {
 
         // Start an attempt at a matching question.
@@ -165,11 +163,6 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_output($this->get_tries_remaining_expectation(1));
     }
 
-    /**
-     * @covers \question_usage_by_activity::regrade_question
-     * @covers \question_attempt::regrade
-     * @covers \question_attempt::get_attempt_state_data_to_regrade_with_version
-     */
     public function test_regrading_does_not_lose_metadata(): void {
 
         // Start an attempt at a matching question.

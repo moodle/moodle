@@ -47,9 +47,9 @@ require_once($CFG->dirroot . '/question/format/xml/format.php');
  * @package   qtype_ordering
  * @copyright 2018 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \qtype_ordering
- * @covers    \qtype_ordering_question
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering_question::class)]
 final class questiontype_test extends \question_testcase {
 
     /**

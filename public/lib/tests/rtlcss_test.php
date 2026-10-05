@@ -1124,8 +1124,8 @@ final class rtlcss_test extends basic_testcase {
     /**
      * Test background images.
      * @param array $data the provider data.
-     * @dataProvider background_image_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('background_image_provider')]
     public function test_background_image($data): void {
         $this->markTestSkipped('Not yet supported!');
         $output = new OutputFormat();
@@ -1135,8 +1135,8 @@ final class rtlcss_test extends basic_testcase {
     /**
      * Test background position.
      * @param array $data the provider data.
-     * @dataProvider background_position_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('background_position_provider')]
     public function test_background_position($data): void {
         $output = new OutputFormat();
         $output->set('SpaceAfterRuleName', '');
@@ -1147,8 +1147,8 @@ final class rtlcss_test extends basic_testcase {
     /**
      * Test background.
      * @param array $data the provider data.
-     * @dataProvider background_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('background_provider')]
     public function test_background($data): void {
         $output = new OutputFormat();
         $output->set('SpaceAfterRuleName', ' ');
@@ -1161,8 +1161,8 @@ final class rtlcss_test extends basic_testcase {
     /**
      * Test directives.
      * @param array $data the provider data.
-     * @dataProvider directives_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('directives_provider')]
     public function test_directives($data): void {
         $output = new OutputFormat();
         $output->set('SpaceAfterRuleName', '');
@@ -1177,8 +1177,8 @@ final class rtlcss_test extends basic_testcase {
     /**
      * Test properties.
      * @param array $data the provider data.
-     * @dataProvider properties_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('properties_provider')]
     public function test_properties($data): void {
         $output = new OutputFormat();
         $output->set('SpaceAfterRuleName', '');
@@ -1191,8 +1191,8 @@ final class rtlcss_test extends basic_testcase {
     /**
      * Test special.
      * @param array $data the provider data.
-     * @dataProvider special_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('special_provider')]
     public function test_special($data): void {
         $this->markTestSkipped('Not yet supported!');
         $output = new OutputFormat();
@@ -1204,8 +1204,8 @@ final class rtlcss_test extends basic_testcase {
     /**
      * Test transform original.
      * @param array $data the provider data.
-     * @dataProvider transform_origin_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('transform_origin_provider')]
     public function test_transform_origin($data): void {
         $output = new OutputFormat();
         $output->set('SpaceAfterRuleName', '');
@@ -1219,8 +1219,8 @@ final class rtlcss_test extends basic_testcase {
     /**
      * Test transform.
      * @param array $data the provider data.
-     * @dataProvider transforms_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('transforms_provider')]
     public function test_transforms($data): void {
         $this->markTestSkipped('Not yet supported!');
         $output = new OutputFormat();
@@ -1233,8 +1233,8 @@ final class rtlcss_test extends basic_testcase {
     /**
      * Test values n-syntax.
      * @param array $data the provider data.
-     * @dataProvider values_nsyntax_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('values_nsyntax_provider')]
     public function test_values_nsyntax($data): void {
         $output = new OutputFormat();
         $output->set('SpaceBeforeRules', ' ');
@@ -1247,8 +1247,8 @@ final class rtlcss_test extends basic_testcase {
     /**
      * Test values.
      * @param array $data the provider data.
-     * @dataProvider values_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('values_provider')]
     public function test_values($data): void {
         $output = new OutputFormat();
         $output->set('SpaceAfterRuleName', '');

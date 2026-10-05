@@ -28,10 +28,11 @@ require_once($CFG->dirroot . '/repository/nextcloud/tests/fixtures/testable_acce
  * Class repository_nextcloud_testcase
  *
  * @package repository_nextcloud
- * @group repository_nextcloud
  * @copyright  2017 Project seminar (Learnweb, University of Münster)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\repository_nextcloud\access_controlled_link_manager::class, 'transfer_file_to_path')]
+#[\PHPUnit\Framework\Attributes\Group('repository_nextcloud')]
 final class access_controlled_link_manager_test extends \advanced_testcase {
 
     /** @var null|testable_access_controlled_link_manager a malleable variant of the access_controlled_link_manager. */
@@ -312,8 +313,6 @@ XML;
     }
     /**
      * Test whether the webdav client gets the right params and whether function handles overwrite.
-     *
-     * @covers \repository_nextcloud\access_controlled_link_manager::transfer_file_to_path
      */
     public function test_transfer_file_to_path_overwritefile(): void {
         // Initialize params.

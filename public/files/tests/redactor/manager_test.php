@@ -22,8 +22,8 @@ namespace core_files\redactor;
  * @package   core_files
  * @copyright Meirza <meirza.arson@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_files\redactor\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_files\redactor\manager::class)]
 final class manager_test extends \advanced_testcase {
     /**
      * Helper to get a manager with a dummy file service.

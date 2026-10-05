@@ -27,10 +27,10 @@ use core\url;
  * Unit tests for aggregation helper
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\helpers\aggregation
  * @copyright   2025 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\helpers\aggregation::class)]
 final class aggregation_test extends advanced_testcase {
     /**
      * Test converting aggregation type name to full classpath
@@ -60,9 +60,8 @@ final class aggregation_test extends advanced_testcase {
      *
      * @param string $classpath
      * @param bool $expected
-     *
-     * @dataProvider valid_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_provider')]
     public function test_valid(string $classpath, bool $expected): void {
         $this->assertEquals($expected, aggregation::valid($classpath));
     }

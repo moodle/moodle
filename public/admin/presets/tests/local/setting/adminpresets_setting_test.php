@@ -23,15 +23,13 @@ namespace core_adminpresets\local\setting;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_adminpresets\local\setting\adminpresets_setting
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_adminpresets\local\setting\adminpresets_setting::class)]
 final class adminpresets_setting_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of save_value() method.
      *
-     * @covers ::save_value
-     * @dataProvider save_value_provider
      *
      * @param string $category Admin tree where the setting belongs.
      * @param string $settingplugin Plugin where the setting belongs.
@@ -39,6 +37,7 @@ final class adminpresets_setting_test extends \advanced_testcase {
      * @param string $settingvalue Setting value to be saved.
      * @param bool $expectedsaved Whether the setting will be saved or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('save_value_provider')]
     public function test_save_value(string $category, string $settingplugin, string $settingname, string $settingvalue,
             bool $expectedsaved): void {
         global $DB;
@@ -113,8 +112,6 @@ final class adminpresets_setting_test extends \advanced_testcase {
     /**
      * Test the behaviour of save_attributes_values() method.
      *
-     * @covers ::save_attributes_values
-     * @dataProvider save_attributes_values_provider
      *
      * @param string $category Admin tree where the setting belongs.
      * @param string $settingplugin Plugin where the setting belongs.
@@ -123,6 +120,7 @@ final class adminpresets_setting_test extends \advanced_testcase {
      * @param string $advsettingvalue Advanced setting value to be saved.
      * @param bool $expectedsaved Whether the setting will be saved or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('save_attributes_values_provider')]
     public function test_save_attributes_values(string $category, string $settingplugin, string $settingname,
             ?string $advsettingname, string $advsettingvalue, bool $expectedsaved): void {
         global $DB;

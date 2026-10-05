@@ -26,11 +26,11 @@ use core_reportbuilder\local\report\filter;
  * Unit tests for select report filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\base
- * @covers      \core_reportbuilder\local\filters\select
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\select::class)]
 final class select_test extends advanced_testcase {
 
     /**
@@ -58,9 +58,8 @@ final class select_test extends advanced_testcase {
      * @param int $operator
      * @param string|null $value
      * @param bool $expectmatch
-     *
-     * @dataProvider get_sql_filter_simple_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_simple_provider')]
     public function test_get_sql_filter_simple(int $operator, ?string $value, bool $expectmatch): void {
         global $DB;
 

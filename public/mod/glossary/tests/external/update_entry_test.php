@@ -27,11 +27,11 @@ use mod_glossary_external;
  *
  * @package    mod_glossary
  * @category   external
- * @covers     \mod_glossary\external\update_entry
  * @since      Moodle 3.10
  * @copyright  2020 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_glossary\external\update_entry::class)]
 final class update_entry_test extends \core_external\tests\externallib_testcase {
     /**
      * test_update_entry_without_optional_settings

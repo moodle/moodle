@@ -42,11 +42,11 @@ final class search_test extends \advanced_testcase {
     /**
      * Test get_search_contents() by searching through some existing content using different search terms.
      *
-     * @dataProvider get_search_contents_provider
      * @param array $contentnames The array containing the names of the content that needs to be generated
      * @param string $search The search string
      * @param array $expected The array containing the expected content names that should be returned by the search
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_search_contents_provider')]
     public function test_get_search_contents(array $contentnames, string $search, array $expected): void {
         $this->resetAfterTest();
 

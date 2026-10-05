@@ -23,8 +23,8 @@ namespace core;
  * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \restore_qtype_plugin
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_qtype_plugin::class)]
 final class restore_qtype_plugin_test extends \basic_testcase {
     /**
      * All default and specified fields should be removed from the provided data structure.

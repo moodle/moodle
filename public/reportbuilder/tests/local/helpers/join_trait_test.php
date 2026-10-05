@@ -34,10 +34,10 @@ defined('MOODLE_INTERNAL') || die();
  * Unit tests for the join trait
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\helpers\join_trait
  * @copyright   2024 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\helpers\join_trait::class)]
 final class join_trait_test extends advanced_testcase {
     /**
      * Test adding single join

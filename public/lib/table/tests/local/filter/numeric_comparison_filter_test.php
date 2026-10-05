@@ -98,11 +98,11 @@ final class numeric_comparison_filter_test extends advanced_testcase {
     /**
      * Ensure that the add_filter_value function rejects invalid types.
      *
-     * @dataProvider add_filter_value_invalid_types_provider
      * @param mixed $values
      * @param string $exceptiontype
      * @param string $exceptionmessage
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_filter_value_invalid_types_provider')]
     public function test_add_filter_value_type_invalid($values, string $exceptiontype, string $exceptionmessage): void {
         $filter = new numeric_comparison_filter('example');
 

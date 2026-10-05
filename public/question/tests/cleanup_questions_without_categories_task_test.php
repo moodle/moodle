@@ -22,8 +22,8 @@ namespace core_question;
  * @package   core_question
  * @copyright 2026 Martin Gauk <martin.gauk@tu-berlin.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\task\cleanup_questions_without_categories_task
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\task\cleanup_questions_without_categories_task::class)]
 final class cleanup_questions_without_categories_task_test extends \advanced_testcase {
     /**
      * A question with no category should be deleted, while other questions remain as-is.

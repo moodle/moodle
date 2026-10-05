@@ -33,9 +33,9 @@ use mod_quiz\structure;
  * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \restore_dbops::load_questionbanks_to_tempids
- * @covers \restore_questionbanks_parser_processor
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_dbops::class, 'load_questionbanks_to_tempids')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_questionbanks_parser_processor::class)]
 final class restore_test extends \advanced_testcase {
     /**
      * Given a context, find the default question category, return the question IDs and records.

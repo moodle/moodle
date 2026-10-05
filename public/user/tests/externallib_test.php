@@ -42,8 +42,8 @@ require_once($CFG->dirroot . '/files/externallib.php');
  * Tests for the user external functions.
  *
  * @package core_user
- * @covers \core_user_external
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_user_external::class)]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_users
@@ -636,10 +636,10 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test for \core_user_external::create_users() when user using the same email addresses are being created.
      *
-     * @dataProvider create_users_provider_with_same_emails
      * @param int $sameemailallowed The value to set for $CFG->allowaccountssameemail.
      * @param boolean $differentcase Whether to user a different case for the other user.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_users_provider_with_same_emails')]
     public function test_create_users_with_same_emails($sameemailallowed, $differentcase): void {
         global $DB;
 
@@ -681,10 +681,10 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test create_users with invalid parameters
      *
-     * @dataProvider data_create_users_invalid_parameter
      * @param array $data User data to attempt to register.
      * @param string $expectmessage Expected exception message.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_create_users_invalid_parameter')]
     public function test_create_users_invalid_parameter(array $data, $expectmessage): void {
         global $USER, $CFG, $DB;
 
@@ -989,7 +989,6 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test update_users using similar emails with varying cases.
      *
-     * @dataProvider users_with_same_emails
      * @param boolean $allowsameemail The value to set for $CFG->allowaccountssameemail.
      * @param string $currentname The user's current name.
      * @param string $currentemail The user's current email.
@@ -998,6 +997,7 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
      * @param boolean $withanotheruser Whether to create another user that has the same email as the target user's new email.
      * @param boolean $successexpected Whether we expect that the target user's email/name will be updated.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('users_with_same_emails')]
     public function test_update_users_emails_with_different_cases($allowsameemail, $currentname, $currentemail,
                                                                   $newname, $newemail, $withanotheruser, $successexpected): void {
         global $DB;

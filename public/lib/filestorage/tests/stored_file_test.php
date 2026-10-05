@@ -24,10 +24,10 @@ use context_system;
  *
  * @package    core_files
  * @category   test
- * @covers     \stored_file
  * @copyright  2022 Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\stored_file::class)]
 final class stored_file_test extends advanced_testcase {
 
     /**

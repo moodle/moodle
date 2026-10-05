@@ -28,8 +28,8 @@ use core_tag;
  * @category test
  * @copyright 2014 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_tag_tag
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_tag_tag::class)]
 final class taglib_test extends \advanced_testcase {
 
     /**

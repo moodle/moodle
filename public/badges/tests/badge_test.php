@@ -29,19 +29,19 @@ require_once("{$CFG->libdir}/badgeslib.php");
  * Unit tests for badge class.
  *
  * @package     core_badges
- * @covers      \core_badges\badge
  * @copyright   2024 Sara Arjona <sara@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\badge::class)]
 final class badge_test extends \advanced_testcase {
 
     /**
      * Test create_badge.
      *
-     * @dataProvider badges_provider
      * @param bool $iscourse Whether the badge is a course badge or not.
      * @param array $data Badge data. It will override the default data.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('badges_provider')]
     public function test_create_badge(bool $iscourse = false, array $data = []): void {
         global $DB;
 
@@ -97,10 +97,10 @@ final class badge_test extends \advanced_testcase {
     /**
      * Test update() in badge class.
      *
-     * @dataProvider badges_provider
      * @param bool $iscourse Whether the badge is a course badge or not.
      * @param array $data Badge data to update the badge with. It will override the default data.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('badges_provider')]
     public function test_udpate_badge(bool $iscourse = false, array $data = []): void {
         global $USER, $DB;
 
@@ -167,10 +167,10 @@ final class badge_test extends \advanced_testcase {
     /**
      * Test update_message() in badge class.
      *
-     * @dataProvider badges_provider
      * @param bool $iscourse Whether the badge is a course badge or not.
      * @param array $data Badge data to update the badge with. It will override the default data.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('badges_provider')]
     public function test_udpate_message_badge(bool $iscourse = false, array $data = []): void {
         global $USER, $DB;
 

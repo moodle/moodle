@@ -26,15 +26,13 @@ use stdClass;
  * @package    mod_forum
  * @copyright  2021 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_forum\h5p\canedit
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_forum\h5p\canedit::class)]
 final class canedit_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of can_edit_content().
      *
-     * @covers ::can_edit_content
-     * @dataProvider can_edit_content_provider
      *
      * @param string $currentuser User who will call the method.
      * @param string $fileauthor Author of the file to check.
@@ -44,6 +42,7 @@ final class canedit_test extends \advanced_testcase {
      *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_edit_content_provider')]
     public function test_can_edit_content(string $currentuser, string $fileauthor, string $filecomponent, bool $expected,
             $filearea = 'unittest'): void {
         global $USER, $DB;

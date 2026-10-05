@@ -27,10 +27,10 @@ use core_reportbuilder\local\report\filter;
  * Unit tests for course category report filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\category
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\category::class)]
 final class category_test extends advanced_testcase {
 
     /**
@@ -67,9 +67,8 @@ final class category_test extends advanced_testcase {
      * @param int $operator
      * @param bool $subcategories
      * @param string[] $expectedcategories
-     *
-     * @dataProvider get_sql_filter_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_provider')]
     public function test_get_sql_filter(
         ?string $categoryname,
         int $operator,

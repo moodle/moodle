@@ -29,6 +29,12 @@ use mod_data\local\exporter\utils;
  * @author     Philipp Memmel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\local\exporter\entries_exporter::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_data\local\exporter\entries_exporter::class, 'get_records_count')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_data\local\exporter\entries_exporter::class, 'send_file')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\local\exporter\csv_entries_exporter::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_data\local\exporter\utils::class, 'data_exportdata')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\local\exporter\ods_entries_exporter::class)]
 final class entries_export_test extends \advanced_testcase {
     /**
      * Get the test data.
@@ -92,12 +98,6 @@ final class entries_export_test extends \advanced_testcase {
      *
      * It also includes more general testing of the functionality of the entries_exporter the csv_entries_exporter
      * is inheriting from.
-     *
-     * @covers \mod_data\local\exporter\entries_exporter
-     * @covers \mod_data\local\exporter\entries_exporter::get_records_count()
-     * @covers \mod_data\local\exporter\entries_exporter::send_file()
-     * @covers \mod_data\local\exporter\csv_entries_exporter
-     * @covers \mod_data\local\exporter\utils::data_exportdata
      */
     public function test_export_csv(): void {
         global $CFG, $DB;
@@ -176,8 +176,6 @@ final class entries_export_test extends \advanced_testcase {
     /**
      * Tests that exported CSV values are identical to the strings returned by export_text_value(),
      * including edge cases like the value "0" which must not be treated as empty.
-     *
-     * @covers \mod_data\local\exporter\utils::data_exportdata
      */
     public function test_export_csv_values_match_export_text_value(): void {
         $this->resetAfterTest();
@@ -237,9 +235,6 @@ final class entries_export_test extends \advanced_testcase {
 
     /**
      * Tests specific ODS exporting functionality.
-     *
-     * @covers \mod_data\local\exporter\ods_entries_exporter
-     * @covers \mod_data\local\exporter\utils::data_exportdata
      */
     public function test_export_ods(): void {
         global $DB;

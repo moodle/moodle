@@ -23,8 +23,17 @@ namespace core_external;
  * @category    test
  * @copyright   2022 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @covers      \core_external\external_settings
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_external\external_settings::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\external_settings::class, 'get_instance')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\external_settings::class, 'set_file')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\external_settings::class, 'get_file')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\external_settings::class, 'set_filter')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\external_settings::class, 'get_filter')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\external_settings::class, 'set_fileurl')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\external_settings::class, 'get_fileurl')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\external_settings::class, 'set_raw')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_external\external_settings::class, 'get_raw')]
 final class external_settings_test extends \advanced_testcase {
     /**
      * Reset the singleton between tests.
@@ -36,8 +45,6 @@ final class external_settings_test extends \advanced_testcase {
 
     /**
      * Tests for external_settings class.
-     *
-     * @covers \core_external\external_settings::get_instance
      */
     public function test_external_settings(): void {
         $settings = external_settings::get_instance();
@@ -46,8 +53,6 @@ final class external_settings_test extends \advanced_testcase {
 
     /**
      * Check external_settings defaults.
-     *
-     * @covers \core_external\external_settings::get_instance
      */
     public function test_external_settings_defaults(): void {
         $settings = external_settings::get_instance();
@@ -70,9 +75,6 @@ final class external_settings_test extends \advanced_testcase {
 
     /**
      * Check external_settings file API calls.
-     *
-     * @covers \core_external\external_settings::set_file
-     * @covers \core_external\external_settings::get_file
      */
     public function test_external_settings_set_file(): void {
         $settings = external_settings::get_instance();
@@ -83,9 +85,6 @@ final class external_settings_test extends \advanced_testcase {
 
     /**
      * Check external_settings filter API calls.
-     *
-     * @covers \core_external\external_settings::set_filter
-     * @covers \core_external\external_settings::get_filter
      */
     public function test_external_settings_set_filter(): void {
         $settings = external_settings::get_instance();
@@ -96,9 +95,6 @@ final class external_settings_test extends \advanced_testcase {
 
     /**
      * Check external_settings file API calls.
-     *
-     * @covers \core_external\external_settings::set_fileurl
-     * @covers \core_external\external_settings::get_fileurl
      */
     public function test_external_settings_set_fileurl(): void {
         $settings = external_settings::get_instance();
@@ -109,9 +105,6 @@ final class external_settings_test extends \advanced_testcase {
 
     /**
      * Check external_settings raw API calls.
-     *
-     * @covers \core_external\external_settings::set_raw
-     * @covers \core_external\external_settings::get_raw
      */
     public function test_external_settings_set_raw(): void {
         $settings = external_settings::get_instance();

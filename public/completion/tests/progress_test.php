@@ -27,8 +27,8 @@ use availability_date\condition;
  * @category test
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_completion\progress
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_completion\progress::class)]
 final class progress_test extends \advanced_testcase {
 
     /**

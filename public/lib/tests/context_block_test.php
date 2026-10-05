@@ -24,8 +24,8 @@ namespace core;
  * @category  phpunit
  * @copyright 2022 Andrew Lyons <andrew@nicols.co.uk>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \context_block
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\context_block::class)]
 final class context_block_test extends \advanced_testcase {
 
     /**
@@ -39,8 +39,6 @@ final class context_block_test extends \advanced_testcase {
 
     /**
      * Ensure that block contexts are correctly created for blocks where they are missing.
-     *
-     * @covers ::create_level_instances
      */
     public function test_context_creation(): void {
         global $DB;

@@ -30,9 +30,8 @@ require_once('all_checks.php');
 
 /**
  * Class table_data_should_have_th_test
- *
- * @covers \tool_brickfield\local\htmlchecker\common\checks\table_data_should_have_th
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_brickfield\local\htmlchecker\common\checks\table_data_should_have_th::class)]
 final class table_data_should_have_th_test extends all_checks {
     /** @var string Check type */
     public $checktype = 'table_data_should_have_th';

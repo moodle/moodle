@@ -13,16 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * Tests for the \core_course\task\course_delete_modules class.
- *
- * @package    core
- * @subpackage course
- * @copyright  2021 Tomo Tsuyuki <tomotsuyuki@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_course\task\course_delete_modules
- */
 namespace core_course;
 
 /**
@@ -33,6 +23,7 @@ namespace core_course;
  * @copyright  2021 Tomo Tsuyuki <tomotsuyuki@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_course\task\course_delete_modules::class)]
 final class course_delete_modules_test extends \advanced_testcase {
 
     /**

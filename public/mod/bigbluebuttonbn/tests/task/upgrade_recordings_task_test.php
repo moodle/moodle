@@ -29,8 +29,8 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @package   mod_bigbluebuttonbn
  * @copyright 2019 onwards, Blindside Networks Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_bigbluebuttonbn\task\upgrade_recordings_task
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\task\upgrade_recordings_task::class)]
 final class upgrade_recordings_task_test extends advanced_testcase {
 
     use testcase_helper_trait;

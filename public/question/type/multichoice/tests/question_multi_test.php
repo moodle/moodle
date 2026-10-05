@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package   qtype_multichoice
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qtype_multichoice_multi_question
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_multichoice_multi_question::class)]
 final class question_multi_test extends \advanced_testcase {
 
     public function test_get_expected_data(): void {

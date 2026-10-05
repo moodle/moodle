@@ -22,8 +22,8 @@ use stdClass;
  * Tests for the devicekey class.
  *
  * @package core_user
- * @covers \core_user\devicekey
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_user\devicekey::class)]
 final class devicekey_test extends \advanced_testcase {
     /**
      * Helper to create a device record.

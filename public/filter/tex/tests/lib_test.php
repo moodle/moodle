@@ -37,9 +37,9 @@ require_once($CFG->dirroot . '/filter/tex/lib.php');
  *
  * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers ::filter_tex_sanitize_formula
- * @covers ::filter_tex_updatedcallback
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('filter_tex_sanitize_formula')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('filter_tex_updatedcallback')]
 final class lib_test extends advanced_testcase {
     /**
      * Data provider for test_filter_tex_sanitize_formula.
@@ -58,10 +58,10 @@ final class lib_test extends advanced_testcase {
     /**
      * Tests for filter_tex_sanitize_formula() function.
      *
-     * @dataProvider filter_tex_sanitize_formula_provider
      * @param $formula The formula to test
      * @param $expected The sanitized version of the formula we expect to get
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_tex_sanitize_formula_provider')]
     public function test_filter_tex_sanitize_formula(string $formula, string $expected): void {
         $this->assertEquals($expected, filter_tex_sanitize_formula($formula));
     }

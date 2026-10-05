@@ -27,10 +27,10 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests for all users report audience type
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\reportbuilder\audience\allusers
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\reportbuilder\audience\allusers::class)]
 final class allusers_test extends advanced_testcase {
 
     /**
