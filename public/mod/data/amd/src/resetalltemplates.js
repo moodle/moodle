@@ -22,6 +22,7 @@
  */
 
 import Notification from 'core/notification';
+import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
 import {getString} from 'core/str';
 
@@ -68,6 +69,7 @@ const resetAllTemplatesConfirm = async(actionLink) => {
             getString('resetalltemplatesconfirm', 'mod_data'),
             getString('reset', 'core'),
         );
+        new Pending('mod_data/resetalltemplates:confirmation');
         window.location = actionLink.href;
     } catch (error) {
         return;

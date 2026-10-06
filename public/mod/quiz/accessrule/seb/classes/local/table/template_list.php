@@ -154,8 +154,12 @@ class template_list extends \flexible_table {
             get_string('delete'),
             null,
             [
-            'data-action' => 'delete',
-            'data-id' => $data->get('id'),
+                'data-action' => 'delete',
+                'data-id' => $data->get('id'),
+                'data-modal' => 'confirmation',
+                'data-modal-title-str' => json_encode(['confirmtemplateremovaltitle', 'quizaccess_seb']),
+                'data-modal-content-str' => json_encode(['confirmtemplateremovalquestion', 'quizaccess_seb']),
+
             ]
         );
 

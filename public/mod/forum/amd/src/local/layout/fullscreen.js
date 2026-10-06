@@ -21,6 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Pending from 'core/pending';
 import {addIconToContainer} from 'core/loadingicon';
 import {addToastRegion} from 'core/toast';
 import * as FocusLockManager from 'core/local/aria/focuslock';
@@ -117,17 +118,18 @@ const getLayoutHelpers = (layoutNode, FocusLockManager, focusOnClose) => {
     };
 
     /**
-     * Attempt to make the conatiner full screen.
+     * Attempt to make the container full screen.
      */
     const requestFullscreen = () => {
         if (layoutNode.requestFullscreen) {
-            layoutNode.requestFullscreen();
-        } else if (layoutNode.msRequestFullscreen) {
-            layoutNode.msRequestFullscreen();
-        } else if (layoutNode.mozRequestFullscreen) {
-            layoutNode.mozRequestFullscreen();
-        } else if (layoutNode.webkitRequestFullscreen) {
-            layoutNode.webkitRequestFullscreen();
+            const pendingPromise = new Pending('mod_forum/local/layout/fullscreen.js');
+            layoutNode.requestFullscreen()
+                .then(() => pendingPromise.resolve())
+                .catch(() => {
+                    // Hack to make this act like full-screen as much as possible.
+                    layoutNode.setTop(0);
+                    return;
+                });
         } else {
             // Not supported.
             // Hack to make this act like full-screen as much as possible.

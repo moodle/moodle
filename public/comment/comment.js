@@ -70,6 +70,7 @@ M.core_comment = {
                 }
             },
             post: function() {
+                M.util.js_pending('comment-post');
                 var container = Y.one('#comment-list-'+this.client_id);
                 var ta = Y.one('#dlg-content-'+this.client_id);
                 var scope = this;
@@ -123,6 +124,7 @@ M.core_comment = {
                             }
                             scope.register_pagination();
                             scope.register_delete_buttons();
+                            M.util.js_complete('comment-post');
                         }
                     }, true);
                 } else {
@@ -131,6 +133,7 @@ M.core_comment = {
                     };
                     var anim = new Y.YUI2.util.ColorAnim('dlg-content-'+this.client_id, attributes);
                     anim.animate();
+                    M.util.js_complete('comment-post');
                 }
             },
             request: function(args, noloading) {

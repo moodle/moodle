@@ -35,6 +35,7 @@ import {fillInitialValues} from 'core_grades/grades/grader/gradingpanel/comparis
 import Modal from 'core/modal_cancel';
 import {subscribe} from 'core/pubsub';
 import DrawerEvents from 'core/drawer_events';
+import Pending from 'core/pending';
 
 const templateNames = {
     grader: {
@@ -245,14 +246,17 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, use
 
     graderContainer.addEventListener('click', (e) => {
         if (e.target.closest(Selectors.buttons.toggleFullscreen)) {
+            const pendingPromise = new Pending('core/forum:toggleFullscreen');
             e.stopImmediatePropagation();
             e.preventDefault();
             graderLayout.toggleFullscreen();
 
+            pendingPromise.resolve();
             return;
         }
 
         if (e.target.closest(Selectors.buttons.closeGrader)) {
+            new Pending('core/forum:closeGrader');
             e.stopImmediatePropagation();
             e.preventDefault();
 
@@ -264,10 +268,13 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, use
         }
 
         if (e.target.closest(Selectors.buttons.saveGrade)) {
+            const pendingPromise = new Pending('core/forum:saveGrade');
             saveGradeFunction(userPicker.currentUser);
+            pendingPromise.resolve();
         }
 
         if (e.target.closest(Selectors.buttons.toggleSearch)) {
+            const pendingPromise = new Pending('core/forum:toggleSearch');
             if (toggleSearchButton.getAttribute('aria-expanded') === 'true') {
                 // Search is open so let's close it.
                 hideUserSearchInput(toggleSearchButton, searchInputContainer, searchInput);
@@ -279,7 +286,7 @@ const registerEventListeners = (graderLayout, userPicker, saveGradeFunction, use
                 showSearchResultContainer(bodyContainer, userPickerContainer, searchResultsContainer);
                 renderSearchResults(searchResultsContainer, userList);
             }
-
+            pendingPromise.resolve();
             return;
         }
 

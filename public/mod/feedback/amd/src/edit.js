@@ -28,7 +28,7 @@ import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
 import SortableList from 'core/sortable_list';
-import {getString, getStrings} from 'core/str';
+import {getString} from 'core/str';
 import {add as addToast} from 'core/toast';
 import {reorderQuestions} from 'mod_feedback/local/repository';
 import Templates from 'core/templates';
@@ -100,22 +100,23 @@ export const init = async(cmId) => {
     await enhanceEditForm();
 
     // Add event listeners.
-    document.addEventListener('click', async event => {
-
+    document.addEventListener('click', (event) => {
         // Delete question.
         const deleteButton = event.target.closest(Selectors.deleteQuestionButton);
         if (deleteButton) {
+            const pendingPromise = new Pending('mod_feedback/questions:delete');
             event.preventDefault();
-            const confirmationStrings = await getStrings([
-                {key: 'confirmation', component: 'admin'},
-                {key: 'confirmdeleteitem', component: 'mod_feedback'},
-                {key: 'yes', component: 'core'},
-                {key: 'no', component: 'core'},
-            ]);
-            Notification.confirm(...confirmationStrings, () => {
-                window.location = deleteButton.getAttribute('href');
-            });
-            return;
+            Notification.confirm(
+                getString('confirmation', 'admin'),
+                getString('confirmdeleteitem', 'mod_feedback'),
+                getString('yes', 'core'),
+                getString('no', 'core'),
+                () => {
+                    new Pending('mod_feedback/questions:deleteConfirmed');
+                    window.location = deleteButton.getAttribute('href');
+                },
+            );
+            pendingPromise.resolve();
         }
     });
 

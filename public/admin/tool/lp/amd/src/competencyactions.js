@@ -79,6 +79,7 @@ define(['jquery',
         }
 
         var relocate = function() {
+            M.util.js_pending('core/competencyactions:addHandler');
             var queryparams = $.param(params);
             window.location = url.relativeUrl('/admin/tool/lp/editcompetency.php?' + queryparams);
         };
@@ -295,6 +296,7 @@ define(['jquery',
      * @method editHandler
      */
     var editHandler = function() {
+        M.util.js_pending('core/competencyactions:editHandler');
         var competency = $('[data-region="competencyactions"]').data('competency');
 
         var params = {

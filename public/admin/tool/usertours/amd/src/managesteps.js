@@ -35,6 +35,7 @@ const removeStepFromLink = targetUrl => {
         getString('yes', 'core'),
         getString('no', 'core'),
         () => {
+            M.util.js_pending('core/usertours:removeStepFromLink');
             window.location = targetUrl;
         }
     );

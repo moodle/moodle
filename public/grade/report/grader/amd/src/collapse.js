@@ -426,6 +426,7 @@ export default class ColumnSearch extends search_combobox {
      * @param {HTMLElement} element The element to update.
      */
     async updateDisplayForElement(element) {
+        const pending = new Pending('core/grade/report/grader:updateDisplayForElement');
         const content = element.querySelector(selectors.content);
         const sort = element.querySelector(selectors.sort);
         const expandButton = element.querySelector(selectors.expandbutton);
@@ -470,6 +471,7 @@ export default class ColumnSearch extends search_combobox {
                 expandButton?.classList.remove('d-none');
             }
         }
+        pending.resolve();
     }
 
     /**

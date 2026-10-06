@@ -349,7 +349,8 @@ export default class {
      *
      * @param {MouseEvent} e The triggering event that we are working with.
      */
-    async clickHandler(e) {
+    clickHandler(e) {
+        const pendingPromise = new Pending('core/combosearchbox/search_combobox:clickHandler');
         this.updateNodes();
         // The "clear search" button is triggered.
         if (e.target.closest(this.selectors.clearSearch)) {
@@ -364,8 +365,9 @@ export default class {
             && !this.getHTMLElements().searchDropdown.classList.contains('show')
             && e.target.closest(this.selectors.input)
         ) {
-            await this.renderAndShow();
+            this.renderAndShow();
         }
+        pendingPromise.resolve();
     }
 
     /**

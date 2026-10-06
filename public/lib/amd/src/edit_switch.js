@@ -49,6 +49,7 @@ const setEditMode = (context, setmode) => fetchMany([{
  * @param {HTMLElement} editSwitch
  */
 const toggleEditSwitch = editSwitch => {
+    const pendingPromise = new Pending("core/edit_switch:toggle");
     if (editSwitch.checked) {
         editSwitch.setAttribute('aria-checked', true);
     } else {
@@ -61,6 +62,7 @@ const toggleEditSwitch = editSwitch => {
         window.location = editSwitch.dataset.pageurl;
         return true;
     }
+    pendingPromise.resolve();
     return false;
 };
 

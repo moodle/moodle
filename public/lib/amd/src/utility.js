@@ -89,6 +89,7 @@ const getModalString = (dataset, type, field, defaultValue = null) => {
  * @returns {Promise}
  */
 const displayConfirmation = (source, type) => {
+    const openDialoguePromise = new Pending('core/utility:displayConfirmation');
     let confirmationPromise = null;
     if (`${type}Type` in source.dataset && source.dataset[`${type}Type`] === 'delete') {
         confirmationPromise = deleteCancelPromise(
@@ -103,6 +104,8 @@ const displayConfirmation = (source, type) => {
             getModalString(source.dataset, type, 'YesButton', ['yes', 'core'])
         );
     }
+
+    openDialoguePromise.resolve();
     return confirmationPromise.then(() => {
         const pendingPromise = new Pending('core/utility:displayConfirmation');
         if (source.dataset[`${type}Toast`] === 'true') {
@@ -176,6 +179,8 @@ const registerConfirmationListeners = () => {
         if (e.target.closest('[data-modal-submitting]')) {
             return;
         }
+
+        const pendingPromise = new Pending('core/confirm:modal');
         const confirmRequest = e.target.closest('[data-confirmation="modal"]');
         if (confirmRequest) {
             e.preventDefault();
@@ -196,6 +201,7 @@ const registerConfirmationListeners = () => {
                 getModalString(alertRequest.dataset, 'modal', 'Content'),
             );
         }
+        pendingPromise.resolve();
     });
 };
 

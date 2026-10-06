@@ -26,6 +26,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import Pending from 'core/pending';
 import {exception as displayException} from 'core/notification';
 import {call as fetchMany} from 'core/ajax';
 import {getString} from 'core/str';
@@ -36,7 +37,7 @@ import {saveCancelPromise} from 'core/notification';
  *
  * @param {MouseEvent} e the click event.
  */
-const reopenButtonClicked = async(e) => {
+const reopenButtonClicked = (e) => {
     if (!(e.target instanceof HTMLElement) || !e.target.matches('button[data-action="reopen-attempt"]')) {
         return;
     }
@@ -44,38 +45,41 @@ const reopenButtonClicked = async(e) => {
     e.preventDefault();
     const attemptId = e.target.dataset.attemptId;
 
-    try {
-        // We fetch the confirmation message from the server now, so the message is based
-        // on the latest state of the attempt, rather than when the containing page loaded.
-        const messages = fetchMany([{
-            methodname: 'mod_quiz_get_reopen_attempt_confirmation',
-            args: {
-                "attemptid": attemptId,
-            },
-        }]);
+    const pendingPromise = new Pending('core/quiz:reopenButtonClicked');
 
-        await saveCancelPromise(
-            getString('reopenattemptareyousuretitle', 'mod_quiz'),
-            messages[0],
-            getString('reopenattempt', 'mod_quiz'),
-            {triggerElement: e.target},
-       );
+    // We fetch the confirmation message from the server now, so the message is based
+    // on the latest state of the attempt, rather than when the containing page loaded.
+    const message = fetchMany([{
+        methodname: 'mod_quiz_get_reopen_attempt_confirmation',
+        args: {
+            attemptid: attemptId,
+        },
+    }])[0];
 
+    saveCancelPromise(
+        getString('reopenattemptareyousuretitle', 'mod_quiz'),
+        message,
+        getString('reopenattempt', 'mod_quiz'),
+        {triggerElement: e.target},
+    )
+    .then(async() => {
+        new Pending('core/quiz:reopenButtonClicked');
         await (fetchMany([{
             methodname: 'mod_quiz_reopen_attempt',
             args: {
-                "attemptid": attemptId,
+                attemptid: attemptId,
             },
         }])[0]);
         window.location = M.cfg.wwwroot + e.target.dataset.afterActionUrl;
-
-    } catch (error) {
-        if (error.type === 'modal-save-cancel:cancel') {
+    })
+    .catch((error) => {
+        if (error.type === 'modal-save-cancel:cancel' || error.type === 'modal:hidden') {
             // User clicked Cancel, so do nothing.
             return;
         }
-        await displayException(error);
-    }
+        return displayException(error);
+    });
+    pendingPromise.resolve();
 };
 
 export const init = () => {

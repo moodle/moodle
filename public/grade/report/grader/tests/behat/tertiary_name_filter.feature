@@ -1,8 +1,8 @@
 @core @javascript @gradereport_grader
 Feature: Within the grader report, test that we can open our generic filter dropdown component
-  In order to filter down the users on the page
-  As a teacher
-  I need to be able to see the filter and select a combination of parameters
+    In order to filter down the users on the page
+    As a teacher
+    I need to be able to see the filter and select a combination of parameters
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
@@ -27,6 +27,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
       | activity | course | idnumber | name                |
       | assign   | C1     | a1       | Test assignment one |
     And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
+    And I change the window size to "large"
 
   Scenario: A teacher can open the filter component
     Given I should see "Filter by name"
@@ -44,15 +45,15 @@ Feature: Within the grader report, test that we can open our generic filter drop
     And I wait to be redirected
     # We should only have one user that matches the "D" first name
     Then the following should exist in the "user-grades" table:
-      | -1-                |
-      | Dummy User         |
+      | -1-        |
+      | Dummy User |
     And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Turtle Manatee     |
+      | -1-            |
+      | Teacher 1      |
+      | Student 1      |
+      | User Example   |
+      | User Test      |
+      | Turtle Manatee |
 
     # Test filtering on last name
     # Business logic: If all is selected, we will not show it i.e. First (D) and NOT First (D) Last (All)
@@ -63,15 +64,15 @@ Feature: Within the grader report, test that we can open our generic filter drop
     And I wait to be redirected
     # We should only have one user that matches the "T" first name
     And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Turtle Manatee     |
+      | -1-            |
+      | Turtle Manatee |
     And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
+      | -1-          |
+      | Teacher 1    |
+      | Student 1    |
+      | User Example |
+      | User Test    |
+      | Dummy User   |
 
     # Test filtering on first && last name
     And I click on "Last (M)" "combobox"
@@ -81,15 +82,15 @@ Feature: Within the grader report, test that we can open our generic filter drop
     And I wait to be redirected
     # We should only have one user that matches the "T" first name
     And the following should exist in the "user-grades" table:
-      | -1-                |
-      | User Test          |
+      | -1-       |
+      | User Test |
     And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | Dummy User         |
-      | Turtle Manatee     |
+      | -1-            |
+      | Teacher 1      |
+      | Student 1      |
+      | User Example   |
+      | Dummy User     |
+      | Turtle Manatee |
     # Final cheeky check to ensure our button matches.
     And I click on "First (U) Last (T)" "combobox"
 
@@ -126,8 +127,8 @@ Feature: Within the grader report, test that we can open our generic filter drop
 
   Scenario: A teacher using a language besides english can reset the initials bar
     Given the following "language customisations" exist:
-      | component | stringid | value  |
-      | core      | all      | すべて  |
+      | component | stringid | value |
+      | core      | all      | すべて   |
     And I click on "Filter by name" "combobox"
     And "input[data-action=save]" "css_element" should be visible
     And I select "T" in the "First name" "core_course > initials bar"
@@ -141,12 +142,12 @@ Feature: Within the grader report, test that we can open our generic filter drop
     And I wait to be redirected
     Then I should not see "First (すべて) Last (すべて)"
     And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Dummy User         |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Turtle Manatee     |
+      | -1-            |
+      | Dummy User     |
+      | Student 1      |
+      | User Example   |
+      | User Test      |
+      | Turtle Manatee |
 
   Scenario: A teacher can search and then filter by first or last name
     Given I set the field "Search users" to "Student 1"
@@ -156,53 +157,53 @@ Feature: Within the grader report, test that we can open our generic filter drop
     When I press "Apply"
     And the field "Search users" matches value "Student 1"
     Then the following should exist in the "user-grades" table:
-      | -1-                | -2-                  | -3- |
-      | Student 1          | student1@example.com | -   |
+      | -1-       | -2-                  | -3- |
+      | Student 1 | student1@example.com | -   |
     And the following should not exist in the "user-grades" table:
-      | -1-                | -2-                  | -3- |
-      | Teacher 1          | teacher1@example.com | -   |
-      | Dummy User         | student2@example.com | -   |
-      | User Example       | student3@example.com | -   |
-      | User Test          | student4@example.com | -   |
-      | Turtle Manatee     | student5@example.com | -   |
+      | -1-            | -2-                  | -3- |
+      | Teacher 1      | teacher1@example.com | -   |
+      | Dummy User     | student2@example.com | -   |
+      | User Example   | student3@example.com | -   |
+      | User Test      | student4@example.com | -   |
+      | Turtle Manatee | student5@example.com | -   |
     And I click on "First (S)" "combobox"
     And I select "M" in the "First name" "core_course > initials bar"
     And I press "Apply"
     And the following should not exist in the "user-grades" table:
-      | -1-                | -2-                  | -3- |
-      | Student 1          | student1@example.com | -   |
-      | Teacher 1          | teacher1@example.com | -   |
-      | Dummy User         | student2@example.com | -   |
-      | User Example       | student3@example.com | -   |
-      | User Test          | student4@example.com | -   |
-      | Turtle Manatee     | student5@example.com | -   |
+      | -1-            | -2-                  | -3- |
+      | Student 1      | student1@example.com | -   |
+      | Teacher 1      | teacher1@example.com | -   |
+      | Dummy User     | student2@example.com | -   |
+      | User Example   | student3@example.com | -   |
+      | User Test      | student4@example.com | -   |
+      | Turtle Manatee | student5@example.com | -   |
 
   Scenario: A teacher can search for all users then filter with the initials bar
     Given I set the field "Search users" to "User"
     And I click on "View all results (3)" "option_role"
     And the following should exist in the "user-grades" table:
-      | -1-                | -2-                  | -3- |
-      | User Example       | student3@example.com | -   |
-      | User Test          | student4@example.com | -   |
-      | Dummy User         | student2@example.com | -   |
+      | -1-          | -2-                  | -3- |
+      | User Example | student3@example.com | -   |
+      | User Test    | student4@example.com | -   |
+      | Dummy User   | student2@example.com | -   |
     And the following should not exist in the "user-grades" table:
-      | -1-                | -2-                  | -3- |
-      | Student 1          | student1@example.com | -   |
-      | Teacher 1          | teacher1@example.com | -   |
-      | Turtle Manatee     | student5@example.com | -   |
+      | -1-            | -2-                  | -3- |
+      | Student 1      | student1@example.com | -   |
+      | Teacher 1      | teacher1@example.com | -   |
+      | Turtle Manatee | student5@example.com | -   |
     When I click on "Filter by name" "combobox"
     And I select "E" in the "Last name" "core_course > initials bar"
     And I press "Apply"
     Then the following should exist in the "user-grades" table:
-      | -1-                | -2-                  | -3- |
-      | User Example       | student3@example.com | -   |
+      | -1-          | -2-                  | -3- |
+      | User Example | student3@example.com | -   |
     And the following should not exist in the "user-grades" table:
-      | -1-                | -2-                  | -3- |
-      | Student 1          | student1@example.com | -   |
-      | Teacher 1          | teacher1@example.com | -   |
-      | Dummy User         | student2@example.com | -   |
-      | User Test          | student4@example.com | -   |
-      | Turtle Manatee     | student5@example.com | -   |
+      | -1-            | -2-                  | -3- |
+      | Student 1      | student1@example.com | -   |
+      | Teacher 1      | teacher1@example.com | -   |
+      | Dummy User     | student2@example.com | -   |
+      | User Test      | student4@example.com | -   |
+      | Turtle Manatee | student5@example.com | -   |
 
   # This can be expanded for left/right/home & end keys but will have to be done in conjunction with the non mini render.
   @accessibility

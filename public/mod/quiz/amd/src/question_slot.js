@@ -24,6 +24,7 @@
 
 import {call as fetchMany} from 'core/ajax';
 import Notification from 'core/notification';
+import Pending from 'core/pending';
 
 /**
  * Set the question version for the slot.
@@ -48,6 +49,8 @@ const registerEventListeners = () => {
         if (!e.target.matches('[data-action="mod_quiz-select_slot"][data-slot-id]')) {
             return;
         }
+
+        new Pending('mod_quiz/question_slot:changeSlot');
 
         const slotId = e.target.dataset.slotId;
         const newVersion = parseInt(e.target.value);

@@ -21,6 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import search_combobox from 'core/comboboxsearch/search_combobox';
+import Pending from 'core/pending';
 import {getStrings} from 'core/str';
 import {renderForPromise, replaceNodeContents} from 'core/templates';
 import $ from 'jquery';
@@ -191,6 +192,7 @@ export default class UserSearch extends search_combobox {
      * @param {Event} e The change event.
      */
     changeHandler(e) {
+        new Pending('core/user/comboboxsearch:changeHandler');
         this.toggleDropdown(); // Otherwise the dropdown stays open when user choose an option using keyboard.
 
         if (e.target.value === '0') {
@@ -206,6 +208,7 @@ export default class UserSearch extends search_combobox {
      * @param {KeyboardEvent} e The triggering event that we are working with.
      */
     keyHandler(e) {
+        const pending = new Pending('core/user/comboboxsearch:keyHandler');
         // Switch the key presses to handle keyboard nav.
         switch (e.key) {
             case 'ArrowUp':
@@ -231,6 +234,7 @@ export default class UserSearch extends search_combobox {
                 this.searchInput.focus({preventScroll: true});
                 break;
         }
+        pending.resolve();
     }
 
     /**

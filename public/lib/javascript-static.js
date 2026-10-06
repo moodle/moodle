@@ -222,8 +222,8 @@ M.util.show_confirm_dialog = (e, {
     }
 
     require(
-        ['core/notification', 'core/str', 'core_form/changechecker', 'core/normalise'],
-        function(Notification, Str, FormChangeChecker, Normalise) {
+        ['core/notification', 'core/str', 'core_form/changechecker', 'core/normalise', 'core/pending'],
+        function(Notification, Str, FormChangeChecker, Normalise, Pending) {
 
             if (scope === null && e.target) {
                 // Fall back to the event target if no scope provided.
@@ -240,8 +240,10 @@ M.util.show_confirm_dialog = (e, {
                 continuelabel || Str.get_string('yes', 'moodle'),
             )
             .then(() => {
+                const pending = new Pending('core/show_confirm_dialog:confirmation');
                 if (callback) {
                     callback.apply(scope, callbackargs);
+                    pending.resolve();
                     return;
                 }
 
@@ -250,6 +252,7 @@ M.util.show_confirm_dialog = (e, {
                         `M.util.show_confirm_dialog: No target found for event`,
                         e
                     );
+                    pending.resolve();
                     return;
                 }
 
@@ -267,17 +270,20 @@ M.util.show_confirm_dialog = (e, {
                     form.appendChild(hiddenValue);
                     FormChangeChecker.markFormAsDirty(form);
                     form.submit();
+                    pending.resolve();
                     return;
                 } else if (target.closest('form')) {
                     const form = target.closest('form');
                     FormChangeChecker.markFormAsDirty(form);
                     form.submit();
+                    pending.resolve();
                     return;
                 }
                 window.console.error(
                     `Element of type ${target.tagName} is not supported by M.util.show_confirm_dialog.`
                 );
 
+                pending.resolve();
                 return;
             })
             .catch(() => {
@@ -926,6 +932,10 @@ function right_to_left() {
 }
 
 function openpopup(event, args) {
+    M.util.js_pending('core/lib/javascript-static:openpopup');
+    var resolvePending = function() {
+        M.util.js_complete('core/lib/javascript-static:openpopup');
+    };
 
     if (event) {
         if (event.preventDefault) {
@@ -960,6 +970,7 @@ function openpopup(event, args) {
     }
     var windowobj = window.open(fullurl,args.name,args.options);
     if (!windowobj) {
+        resolvePending();
         return true;
     }
 
@@ -990,6 +1001,7 @@ function openpopup(event, args) {
     }
     windowobj.focus();
 
+    resolvePending();
     return false;
 }
 

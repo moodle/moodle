@@ -205,6 +205,7 @@ export default class Component extends DndCmItem {
      * @param {Event} event
      */
     _activityAnchor(event) {
+        const pendingPromise = new Pending(`courseformat/activity:anchor`);
         const cm = this.reactive.get('cm', this.id);
         // If the user cannot access the element but the element is present in the page
         // the new url should be an anchor link.
@@ -218,6 +219,7 @@ export default class Component extends DndCmItem {
                 this.reactive.dispatch('setPageItem', 'cm', cm.id);
                 pendingAnchor.resolve();
             }, 50);
+            pendingPromise.resolve();
             return;
         }
         // If the element is not present in the page we need to go to the specific section.

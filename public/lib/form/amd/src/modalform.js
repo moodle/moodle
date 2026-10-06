@@ -368,9 +368,11 @@ export default class ModalForm {
      * Submit the form via AJAX call to the core_form_dynamic_form WS
      */
     async submitFormAjax() {
+        const pendingPromise = new Pending('core_form/modalform:submitFormAjax');
         // If we found invalid fields, focus on the first one and do not submit via ajax.
         if (!this.validateElements()) {
             this.trigger(this.events.CLIENT_VALIDATION_ERROR, null, false);
+            pendingPromise.resolve();
             return;
         }
         this.disableButtons();
@@ -404,12 +406,14 @@ export default class ModalForm {
                     this.modal.hide();
                 }
             }
+            pendingPromise.resolve();
             return null;
         })
         .catch(exception => {
             this.enableButtons();
             this.onSubmitError(exception);
         });
+        pendingPromise.resolve();
     }
 
     /**

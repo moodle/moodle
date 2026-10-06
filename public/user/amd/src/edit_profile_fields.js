@@ -14,6 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import ModalForm from 'core_form/modalform';
+import Pending from 'core/pending';
 import {getString} from 'core/str';
 
 /**
@@ -46,7 +47,10 @@ export const init = () => {
                 modalConfig: {title},
                 returnFocus: element,
             });
-            form.addEventListener(form.events.FORM_SUBMITTED, () => window.location.reload());
+            form.addEventListener(form.events.FORM_SUBMITTED, () => {
+                new Pending('core_user/edit_profile_fields:submitted');
+                window.location.reload();
+            });
             form.show();
         }
 
@@ -59,7 +63,10 @@ export const init = () => {
                 modalConfig: {title: getString('profileeditfield', 'admin', element.getAttribute('data-name'))},
                 returnFocus: element,
             });
-            form.addEventListener(form.events.FORM_SUBMITTED, () => window.location.reload());
+            form.addEventListener(form.events.FORM_SUBMITTED, () => {
+                new Pending('core_user/edit_profile_fields:submitted');
+                window.location.reload();
+            });
             form.show();
         }
 
@@ -72,7 +79,10 @@ export const init = () => {
                 modalConfig: {title: getString('profilecreatenewfield', 'admin', element.getAttribute('data-datatypename'))},
                 returnFocus: element,
             });
-            form.addEventListener(form.events.FORM_SUBMITTED, () => window.location.reload());
+            form.addEventListener(form.events.FORM_SUBMITTED, () => {
+                new Pending('core_user/edit_profile_fields:submitted');
+                window.location.reload();
+            });
             form.show();
         }
     });

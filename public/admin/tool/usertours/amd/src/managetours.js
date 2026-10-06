@@ -35,6 +35,7 @@ const removeTourFromLink = targetUrl => {
         getString('yes', 'core'),
         getString('no', 'core'),
         () => {
+            M.util.js_pending('core/usertours:removeTourFromLink');
             window.location = targetUrl;
         }
     );

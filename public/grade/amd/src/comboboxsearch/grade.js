@@ -21,6 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import search_combobox from 'core/comboboxsearch/search_combobox';
+import Pending from 'core/pending';
 import * as Repository from 'core_grades/searchwidget/repository';
 import {renderForPromise, replaceNodeContents} from 'core/templates';
 import {debounce} from 'core/utils';
@@ -193,7 +194,8 @@ export default class GradeItemSearch extends search_combobox {
      *
      * @param {MouseEvent} e The triggering event that we are working with.
      */
-    async clickHandler(e) {
+    clickHandler(e) {
+        const pendingPromise = new Pending('core/combosearchbox/grade:clickHandler');
         if (e.target.closest(this.selectors.clearSearch)) {
             e.stopPropagation();
             // Clear the entered search query in the search bar.
@@ -201,9 +203,11 @@ export default class GradeItemSearch extends search_combobox {
             this.setSearchTerms(this.searchInput.value);
             this.searchInput.focus();
             this.clearSearchButton.classList.add('d-none');
+
             // Display results.
-            await this.filterrenderpipe();
+            this.filterrenderpipe();
         }
+        pendingPromise.resolve();
     }
 
     /**
@@ -212,6 +216,7 @@ export default class GradeItemSearch extends search_combobox {
      * @param {Event} e The change event.
      */
     changeHandler(e) {
+        new Pending('core/combosearchbox/grade:changeHandler');
         window.location = this.selectOneLink(e.target.value);
     }
 

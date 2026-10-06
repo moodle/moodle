@@ -22,6 +22,7 @@
  */
 import DynamicForm from 'core_form/dynamicform';
 import ModalForm from 'core_form/modalform';
+import Pending from 'core/pending';
 import {getString} from 'core/str';
 import {add as addToast} from 'core/toast';
 
@@ -43,7 +44,10 @@ export const initDynamicForm = (containerSelector, formClass) => {
     });
 
     // Reload the page on cancel.
-    form.addEventListener(form.events.CANCEL_BUTTON_PRESSED, () => window.location.reload());
+    form.addEventListener(form.events.CANCEL_BUTTON_PRESSED, () => {
+        new Pending('core_user/private_files:cancelled');
+        window.location.reload();
+    });
 };
 
 /**
@@ -61,7 +65,10 @@ export const initModal = (elementSelector, formClass) => {
             modalConfig: {title: getString('privatefilesmanage')},
             returnFocus: e.target,
         });
-        form.addEventListener(form.events.FORM_SUBMITTED, () => window.location.reload());
+        form.addEventListener(form.events.FORM_SUBMITTED, () => {
+            new Pending('core_user/private_files:submitted');
+            window.location.reload();
+        });
         form.show();
     });
 };

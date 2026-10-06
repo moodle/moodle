@@ -112,15 +112,16 @@ async function enableBadge(badgeId, badgeName, reportElement) {
             showEnableResultToast(badgeName, result);
             // Report element is present, reload the table.
             dispatchEvent(reportEvents.tableReload, {preservePagination: true}, reportElement);
+            pendingPromise.resolve();
         } else {
             // Report element is not present, add the parameters to the current page to display the message.
             const awards = result.result?.pop().awards;
             document.location = document.location.pathname + `?id=${badgeId}&awards=${awards}`;
         }
     } catch (error) {
+        pendingPromise.resolve();
         Notification.exception(error);
     }
-    pendingPromise.resolve();
 }
 
 /**
@@ -158,17 +159,20 @@ async function disableBadge(badgeId, badgeName, reportElement) {
         }
     };
 
+    const pendingPromise = new Pending('core_badges/disable');
     try {
         const result = await Ajax.call([request])[0];
         if (reportElement) {
             // Report element is present, show the message in a toast and reload the table.
             showDisableResultToast(badgeName, result);
             dispatchEvent(reportEvents.tableReload, {preservePagination: true}, reportElement);
+            pendingPromise.resolve();
         } else {
             // Report element is not present, the page should be reloaded.
             document.location = document.location.pathname + `?id=${badgeId}`;
         }
     } catch (error) {
+        pendingPromise.resolve();
         Notification.exception(error);
     }
 }

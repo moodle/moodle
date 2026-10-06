@@ -25,6 +25,7 @@ import {getString} from 'core/str';
 import {prefetchStrings} from 'core/prefetch';
 import {relativeUrl} from 'core/url';
 import {saveCancel, deleteCancel} from 'core/notification';
+import Pending from 'core/pending';
 import Templates from 'core/templates';
 
 prefetchStrings('admin', ['confirmation']);
@@ -121,12 +122,14 @@ const registerEditorToggler = (instanceId, mode) => {
                 getString('enabletemplateeditorcheck', 'mod_data'),
                 getString('editorenable', 'mod_data'),
                 () => {
+                    new Pending('mod_data/templateseditor:confirmation');
                     window.location = relativeUrl('/mod/data/templates.php', {d: instanceId, mode: mode, useeditor: true});
                 },
                 null,
                 {triggerElement: event.target}
             );
         } else {
+            new Pending('mod_data/templateseditor:confirmation');
             window.location = relativeUrl('/mod/data/templates.php', {d: instanceId, mode: mode, useeditor: false});
         }
     });

@@ -22,6 +22,7 @@
  */
 import ModalForm from 'core_form/modalform';
 import {getString} from 'core/str';
+import Pending from 'core/pending';
 
 /**
  * Initialize upload files to the content bank form as Modal form.
@@ -45,6 +46,7 @@ export const initModal = (elementSelector, formClass, contextId, contentId) => {
             returnFocus: e.target,
         });
         form.addEventListener(form.events.FORM_SUBMITTED, (event) => {
+            new Pending('core_contentbank/upload:formSubmitted');
             document.location = event.detail.returnurl;
         });
         form.show();

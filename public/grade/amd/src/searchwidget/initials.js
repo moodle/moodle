@@ -132,6 +132,7 @@ const registerListenerEvents = (callingLink, gpr_userid = null, gpr_search = nul
             // Handle form submissions.
             if (e.target.closest(`${selectors.formDropdown}`) && e.target.type === selectors.formItems.type) {
                 if (e.target.dataset.action === selectors.formItems.save) {
+                    new Pending('core/searchwidget/initials:formSubmission');
                     // Ensure we strip out the value (All) as it messes with the PHP side of the initials bar.
                     // Then we will redirect the user back onto the page with new filters applied.
                     const params = {
@@ -146,7 +147,9 @@ const registerListenerEvents = (callingLink, gpr_userid = null, gpr_search = nul
                     window.location = Url.relativeUrl(callingLink, params);
                 }
                 if (e.target.dataset.action === selectors.formItems.cancel) {
+                    const pending = new Pending('core/searchwidget/initials:formCancellation');
                     Dropdown.getOrCreateInstance(document.querySelector(`.${selectors.targetButton}`)).toggle();
+                    pending.resolve();
                 }
             }
         });
