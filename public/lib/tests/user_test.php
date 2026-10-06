@@ -1068,4 +1068,40 @@ final class user_test extends \advanced_testcase {
         $this->assertSame('', $systemuser->theme);
         $this->assertObjectNotHasProperty('description', $systemuser);
     }
+
+    /**
+     * Test that any outstanding forgot-password tokens are invalidated when a user's email address changes.
+     *
+     * @covers \core_user::update_user
+     */
+    public function test_update_user_invalidates_password_reset_tokens_on_email_change(): void {
+        global $DB;
+
+        $user = $this->getDataGenerator()->create_user(['email' => 'original@example.com']);
+
+        // Simulate an outstanding forgot-password token for the user.
+        $resetrecord = (object) [
+            'userid' => $user->id,
+            'timerequested' => time(),
+            'token' => random_string(32),
+        ];
+        $DB->insert_record('user_password_resets', $resetrecord);
+        $this->assertTrue($DB->record_exists('user_password_resets', ['userid' => $user->id]));
+
+        // Updating an unrelated field should not touch the outstanding token.
+        $updateduser = (object) [
+            'id' => $user->id,
+            'firstname' => 'Changed',
+        ];
+        \core_user::update_user($updateduser);
+        $this->assertTrue($DB->record_exists('user_password_resets', ['userid' => $user->id]));
+
+        // Changing the email address should invalidate the outstanding token.
+        $updateduser = (object) [
+            'id' => $user->id,
+            'email' => 'changed@example.com',
+        ];
+        \core_user::update_user($updateduser);
+        $this->assertFalse($DB->record_exists('user_password_resets', ['userid' => $user->id]));
+    }
 }
