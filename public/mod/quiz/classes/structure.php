@@ -1421,7 +1421,7 @@ class structure {
      */
     public function set_section_heading($id, $newheading) {
         global $DB;
-        $section = $DB->get_record('quiz_sections', ['id' => $id], '*', MUST_EXIST);
+        $section = $DB->get_record('quiz_sections', ['id' => $id, 'quizid' => $this->get_quizid()], '*', MUST_EXIST);
         $section->heading = $newheading;
         $DB->update_record('quiz_sections', $section);
 
@@ -1447,7 +1447,7 @@ class structure {
      */
     public function set_section_shuffle($id, $shuffle) {
         global $DB;
-        $section = $DB->get_record('quiz_sections', ['id' => $id], '*', MUST_EXIST);
+        $section = $DB->get_record('quiz_sections', ['id' => $id, 'quizid' => $this->get_quizid()], '*', MUST_EXIST);
         $section->shufflequestions = $shuffle;
         $DB->update_record('quiz_sections', $section);
 
@@ -1470,11 +1470,11 @@ class structure {
      */
     public function remove_section_heading($sectionid) {
         global $DB;
-        $section = $DB->get_record('quiz_sections', ['id' => $sectionid], '*', MUST_EXIST);
+        $section = $DB->get_record('quiz_sections', ['id' => $sectionid, 'quizid' => $this->get_quizid()], '*', MUST_EXIST);
         if ($section->firstslot == 1) {
             throw new coding_exception('Cannot remove the first section in a quiz.');
         }
-        $DB->delete_records('quiz_sections', ['id' => $sectionid]);
+        $DB->delete_records('quiz_sections', ['id' => $sectionid, 'quizid' => $this->get_quizid()]);
 
         // Log page deleted created event.
         $firstslot = $DB->get_record('quiz_slots', ['quizid' => $this->get_quizid(), 'slot' => $section->firstslot]);
