@@ -477,7 +477,7 @@ function h5pactivity_pluginfile($course, $cm, context $context,
     if (empty($file)) {
         return false;
     }
-    send_stored_file($file, $lifetime, 0, false, $options);
+    send_stored_file($file, null, 0, false, $options);
 }
 
 /**
