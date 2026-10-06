@@ -2952,6 +2952,62 @@ EOF;
     }
 
     /**
+     * Test that updating a user's password invalidates any outstanding forgot-password tokens.
+     *
+     * @covers ::update_internal_user_password
+     */
+    public function test_update_internal_user_password_invalidates_password_reset_tokens(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user(['auth' => 'manual']);
+
+        $resetrecord = (object) [
+            'userid' => $user->id,
+            'timerequested' => time(),
+            'token' => random_string(32),
+        ];
+        $DB->insert_record('user_password_resets', $resetrecord);
+        $this->assertTrue($DB->record_exists('user_password_resets', ['userid' => $user->id]));
+
+        update_internal_user_password($user, 'newpassword');
+
+        $this->assertFalse($DB->record_exists('user_password_resets', ['userid' => $user->id]));
+    }
+
+    /**
+     * Test that a rehash-only update (e.g. a legacy hash being upgraded on login, with the
+     * password itself unchanged) does not invalidate outstanding forgot-password tokens.
+     *
+     * @covers ::update_internal_user_password
+     */
+    public function test_update_internal_user_password_keeps_password_reset_tokens_on_rehash_only(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $password = 'testpassword';
+        $user = $this->getDataGenerator()->create_user(['auth' => 'manual']);
+
+        // Set a legacy (bcrypt) hash for the same password, simulating an old account.
+        $bcrypthash = password_hash($password, PASSWORD_BCRYPT);
+        $DB->set_field('user', 'password', $bcrypthash, ['id' => $user->id]);
+        $user->password = $bcrypthash;
+
+        $resetrecord = (object) [
+            'userid' => $user->id,
+            'timerequested' => time(),
+            'token' => random_string(32),
+        ];
+        $DB->insert_record('user_password_resets', $resetrecord);
+
+        // Updating with the same password only triggers a rehash (algorithm upgrade), not a real change.
+        update_internal_user_password($user, $password);
+
+        $this->assertFalse(password_is_legacy_hash($user->password));
+        $this->assertTrue($DB->record_exists('user_password_resets', ['userid' => $user->id]));
+    }
+
+    /**
      * Testing that if the password is not cached, that it does not update
      * the user table and fire event.
      *

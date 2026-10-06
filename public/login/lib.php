@@ -146,9 +146,8 @@ function core_login_process_password_reset($username, $email) {
                 $resetrecord = core_login_generate_password_reset($user);
                 $sendemail = true;
             } else if ($resetinprogress->timerequested < (time() - $CFG->pwresettime)) {
-                // Preexisting, but expired request - delete old record & create new one.
+                // Preexisting, but expired request.
                 // Uncommon case - expired requests are cleaned up by cron.
-                $DB->delete_records('user_password_resets', array('id' => $resetinprogress->id));
                 $resetrecord = core_login_generate_password_reset($user);
                 $sendemail = true;
             } else if (empty($resetinprogress->timererequested)) {
@@ -315,11 +314,19 @@ function core_login_process_password_set($token) {
 }
 
 /** Create a new record in the database to track a new password set request for user.
+ *
+ * Any existing outstanding password reset tokens for this user are removed first, so only the
+ * newly generated token remains valid.
+ *
  * @param object $user the user record, the requester would like a new password set for.
  * @return record created.
  */
 function core_login_generate_password_reset ($user) {
     global $DB;
+
+    // Remove any existing tokens for this user, as they are being superseded by the new one.
+    $DB->delete_records('user_password_resets', ['userid' => $user->id]);
+
     $resetrecord = new stdClass();
     $resetrecord->timerequested = time();
     $resetrecord->userid = $user->id;

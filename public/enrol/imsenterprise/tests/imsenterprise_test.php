@@ -160,6 +160,44 @@ final class imsenterprise_test extends \advanced_testcase {
         $this->assertEquals($imsuser->lastname, $dbuser->lastname);
     }
 
+    /**
+     * Updating a user's email address via an IMS Enterprise import should invalidate any outstanding
+     * forgot-password tokens for that user, the same way changing the email via core\user::update_user() does.
+     *
+     * @covers \enrol_imsenterprise_plugin::process_person_tag
+     */
+    public function test_user_update_email_invalidates_password_reset_tokens(): void {
+        global $DB;
+
+        $user = $this->getDataGenerator()->create_user([
+            'idnumber' => 'test-update-user',
+            'email' => 'original@example.com',
+        ]);
+
+        $resetrecord = (object) [
+            'userid' => $user->id,
+            'timerequested' => time(),
+            'token' => random_string(32),
+        ];
+        $DB->insert_record('user_password_resets', $resetrecord);
+        $this->assertTrue($DB->record_exists('user_password_resets', ['userid' => $user->id]));
+
+        $imsuser = new \stdClass();
+        $imsuser->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_UPDATE;
+        $imsuser->username = $user->idnumber;
+        $imsuser->email = 'changed@example.com';
+        $imsuser->firstname = 'U';
+        $imsuser->lastname = '3';
+
+        $this->set_xml_file([$imsuser]);
+        $this->imsplugin->cron();
+
+        $dbuser = $DB->get_record('user', ['id' => $user->id], '*', MUST_EXIST);
+        $this->assertEquals($imsuser->email, $dbuser->email);
+
+        $this->assertFalse($DB->record_exists('user_password_resets', ['userid' => $user->id]));
+    }
+
     public function test_user_update_disabled(): void {
         global $DB;
 

@@ -547,6 +547,10 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             if ($imsupdateusers) {
                 if ($id = $DB->get_field('user', 'id', array('idnumber' => $person->idnumber))) {
                     $person->id = $id;
+                    if (isset($person->email) && $DB->get_field('user', 'email', ['id' => $id]) !== $person->email) {
+                        // Invalidate any outstanding forgot-password tokens, as they were sent to the old email address.
+                        $DB->delete_records('user_password_resets', ['userid' => $id]);
+                    }
                     $DB->update_record('user', $person);
                     $this->log_line("Updated user $person->username");
                 } else {
