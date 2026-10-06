@@ -1443,6 +1443,174 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
     }
 
     /**
+     * Disabling both dates must not turn the previous enrolment period into an end date near the Unix epoch.
+     */
+    public function test_submit_user_enrolment_form_disables_dates(): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $generator = self::getDataGenerator();
+        $course = $generator->create_course();
+        $student = $generator->create_user();
+        $teacher = $generator->create_user();
+        $manualplugin = enrol_get_plugin('manual');
+        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
+        $start = strtotime('2026-01-01 12:00:00 UTC');
+        $manualplugin->enrol_user($instance, $student->id, $studentroleid, $start, $start + 7 * DAYSECS);
+        $manualplugin->enrol_user($instance, $teacher->id, $teacherroleid);
+        $ue = $DB->get_record('user_enrolments', ['enrolid' => $instance->id, 'userid' => $student->id], '*', MUST_EXIST);
+
+        $teacher->ignoresesskey = true;
+        self::setUser($teacher);
+        require_once($CFG->dirroot . '/enrol/editenrolment_form.php');
+        $form = new enrol_user_enrolment_form(null, [
+            'ue' => $ue,
+            'enrolinstancename' => $manualplugin->get_instance_name($instance),
+            'modal' => true,
+        ]);
+        $this->assertEquals([7 * DAYSECS], (new \ReflectionProperty(\moodleform::class, '_form'))
+            ->getValue($form)->getElementValue('duration'));
+
+        $formdata = enrol_user_enrolment_form::mock_generate_submit_keys([
+            'ue' => $ue->id,
+            'status' => ENROL_USER_ACTIVE,
+            'timestart' => ['day' => 1, 'month' => 1, 'year' => 2026, 'hour' => 12, 'minute' => 0],
+            'timeend' => ['day' => 8, 'month' => 1, 'year' => 2026, 'hour' => 12, 'minute' => 0],
+        ]);
+        $result = core_enrol_external::submit_user_enrolment_form(http_build_query($formdata));
+        $this->assertTrue($result['result']);
+
+        $ue = $DB->get_record('user_enrolments', ['id' => $ue->id], '*', MUST_EXIST);
+        $this->assertEquals(0, $ue->timestart);
+        $this->assertEquals(0, $ue->timeend);
+
+        $formdata['duration'] = 7 * DAYSECS;
+        $result = core_enrol_external::submit_user_enrolment_form(http_build_query($formdata));
+        $this->assertTrue($result['result']);
+        $ue = $DB->get_record('user_enrolments', ['id' => $ue->id], '*', MUST_EXIST);
+        $this->assertEquals(0, $ue->timeend);
+
+        $form = new enrol_user_enrolment_form(null, [
+            'ue' => $ue,
+            'enrolinstancename' => $manualplugin->get_instance_name($instance),
+            'modal' => true,
+        ]);
+        $mform = (new \ReflectionProperty(\moodleform::class, '_form'))->getValue($form);
+        $this->assertArrayNotHasKey('enabled', $mform->getElementValue('timestart'));
+        $this->assertArrayNotHasKey('enabled', $mform->getElementValue('timeend'));
+    }
+
+    /**
+     * A period selected explicitly must still calculate an end date from an enabled start date.
+     */
+    public function test_submit_user_enrolment_form_with_period(): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $generator = self::getDataGenerator();
+        $course = $generator->create_course();
+        $student = $generator->create_user();
+        $teacher = $generator->create_user();
+        $manualplugin = enrol_get_plugin('manual');
+        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
+        $manualplugin->enrol_user($instance, $student->id, $studentroleid);
+        $manualplugin->enrol_user($instance, $teacher->id, $teacherroleid);
+        $ue = $DB->get_record('user_enrolments', ['enrolid' => $instance->id, 'userid' => $student->id], '*', MUST_EXIST);
+
+        $teacher->ignoresesskey = true;
+        self::setUser($teacher);
+        require_once($CFG->dirroot . '/enrol/editenrolment_form.php');
+        $formdata = enrol_user_enrolment_form::mock_generate_submit_keys([
+            'ue' => $ue->id,
+            'status' => ENROL_USER_ACTIVE,
+            'timestart' => ['day' => 1, 'month' => 1, 'year' => 2026, 'hour' => 12, 'minute' => 0, 'enabled' => 1],
+            'timeend' => ['day' => 8, 'month' => 1, 'year' => 2026, 'hour' => 12, 'minute' => 0],
+            'duration' => 7 * DAYSECS,
+        ]);
+        $result = core_enrol_external::submit_user_enrolment_form(http_build_query($formdata));
+        $this->assertTrue($result['result']);
+
+        $ue = $DB->get_record('user_enrolments', ['id' => $ue->id], '*', MUST_EXIST);
+        $this->assertGreaterThan(0, $ue->timestart);
+        $this->assertEquals($ue->timestart + 7 * DAYSECS, $ue->timeend);
+    }
+
+    /**
+     * A changed period must still calculate a new end date when the end date selector is disabled.
+     */
+    public function test_submit_user_enrolment_form_changes_existing_period(): void {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+        $generator = self::getDataGenerator();
+        $course = $generator->create_course();
+        $student = $generator->create_user();
+        $teacher = $generator->create_user();
+        $manualplugin = enrol_get_plugin('manual');
+        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $studentroleid = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
+        $start = strtotime('2026-01-01 12:00:00 UTC');
+        $manualplugin->enrol_user($instance, $student->id, $studentroleid, $start, $start + 7 * DAYSECS);
+        $manualplugin->enrol_user($instance, $teacher->id, $teacherroleid);
+        $ue = $DB->get_record('user_enrolments', ['enrolid' => $instance->id, 'userid' => $student->id], '*', MUST_EXIST);
+
+        $teacher->ignoresesskey = true;
+        self::setUser($teacher);
+        require_once($CFG->dirroot . '/enrol/editenrolment_form.php');
+        $formdata = enrol_user_enrolment_form::mock_generate_submit_keys([
+            'ue' => $ue->id,
+            'status' => ENROL_USER_ACTIVE,
+            'timestart' => ['day' => 1, 'month' => 1, 'year' => 2026, 'hour' => 12, 'minute' => 0, 'enabled' => 1],
+            'duration' => 14 * DAYSECS,
+        ]);
+        $result = core_enrol_external::submit_user_enrolment_form(http_build_query($formdata));
+        $this->assertTrue($result['result']);
+
+        $ue = $DB->get_record('user_enrolments', ['id' => $ue->id], '*', MUST_EXIST);
+        $this->assertEquals($ue->timestart + 14 * DAYSECS, $ue->timeend);
+    }
+
+    /**
+     * Unticking only the end date must leave the enrolment without an end date, even if it previously had a period.
+     */
+    public function test_submit_user_enrolment_form_disables_end_date_only(): void {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+        $generator = self::getDataGenerator();
+        $course = $generator->create_course();
+        $student = $generator->create_user();
+        $teacher = $generator->create_user();
+        $manualplugin = enrol_get_plugin('manual');
+        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $start = strtotime('2026-01-01 12:00:00 UTC');
+        $manualplugin->enrol_user($instance, $student->id, null, $start, $start + 7 * DAYSECS);
+        $manualplugin->enrol_user(
+            $instance,
+            $teacher->id,
+            $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST),
+        );
+        $ue = $DB->get_record('user_enrolments', ['enrolid' => $instance->id, 'userid' => $student->id], '*', MUST_EXIST);
+        $teacher->ignoresesskey = true;
+        self::setUser($teacher);
+        require_once($CFG->dirroot . '/enrol/editenrolment_form.php');
+        $formdata = enrol_user_enrolment_form::mock_generate_submit_keys([
+            'ue' => $ue->id,
+            'status' => ENROL_USER_ACTIVE,
+            'timestart' => ['day' => 1, 'month' => 1, 'year' => 2026, 'hour' => 12, 'minute' => 0, 'enabled' => 1],
+        ]);
+        $result = core_enrol_external::submit_user_enrolment_form(http_build_query($formdata));
+        $this->assertTrue($result['result']);
+        $ue = $DB->get_record('user_enrolments', ['id' => $ue->id], '*', MUST_EXIST);
+        $this->assertGreaterThan(0, $ue->timestart);
+        $this->assertEquals(0, $ue->timeend);
+    }
+
+    /**
      * Test for core_enrol_external::unenrol_user_enrolment().
      */
     public function test_unenerol_user_enrolment(): void {
