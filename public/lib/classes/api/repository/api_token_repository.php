@@ -236,8 +236,6 @@ class api_token_repository {
      * @return api_token_entity[]
      */
     public function get_user_tokens(int $userid, bool $includeinactive = false): array {
-        global $DB;
-
         $select = "userid = :userid";
         $params = ['userid' => $userid];
 
@@ -249,15 +247,97 @@ class api_token_repository {
             ];
         }
 
-        $records = $DB->get_records_select('rest_api_tokens', $select, $params, 'timecreated DESC');
+        return $this->get_tokens_select($select, $params, sort: 'timecreated DESC');
+    }
 
-        if (empty($records)) {
-            return [];
+    /**
+     * Get the tokens whose owners are due a reminder that they are about to expire.
+     *
+     * @param int|null $userid Only this owner's tokens, or everyone's if null.
+     * @return api_token_entity[]
+     */
+    public function get_tokens_to_warn(?int $userid = null): array {
+        $now = di::get(clock::class)->time();
+        $select = "revoked = :revoked AND expirytime > :now AND expirytime <= :horizon AND timeexpirednotified IS NULL";
+        $params = [
+            'revoked' => api_token_entity::REVOKED_NO,
+            'now' => $now,
+            'horizon' => $now + (max(token_manager::REMINDER_DAYS) * DAYSECS),
+        ];
+
+        return array_filter(
+            $this->get_tokens_select($select, $params, $userid),
+            fn(api_token_entity $token) => token_manager::is_reminder_due(
+                $token->get_timecreated(),
+                $token->get_expirytime(),
+                $token->get_timeexpirywarned(),
+            ),
+        );
+    }
+
+    /**
+     * Get the recently expired tokens whose owners have not been told.
+     *
+     * @param int|null $userid Only this owner's tokens, or everyone's if null.
+     * @return api_token_entity[]
+     */
+    public function get_expired_tokens_to_notify(?int $userid = null): array {
+        $now = di::get(clock::class)->time();
+        $select = "revoked = :revoked AND expirytime <= :now AND expirytime > :cutoff AND timeexpirednotified IS NULL";
+        $params = [
+            'revoked' => api_token_entity::REVOKED_NO,
+            'now' => $now,
+            'cutoff' => $now - (token_manager::EXPIRED_NOTICE_DAYS * DAYSECS),
+        ];
+
+        return $this->get_tokens_select($select, $params, $userid);
+    }
+
+    /**
+     * Record that a token's owner has just been reminded it is about to expire.
+     *
+     * @param int $tokenid The token ID.
+     * @return void
+     */
+    public function mark_expiry_warned(int $tokenid): void {
+        global $DB;
+
+        $DB->set_field('rest_api_tokens', 'timeexpirywarned', di::get(clock::class)->time(), ['id' => $tokenid]);
+    }
+
+    /**
+     * Record that a token's owner has been told it has expired.
+     *
+     * @param int $tokenid The token ID.
+     * @return void
+     */
+    public function mark_expired_notified(int $tokenid): void {
+        global $DB;
+
+        $DB->set_field('rest_api_tokens', 'timeexpirednotified', di::get(clock::class)->time(), ['id' => $tokenid]);
+    }
+
+    /**
+     * Get the tokens matching a WHERE clause, optionally for one owner only.
+     *
+     * @param string $select The WHERE clause.
+     * @param array $params The clause's parameters.
+     * @param int|null $userid Only this owner's tokens, or everyone's if null.
+     * @param string $sort The ORDER BY clause.
+     * @return api_token_entity[]
+     */
+    protected function get_tokens_select(string $select, array $params, ?int $userid = null, string $sort = 'id'): array {
+        global $DB;
+
+        if ($userid !== null) {
+            $select .= " AND userid = :ownerid";
+            $params['ownerid'] = $userid;
         }
 
-        return array_map(function ($record) {
-            return api_token_entity::create_from_record($record);
-        }, $records);
+        return array_map(
+            fn($record) => api_token_entity::create_from_record($record),
+            $DB->get_records_select('rest_api_tokens', $select, $params, $sort),
+        );
     }
 
     /**

@@ -5206,6 +5206,8 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
         <FIELD NAME="lastaccessed" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Timestamp when the token was last successfully used to authenticate an API request"/>
         <FIELD NAME="lastaccessip" TYPE="char" LENGTH="45" NOTNULL="false" SEQUENCE="false" COMMENT="IP address the token was last used from"/>
+        <FIELD NAME="timeexpirywarned" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="When the owner was last reminded that the token is about to expire"/>
+        <FIELD NAME="timeexpirednotified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="When the owner was told that the token has expired"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

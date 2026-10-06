@@ -166,3 +166,12 @@ Feature: Manage personal access tokens
     When I click on "Revoke" "button" in the "Gradebook sync" "table_row"
     Then I should see "Token revoked"
     And I should see "You have no personal access tokens."
+
+  @javascript
+  Scenario: The expiring soon warning opens when its icon is clicked
+    Given the following "personal access tokens" exist:
+      | user  | name           | expirytime  |
+      | user1 | Gradebook sync | ##+2 days## |
+    And I am on the "user > Personal access tokens" page logged in as "user1"
+    When I click on "Expires within 3 days" "button" in the "Gradebook sync" "table_row"
+    Then I should see "Expires within 3 days" in the ".popover" "css_element"
