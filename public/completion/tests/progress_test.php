@@ -577,4 +577,214 @@ final class progress_test extends \advanced_testcase {
         $completion->update_state($cm2, COMPLETION_COMPLETE, $user2->id);
         $this->assertEquals(100, \core_completion\progress::get_course_progress_percentage($course, $user2->id));
     }
+
+    /**
+     * Data provider for test_get_course_progress_percentage_perf_regression.
+     *
+     * Each case restricts/unrestricts the first activity via a different branch of the
+     * fast-path guard in completion_info::get_user_activities_with_completion() (an
+     * availability condition, or group mode), so both are covered by the same assertions.
+     *
+     * @return array
+     */
+    public static function get_course_progress_percentage_perf_regression_provider(): array {
+        return [
+            'availability restriction' => [
+                'restrict' => function (int $cmid): void {
+                    global $DB;
+                    $availability = tree::get_root_json(
+                        [condition::get_json(condition::DIRECTION_FROM, time() - 3600)]
+                    );
+                    $DB->set_field('course_modules', 'availability', json_encode($availability), ['id' => $cmid]);
+                },
+                'unrestrict' => function (int $cmid): void {
+                    global $DB;
+                    $DB->set_field('course_modules', 'availability', null, ['id' => $cmid]);
+                },
+            ],
+            'group mode restriction' => [
+                'restrict' => function (int $cmid): void {
+                    global $DB;
+                    $DB->set_field('course_modules', 'groupmode', SEPARATEGROUPS, ['id' => $cmid]);
+                },
+                'unrestrict' => function (int $cmid): void {
+                    global $DB;
+                    $DB->set_field('course_modules', 'groupmode', NOGROUPS, ['id' => $cmid]);
+                },
+            ],
+        ];
+    }
+
+    /**
+     * Tests the performance and correctness of the fast path and per-request cache
+     * used when calculating course progress percentage.
+     *
+     * @dataProvider get_course_progress_percentage_perf_regression_provider
+     * @param \Closure $restrict Applies a restriction to a cmid that forces the slow path.
+     * @param \Closure $unrestrict Reverses whatever $restrict did.
+     */
+    public function test_get_course_progress_percentage_perf_regression(\Closure $restrict, \Closure $unrestrict): void {
+        global $DB;
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['enablecompletion' => 1]);
+        $user = $generator->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $generator->enrol_user($user->id, $course->id, $studentrole->id);
+
+        // Two unrestricted activities with completion enabled.
+        $forum1 = $generator->create_module('forum', ['course' => $course->id], ['completion' => COMPLETION_TRACKING_MANUAL]);
+        $forum2 = $generator->create_module('forum', ['course' => $course->id], ['completion' => COMPLETION_TRACKING_MANUAL]);
+
+        $this->setUser($user);
+
+        // Complete one activity, so progress should be 50%.
+        $cm1 = get_coursemodule_from_id('forum', $forum1->cmid);
+        $completion = new \completion_info($course);
+        $completion->update_state($cm1, COMPLETION_COMPLETE, $user->id);
+
+        // The fast path should use fewer DB reads than the slow path.
+        \cache::make_from_params(\cache_store::MODE_REQUEST, 'core', 'course_progress')->purge();
+        get_fast_modinfo($course, $user->id);
+
+        $readsbefore = $DB->perf_get_reads();
+        $completion = new \completion_info($course);
+        $fastmodules = $completion->get_user_activities_with_completion($user->id);
+        $readsfast = $DB->perf_get_reads() - $readsbefore;
+        $this->assertCount(2, $fastmodules, 'Both unrestricted activities should be counted by the fast path.');
+
+        // Restrict one activity to force the slow path.
+        $restrict($forum1->cmid);
+        rebuild_course_cache($course->id, true);
+        get_fast_modinfo($course, $user->id, true);
+
+        $readsbefore = $DB->perf_get_reads();
+        $completion = new \completion_info($course);
+        $slowmodules = $completion->get_user_activities_with_completion($user->id);
+        $readsslow = $DB->perf_get_reads() - $readsbefore;
+        $this->assertCount(2, $slowmodules, 'Both activities remain accessible (the restriction does not exclude this user).');
+
+        $this->assertGreaterThan($readsfast, $readsslow, 'The slow path should use more DB reads than the fast path.');
+
+        // The fast and slow paths should agree on the resulting percentage.
+        \cache::make_from_params(\cache_store::MODE_REQUEST, 'core', 'course_progress')->purge();
+        $slowpct = progress::get_course_progress_percentage($course, $user->id);
+
+        $unrestrict($forum1->cmid);
+        rebuild_course_cache($course->id, true);
+        get_fast_modinfo($course, $user->id, true);
+
+        \cache::make_from_params(\cache_store::MODE_REQUEST, 'core', 'course_progress')->purge();
+        $fastpct = progress::get_course_progress_percentage($course, $user->id);
+
+        $this->assertSame((float)50, (float)$fastpct, 'Fast path must report 50% when one of two activities is completed.');
+        $this->assertSame((float)$slowpct, (float)$fastpct, 'Fast and slow paths must agree on the percentage.');
+
+        // A second call in the same request should be served from cache, with no extra DB reads.
+        \cache::make_from_params(\cache_store::MODE_REQUEST, 'core', 'course_progress')->purge();
+        $pct1 = progress::get_course_progress_percentage($course, $user->id);
+        $readsbefore = $DB->perf_get_reads();
+        $pct2 = progress::get_course_progress_percentage($course, $user->id);
+        $readscached = $DB->perf_get_reads() - $readsbefore;
+
+        $this->assertSame($pct1, $pct2, 'Repeated calls in the same request must return the same value.');
+        $this->assertSame(0, $readscached, 'Repeated calls in the same request must be served from the request cache.');
+    }
+
+    /**
+     * Tests that the per-request course progress cache is purged when completion
+     * criteria are unlocked via completion_info::delete_course_completion_data().
+     *
+     * @covers \completion_info::delete_course_completion_data
+     */
+    public function test_course_progress_cache_invalidated_by_delete_course_completion_data(): void {
+        global $DB;
+
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
+
+        $this->getDataGenerator()->create_module(
+            'forum',
+            ['course' => $course->id],
+            ['completion' => COMPLETION_TRACKING_MANUAL]
+        );
+
+        // Mark the course itself as complete, so progress reports 100% and caches it.
+        $ccompletion = new completion_completion(['course' => $course->id, 'userid' => $user->id]);
+        $ccompletion->mark_complete();
+        $this->assertEquals(100, progress::get_course_progress_percentage($course, $user->id));
+
+        // Unlocking completion criteria wipes course_completions data directly.
+        $completion = new \completion_info($course);
+        $completion->delete_course_completion_data();
+
+        // The next call in the same request must not serve the stale 100% cached value.
+        $this->assertEquals(0, progress::get_course_progress_percentage($course, $user->id));
+    }
+
+    /**
+     * Tests that the per-request course progress cache is purged when a course is
+     * reset via completion_info::delete_all_completion_data().
+     *
+     * @covers \completion_info::delete_all_completion_data
+     */
+    public function test_course_progress_cache_invalidated_by_delete_all_completion_data(): void {
+        global $DB;
+
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
+
+        $forum = $this->getDataGenerator()->create_module(
+            'forum',
+            ['course' => $course->id],
+            ['completion' => COMPLETION_TRACKING_MANUAL]
+        );
+
+        $cm = get_coursemodule_from_id('forum', $forum->cmid);
+        $completion = new \completion_info($course);
+        $completion->update_state($cm, COMPLETION_COMPLETE, $user->id);
+        $this->assertEquals(100, progress::get_course_progress_percentage($course, $user->id));
+
+        // Course reset wipes both module and course completion data.
+        $completion->delete_all_completion_data();
+
+        // The next call in the same request must not serve the stale 100% cached value.
+        $this->assertEquals(0, progress::get_course_progress_percentage($course, $user->id));
+    }
+
+    /**
+     * Tests that the per-request course progress cache is purged when an activity
+     * is deleted via completion_info::delete_all_state().
+     *
+     * @covers \completion_info::delete_all_state
+     */
+    public function test_course_progress_cache_invalidated_by_delete_all_state(): void {
+        global $DB;
+
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
+
+        $forum = $this->getDataGenerator()->create_module(
+            'forum',
+            ['course' => $course->id],
+            ['completion' => COMPLETION_TRACKING_MANUAL]
+        );
+
+        $cm = get_coursemodule_from_id('forum', $forum->cmid);
+        $completion = new \completion_info($course);
+        $completion->update_state($cm, COMPLETION_COMPLETE, $user->id);
+        $this->assertEquals(100, progress::get_course_progress_percentage($course, $user->id));
+
+        // This is called when the activity is deleted.
+        $completion->delete_all_state($cm);
+
+        // The next call in the same request must not serve the stale 100% cached value.
+        $this->assertEquals(0, progress::get_course_progress_percentage($course, $user->id));
+    }
 }

@@ -891,6 +891,7 @@ class completion_info {
         // Difficult to find affected users, just purge all completion cache.
         cache::make('core', 'completion')->purge();
         cache::make('core', 'coursecompletion')->purge();
+        cache::make_from_params(cache_store::MODE_REQUEST, 'core', 'course_progress')->purge();
     }
 
     /**
@@ -945,6 +946,7 @@ class completion_info {
         // Difficult to find affected users, just purge all completion cache.
         cache::make('core', 'completion')->purge();
         cache::make('core', 'coursecompletion')->purge();
+        cache::make_from_params(cache_store::MODE_REQUEST, 'core', 'course_progress')->purge();
     }
 
     /**
@@ -1267,6 +1269,9 @@ class completion_info {
         }
         $transaction->allow_commit();
 
+        // Purge the per-request progress cache so this state change is seen immediately.
+        \cache::make_from_params(\cache_store::MODE_REQUEST, 'core', 'course_progress')->purge();
+
         $cmcontext = context_module::instance($data->coursemoduleid);
 
         $completioncache = cache::make('core', 'completion');
@@ -1371,6 +1376,17 @@ class completion_info {
         foreach ($activities as $cm) {
             // Step 1: Exclude activities hidden from the user on the course page.
             if (!$cm->is_visible_on_course_page()) {
+                continue;
+            }
+
+            // No restrictions means everyone can see this activity,
+            // so skip the costly info_module/capability_checker check (fast path).
+            if (
+                empty($cm->availability) &&
+                (int)$cm->groupmode !== SEPARATEGROUPS &&
+                empty($cm->groupingid)
+            ) {
+                $visible[$cm->id] = 1;
                 continue;
             }
 
