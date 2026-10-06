@@ -55,17 +55,34 @@ class progress {
 
         $completion = new \completion_info($course);
 
-        // First, let's make sure completion is enabled.
+        // First, let's make sure completion is enabled. Not cached: cheap, and
+        // must reflect live capability/setting changes.
         if (!$completion->is_enabled()) {
             return null;
         }
 
+        // Tracked-user status can change mid-request, so check it every call
+        // rather than caching it.
         if (!$completion->is_tracked_user($userid)) {
             return null;
         }
 
+        // Cache the expensive remainder for this request: course/summary
+        // pages call this repeatedly for the same (course, user). Key includes
+        // cacherev so structural changes invalidate naturally; completion
+        // changes purge the cache explicitly (see completion_info::internal_set_data()).
+        // 'NULL' is a sentinel for a cached null, since a cache miss is false.
+        $cacherev = !empty($course->cacherev) ? $course->cacherev : 0;
+        $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'core', 'course_progress');
+        $cachekey = $course->id . '_' . $userid . '_' . $cacherev;
+        $cached = $cache->get($cachekey);
+        if ($cached !== false) {
+            return $cached === 'NULL' ? null : $cached;
+        }
+
         // Before we check how many modules have been completed see if the course has.
         if ($completion->is_course_complete($userid)) {
+            $cache->set($cachekey, 100);
             return 100;
         }
 
@@ -73,12 +90,15 @@ class progress {
         $modules = $completion->get_user_activities_with_completion($userid);
         $count = count($modules);
         if (!$count) {
+            $cache->set($cachekey, 'NULL');
             return null;
         }
 
         // Get the number of modules that have been completed.
         $totalcompleted = $completion->count_modules_completed($userid, array_keys($modules));
 
-        return ($totalcompleted / $count) * 100;
+        $result = ($totalcompleted / $count) * 100;
+        $cache->set($cachekey, $result);
+        return $result;
     }
 }
