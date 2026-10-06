@@ -122,7 +122,7 @@ switch($requestmethod) {
 
                     case 'getmaxmark':
                         require_capability('mod/quiz:manage', $modcontext);
-                        $slot = $DB->get_record('quiz_slots', ['id' => $id], '*', MUST_EXIST);
+                        $slot = $DB->get_record('quiz_slots', ['id' => $id, 'quizid' => $quiz->id], '*', MUST_EXIST);
                         $result = ['instancemaxmark' => quiz_format_question_grade($quiz, $slot->maxmark)];
                         break;
 
