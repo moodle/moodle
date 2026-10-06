@@ -2378,5 +2378,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026092300.01);
     }
 
+    if ($oldversion < 2026100500.01) {
+        // Define fields timeexpirywarned and timeexpirednotified to be added to rest_api_tokens.
+        $table = new xmldb_table('rest_api_tokens');
+        $fields = [
+            new xmldb_field('timeexpirywarned', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'lastaccessip'),
+            new xmldb_field('timeexpirednotified', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timeexpirywarned'),
+        ];
+
+        // Conditionally launch add fields.
+        foreach ($fields as $field) {
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+        }
+
+        // Tokens which lapsed before owners were told about it are marked as told, so the first
+        // run after upgrade does not announce expiries that may be months old.
+        $now = time();
+        $DB->set_field_select('rest_api_tokens', 'timeexpirednotified', $now, 'expirytime <= :now', ['now' => $now]);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026100500.01);
+    }
+
     return true;
 }
