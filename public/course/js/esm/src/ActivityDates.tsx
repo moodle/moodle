@@ -23,10 +23,10 @@
 
 import ActivityDate from '@moodle/lms/core_course/ActivityDate';
 
-export interface ActivityDatesProps {
+export type ActivityDatesProps = {
     /** The activity dates to display, with the date already formatted. */
-    dates: {label: string; value: string}[];
-}
+    dates: Array<{label: string; value: string}>;
+};
 
 /**
  * Render the activity dates.

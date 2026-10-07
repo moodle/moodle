@@ -9,46 +9,42 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  * @since      2.9
  */
 import config from "./config";
-const fileUrl = /* @__PURE__ */ __name((relativeScript, slashArg) => {
-  let url = config.wwwroot + relativeScript;
-  if (slashArg.charAt(0) !== "/") {
-    slashArg = `/${slashArg}`;
+const fileUrl = /* @__PURE__ */ __name((relativeScript, slashArgument) => {
+  let url2 = config.wwwroot + relativeScript;
+  if (!slashArgument.startsWith("/")) {
+    slashArgument = `/${slashArgument}`;
   }
-  if (config.slasharguments) {
-    url += slashArg;
-  } else {
-    url += `?file=${encodeURIComponent(slashArg)}`;
-  }
-  return url;
+  url2 += config.slasharguments === 0 ? `?file=${encodeURIComponent(slashArgument)}` : slashArgument;
+  return url2;
 }, "fileUrl");
 const relativeUrl = /* @__PURE__ */ __name((relativePath, params = {}, includeSessKey = false) => {
-  if (relativePath.indexOf("http:") === 0 || relativePath.indexOf("https:") === 0 || relativePath.indexOf("://") >= 0) {
+  if (relativePath.startsWith("http:") || relativePath.startsWith("https:") || relativePath.includes("://")) {
     throw new Error("relativeUrl function does not accept absolute urls");
   }
-  if (relativePath.charAt(0) !== "/") {
+  if (!relativePath.startsWith("/")) {
     relativePath = `/${relativePath}`;
   }
   if (config.admin !== "admin") {
-    relativePath = relativePath.replace(/^\/admin\//, `/${config.admin}/`);
+    relativePath = relativePath.replace(/^\/admin\//u, () => `/${config.admin}/`);
   }
-  const queryParams = { ...params };
+  const queryParameters = { ...params };
   if (includeSessKey) {
-    queryParams.sesskey = config.sesskey;
+    queryParameters.sesskey = config.sesskey;
   }
-  const queryString = new URLSearchParams(
-    Object.entries(queryParams).map(([param, value]) => [param, String(value)])
-  ).toString();
+  const entries = Object.entries(queryParameters).map(([parameter, value]) => [parameter, String(value)]);
+  const queryString = new URLSearchParams(entries).toString();
   if (queryString !== "") {
     return `${config.wwwroot}${relativePath}?${queryString}`;
   }
   return config.wwwroot + relativePath;
 }, "relativeUrl");
 const imageUrl = /* @__PURE__ */ __name((imagename, component) => M.util.image_url(imagename, component), "imageUrl");
-var url_default = {
+const url = {
   fileUrl,
   relativeUrl,
   imageUrl
 };
+var url_default = url;
 export {
   url_default as default,
   fileUrl,

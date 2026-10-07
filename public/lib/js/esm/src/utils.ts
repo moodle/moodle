@@ -37,30 +37,29 @@ import Pending from './pending';
  * @returns The throttled function.
  */
 export const throttle = <T extends unknown[]>(func: (...args: T) => void, wait: number): ((...args: T) => void) => {
-    let onCooldown = false;
-    let runAgain = false;
+    let isOnCooldown = false;
+    let isRunAgain = false;
     let latestArgs: T;
 
-    const run = function(this: unknown, ...args: T): void {
+    const run = function (this: unknown, ...args: T): void {
         latestArgs = args;
 
-        if (onCooldown) {
-            runAgain = true;
+        if (isOnCooldown) {
+            isRunAgain = true;
             return;
         }
 
         // Preserve caller context for throttled methods.
-        // eslint-disable-next-line no-invalid-this
+
         func.apply(this, args);
-        onCooldown = true;
+        isOnCooldown = true;
 
         setTimeout(() => {
-            const recurse = runAgain;
-            onCooldown = false;
-            runAgain = false;
+            const isRecurse = isRunAgain;
+            isOnCooldown = false;
+            isRunAgain = false;
 
-            if (recurse) {
-                // eslint-disable-next-line no-invalid-this
+            if (isRecurse) {
                 run.apply(this, latestArgs);
             }
         }, wait);
@@ -70,16 +69,16 @@ export const throttle = <T extends unknown[]>(func: (...args: T) => void, wait: 
 };
 
 /**
- * @property debounceMap A map of functions to their debounced pending promises.
+ * DebounceMap A map of functions to their debounced pending promises.
  */
-const debounceMap = new Map<(...args: DebouncedFunction<any[]>[]) => void, Pending>();
+const debounceMap = new Map<(...args: Array<DebouncedFunction<any[]>>) => void, Pending>();
 
 type DebounceOptions = {
     pending?: boolean;
     cancel?: boolean;
 };
 
-type DebouncedFunction<T extends Function[]> = ((...args: T) => void) & {
+type DebouncedFunction<T extends unknown[]> = ((...args: T) => void) & {
     cancel?: () => void;
 };
 
@@ -107,10 +106,12 @@ export const debounce = <T extends unknown[]>(
         if (pending && !debounceMap.has(returnedFunction)) {
             debounceMap.set(returnedFunction, new Pending('core/utils:debounce'));
         }
+
         if (timeout !== null) {
             clearTimeout(timeout);
         }
-        timeout = setTimeout(async() => {
+
+        const flush = async (): Promise<void> => {
             // Get the current pending promise and immediately empty it.
             // This is important to allow the function to be debounced again as soon as possible.
             // We do not resolve it until later - but that's fine because the promise is appropriately scoped.
@@ -119,10 +120,14 @@ export const debounce = <T extends unknown[]>(
 
             // Allow the debounced function to return a Promise.
             // This ensures that Behat will not continue until the function has finished executing.
-            await func.apply(undefined, args);
+            await func(...args);
 
             // Resolve the pending promise if it exists.
             pendingPromise?.resolve();
+        };
+
+        timeout = setTimeout(() => {
+            void flush();
         }, wait);
     };
 
@@ -145,16 +150,20 @@ export const debounce = <T extends unknown[]>(
  * @param component The component name to normalise.
  * @returns The normalised component name.
  */
-export const getNormalisedComponent = (component: string): string => {
-    if (component && component !== 'moodle' && component !== 'core') {
+export const getNormalisedComponent = (component: string | null | undefined): string => {
+    // AMD callers are untyped and pass null or nothing for core.
+    if (component !== undefined && component !== null && !['', 'moodle', 'core'].includes(component)) {
         return component;
     }
 
     return 'core';
 };
 
-export default {
+/** Groups the helpers for `import utils from '@moodle/lms/core/utils'`. */
+const utils = {
     throttle,
     debounce,
     getNormalisedComponent,
 };
+
+export default utils;

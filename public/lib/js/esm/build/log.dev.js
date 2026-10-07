@@ -29,18 +29,15 @@ let currentLevel = levels.WARN;
 let defaultLevel = levels.WARN;
 function resolveLevel(level) {
   if (typeof level === "string") {
-    const upper = level.toUpperCase();
-    if (upper in levels) {
-      return levels[upper];
-    }
-    return levels.WARN;
+    const resolved = levels[level.toUpperCase()];
+    return resolved ?? levels.WARN;
   }
   return level;
 }
 __name(resolveLevel, "resolveLevel");
 function formatMessage(message, source) {
-  const msg = String(message);
-  return source ? `${source}: ${msg}` : msg;
+  const text = String(message);
+  return source === void 0 || source === "" ? text : `${source}: ${text}`;
 }
 __name(formatMessage, "formatMessage");
 function logAtLevel(level, message, source) {
@@ -48,7 +45,7 @@ function logAtLevel(level, message, source) {
     return;
   }
   const method = consoleMethods[level];
-  if (method) {
+  if (method !== void 0) {
     console[method](formatMessage(message, source));
   }
 }
@@ -78,7 +75,7 @@ function disableAll() {
 }
 __name(disableAll, "disableAll");
 function setConfig(config) {
-  if (typeof config.level !== "undefined") {
+  if (config.level !== void 0) {
     setLevel(config.level);
   }
 }

@@ -38,8 +38,17 @@ import config from '@moodle/lms/core/config';
 import {getString} from '@moodle/lms/core/stringUtils';
 import {requireAsync} from '@moodle/lms/core/amd';
 
+/** The part of the AMD core/notification module this module uses. */
+type NotificationModule = {
+    alert: (
+        title: string | Promise<string>,
+        message: string | Promise<string>,
+        cancelText: string | Promise<string>,
+    ) => Promise<unknown>;
+};
+
 /** Options accepted by {@link emitDeprecation}. */
-interface DeprecationOptions {
+type DeprecationOptions = {
     /** An alternative to the first part of the deprecation message. */
     alternativeNotice?: string | null;
     /** The name of the replacement, if there is one. */
@@ -54,43 +63,54 @@ interface DeprecationOptions {
     final?: boolean;
     /** Whether to emit a toast notification. */
     emit?: boolean;
-}
+};
+
+/** The subset of {@link DeprecationOptions} that appears in a deprecation message. */
+type DeprecationMessage = Pick<
+    DeprecationOptions, 'alternativeNotice' | 'replacement' | 'since' | 'reason' | 'mdl'
+> & {
+    /** The name of the deprecated thing. */
+    thing: string;
+};
+
+/**
+ * Whether an optional message part was supplied and is not empty.
+ *
+ * @param value The message part to test.
+ * @returns True when the part has text to include.
+ */
+const hasText = (value: string | null | undefined): value is string => typeof value === 'string' && value !== '';
 
 /**
  * Build a plain-text deprecation message.
+ *
+ * @param details The parts of the deprecation to describe.
+ * @returns The assembled message.
  */
-const getMessage = (
-    thing: string,
-    alternativeNotice: string | null,
-    replacement: string | null,
-    since: string | null,
-    reason: string | null,
-    mdl: string | null,
-): string => {
-    const parts: string[] = [];
-    parts.push('Deprecation: ');
+const getMessage = ({thing, alternativeNotice, replacement, since, reason, mdl}: DeprecationMessage): string => {
+    const parts: string[] = ['Deprecation: '];
 
-    if (alternativeNotice) {
+    if (hasText(alternativeNotice)) {
         parts.push(alternativeNotice);
     } else {
         parts.push(`${thing} has been deprecated`);
     }
 
-    if (since !== null) {
+    if (hasText(since)) {
         parts.push(` since ${since}`);
     }
 
     parts.push('.');
 
-    if (reason) {
+    if (hasText(reason)) {
         parts.push(` ${reason}`);
     }
 
-    if (replacement) {
+    if (hasText(replacement)) {
         parts.push(` Please use ${replacement} instead.`);
     }
 
-    if (mdl) {
+    if (hasText(mdl)) {
         parts.push(` See ${mdl} for more information.`);
     }
 
@@ -99,19 +119,14 @@ const getMessage = (
 
 /**
  * Build an HTML deprecation message for the toast notification.
+ *
+ * @param details The parts of the deprecation to describe.
+ * @returns The assembled HTML message.
  */
-const getHTMLMessage = (
-    thing: string,
-    alternativeNotice: string | null,
-    replacement: string | null,
-    since: string | null,
-    reason: string | null,
-    mdl: string | null,
-): string => {
-    const parts: string[] = [];
+const getHtmlMessage = ({thing, alternativeNotice, replacement, since, reason, mdl}: DeprecationMessage): string => {
+    const parts: string[] = ['<h2>Deprecation</h2>'];
 
-    parts.push('<h2>Deprecation</h2>');
-    if (alternativeNotice) {
+    if (hasText(alternativeNotice)) {
         parts.push(`<p>${alternativeNotice}`);
     } else {
         parts.push(`<p><code>${thing}</code> is deprecated`);
@@ -123,19 +138,17 @@ const getHTMLMessage = (
 
     parts.push('.</p>');
 
-    if (reason) {
+    if (hasText(reason)) {
         parts.push(`<p>${reason}</p>`);
     }
 
-    if (replacement) {
+    if (hasText(replacement)) {
         parts.push(`<p>Please use <code>${replacement}</code> instead.</p>`);
     }
 
-    if (mdl) {
+    if (hasText(mdl)) {
         const url = `https://moodle.atlassian.net/browse/${mdl}`;
-        parts.push(
-            `<p>See <a href="${url}" target="_blank" rel="noopener noreferrer">${mdl}</a> for more information.</p>`,
-        );
+        parts.push(`<p>See <a href="${url}" target="_blank" rel="noopener noreferrer">${mdl}</a> for more information.</p>`);
     }
 
     return parts.join('');
@@ -147,10 +160,7 @@ const getHTMLMessage = (
  * Items in the ignore list will only trigger the notification if they are finally deprecated,
  * but will still log the deprecation in the console.
  */
-const isIgnored = (thing: string): boolean => {
-    const ignored = config.deprecationignorelist || [];
-    return ignored.includes(thing);
-};
+const isIgnored = (thing: string): boolean => config.deprecationignorelist.includes(thing);
 
 /**
  * Check environment conditions to determine if a notification can be emitted.
@@ -175,40 +185,38 @@ const canEmit = (): boolean => {
  * @param options Deprecation details.
  */
 export default function emitDeprecation(thing: string, {
-    alternativeNotice = null,
-    replacement = null,
-    since = null,
-    reason = null,
-    mdl = null,
+    alternativeNotice,
+    replacement,
+    since,
+    reason,
+    mdl,
     final = false,
     emit = true,
 }: DeprecationOptions = {}): void {
-    if (replacement === null && reason === null && mdl === null) {
-        throw new Error(
-            'You must provide at least one of replacement, reason or mdl when marking something as deprecated.',
-        );
+    if (!hasText(replacement) && !hasText(reason) && !hasText(mdl)) {
+        throw new Error('You must provide at least one of replacement, reason or mdl when marking something as deprecated.');
     }
 
-    const message = getMessage(thing, alternativeNotice, replacement, since, reason, mdl);
+    const details: DeprecationMessage = {
+        thing, alternativeNotice, replacement, since, reason, mdl,
+    };
+    const message = getMessage(details);
 
     // Always emit if the deprecation is final.
     // For non-final deprecations emit if the config allows it and the user has not ignored it.
-    if (final || canEmit()) {
-        if (final || (emit && !isIgnored(thing))) {
-            const htmlMessage = getHTMLMessage(thing, alternativeNotice, replacement, since, reason, mdl);
-            // The core/notification module is still AMD — load it dynamically.
-            requireAsync<typeof import('core/notification')>('core/notification')
-            .then((notification) => {
-                return notification.alert('Deprecation Warning', htmlMessage, getString('ok'));
+    if ((final || canEmit()) && (final || (emit && !isIgnored(thing)))) {
+        // The core/notification module is still AMD — load it dynamically. Its alert()
+        // accepts a Promise for any of its arguments, so getString is passed unawaited.
+        void requireAsync<NotificationModule>('core/notification')
+            .then(notification => {
+                void notification.alert('Deprecation Warning', getHtmlMessage(details), getString('ok'));
             });
-        }
     }
 
     // If this is a final deprecation, throw an error to break execution.
     if (final) {
         throw new Error(message);
-    } else {
-        // eslint-disable-next-line no-console
-        console.error(message);
     }
+
+    console.error(message);
 }

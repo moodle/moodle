@@ -10,17 +10,17 @@ import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import { useState, useEffect } from "react";
-import { getString } from "@moodle/lms/core/stringUtils";
 import { Badge } from "@moodlehq/design-system";
+import { getString } from "@moodle/lms/core/stringUtils";
 import { ActivityIcon } from "@moodle/lms/block_timeline/views/ActivityIcon";
 function EventListItem({ event, courseview = false }) {
   const [overdueLabel, setOverdueLabel] = useState("");
   const [ariaLabel, setAriaLabel] = useState("");
   useEffect(() => {
-    getString("overdue", "block_timeline").then(setOverdueLabel);
+    void getString("overdue", "block_timeline").then(setOverdueLabel);
   }, []);
   useEffect(() => {
-    getString("ariaeventlistitem", "block_timeline", {
+    void getString("ariaeventlistitem", "block_timeline", {
       name: event.activityname ?? "",
       course: event.course.fullnamedisplay,
       date: event.formatteddatetime
@@ -31,7 +31,7 @@ function EventListItem({ event, courseview = false }) {
     minute: "2-digit",
     hour12: false
   });
-  const purposeClass = event.purpose ? ` ${event.purpose}` : "";
+  const purposeClass = event.purpose === void 0 || event.purpose === "" ? "" : ` ${event.purpose}`;
   const iconContainerClass = `small courseicon align-self-center mx-2 mb-1 mb-sm-0 text-nowrap activityiconcontainer${purposeClass}`;
   return /* @__PURE__ */ jsxDEV(
     "div",
@@ -57,7 +57,7 @@ function EventListItem({ event, courseview = false }) {
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "event-name-container flex-grow-1 line-height-4 nowrap text-truncate", children: [
               /* @__PURE__ */ jsxDEV("div", { className: "d-flex", children: /* @__PURE__ */ jsxDEV("h5", { className: "h6 event-name mb-0 pb-1 text-truncate", children: [
-                /* @__PURE__ */ jsxDEV("a", { href: event.url, title: event.name, "aria-label": ariaLabel || void 0, children: event.activityname }, void 0, false, {
+                /* @__PURE__ */ jsxDEV("a", { href: event.url, title: event.name, "aria-label": ariaLabel === "" ? void 0 : ariaLabel, children: event.activityname }, void 0, false, {
                   fileName: "public/blocks/timeline/js/esm/src/views/EventListItem.tsx",
                   lineNumber: 86,
                   columnNumber: 33
@@ -78,7 +78,7 @@ function EventListItem({ event, courseview = false }) {
               }, this),
               /* @__PURE__ */ jsxDEV("small", { className: "mb-0", children: [
                 event.activitystr,
-                !courseview && event.course?.fullnamedisplay && /* @__PURE__ */ jsxDEV(Fragment, { children: [
+                !courseview && (event.course?.fullnamedisplay ?? "") !== "" && /* @__PURE__ */ jsxDEV(Fragment, { children: [
                   " \xB7 ",
                   event.course.fullnamedisplay
                 ] }, void 0, true, {

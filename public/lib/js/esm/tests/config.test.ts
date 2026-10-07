@@ -20,7 +20,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import config, {isJSCachingEnabled} from '@moodle/lms/core/config';
+import config, {isJsCachingEnabled} from '@moodle/lms/core/config';
 
 describe('core/config', () => {
     it('exports the live M.cfg object', () => {
@@ -55,17 +55,17 @@ describe('core/config', () => {
         expect(config.language).toBe('en');
     });
 
-    describe('isJSCachingEnabled', () => {
+    describe('isJsCachingEnabled', () => {
         it('is false when jsrev is -1 (developer mode)', () => {
             expect(config.jsrev).toBe(-1);
-            expect(isJSCachingEnabled).toBe(false);
+            expect(isJsCachingEnabled).toBe(false);
         });
 
         it('is true when jsrev is a positive revision number', () => {
             (globalThis as any).M.cfg.jsrev = 12345;
 
             jest.isolateModules(() => {
-                const {isJSCachingEnabled: fresh} = require('@moodle/lms/core/config');
+                const {isJsCachingEnabled: fresh} = require('@moodle/lms/core/config');
                 expect(fresh).toBe(true);
             });
         });
@@ -74,7 +74,7 @@ describe('core/config', () => {
             (globalThis as any).M.cfg.jsrev = 0;
 
             jest.isolateModules(() => {
-                const {isJSCachingEnabled: fresh} = require('@moodle/lms/core/config');
+                const {isJsCachingEnabled: fresh} = require('@moodle/lms/core/config');
                 expect(fresh).toBe(true);
             });
         });

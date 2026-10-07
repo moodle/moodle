@@ -23,13 +23,13 @@
 import type {CalendarEvent, FilterOffsets} from './types';
 
 /** Number of seconds in a day, used to convert day offsets into timestamp ranges. */
-export const SECONDS_IN_DAY = 86400;
+export const SECONDS_IN_DAY = 86_400;
 
 /** Events grouped under a single day, keyed by that day's midnight timestamp. */
-export interface DayGroup {
+export type DayGroup = {
     dayTimestamp: number;
     events: CalendarEvent[];
-}
+};
 
 /**
  * Derive WS starttime and endtime from midnight and filter offsets.
@@ -39,10 +39,10 @@ export interface DayGroup {
  */
 export function computeTimeRange(midnight: number, offsets: FilterOffsets): {starttime: number; endtime: number | null} {
     return {
-        starttime: midnight + offsets.daysoffset * SECONDS_IN_DAY,
-        endtime:   offsets.dayslimit !== null
-            ? midnight + offsets.dayslimit * SECONDS_IN_DAY
-            : null,
+        starttime: midnight + (offsets.daysoffset * SECONDS_IN_DAY),
+        endtime: offsets.dayslimit === null
+            ? null
+            : midnight + (offsets.dayslimit * SECONDS_IN_DAY),
     };
 }
 
@@ -58,9 +58,11 @@ export function groupByDay(events: CalendarEvent[]): DayGroup[] {
         if (!map.has(day)) {
             map.set(day, []);
         }
+
         map.get(day)!.push(event);
     }
-    return Array.from(map.entries())
+
+    return [...map]
         .sort(([a], [b]) => a - b)
         .map(([dayTimestamp, evts]) => ({dayTimestamp, events: evts}));
 }
@@ -79,6 +81,7 @@ export function filterEvents(events: CalendarEvent[], midnight: number, filterov
         if (event.eventtype === 'open' || event.eventtype === 'opensubmission') {
             return event.timeusermidnight > midnight;
         }
+
         return !filteroverdue || event.overdue;
     });
 }

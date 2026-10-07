@@ -12,20 +12,16 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @module     block_timeline/nav/ViewSelector
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import String from "@moodle/lms/core/String";
 import { useAriaLabels } from "../common/useAriaLabels";
 import { useComposedLabel } from "../common/useComposedLabel";
+import String from "@moodle/lms/core/String";
 const VIEW_OPTIONS = [
   { name: "sortbydates", labelKey: "sortbydates" },
   { name: "sortbycourses", labelKey: "sortbycourses" }
 ];
 function ViewSelector({ activeOrder, onChange }) {
   const menuId = "menusortby";
-  const { buttonLabel: menuLabel, itemLabels } = useAriaLabels(
-    "ariaviewselector",
-    "ariaviewselectoroption",
-    VIEW_OPTIONS
-  );
+  const { buttonLabel: menuLabel, itemLabels } = useAriaLabels("ariaviewselector", "ariaviewselectoroption", VIEW_OPTIONS);
   const activeOption = VIEW_OPTIONS.find((o) => o.name === activeOrder) ?? VIEW_OPTIONS[0];
   const toggleLabel = useComposedLabel("ariaviewselectorbutton", activeOption.labelKey);
   return /* @__PURE__ */ jsxDEV("div", { "data-region": "view-selector", className: "dropdown mb-1", children: [
@@ -42,11 +38,11 @@ function ViewSelector({ activeOrder, onChange }) {
         title: menuLabel,
         children: /* @__PURE__ */ jsxDEV("span", { "data-active-item-text": "", children: /* @__PURE__ */ jsxDEV(String, { identifier: activeOption.labelKey, component: "block_timeline", children: "" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/nav/ViewSelector.tsx",
-          lineNumber: 82,
+          lineNumber: 79,
           columnNumber: 21
         }, this) }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/nav/ViewSelector.tsx",
-          lineNumber: 81,
+          lineNumber: 78,
           columnNumber: 17
         }, this)
       },
@@ -54,7 +50,7 @@ function ViewSelector({ activeOrder, onChange }) {
       false,
       {
         fileName: "public/blocks/timeline/js/esm/src/nav/ViewSelector.tsx",
-        lineNumber: 68,
+        lineNumber: 65,
         columnNumber: 13
       },
       this
@@ -76,13 +72,13 @@ function ViewSelector({ activeOrder, onChange }) {
             "aria-current": activeOrder === option.name ? "true" : void 0,
             "aria-label": itemLabels[option.name],
             role: "menuitem",
-            onClick: (e) => {
-              e.preventDefault();
+            onClick: (event) => {
+              event.preventDefault();
               onChange(option.name);
             },
             children: /* @__PURE__ */ jsxDEV(String, { identifier: option.labelKey, component: "block_timeline", children: "" }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/nav/ViewSelector.tsx",
-              lineNumber: 107,
+              lineNumber: 104,
               columnNumber: 25
             }, this)
           },
@@ -90,7 +86,7 @@ function ViewSelector({ activeOrder, onChange }) {
           false,
           {
             fileName: "public/blocks/timeline/js/esm/src/nav/ViewSelector.tsx",
-            lineNumber: 94,
+            lineNumber: 91,
             columnNumber: 21
           },
           this
@@ -100,14 +96,14 @@ function ViewSelector({ activeOrder, onChange }) {
       false,
       {
         fileName: "public/blocks/timeline/js/esm/src/nav/ViewSelector.tsx",
-        lineNumber: 86,
+        lineNumber: 83,
         columnNumber: 13
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/blocks/timeline/js/esm/src/nav/ViewSelector.tsx",
-    lineNumber: 67,
+    lineNumber: 64,
     columnNumber: 9
   }, this);
 }

@@ -7,9 +7,12 @@ import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
  * @module     block_timeline/views/CoursesView
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import { useState, useEffect, useCallback, useRef } from "react";
-import String from "@moodle/lms/core/String";
-import { getString } from "@moodle/lms/core/stringUtils";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef
+} from "react";
 import { Button } from "@moodlehq/design-system";
 import {
   getEnrolledCourses,
@@ -18,8 +21,10 @@ import {
   getFormattedDays,
   getFormattedEventDateTimes
 } from "../repository";
-import EventListItem from "@moodle/lms/block_timeline/views/EventListItem";
 import { computeTimeRange, groupByDay, filterEvents } from "../common/utils";
+import EventListItem from "@moodle/lms/block_timeline/views/EventListItem";
+import { getString } from "@moodle/lms/core/stringUtils";
+import String from "@moodle/lms/core/String";
 const COURSES_PER_PAGE = 2;
 const EVENTS_PER_PAGE = 6;
 const MORE_EVENTS_LIMIT = 10;
@@ -49,8 +54,8 @@ function CoursesView({
   const [moreActivitiesLabel, setMoreActivitiesLabel] = useState("");
   const [moreCoursesLabel, setMoreCoursesLabel] = useState("");
   useEffect(() => {
-    getString("moreactivities", "block_timeline").then(setMoreActivitiesLabel);
-    getString("morecourses", "block_timeline").then(setMoreCoursesLabel);
+    void getString("moreactivities", "block_timeline").then(setMoreActivitiesLabel);
+    void getString("morecourses", "block_timeline").then(setMoreCoursesLabel);
   }, []);
   const { starttime, endtime } = computeTimeRange(midnight, offsets);
   const { filteroverdue } = offsets;
@@ -63,7 +68,7 @@ function CoursesView({
       const coursesResult = await getEnrolledCourses({
         limit: COURSES_PER_PAGE + 1,
         offset,
-        searchvalue: searchvalue || null
+        searchvalue: searchvalue === "" ? null : searchvalue
       });
       hasMorePhp = coursesResult.courses.length > COURSES_PER_PAGE;
       const pageCourses = hasMorePhp ? coursesResult.courses.slice(0, COURSES_PER_PAGE) : coursesResult.courses;
@@ -74,30 +79,40 @@ function CoursesView({
           timesortfrom: starttime,
           timesortto: endtime,
           limitnum: EVENTS_PER_PAGE + 1,
-          searchvalue: searchvalue || null
+          searchvalue: searchvalue === "" ? null : searchvalue
         });
         const eventsByCourseId = new Map(eventsResult.groupedbycourse.map((g) => [g.courseid, g.events]));
         const allEvents = eventsResult.groupedbycourse.flatMap((g) => g.events);
-        const dayMap = await getFormattedDays(allEvents.map((e) => e.timeusermidnight));
-        const dateTimeMap = await getFormattedEventDateTimes(allEvents.map((e) => e.timesort));
+        const dayMap = await getFormattedDays(allEvents.map((event) => event.timeusermidnight));
+        const dateTimeMap = await getFormattedEventDateTimes(allEvents.map((event) => event.timesort));
         for (const course of pageCourses) {
-          const events = (eventsByCourseId.get(course.id) ?? []).map((e) => ({
-            ...e,
-            formattedday: dayMap.get(e.timeusermidnight) ?? "",
-            formatteddatetime: dateTimeMap.get(e.timesort) ?? ""
+          const events = (eventsByCourseId.get(course.id) ?? []).map((event) => ({
+            ...event,
+            formattedday: dayMap.get(event.timeusermidnight) ?? "",
+            formatteddatetime: dateTimeMap.get(event.timesort) ?? ""
           }));
           const { shown, hasMore, lastId } = processInitialEvents(events, midnight, filteroverdue);
           if (shown.length > 0) {
             visibleCourses.push({ ...course, events });
-            visiblePerCourse.set(course.id, { events: shown, hasMore, lastEventId: lastId, loading: false });
+            visiblePerCourse.set(course.id, {
+              events: shown,
+              hasMore,
+              lastEventId: lastId,
+              loading: false
+            });
           }
         }
       }
     } while (visibleCourses.length < COURSES_PER_PAGE && hasMorePhp);
-    return { courses: visibleCourses, perCourse: visiblePerCourse, nextOffset: offset, hasMorePhp };
+    return {
+      courses: visibleCourses,
+      perCourse: visiblePerCourse,
+      nextOffset: offset,
+      hasMorePhp
+    };
   }, [starttime, endtime, searchvalue, midnight, filteroverdue]);
-  const loadUntilVisibleRef = useRef(loadUntilVisible);
-  loadUntilVisibleRef.current = loadUntilVisible;
+  const loadUntilVisibleReference = useRef(loadUntilVisible);
+  loadUntilVisibleReference.current = loadUntilVisible;
   useEffect(() => {
     let cancelled = false;
     const init = /* @__PURE__ */ __name(async () => {
@@ -106,44 +121,101 @@ function CoursesView({
       setPerCourse(/* @__PURE__ */ new Map());
       setNextBatch(null);
       setHasMoreCourses(false);
-      const batch1 = await loadUntilVisibleRef.current(0);
+      const batch1 = await loadUntilVisibleReference.current(0);
       if (cancelled) {
         return;
       }
       setDisplayedCourses(batch1.courses);
       setPerCourse(new Map(batch1.perCourse));
       if (batch1.hasMorePhp) {
-        const batch2 = await loadUntilVisibleRef.current(batch1.nextOffset);
+        const batch2 = await loadUntilVisibleReference.current(batch1.nextOffset);
         if (!cancelled) {
           setNextBatch(batch2);
           setHasMoreCourses(batch2.courses.length > 0);
         }
       } else {
-        setNextBatch({ courses: [], perCourse: /* @__PURE__ */ new Map(), nextOffset: 0, hasMorePhp: false });
+        setNextBatch({
+          courses: [],
+          perCourse: /* @__PURE__ */ new Map(),
+          nextOffset: 0,
+          hasMorePhp: false
+        });
       }
       if (!cancelled) {
         setLoading(false);
       }
     }, "init");
-    init();
+    void init();
     return () => {
       cancelled = true;
     };
   }, [loadUntilVisible]);
+  if (loading || searchPending) {
+    return null;
+  }
+  if (displayedCourses.length === 0) {
+    if (hasenrolledcourses) {
+      return /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-events-empty-message", children: [
+        /* @__PURE__ */ jsxDEV("img", { src: noeventsurl, className: "timeline-empty-icon", alt: "" }, void 0, false, {
+          fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
+          lineNumber: 232,
+          columnNumber: 21
+        }, this),
+        /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "noevents", component: "block_timeline", children: "" }, void 0, false, {
+          fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
+          lineNumber: 234,
+          columnNumber: 25
+        }, this) }, void 0, false, {
+          fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
+          lineNumber: 233,
+          columnNumber: 21
+        }, this)
+      ] }, void 0, true, {
+        fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
+        lineNumber: 231,
+        columnNumber: 17
+      }, this);
+    }
+    return /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-courses-empty-message", children: [
+      /* @__PURE__ */ jsxDEV("img", { src: nocoursesurl, className: "timeline-empty-icon", alt: "" }, void 0, false, {
+        fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
+        lineNumber: 242,
+        columnNumber: 17
+      }, this),
+      /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "nocoursesinprogress", component: "block_timeline", children: "" }, void 0, false, {
+        fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
+        lineNumber: 244,
+        columnNumber: 21
+      }, this) }, void 0, false, {
+        fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
+        lineNumber: 243,
+        columnNumber: 17
+      }, this)
+    ] }, void 0, true, {
+      fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
+      lineNumber: 241,
+      columnNumber: 13
+    }, this);
+  }
   const handleShowMoreCourses = /* @__PURE__ */ __name(async () => {
     if (preparingNextBatch || !nextBatch || nextBatch.courses.length === 0) {
       return;
     }
     const consumed = nextBatch;
-    setDisplayedCourses((prev) => [...prev, ...consumed.courses]);
-    setPerCourse((prev) => new Map([...prev, ...consumed.perCourse]));
+    setDisplayedCourses((previous) => [...previous, ...consumed.courses]);
+    setPerCourse((previous) => new Map([...previous, ...consumed.perCourse]));
     setPreparingNextBatch(true);
     if (consumed.hasMorePhp) {
-      const peek = await loadUntilVisibleRef.current(consumed.nextOffset);
+      const peek = await loadUntilVisibleReference.current(consumed.nextOffset);
       setNextBatch(peek);
       setHasMoreCourses(peek.courses.length > 0);
     } else {
-      setNextBatch({ courses: [], perCourse: /* @__PURE__ */ new Map(), nextOffset: 0, hasMorePhp: false });
+      setNextBatch({
+        courses: [],
+        perCourse: /* @__PURE__ */ new Map(),
+        nextOffset: 0,
+        hasMorePhp: false
+      });
       setHasMoreCourses(false);
     }
     setPreparingNextBatch(false);
@@ -153,8 +225,8 @@ function CoursesView({
     if (!state) {
       return;
     }
-    setPerCourse((prev) => {
-      const next = new Map(prev);
+    setPerCourse((previous) => {
+      const next = new Map(previous);
       next.set(courseId, { ...state, loading: true });
       return next;
     });
@@ -165,22 +237,22 @@ function CoursesView({
         timesortto: endtime,
         aftereventid: state.lastEventId,
         limitnum: MORE_EVENTS_LIMIT + 1,
-        searchvalue: searchvalue || null
+        searchvalue: searchvalue === "" ? null : searchvalue
       });
-      const dayMap = await getFormattedDays(result.events.map((e) => e.timeusermidnight));
-      const dateTimeMap = await getFormattedEventDateTimes(result.events.map((e) => e.timesort));
-      const enriched = result.events.map((e) => ({
-        ...e,
-        formattedday: dayMap.get(e.timeusermidnight) ?? "",
-        formatteddatetime: dateTimeMap.get(e.timesort) ?? ""
+      const dayMap = await getFormattedDays(result.events.map((event) => event.timeusermidnight));
+      const dateTimeMap = await getFormattedEventDateTimes(result.events.map((event) => event.timesort));
+      const enriched = result.events.map((event) => ({
+        ...event,
+        formattedday: dayMap.get(event.timeusermidnight) ?? "",
+        formatteddatetime: dateTimeMap.get(event.timesort) ?? ""
       }));
       const filtered = filterEvents(enriched, midnight, filteroverdue);
       const moreExist = filtered.length > MORE_EVENTS_LIMIT;
       const newEvents = moreExist ? filtered.slice(0, MORE_EVENTS_LIMIT) : filtered;
       const updatedEvents = [...state.events, ...newEvents];
       const newLastId = updatedEvents.length > 0 ? updatedEvents[updatedEvents.length - 1].id : state.lastEventId;
-      setPerCourse((prev) => {
-        const next = new Map(prev);
+      setPerCourse((previous) => {
+        const next = new Map(previous);
         next.set(courseId, {
           events: updatedEvents,
           hasMore: moreExist,
@@ -190,60 +262,13 @@ function CoursesView({
         return next;
       });
     } catch {
-      setPerCourse((prev) => {
-        const next = new Map(prev);
+      setPerCourse((previous) => {
+        const next = new Map(previous);
         next.set(courseId, { ...state, loading: false });
         return next;
       });
     }
   }, "handleShowMoreActivities");
-  if (loading || searchPending) {
-    return null;
-  }
-  if (displayedCourses.length === 0) {
-    if (hasenrolledcourses) {
-      return /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-events-empty-message", children: [
-        /* @__PURE__ */ jsxDEV("img", { src: noeventsurl, className: "timeline-empty-icon", alt: "" }, void 0, false, {
-          fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-          lineNumber: 306,
-          columnNumber: 21
-        }, this),
-        /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "noevents", component: "block_timeline", children: "" }, void 0, false, {
-          fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-          lineNumber: 308,
-          columnNumber: 25
-        }, this) }, void 0, false, {
-          fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-          lineNumber: 307,
-          columnNumber: 21
-        }, this)
-      ] }, void 0, true, {
-        fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 305,
-        columnNumber: 17
-      }, this);
-    }
-    return /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-courses-empty-message", children: [
-      /* @__PURE__ */ jsxDEV("img", { src: nocoursesurl, className: "timeline-empty-icon", alt: "" }, void 0, false, {
-        fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 315,
-        columnNumber: 17
-      }, this),
-      /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "nocoursesinprogress", component: "block_timeline", children: "" }, void 0, false, {
-        fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 317,
-        columnNumber: 21
-      }, this) }, void 0, false, {
-        fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 316,
-        columnNumber: 17
-      }, this)
-    ] }, void 0, true, {
-      fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-      lineNumber: 314,
-      columnNumber: 13
-    }, this);
-  }
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
     /* @__PURE__ */ jsxDEV("ul", { className: "list-group unstyled", "data-region": "courses-list", children: displayedCourses.map((course) => {
       const state = perCourse.get(course.id);
@@ -259,7 +284,7 @@ function CoursesView({
           children: [
             /* @__PURE__ */ jsxDEV("h4", { className: "h5 fw-bold", children: course.fullname }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 338,
+              lineNumber: 359,
               columnNumber: 33
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "pb-2", "data-region": "event-list-wrapper", children: state.events.length === 0 ? /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-events-empty-message", children: /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(
@@ -273,18 +298,18 @@ function CoursesView({
               false,
               {
                 fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                lineNumber: 343,
-                columnNumber: 49
+                lineNumber: 365,
+                columnNumber: 53
               },
               this
             ) }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 342,
-              columnNumber: 45
+              lineNumber: 364,
+              columnNumber: 49
             }, this) }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 341,
-              columnNumber: 41
+              lineNumber: 363,
+              columnNumber: 45
             }, this) : groupByDay(state.events).map(({ dayTimestamp, events }) => /* @__PURE__ */ jsxDEV("div", { children: [
               /* @__PURE__ */ jsxDEV(
                 "div",
@@ -294,35 +319,35 @@ function CoursesView({
                   "data-timestamp": dayTimestamp,
                   children: /* @__PURE__ */ jsxDEV("h4", { className: "h6 d-inline", children: events[0].formattedday }, void 0, false, {
                     fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                    lineNumber: 357,
-                    columnNumber: 53
+                    lineNumber: 380,
+                    columnNumber: 57
                   }, this)
                 },
                 void 0,
                 false,
                 {
                   fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                  lineNumber: 352,
-                  columnNumber: 49
+                  lineNumber: 375,
+                  columnNumber: 53
                 },
                 this
               ),
               /* @__PURE__ */ jsxDEV("div", { className: "list-group list-group-flush", children: events.map((event) => /* @__PURE__ */ jsxDEV(EventListItem, { event, courseview: true }, event.id, false, {
                 fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                lineNumber: 361,
-                columnNumber: 57
+                lineNumber: 384,
+                columnNumber: 61
               }, this)) }, void 0, false, {
                 fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                lineNumber: 359,
-                columnNumber: 49
+                lineNumber: 382,
+                columnNumber: 53
               }, this)
             ] }, dayTimestamp, true, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 351,
-              columnNumber: 45
+              lineNumber: 374,
+              columnNumber: 49
             }, this)) }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 339,
+              lineNumber: 360,
               columnNumber: 33
             }, this),
             state.hasMore && /* @__PURE__ */ jsxDEV("div", { className: "pt-1 pb-2 ps-2", "data-region": "more-events-button-container", children: /* @__PURE__ */ jsxDEV(
@@ -330,7 +355,7 @@ function CoursesView({
               {
                 variant: "secondary",
                 size: "sm",
-                onClick: () => handleShowMoreActivities(course.id),
+                onClick: async () => handleShowMoreActivities(course.id),
                 disabled: state.loading,
                 "data-action": "more-events",
                 label: moreActivitiesLabel,
@@ -345,8 +370,8 @@ function CoursesView({
                   false,
                   {
                     fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                    lineNumber: 379,
-                    columnNumber: 49
+                    lineNumber: 403,
+                    columnNumber: 53
                   },
                   this
                 ) : void 0
@@ -355,13 +380,13 @@ function CoursesView({
               false,
               {
                 fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-                lineNumber: 371,
+                lineNumber: 394,
                 columnNumber: 41
               },
               this
             ) }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-              lineNumber: 370,
+              lineNumber: 393,
               columnNumber: 37
             }, this)
           ]
@@ -370,18 +395,18 @@ function CoursesView({
         true,
         {
           fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-          lineNumber: 333,
+          lineNumber: 354,
           columnNumber: 29
         },
         this
       ) }, course.id, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 332,
+        lineNumber: 353,
         columnNumber: 25
       }, this);
     }) }, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-      lineNumber: 325,
+      lineNumber: 345,
       columnNumber: 13
     }, this),
     hasMoreCourses && /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center pt-3", "data-region": "more-courses-button-container", children: /* @__PURE__ */ jsxDEV(
@@ -398,18 +423,18 @@ function CoursesView({
       false,
       {
         fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-        lineNumber: 396,
+        lineNumber: 421,
         columnNumber: 21
       },
       this
     ) }, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-      lineNumber: 395,
+      lineNumber: 420,
       columnNumber: 17
     }, this)
   ] }, void 0, true, {
     fileName: "public/blocks/timeline/js/esm/src/views/CoursesView.tsx",
-    lineNumber: 324,
+    lineNumber: 344,
     columnNumber: 9
   }, this);
 }

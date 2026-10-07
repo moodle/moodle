@@ -15,9 +15,9 @@
  */
 const config = M.cfg;
 var config_default = config;
-const isJSCachingEnabled = config.jsrev !== -1;
+const isJsCachingEnabled = config.jsrev !== -1;
 export {
   config_default as default,
-  isJSCachingEnabled
+  isJsCachingEnabled
 };
 //# sourceMappingURL=config.dev.js.map

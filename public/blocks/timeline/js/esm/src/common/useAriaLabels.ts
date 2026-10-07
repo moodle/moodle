@@ -24,11 +24,11 @@
 import {useState, useEffect} from 'react';
 import {getString} from '@moodle/lms/core/stringUtils';
 
-interface AriaLabelOption<T extends string> {
+type AriaLabelOption<T extends string> = {
     name: T;
     labelKey: string;
     labelComponent?: string;
-}
+};
 
 /**
  * Fetch a dropdown's button aria-label and a per-option aria-label map.
@@ -40,19 +40,21 @@ interface AriaLabelOption<T extends string> {
 export function useAriaLabels<T extends string>(
     buttonKey: string,
     itemAriaKey: string,
-    options: AriaLabelOption<T>[]
+    options: Array<AriaLabelOption<T>>,
 ) {
     const [buttonLabel, setButtonLabel] = useState('');
     const [itemLabels, setItemLabels] = useState<Partial<Record<T, string>>>({});
 
     useEffect(() => {
-        getString(buttonKey, 'block_timeline').then(setButtonLabel);
+        void getString(buttonKey, 'block_timeline').then(setButtonLabel);
 
-        options.forEach(opt => {
-            getString(opt.labelKey, opt.labelComponent ?? 'block_timeline')
-                .then(label => getString(itemAriaKey, 'block_timeline', label))
-                .then(ariaLabel => setItemLabels(prev => ({...prev, [opt.name]: ariaLabel})));
-        });
+        for (const opt of options) {
+            void getString(opt.labelKey, opt.labelComponent ?? 'block_timeline')
+                .then(async label => getString(itemAriaKey, 'block_timeline', label))
+                .then(ariaLabel => {
+                    setItemLabels(previous => ({...previous, [opt.name]: ariaLabel}));
+                });
+        }
     }, []);
 
     return {buttonLabel, itemLabels};

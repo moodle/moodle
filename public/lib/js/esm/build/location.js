@@ -6,4 +6,4 @@
  * @module     core/location
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */function n(i){window.location.assign(i)}export{n as redirect};
+ */function o(i){globalThis.location.assign(i)}export{o as redirect};

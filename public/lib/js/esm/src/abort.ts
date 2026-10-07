@@ -21,33 +21,38 @@
  */
 
 declare global {
+    /* eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Window merging needs an interface. */
     interface Window {
         globalAbortController: AbortController | undefined;
     }
+
+    // Declares the same global for globalThis access; only var reaches globalThis.
+    var globalAbortController: AbortController | undefined;
 }
 
 /**
- * Get the Global Abort Signal.
+ * The signal every global fetch is issued with, so that they can be cancelled together.
+ *
+ * @returns The signal of the current global abort controller.
  */
-export const getGlobalAbortSignal = (): AbortSignal => {
-    return window.globalAbortController!.signal;
-};
+export const getGlobalAbortSignal = (): AbortSignal => globalThis.globalAbortController!.signal;
 
 /**
- * Abort all ongoing global fetches.
+ * Cancel every request issued with the signal from {@link getGlobalAbortSignal}.
  */
 export const abortGlobalFetches = (): void => {
-    window.globalAbortController?.abort();
+    globalThis.globalAbortController?.abort();
 };
 
 /**
- * Reset the Global Abort Controller.
+ * Replace the controller, so that requests made after an abort are not cancelled by it.
  */
 export const resetGlobalAbortController = (): void => {
-    window.globalAbortController = new AbortController();
+    /* eslint-disable-next-line unicorn/no-global-object-property-assignment -- Behat aborts via this global. */
+    globalThis.globalAbortController = new AbortController();
 };
 
-// Initialize the Global Abort Controller on module load.
+/* eslint-disable-next-line unicorn/no-top-level-side-effects -- Must exist before the first request. */
 resetGlobalAbortController();
 
 export default getGlobalAbortSignal;

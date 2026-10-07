@@ -159,6 +159,20 @@ describe('core/pending', () => {
             expect(completeStack).toHaveLength(0);
         });
 
+        it('does not raise an unhandled rejection when the caller does not catch', async() => {
+            const unhandled = jest.fn();
+            process.on('unhandledRejection', unhandled);
+
+            try {
+                Pending.Promise((_, reject) => reject('error'), 'test/uncaught');
+                await new Promise((resolve) => setTimeout(resolve, 0));
+            } finally {
+                process.off('unhandledRejection', unhandled);
+            }
+
+            expect(unhandled).not.toHaveBeenCalled();
+        });
+
         it('passes resolve and reject to the executor', () => {
             const executorSpy = jest.fn();
 

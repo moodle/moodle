@@ -24,14 +24,14 @@
 
 import config from './config';
 
-export interface StorageInterface {
+export type StorageInterface = {
     getItem(key: string): string | null;
     setItem(key: string, value: string): void;
     removeItem(key: string): void;
     clear(): void;
     length: number;
     key(index: number): string | null;
-}
+};
 
 /**
  * A wrapper around the browser's Storage API (localStorage / sessionStorage)
@@ -39,13 +39,35 @@ export interface StorageInterface {
  * when the Moodle jsrev changes.
  */
 class Storage {
-    #storage: StorageInterface;
-    #supported: boolean;
-    #prefix: string;
-    #jsrevPrefix: string;
-    #loginPrefix: string;
+    /**
+     * Hash a string, used to make shorter key prefixes.
+     *
+     * @param source The string to hash
+     * @returns A 32-bit integer hash
+     */
+    static hashString(source: string): number {
+        let hash = 0;
+        /* eslint-disable no-bitwise -- The shift and subtract are the hash function itself. */
+        for (let index = 0; index < source.length; index++) {
+            /* eslint-disable-next-line unicorn/prefer-code-point -- Index loop; codePointAt rereads surrogate pairs. */
+            hash = ((hash << 5) - hash) + source.charCodeAt(index);
+            // eslint-disable-next-line unicorn/prefer-math-trunc -- | 0 wraps to 32 bits, Math.trunc does not.
+            hash |= 0;
+        }
+        /* eslint-enable no-bitwise */
+
+        return hash;
+    }
+
+    readonly #storage: StorageInterface;
+    readonly #supported: boolean;
+    readonly #prefix: string;
+    readonly #jsrevPrefix: string;
+    readonly #loginPrefix: string;
 
     /**
+     * Wrap a Storage instance, namespacing every key it reads and writes.
+     *
      * @param storage The underlying Storage instance (e.g. `window.localStorage`).
      */
     constructor(storage: StorageInterface) {
@@ -67,14 +89,17 @@ class Storage {
             // Disable cache if debugging.
             return false;
         }
-        if (typeof this.#storage === 'undefined') {
+
+        if (this.#storage === undefined) {
             return false;
         }
+
         const testKey = 'test';
         try {
             if (this.#storage === null) {
                 return false;
             }
+
             // MDL-51461 - Some browsers misreport availability of the storage
             // so check it is actually usable.
             this.#storage.setItem(testKey, '1');
@@ -116,25 +141,9 @@ class Storage {
                 this.#storage.clear();
                 this.#storage.setItem(this.#jsrevPrefix, String(config.jsrev));
             }
+
             this.#storage.setItem(this.#loginPrefix, String(config.currentlogin));
         }
-    }
-
-    /**
-     * Hash a string, used to make shorter key prefixes.
-     *
-     * @param source The string to hash
-     * @returns A 32-bit integer hash
-     */
-    static hashString(source: string): number {
-        let hash = 0;
-        for (let i = 0; i < source.length; i++) {
-            /* eslint-disable no-bitwise */
-            hash = ((hash << 5) - hash) + source.charCodeAt(i);
-            hash |= 0;
-            /* eslint-enable no-bitwise */
-        }
-        return hash;
     }
 
     /**
@@ -147,6 +156,7 @@ class Storage {
         if (!this.#supported) {
             return null;
         }
+
         return this.#storage.getItem(this.#prefixKey(key));
     }
 
@@ -161,11 +171,13 @@ class Storage {
         if (!this.#supported) {
             return false;
         }
+
         try {
             this.#storage.setItem(this.#prefixKey(key), value);
         } catch {
             return false;
         }
+
         return true;
     }
 
@@ -177,8 +189,8 @@ class Storage {
     }
 }
 
-const internalLocalStore = new Storage(window.localStorage);
-const internalSessionStore = new Storage(window.sessionStorage);
+const internalLocalStore = new Storage(localStorage);
+const internalSessionStore = new Storage(sessionStorage);
 
 /**
  * A singleton {@link Storage} backed by `window.localStorage`.
@@ -209,7 +221,7 @@ const internalSessionStore = new Storage(window.sessionStorage);
 export const localStore = {
     get: internalLocalStore.get.bind(internalLocalStore),
     set: internalLocalStore.set.bind(internalLocalStore),
-    'default': internalLocalStore,
+    default: internalLocalStore,
 };
 
 /**
@@ -241,7 +253,7 @@ export const localStore = {
 export const sessionStore = {
     get: internalSessionStore.get.bind(internalSessionStore),
     set: internalSessionStore.set.bind(internalSessionStore),
-    'default': internalSessionStore,
+    default: internalSessionStore,
 };
 
 export default Storage;

@@ -92,6 +92,10 @@ const xoConfig = [
             // SyntaxError on load there, which takes the whole bundle down. The u flag is ES2015.
             'unicorn/prefer-at': 'off',
             'unicorn/logical-assignment-operators': 'off',
+
+            // Top-level await (ES2022) needs Safari 15, so a module using it does not load in
+            // the older Safari and iOS that browserslist lists.
+            'unicorn/prefer-top-level-await': 'off',
             '@typescript-eslint/prefer-nullish-coalescing': ['error', {
                 // XO's options plus ignoreIfStatements, so an explicit if-assign is not pushed to ??=.
                 ignoreTernaryTests: false,

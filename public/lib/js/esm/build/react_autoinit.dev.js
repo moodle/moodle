@@ -24,173 +24,164 @@ import { isProfilerEnabled } from "@moodle/lms/core/profiler";
 import { mountReactApp, unmountReactApp } from "@moodle/lms/core/mount";
 import Pending from "@moodle/lms/core/pending";
 const SELECTOR = "[data-react-component]";
-const MOUNTED_FLAG = "reactMounted";
-const MOUNTING_FLAG = "reactMounting";
 const reactUnmountMap = /* @__PURE__ */ new WeakMap();
-const profilingEnabled = isProfilerEnabled();
-const domReady = /* @__PURE__ */ __name(() => document.readyState === "loading" ? new Promise(
-  (resolve) => document.addEventListener("DOMContentLoaded", resolve, {
-    once: true
-  })
-) : Promise.resolve(), "domReady");
-const parseProps = /* @__PURE__ */ __name((el) => {
-  const raw = el.getAttribute("data-react-props");
-  if (!raw) {
+const isProfilingEnabled = isProfilerEnabled();
+const domReady = /* @__PURE__ */ __name(async () => {
+  if (document.readyState !== "loading") {
+    return;
+  }
+  return new Promise((resolve) => {
+    document.addEventListener("DOMContentLoaded", () => {
+      resolve();
+    }, { once: true });
+  });
+}, "domReady");
+const parseProps = /* @__PURE__ */ __name((element) => {
+  const raw = element.dataset.reactProps;
+  if (raw === void 0 || raw === "") {
     return {};
   }
   try {
-    return JSON.parse(raw);
-  } catch (e) {
-    window.console.error("[react_autoinit] invalid JSON", raw, e);
+    const parsed = JSON.parse(raw);
+    if (typeof parsed !== "object" || parsed === null) {
+      return {};
+    }
+    return parsed;
+  } catch (error) {
+    console.error("[react_autoinit] invalid JSON", raw, error);
     return {};
   }
 }, "parseProps");
 const resolveComponent = /* @__PURE__ */ __name(async (componentName) => {
-  if (!componentName) {
-    return null;
-  }
   if (!componentName.startsWith("@moodle/lms/")) {
-    window.console.error(
+    console.error(
       "[react_autoinit] Invalid component format, expected @moodle/lms/<component>/<path>:",
       componentName
     );
-    return null;
+    return void 0;
   }
   try {
-    if (profilingEnabled) {
-      window.console.log(
-        `[react_autoinit] Loading: ${componentName}`
-      );
+    if (isProfilingEnabled) {
+      console.log(`[react_autoinit] Loading: ${componentName}`);
     }
-    const module = await import(componentName);
-    return module;
-  } catch (e) {
-    window.console.error(`[react_autoinit] Failed to import: ${componentName}`, e);
-    return null;
+    return await import(componentName);
+  } catch (error) {
+    console.error(`[react_autoinit] Failed to import: ${componentName}`, error);
+    return void 0;
   }
 }, "resolveComponent");
-const mountReactComponent = /* @__PURE__ */ __name((el, Component, props) => {
-  const componentName = el.getAttribute("data-react-component") || "Unknown";
-  const unmount = mountReactApp(el, Component, props, {
-    id: componentName
-  });
-  reactUnmountMap.set(el, unmount);
+const mountReactComponent = /* @__PURE__ */ __name((element, component, props) => {
+  const componentName = element.dataset.reactComponent ?? "Unknown";
+  const unmount = mountReactApp(element, component, props, { id: componentName });
+  reactUnmountMap.set(element, unmount);
 }, "mountReactComponent");
-const mountOne = /* @__PURE__ */ __name(async (el) => {
-  if (el.dataset[MOUNTED_FLAG]) {
+const mountOne = /* @__PURE__ */ __name(async (element) => {
+  if (element.dataset.reactMounted !== void 0 || element.dataset.reactMounting !== void 0) {
     return;
   }
-  if (el.dataset[MOUNTING_FLAG]) {
-    return;
-  }
-  el.dataset[MOUNTING_FLAG] = "1";
-  const componentName = el.getAttribute("data-react-component");
-  if (!componentName) {
-    delete el.dataset[MOUNTING_FLAG];
+  element.dataset.reactMounting = "1";
+  const componentName = element.dataset.reactComponent;
+  if (componentName === void 0 || componentName === "") {
+    delete element.dataset.reactMounting;
     return;
   }
   const pendingPromise = new Pending(`reactAutoInit:${componentName}`);
   try {
-    const mod = await resolveComponent(componentName);
-    if (!mod) {
-      window.console.warn("[react_autoinit] Component not found:", componentName);
+    const module = await resolveComponent(componentName);
+    if (!module) {
+      console.warn("[react_autoinit] Component not found:", componentName);
       return;
     }
-    const Component = mod.default;
-    if (!Component) {
-      window.console.warn("[react_autoinit] Module has no default export:", componentName);
+    const component = module.default;
+    if (!component) {
+      console.warn("[react_autoinit] Module has no default export:", componentName);
       return;
     }
-    const props = parseProps(el);
-    mountReactComponent(el, Component, props);
-    el.dataset[MOUNTED_FLAG] = "1";
-    if (profilingEnabled) {
-      window.console.log(
-        `[react_autoinit] Mounted via default: ${componentName}`
-      );
+    mountReactComponent(element, component, parseProps(element));
+    element.dataset.reactMounted = "1";
+    if (isProfilingEnabled) {
+      console.log(`[react_autoinit] Mounted via default: ${componentName}`);
     }
-  } catch (e) {
-    window.console.error("[react_autoinit] Mount failed:", componentName, e);
+  } catch (error) {
+    console.error("[react_autoinit] Mount failed:", componentName, error);
   } finally {
-    delete el.dataset[MOUNTING_FLAG];
+    delete element.dataset.reactMounting;
     pendingPromise.resolve();
   }
 }, "mountOne");
-const unmountOne = /* @__PURE__ */ __name((el) => {
-  const unmount = reactUnmountMap.get(el) ?? (() => unmountReactApp(el));
-  if (unmount) {
-    try {
-      unmount();
-      if (profilingEnabled) {
-        const componentName = el.getAttribute("data-react-component");
-        window.console.log(`[react_autoinit] Unmounted: ${componentName}`);
-      }
-    } catch (e) {
-      window.console.error("[react_autoinit] Error unmounting:", e);
+const unmountOne = /* @__PURE__ */ __name((element) => {
+  const unmount = reactUnmountMap.get(element) ?? (() => {
+    unmountReactApp(element);
+  });
+  try {
+    unmount();
+    if (isProfilingEnabled) {
+      console.log(`[react_autoinit] Unmounted: ${element.dataset.reactComponent}`);
     }
-    reactUnmountMap.delete(el);
+  } catch (error) {
+    console.error("[react_autoinit] Error unmounting:", error);
   }
-  delete el.dataset[MOUNTED_FLAG];
-  delete el.dataset[MOUNTING_FLAG];
+  reactUnmountMap.delete(element);
+  delete element.dataset.reactMounted;
+  delete element.dataset.reactMounting;
 }, "unmountOne");
 const scanAndMount = /* @__PURE__ */ __name((root) => {
   const elements = root.querySelectorAll(SELECTOR);
-  if (profilingEnabled && elements.length > 0) {
-    window.console.log(
-      `[react_autoinit] Found ${elements.length} component(s) to mount`
-    );
+  if (isProfilingEnabled && elements.length > 0) {
+    console.log(`[react_autoinit] Found ${elements.length} component(s) to mount`);
   }
-  for (const el of elements) {
-    mountOne(el);
+  for (const element of elements) {
+    void mountOne(element);
   }
 }, "scanAndMount");
 const handleAddedNode = /* @__PURE__ */ __name((node) => {
-  if (!(node instanceof Element)) {
+  if (!(node instanceof HTMLElement)) {
     return;
   }
-  if (node.matches?.(SELECTOR)) {
-    if (profilingEnabled) {
-      window.console.log("[react_autoinit] New component detected");
+  if (node.matches(SELECTOR)) {
+    if (isProfilingEnabled) {
+      console.log("[react_autoinit] New component detected");
     }
-    mountOne(node);
+    void mountOne(node);
   }
-  node.querySelectorAll?.(SELECTOR).forEach(mountOne);
+  for (const element of node.querySelectorAll(SELECTOR)) {
+    void mountOne(element);
+  }
 }, "handleAddedNode");
 const handleRemovedNode = /* @__PURE__ */ __name((node) => {
-  if (!(node instanceof Element)) {
+  if (!(node instanceof HTMLElement)) {
     return;
   }
-  if (node.matches?.(SELECTOR)) {
+  if (node.matches(SELECTOR)) {
     unmountOne(node);
   }
-  node.querySelectorAll?.(SELECTOR).forEach(unmountOne);
+  for (const element of node.querySelectorAll(SELECTOR)) {
+    unmountOne(element);
+  }
 }, "handleRemovedNode");
 const installObserver = /* @__PURE__ */ __name(() => {
-  const obs = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes?.forEach(handleAddedNode);
-      mutation.removedNodes?.forEach(handleRemovedNode);
-    });
+  const observer2 = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      mutation.addedNodes.forEach(handleAddedNode);
+      mutation.removedNodes.forEach(handleRemovedNode);
+    }
   });
-  obs.observe(document.documentElement, {
-    childList: true,
-    subtree: true
-  });
-  return obs;
+  observer2.observe(document.documentElement, { childList: true, subtree: true });
+  return observer2;
 }, "installObserver");
 let observer = null;
 const init = /* @__PURE__ */ __name(async () => {
   await domReady();
-  if (profilingEnabled) {
-    window.console.log("[react_autoinit] Initializing (profiling enabled)...");
+  if (isProfilingEnabled) {
+    console.log("[react_autoinit] Initializing (profiling enabled)...");
   }
-  if (!observer) {
+  if (observer === null) {
     observer = installObserver();
-    if (profilingEnabled) {
-      window.console.log("[react_autoinit] MutationObserver active");
-    }
+  }
+  if (isProfilingEnabled) {
+    console.log("[react_autoinit] MutationObserver active");
   }
   scanAndMount(document);
 }, "init");
-init();
+void init();
 //# sourceMappingURL=react_autoinit.dev.js.map

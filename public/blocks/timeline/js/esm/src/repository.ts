@@ -17,31 +17,31 @@
  * Data-access layer for the Timeline block.
  *
  * All AJAX calls live here — views only ever talk to this module, never to
- * @moodle/lms/core/ajax directly. Every call wraps an existing core_calendar
+ * `@moodle/lms/core/ajax` directly. Every call wraps an existing core_calendar
  * or core_course web service; block_timeline defines none of its own.
  *
  * @module     block_timeline/repository
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import type {CalendarEvent, Course} from './common/types';
 import {fetchOne, fetchMany} from '@moodle/lms/core/ajax';
 import {getString} from '@moodle/lms/core/stringUtils';
 import config from '@moodle/lms/core/config';
-import type {CalendarEvent, Course} from './common/types';
 
 /** Options for fetching timeline events (dates view). */
-export interface GetTimelineEventsArgs {
+export type GetTimelineEventsArgs = {
     timesortfrom?: number;
     timesortto?: number | null;
     aftereventid?: number;
     limitnum?: number;
     searchvalue?: string | null;
-}
+};
 
 /** Response from core_calendar_get_action_events_by_timesort. */
-export interface TimelineEventsResponse {
+export type TimelineEventsResponse = {
     events: CalendarEvent[];
-}
+};
 
 /**
  * Fetch action events for the timeline dates view.
@@ -50,31 +50,30 @@ export interface TimelineEventsResponse {
  *
  * @param args time range, pagination and search filters.
  */
-export const getTimelineEvents = (args: GetTimelineEventsArgs): Promise<TimelineEventsResponse> => {
-    return fetchOne<TimelineEventsResponse>({
+export const getTimelineEvents = async (args: GetTimelineEventsArgs): Promise<TimelineEventsResponse> =>
+    fetchOne<TimelineEventsResponse>({
         methodname: 'core_calendar_get_action_events_by_timesort',
         args: {
             timesortfrom: args.timesortfrom ?? 0,
-            timesortto:   args.timesortto ?? null,
+            timesortto: args.timesortto ?? null,
             aftereventid: args.aftereventid ?? 0,
-            limitnum:     args.limitnum ?? 20,
-            searchvalue:  args.searchvalue ?? null,
+            limitnum: args.limitnum ?? 20,
+            searchvalue: args.searchvalue ?? null,
         },
     });
-};
 
 /** Options for fetching enrolled courses for the courses view. */
-export interface GetEnrolledCoursesArgs {
+export type GetEnrolledCoursesArgs = {
     limit?: number;
     offset?: number;
     searchvalue?: string | null;
-}
+};
 
 /** Response from core_course_get_enrolled_courses_by_timeline_classification. */
-export interface EnrolledCoursesResponse {
+export type EnrolledCoursesResponse = {
     courses: Course[];
     nextoffset: number;
-}
+};
 
 /**
  * Fetch enrolled courses (all classifications, excluding user-hidden ones) for the courses view.
@@ -86,38 +85,37 @@ export interface EnrolledCoursesResponse {
  *
  * @param args pagination and search filters.
  */
-export const getEnrolledCourses = (args: GetEnrolledCoursesArgs): Promise<EnrolledCoursesResponse> => {
-    return fetchOne<EnrolledCoursesResponse>({
+export const getEnrolledCourses = async (args: GetEnrolledCoursesArgs): Promise<EnrolledCoursesResponse> =>
+    fetchOne<EnrolledCoursesResponse>({
         methodname: 'core_course_get_enrolled_courses_by_timeline_classification',
         args: {
             classification: 'all',
-            limit:          args.limit ?? 2,
-            offset:         args.offset ?? 0,
-            sort:           'fullname ASC',
-            searchvalue:    args.searchvalue ?? null,
+            limit: args.limit ?? 2,
+            offset: args.offset ?? 0,
+            sort: 'fullname ASC',
+            searchvalue: args.searchvalue ?? null,
         },
     });
-};
 
 /** Options for fetching action events across multiple courses. */
-export interface GetEventsByCoursesArgs {
+export type GetEventsByCoursesArgs = {
     courseids: number[];
     timesortfrom?: number | null;
     timesortto?: number | null;
     limitnum?: number;
     searchvalue?: string | null;
-}
+};
 
 /** A single course's events, as returned within groupedbycourse. */
-export interface EventsByCourseGroup {
+export type EventsByCourseGroup = {
     courseid: number;
     events: CalendarEvent[];
-}
+};
 
 /** Response from core_calendar_get_action_events_by_courses. */
-export interface EventsByCoursesResponse {
+export type EventsByCoursesResponse = {
     groupedbycourse: EventsByCourseGroup[];
-}
+};
 
 /**
  * Fetch action events for a set of courses, grouped by course id.
@@ -126,35 +124,34 @@ export interface EventsByCoursesResponse {
  *
  * @param args course ids, time range and search filters.
  */
-export const getEventsByCourses = (args: GetEventsByCoursesArgs): Promise<EventsByCoursesResponse> => {
-    return fetchOne<EventsByCoursesResponse>({
+export const getEventsByCourses = async (args: GetEventsByCoursesArgs): Promise<EventsByCoursesResponse> =>
+    fetchOne<EventsByCoursesResponse>({
         methodname: 'core_calendar_get_action_events_by_courses',
         args: {
-            courseids:    args.courseids,
+            courseids: args.courseids,
             timesortfrom: args.timesortfrom ?? null,
-            timesortto:   args.timesortto ?? null,
-            limitnum:     args.limitnum ?? 10,
-            searchvalue:  args.searchvalue ?? null,
+            timesortto: args.timesortto ?? null,
+            limitnum: args.limitnum ?? 10,
+            searchvalue: args.searchvalue ?? null,
         },
     });
-};
 
 /** Options for fetching more events for a single course. */
-export interface GetEventsByCourseArgs {
+export type GetEventsByCourseArgs = {
     courseid: number;
     timesortfrom: number;
     timesortto?: number | null;
     aftereventid?: number;
     limitnum?: number;
     searchvalue?: string | null;
-}
+};
 
 /** Response from core_calendar_get_action_events_by_course. */
-export interface EventsByCourseResponse {
+export type EventsByCourseResponse = {
     events: CalendarEvent[];
     firstid?: number;
     lastid?: number;
-}
+};
 
 /**
  * Fetch more action events for a single course (for per-course "Show more activities").
@@ -163,19 +160,18 @@ export interface EventsByCourseResponse {
  *
  * @param args course id, time range, pagination and search filters.
  */
-export const getEventsByCourse = (args: GetEventsByCourseArgs): Promise<EventsByCourseResponse> => {
-    return fetchOne<EventsByCourseResponse>({
+export const getEventsByCourse = async (args: GetEventsByCourseArgs): Promise<EventsByCourseResponse> =>
+    fetchOne<EventsByCourseResponse>({
         methodname: 'core_calendar_get_action_events_by_course',
         args: {
-            courseid:     args.courseid,
+            courseid: args.courseid,
             timesortfrom: args.timesortfrom,
-            timesortto:   args.timesortto ?? null,
+            timesortto: args.timesortto ?? null,
             aftereventid: args.aftereventid ?? 0,
-            limitnum:     args.limitnum ?? 20,
-            searchvalue:  args.searchvalue ?? null,
+            limitnum: args.limitnum ?? 20,
+            searchvalue: args.searchvalue ?? null,
         },
     });
-};
 
 /**
  * Persist a single user preference via the core_user_update_user_preferences WS.
@@ -209,6 +205,7 @@ async function getFormattedTimestamps(timestamps: number[], formatStringKey: str
     if (unique.length === 0) {
         return new Map();
     }
+
     const format = await getString(formatStringKey, 'langconfig');
     const [result] = await fetchMany<{dates: string[]}>([{
         methodname: 'core_get_user_dates',
@@ -217,7 +214,7 @@ async function getFormattedTimestamps(timestamps: number[], formatStringKey: str
             timestamps: unique.map(ts => ({timestamp: ts, format})),
         },
     }]);
-    return new Map(unique.map((ts, i) => [ts, result.dates[i]]));
+    return new Map(unique.map((ts, index) => [ts, result.dates[index]]));
 }
 
 /**
@@ -225,7 +222,7 @@ async function getFormattedTimestamps(timestamps: number[], formatStringKey: str
  *
  * @param timestamps midnight timestamps to format, one per distinct day.
  */
-export const getFormattedDays = (timestamps: number[]): Promise<Map<number, string>> =>
+export const getFormattedDays = async (timestamps: number[]): Promise<Map<number, string>> =>
     getFormattedTimestamps(timestamps, 'strftimedaydate');
 
 /**
@@ -236,5 +233,5 @@ export const getFormattedDays = (timestamps: number[]): Promise<Map<number, stri
  *
  * @param timestamps event timesort timestamps to format.
  */
-export const getFormattedEventDateTimes = (timestamps: number[]): Promise<Map<number, string>> =>
+export const getFormattedEventDateTimes = async (timestamps: number[]): Promise<Map<number, string>> =>
     getFormattedTimestamps(timestamps, 'strftimedatetime');

@@ -13,10 +13,12 @@ function useAriaLabels(buttonKey, itemAriaKey, options) {
   const [buttonLabel, setButtonLabel] = useState("");
   const [itemLabels, setItemLabels] = useState({});
   useEffect(() => {
-    getString(buttonKey, "block_timeline").then(setButtonLabel);
-    options.forEach((opt) => {
-      getString(opt.labelKey, opt.labelComponent ?? "block_timeline").then((label) => getString(itemAriaKey, "block_timeline", label)).then((ariaLabel) => setItemLabels((prev) => ({ ...prev, [opt.name]: ariaLabel })));
-    });
+    void getString(buttonKey, "block_timeline").then(setButtonLabel);
+    for (const opt of options) {
+      void getString(opt.labelKey, opt.labelComponent ?? "block_timeline").then(async (label) => getString(itemAriaKey, "block_timeline", label)).then((ariaLabel) => {
+        setItemLabels((previous) => ({ ...previous, [opt.name]: ariaLabel }));
+      });
+    }
   }, []);
   return { buttonLabel, itemLabels };
 }

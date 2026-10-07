@@ -5,7 +5,7 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * Swizzlable wrapper around the design system ActivityIcon.
  *
  * Themes that need a custom icon can eject this component via the swizzle
- * manifest. All other code imports from @moodle/lms/block_timeline/views/ActivityIcon
+ * manifest. All other code imports from `@moodle/lms/block_timeline/views/ActivityIcon`
  * so the override applies everywhere without touching call sites.
  *
  * @module     block_timeline/views/ActivityIcon
@@ -56,13 +56,12 @@ const FILE_TYPE_MAP = {
   writer: "file-text-editor"
 };
 function resolveResourceIcon(iconurl) {
-  const match = iconurl.match(/f(?:\/|%2f)([a-z0-9_-]+)/i);
-  const filetype = match ? match[1].toLowerCase() : "";
+  const filetype = /f(?:\/|%2f)(?<filetype>[\w-]+)/iu.exec(iconurl)?.groups?.filetype.toLowerCase() ?? "";
   return FILE_TYPE_MAP[filetype] ?? "file";
 }
 __name(resolveResourceIcon, "resolveResourceIcon");
 function resolveIcon(modulename, iconurl) {
-  if (!modulename || modulename === "undefined") {
+  if (modulename === void 0 || modulename === null || ["", "undefined"].includes(modulename)) {
     return "file-unknown";
   }
   if (modulename === "resource") {
@@ -74,7 +73,7 @@ __name(resolveIcon, "resolveIcon");
 function ActivityIcon({ modulename, iconurl, alt = "" }) {
   return /* @__PURE__ */ jsxDEV(DSActivityIcon, { icon: resolveIcon(modulename, iconurl), alt, container: "none", size: "xl" }, void 0, false, {
     fileName: "public/blocks/timeline/js/esm/src/views/ActivityIcon.tsx",
-    lineNumber: 119,
+    lineNumber: 120,
     columnNumber: 12
   }, this);
 }

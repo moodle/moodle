@@ -13,12 +13,28 @@ class Storage {
   static {
     __name(this, "Storage");
   }
+  /**
+   * Hash a string, used to make shorter key prefixes.
+   *
+   * @param source The string to hash
+   * @returns A 32-bit integer hash
+   */
+  static hashString(source) {
+    let hash = 0;
+    for (let index = 0; index < source.length; index++) {
+      hash = (hash << 5) - hash + source.charCodeAt(index);
+      hash |= 0;
+    }
+    return hash;
+  }
   #storage;
   #supported;
   #prefix;
   #jsrevPrefix;
   #loginPrefix;
   /**
+   * Wrap a Storage instance, namespacing every key it reads and writes.
+   *
    * @param storage The underlying Storage instance (e.g. `window.localStorage`).
    */
   constructor(storage) {
@@ -37,7 +53,7 @@ class Storage {
     if (config.jsrev === -1) {
       return false;
     }
-    if (typeof this.#storage === "undefined") {
+    if (this.#storage === void 0) {
       return false;
     }
     const testKey = "test";
@@ -82,20 +98,6 @@ class Storage {
     }
   }
   /**
-   * Hash a string, used to make shorter key prefixes.
-   *
-   * @param source The string to hash
-   * @returns A 32-bit integer hash
-   */
-  static hashString(source) {
-    let hash = 0;
-    for (let i = 0; i < source.length; i++) {
-      hash = (hash << 5) - hash + source.charCodeAt(i);
-      hash |= 0;
-    }
-    return hash;
-  }
-  /**
    * Get a value from storage.
    *
    * @param key The cache key to check.
@@ -132,17 +134,17 @@ class Storage {
     this.#storage.clear();
   }
 }
-const internalLocalStore = new Storage(window.localStorage);
-const internalSessionStore = new Storage(window.sessionStorage);
+const internalLocalStore = new Storage(localStorage);
+const internalSessionStore = new Storage(sessionStorage);
 const localStore = {
   get: internalLocalStore.get.bind(internalLocalStore),
   set: internalLocalStore.set.bind(internalLocalStore),
-  "default": internalLocalStore
+  default: internalLocalStore
 };
 const sessionStore = {
   get: internalSessionStore.get.bind(internalSessionStore),
   set: internalSessionStore.set.bind(internalSessionStore),
-  "default": internalSessionStore
+  default: internalSessionStore
 };
 var Storage_default = Storage;
 export {

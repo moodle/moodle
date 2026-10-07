@@ -22,42 +22,54 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import String from '@moodle/lms/core/String';
 import type {FilterName} from '../common/types';
 import {useAriaLabels} from '../common/useAriaLabels';
 import {useComposedLabel} from '../common/useComposedLabel';
+import String from '@moodle/lms/core/String';
 
 const MENU_ID = 'menudayfilter';
 const GROUP_ID = 'duedatefiltergrouplabel';
 
-interface FilterOption {
+type FilterOption = {
     name: FilterName;
     labelKey: string;
     labelComponent: string;
     dataFrom: string;
     dataTo?: string;
-}
+};
 
 /** Top-level items (above the divider). */
 const TOP_OPTIONS: FilterOption[] = [
-    {name: 'all', labelKey: 'all', labelComponent: 'core', dataFrom: '-14'},
-    {name: 'overdue', labelKey: 'overdue', labelComponent: 'block_timeline', dataFrom: '-14', dataTo: '1'},
+    {
+        name: 'all', labelKey: 'all', labelComponent: 'core', dataFrom: '-14',
+    },
+    {
+        name: 'overdue', labelKey: 'overdue', labelComponent: 'block_timeline', dataFrom: '-14', dataTo: '1',
+    },
 ];
 
 /** Grouped date-range items (below the divider). */
 const GROUP_OPTIONS: FilterOption[] = [
-    {name: 'next7days', labelKey: 'next7days', labelComponent: 'block_timeline', dataFrom: '0', dataTo: '7'},
-    {name: 'next30days', labelKey: 'next30days', labelComponent: 'block_timeline', dataFrom: '0', dataTo: '30'},
-    {name: 'next3months', labelKey: 'next3months', labelComponent: 'block_timeline', dataFrom: '0', dataTo: '90'},
-    {name: 'next6months', labelKey: 'next6months', labelComponent: 'block_timeline', dataFrom: '0', dataTo: '180'},
+    {
+        name: 'next7days', labelKey: 'next7days', labelComponent: 'block_timeline', dataFrom: '0', dataTo: '7',
+    },
+    {
+        name: 'next30days', labelKey: 'next30days', labelComponent: 'block_timeline', dataFrom: '0', dataTo: '30',
+    },
+    {
+        name: 'next3months', labelKey: 'next3months', labelComponent: 'block_timeline', dataFrom: '0', dataTo: '90',
+    },
+    {
+        name: 'next6months', labelKey: 'next6months', labelComponent: 'block_timeline', dataFrom: '0', dataTo: '180',
+    },
 ];
 
 const ALL_OPTIONS = [...TOP_OPTIONS, ...GROUP_OPTIONS];
 
-interface DayFilterProps {
+type DayFilterProps = {
     activeFilter: FilterName;
     onChange: (filter: FilterName) => void;
-}
+};
 
 /**
  * Renders the day-filter dropdown button and menu, matching the legacy Mustache template.
@@ -70,23 +82,21 @@ export default function DayFilter({activeFilter, onChange}: DayFilterProps) {
 
     const activeOption = ALL_OPTIONS.find(o => o.name === activeFilter) ?? ALL_OPTIONS[0];
 
-    const toggleLabel = useComposedLabel(
-        'ariadayfilterbutton', activeOption.labelKey, activeOption.labelComponent
-    );
+    const toggleLabel = useComposedLabel('ariadayfilterbutton', activeOption.labelKey, activeOption.labelComponent);
 
     const renderItem = (option: FilterOption) => (
         <a
             key={option.name}
             className={`dropdown-item${activeFilter === option.name ? ' active dropdown-item-active' : ''}`}
-            href="#"
+            href='#'
             data-from={option.dataFrom}
-            {...(option.dataTo !== undefined ? {'data-to': option.dataTo} : {})}
+            {...(option.dataTo === undefined ? {} : {'data-to': option.dataTo})}
             data-filtername={option.name}
             aria-current={activeFilter === option.name ? 'true' : undefined}
             aria-label={itemLabels[option.name]}
-            role="menuitem"
-            onClick={(e) => {
-                e.preventDefault();
+            role='menuitem'
+            onClick={event => {
+                event.preventDefault();
                 onChange(option.name);
             }}
         >
@@ -95,21 +105,21 @@ export default function DayFilter({activeFilter, onChange}: DayFilterProps) {
     );
 
     return (
-        <div data-region="day-filter" className="dropdown mb-1">
+        <div data-region='day-filter' className='dropdown mb-1'>
             <button
-                type="button"
-                className="btn btn-outline-secondary dropdown-toggle icon-no-margin"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
+                type='button'
+                className='btn btn-outline-secondary dropdown-toggle icon-no-margin'
+                data-bs-toggle='dropdown'
+                aria-haspopup='true'
                 // Bootstrap's dropdown JS flips this to "true" on open and owns it from then
                 // on. The literal never changes between renders, so React's reconciler leaves
                 // the attribute alone and will not reset it while the menu is open.
-                aria-expanded="false"
+                aria-expanded='false'
                 aria-label={toggleLabel}
                 aria-controls={MENU_ID}
                 title={menuLabel}
             >
-                <span data-active-item-text="">
+                <span data-active-item-text=''>
                     <String
                         identifier={activeOption.labelKey}
                         component={activeOption.labelComponent}
@@ -119,21 +129,21 @@ export default function DayFilter({activeFilter, onChange}: DayFilterProps) {
 
             <div
                 id={MENU_ID}
-                role="menu"
+                role='menu'
                 aria-label={menuLabel}
-                className="dropdown-menu"
-                data-show-active-item=""
-                data-skip-active-class="true"
+                className='dropdown-menu'
+                data-show-active-item=''
+                data-skip-active-class='true'
             >
-                {TOP_OPTIONS.map(renderItem)}
+                {TOP_OPTIONS.map(option => renderItem(option))}
 
-                <div className="dropdown-divider" role="separator" />
+                <div className='dropdown-divider' role='separator' />
 
-                <div role="group" aria-labelledby={GROUP_ID}>
-                    <div className="h6 dropdown-header" role="presentation" id={GROUP_ID}>
-                        <String identifier="duedate" component="block_timeline">{''}</String>
+                <div role='group' aria-labelledby={GROUP_ID}>
+                    <div className='h6 dropdown-header' role='presentation' id={GROUP_ID}>
+                        <String identifier='duedate' component='block_timeline'>{''}</String>
                     </div>
-                    {GROUP_OPTIONS.map(renderItem)}
+                    {GROUP_OPTIONS.map(option => renderItem(option))}
                 </div>
             </div>
         </div>

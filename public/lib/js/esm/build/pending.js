@@ -15,4 +15,4 @@
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.6
- */class t{#e;static pending(e){M.util.js_pending(e)}static complete(e){M.util.js_complete(e)}constructor(e="pendingPromise"){let i,s;this.#e=t.Promise((o,r)=>{i=o,s=r},e),this.resolve=i,this.reject=s}then(e,i){return this.#e.then(e,i)}catch(e){return this.#e.catch(e)}static Promise(e,i="pendingPromise"){const s=new Promise((o,r)=>{t.pending(i),e(o,r)});return s.then(()=>{t.complete(i)}).catch(()=>{}),s}}export{t as default};
+ */class r{static pending(e){M.util.js_pending(e)}static complete(e){M.util.js_complete(e)}static Promise(e,s="pendingPromise"){const i=new Promise((t,o)=>{this.pending(s),e(t,o)});return i.then(()=>{this.complete(s)}).catch(()=>{}),i}#e;constructor(e="pendingPromise"){let s,i;this.#e=r.Promise((t,o)=>{s=t,i=o},e),this.resolve=s,this.reject=i}async then(e,s){return this.#e.then(e,s)}async catch(e){return this.#e.catch(e)}}export{r as default};

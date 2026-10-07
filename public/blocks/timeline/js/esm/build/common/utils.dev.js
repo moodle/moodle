@@ -10,7 +10,7 @@ const SECONDS_IN_DAY = 86400;
 function computeTimeRange(midnight, offsets) {
   return {
     starttime: midnight + offsets.daysoffset * SECONDS_IN_DAY,
-    endtime: offsets.dayslimit !== null ? midnight + offsets.dayslimit * SECONDS_IN_DAY : null
+    endtime: offsets.dayslimit === null ? null : midnight + offsets.dayslimit * SECONDS_IN_DAY
   };
 }
 __name(computeTimeRange, "computeTimeRange");
@@ -23,7 +23,7 @@ function groupByDay(events) {
     }
     map.get(day).push(event);
   }
-  return Array.from(map.entries()).sort(([a], [b]) => a - b).map(([dayTimestamp, evts]) => ({ dayTimestamp, events: evts }));
+  return [...map].sort(([a], [b]) => a - b).map(([dayTimestamp, evts]) => ({ dayTimestamp, events: evts }));
 }
 __name(groupByDay, "groupByDay");
 function filterEvents(events, midnight, filteroverdue) {

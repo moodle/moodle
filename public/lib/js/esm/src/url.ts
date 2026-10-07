@@ -30,28 +30,24 @@ declare const M: {
     };
 };
 
-type QueryParams = Record<string, string | number | boolean | null | undefined>;
+type QueryParameters = Record<string, string | number | boolean | undefined>;
 
 /**
  * Construct a file URL.
  *
- * @param relativeScript
- * @param slashArg
+ * @param relativeScript The script path, relative to wwwroot.
+ * @param slashArgument The argument to pass as a slash argument.
  * @returns URL string
  */
-export const fileUrl = (relativeScript: string, slashArg: string): string => {
+export const fileUrl = (relativeScript: string, slashArgument: string): string => {
     let url = config.wwwroot + relativeScript;
 
     // Force a leading slash.
-    if (slashArg.charAt(0) !== '/') {
-        slashArg = `/${slashArg}`;
+    if (!slashArgument.startsWith('/')) {
+        slashArgument = `/${slashArgument}`;
     }
 
-    if (config.slasharguments) {
-        url += slashArg;
-    } else {
-        url += `?file=${encodeURIComponent(slashArg)}`;
-    }
+    url += config.slasharguments === 0 ? `?file=${encodeURIComponent(slashArgument)}` : slashArgument;
 
     return url;
 };
@@ -66,35 +62,34 @@ export const fileUrl = (relativeScript: string, slashArg: string): string => {
  */
 export const relativeUrl = (
     relativePath: string,
-    params: QueryParams = {},
+    params: QueryParameters = {},
     includeSessKey = false,
 ): string => {
     if (
-        relativePath.indexOf('http:') === 0
-        || relativePath.indexOf('https:') === 0
-        || relativePath.indexOf('://') >= 0
+        relativePath.startsWith('http:')
+        || relativePath.startsWith('https:')
+        || relativePath.includes('://')
     ) {
         throw new Error('relativeUrl function does not accept absolute urls');
     }
 
     // Fix non-relative paths.
-    if (relativePath.charAt(0) !== '/') {
+    if (!relativePath.startsWith('/')) {
         relativePath = `/${relativePath}`;
     }
 
     // Fix admin URLs.
     if (config.admin !== 'admin') {
-        relativePath = relativePath.replace(/^\/admin\//, `/${config.admin}/`);
+        relativePath = relativePath.replace(/^\/admin\//u, () => `/${config.admin}/`);
     }
 
-    const queryParams: QueryParams = {...params};
+    const queryParameters: QueryParameters = {...params};
     if (includeSessKey) {
-        queryParams.sesskey = config.sesskey;
+        queryParameters.sesskey = config.sesskey;
     }
 
-    const queryString = new URLSearchParams(
-        Object.entries(queryParams).map(([param, value]) => [param, String(value)]),
-    ).toString();
+    const entries = Object.entries(queryParameters).map(([parameter, value]) => [parameter, String(value)]);
+    const queryString = new URLSearchParams(entries).toString();
 
     if (queryString !== '') {
         return `${config.wwwroot}${relativePath}?${queryString}`;
@@ -112,8 +107,11 @@ export const relativeUrl = (
  */
 export const imageUrl = (imagename: string, component: string): string => M.util.image_url(imagename, component);
 
-export default {
+/** Groups the URL helpers for `import url from '@moodle/lms/core/url'`. */
+const url = {
     fileUrl,
     relativeUrl,
     imageUrl,
 };
+
+export default url;

@@ -7,16 +7,21 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import { createElement, Profiler } from "react";
-const isProfilerEnabled = /* @__PURE__ */ __name(() => {
-  return window.M?.cfg?.jsrev === -1;
-}, "isProfilerEnabled");
+import {
+  createElement,
+  Profiler
+} from "react";
+const getComponentId = /* @__PURE__ */ __name((component, preferred, fallback) => {
+  const candidates = [preferred, component.displayName, component.name];
+  return candidates.find((candidate) => candidate !== void 0 && candidate !== "") ?? fallback;
+}, "getComponentId");
+const isProfilerEnabled = /* @__PURE__ */ __name(() => globalThis.M?.cfg?.jsrev === -1, "isProfilerEnabled");
 const onRenderCallback = /* @__PURE__ */ __name((id, phase, actualDuration, baseDuration, startTime, commitTime) => {
   if (!isProfilerEnabled()) {
     return;
   }
-  window.console.groupCollapsed(`[${phase}] ${id} - ${actualDuration.toFixed(2)}ms`);
-  window.console.table({
+  console.groupCollapsed(`[${phase}] ${id} - ${actualDuration.toFixed(2)}ms`);
+  console.table({
     Component: id,
     Phase: phase,
     "Duration (ms)": actualDuration.toFixed(2),
@@ -25,27 +30,19 @@ const onRenderCallback = /* @__PURE__ */ __name((id, phase, actualDuration, base
     "Commit Time": commitTime.toFixed(2)
   });
   if (actualDuration > 16) {
-    window.console.warn(
-      `Slow render: ${actualDuration.toFixed(2)}ms (target: <16ms for 60fps)`
-    );
+    console.warn(`Slow render: ${actualDuration.toFixed(2)}ms (target: <16ms for 60fps)`);
   }
   if (actualDuration > 50) {
-    window.console.error(
-      `Very slow render: ${actualDuration.toFixed(
-        2
-      )}ms - Consider optimization!`
-    );
+    console.error(`Very slow render: ${actualDuration.toFixed(2)}ms - Consider optimization!`);
   }
-  window.console.groupEnd();
+  console.groupEnd();
 }, "onRenderCallback");
-const getProfilerCallback = /* @__PURE__ */ __name(() => {
-  return isProfilerEnabled() ? onRenderCallback : void 0;
-}, "getProfilerCallback");
+const getProfilerCallback = /* @__PURE__ */ __name(() => isProfilerEnabled() ? onRenderCallback : void 0, "getProfilerCallback");
 function withProfiler(Component, id) {
   if (!isProfilerEnabled()) {
     return Component;
   }
-  const componentId = id || Component.displayName || Component.name || "Component";
+  const componentId = getComponentId(Component, id, "Component");
   const ProfiledComponent = /* @__PURE__ */ __name((props) => createElement(
     Profiler,
     { id: componentId, onRender: onRenderCallback },
@@ -56,6 +53,7 @@ function withProfiler(Component, id) {
 }
 __name(withProfiler, "withProfiler");
 export {
+  getComponentId,
   getProfilerCallback,
   isProfilerEnabled,
   onRenderCallback,

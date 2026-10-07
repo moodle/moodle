@@ -22,7 +22,6 @@ class Pending {
   static {
     __name(this, "Pending");
   }
-  #internalPromise;
   /**
    * Register a pending operation with Moodle's Behat integration.
    *
@@ -38,35 +37,6 @@ class Pending {
    */
   static complete(key) {
     M.util.js_complete(key);
-  }
-  /**
-   * Request a new pendingPromise for later resolution.
-   *
-   * When the action you are performing is complete, simply call `resolve` on the returned Promise.
-   *
-   * @param pendingKey An identifier to help in debugging.
-   * @returns A Promise with `resolve` and `reject` methods attached.
-   */
-  constructor(pendingKey = "pendingPromise") {
-    let resolver;
-    let rejector;
-    this.#internalPromise = Pending.Promise((resolve, reject) => {
-      resolver = resolve;
-      rejector = reject;
-    }, pendingKey);
-    this.resolve = resolver;
-    this.reject = rejector;
-  }
-  then(onfulfilled, onrejected) {
-    return this.#internalPromise.then(onfulfilled, onrejected);
-  }
-  /**
-   * Attaches a callback for only the rejection of the Promise.
-   * @param onrejected The callback to execute when the Promise is rejected.
-   * @returns A Promise for the completion of the callback.
-   */
-  catch(onrejected) {
-    return this.#internalPromise.catch(onrejected);
   }
   /**
    * Create a new Pending Promise with the same interface as a native Promise.
@@ -92,17 +62,50 @@ class Pending {
    *     }, 'mod_myexample/setup:init');
    * };
    */
-  static Promise(fn, pendingKey = "pendingPromise") {
+  /* eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/promise-function-async --
+     Released API name from core/pending. Not async: that would return a new promise without the catch below,
+     so a rejection the caller does not catch would be reported as unhandled. */
+  static Promise(executor, pendingKey = "pendingPromise") {
     const resolver = new Promise((resolve, reject) => {
-      Pending.pending(pendingKey);
-      fn(resolve, reject);
+      this.pending(pendingKey);
+      executor(resolve, reject);
     });
     resolver.then(() => {
-      Pending.complete(pendingKey);
-      return;
+      this.complete(pendingKey);
     }).catch(() => {
     });
     return resolver;
+  }
+  #internalPromise;
+  /**
+   * Request a new pendingPromise for later resolution.
+   *
+   * When the action you are performing is complete, simply call `resolve` on the returned Promise.
+   *
+   * @param pendingKey An identifier to help in debugging.
+   * @returns A Promise with `resolve` and `reject` methods attached.
+   */
+  constructor(pendingKey = "pendingPromise") {
+    let resolver;
+    let rejector;
+    this.#internalPromise = Pending.Promise((resolve, reject) => {
+      resolver = resolve;
+      rejector = reject;
+    }, pendingKey);
+    this.resolve = resolver;
+    this.reject = rejector;
+  }
+  /* eslint-disable-next-line unicorn/no-thenable -- Pending is documented as awaitable. */
+  async then(onfulfilled, onrejected) {
+    return this.#internalPromise.then(onfulfilled, onrejected);
+  }
+  /**
+   * Attaches a callback for only the rejection of the Promise.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of the callback.
+   */
+  async catch(onrejected) {
+    return this.#internalPromise.catch(onrejected);
   }
 }
 export {

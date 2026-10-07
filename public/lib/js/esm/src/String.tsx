@@ -16,11 +16,11 @@
 import {Suspense, use, type ReactNode} from 'react';
 import {getString, type StringParams} from './stringUtils';
 
-export interface StringProps {
+export type StringProps = {
     identifier: string;
     component?: string;
     params?: StringParams;
-}
+};
 
 function StringInner({identifier, component, params}: StringProps) {
     return <>{use(getString(identifier, component, params))}</>;

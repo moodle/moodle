@@ -24,13 +24,18 @@
  */
 
 import {useState, useCallback} from 'react';
+import {setUserPreference} from './repository';
+import type {
+    TimelineProps,
+    FilterName,
+    OrderName,
+    FilterOffsets,
+} from './common/types';
 import DayFilter from '@moodle/lms/block_timeline/nav/DayFilter';
 import ViewSelector from '@moodle/lms/block_timeline/nav/ViewSelector';
 import Search from '@moodle/lms/block_timeline/nav/Search';
 import DatesView from '@moodle/lms/block_timeline/views/DatesView';
 import CoursesView from '@moodle/lms/block_timeline/views/CoursesView';
-import {setUserPreference} from './repository';
-import type {TimelineProps, FilterName, OrderName, FilterOffsets} from './common/types';
 
 const PREF_FILTER = 'block_timeline_user_filter_preference';
 const PREF_ORDER = 'block_timeline_user_sort_preference';
@@ -94,24 +99,24 @@ export default function Timeline({midnight, filter, order, limit, nocoursesurl, 
     const showCoursesView = activeOrder === 'sortbycourses';
 
     return (
-        <div data-region="timeline" className="block-timeline">
-            <div className="p-0">
-                <div className="d-flex flex-wrap gap-1 g-0">
+        <div data-region='timeline' className='block-timeline'>
+            <div className='p-0'>
+                <div className='d-flex flex-wrap gap-1 g-0'>
                     <div>
                         <DayFilter activeFilter={activeFilter} onChange={handleFilterChange} />
                     </div>
                     <div>
                         <ViewSelector activeOrder={activeOrder} onChange={handleOrderChange} />
                     </div>
-                    <div className="flex-grow-1 d-flex justify-content-end nav-search">
+                    <div className='flex-grow-1 d-flex justify-content-end nav-search'>
                         <Search onSearch={handleSearch} onSearching={setSearchPending} />
                     </div>
                 </div>
-                <div className="pb-3 px-2 border-bottom"></div>
+                <div className='pb-3 px-2 border-bottom'></div>
             </div>
 
-            <div className="p-0">
-                <div data-region="view-dates" className={showCoursesView ? 'd-none' : ''}>
+            <div className='p-0'>
+                <div data-region='view-dates' className={showCoursesView ? 'd-none' : ''}>
                     {!showCoursesView && (
                         <DatesView
                             midnight={midnight}
@@ -125,7 +130,7 @@ export default function Timeline({midnight, filter, order, limit, nocoursesurl, 
                         />
                     )}
                 </div>
-                <div data-region="view-courses" className={showCoursesView ? '' : 'd-none'}>
+                <div data-region='view-courses' className={showCoursesView ? '' : 'd-none'}>
                     {showCoursesView && (
                         <CoursesView
                             midnight={midnight}

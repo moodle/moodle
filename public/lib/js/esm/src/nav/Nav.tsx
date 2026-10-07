@@ -23,19 +23,30 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {Fragment, cloneElement, isValidElement, useEffect, useId, useLayoutEffect, useMemo, useRef, useState,
-    type ReactElement, type ReactNode} from 'react';
+import {
+    Fragment,
+    cloneElement,
+    isValidElement,
+    useEffect,
+    useId,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+    type ReactElement,
+    type ReactNode,
+} from 'react';
 import {NavPill} from '@moodlehq/design-system';
 import {requireAsync} from '@moodle/lms/core/amd';
 
-export interface NavActionLinkAction {
+export type NavActionLinkAction = {
     id: string;
     event: string;
     jsfunction: string;
     jsfunctionargs?: string | false;
-}
+};
 
-export interface NavNode {
+export type NavNode = {
     key: string;
     text: string;
     href: string | null;
@@ -45,16 +56,16 @@ export interface NavNode {
     children: NavNode[];
     id?: string | null;
     title?: string | null;
-    attributes?: {name: string; value: unknown}[];
+    attributes?: Array<{name: string; value: unknown}>;
     actions?: NavActionLinkAction[];
     /**
      * A separator rather than a real item. Only ever set on children, and rendered as a
      * Bootstrap dropdown-divider, matching legacy moremenu_children.mustache.
      */
     divider?: boolean;
-}
+};
 
-export interface NavProps {
+export type NavProps = {
     items: NavNode[];
     morelabel: string;
     istablist: boolean;
@@ -70,7 +81,7 @@ export interface NavProps {
      * already sits inside the navbar's own landmark and must not nest a second one inside it.
      */
     navlabel?: string;
-}
+};
 
 /**
  * Check whether a node, or any of its descendants, is the currently active node.
@@ -81,7 +92,7 @@ export interface NavProps {
  * @returns True if the node or one of its descendants is active.
  */
 const isNodeActive = (node: NavNode): boolean =>
-    node.active || node.children.some(isNodeActive);
+    node.active || node.children.some(child => isNodeActive(child));
 
 /**
  * Returns a copy of the given nodes with `active` recomputed against a specific href, recursively.
@@ -93,7 +104,7 @@ const isNodeActive = (node: NavNode): boolean =>
  * @param activeHref The href of the tab Bootstrap reports as active.
  * @returns A new node array with `active` set to `node.href === activeHref` throughout.
  */
-const withActiveHref = (nodes: NavNode[], activeHref: string): NavNode[] => nodes.map((node) => ({
+const withActiveHref = (nodes: NavNode[], activeHref: string): NavNode[] => nodes.map(node => ({
     ...node,
     active: node.href === activeHref,
     children: withActiveHref(node.children, activeHref),
@@ -107,7 +118,7 @@ const withActiveHref = (nodes: NavNode[], activeHref: string): NavNode[] => node
  * @returns True if some node in the tree has that href.
  */
 const hasNodeWithHref = (nodes: NavNode[], href: string): boolean =>
-    nodes.some((node) => node.href === href || hasNodeWithHref(node.children, href));
+    nodes.some(node => node.href === href || hasNodeWithHref(node.children, href));
 
 /**
  * Attribute names excluded from toAttributeRecord()'s output because they're already handled
@@ -121,12 +132,10 @@ const RESERVED_ATTRIBUTE_NAMES = new Set(['id', 'class', 'disabled']);
  * @param attributes The {name, value} pairs from more_menu.php's actionattributes() export.
  * @returns A record suitable for spreading onto a JSX element.
  */
-const toAttributeRecord = (attributes: {name: string; value: unknown}[] = []): Record<string, string> =>
-    Object.fromEntries(
-        attributes
-            .filter(({name}) => !RESERVED_ATTRIBUTE_NAMES.has(name))
-            .map(({name, value}) => [name, String(value)]),
-    );
+const toAttributeRecord = (attributes: Array<{name: string; value: unknown}> = []): Record<string, string> =>
+    Object.fromEntries(attributes
+        .filter(({name}) => !RESERVED_ATTRIBUTE_NAMES.has(name))
+        .map(({name, value}) => [name, String(value)]));
 
 /**
  * Resolve a dotted global function reference (e.g. "openpopup", "M.util.someFunction") to the
@@ -135,8 +144,22 @@ const toAttributeRecord = (attributes: {name: string; value: unknown}[] = []): R
  * @param path The dotted path to resolve from `window`.
  * @returns The resolved function, or undefined if any segment of the path is missing.
  */
-const resolveGlobalFunction = (path: string): ((...args: unknown[]) => void) | undefined =>
-    path.split('.').reduce<any>((obj, key) => obj?.[key], window as unknown as Record<string, unknown>);
+const resolveGlobalFunction = (path: string): ((...args: unknown[]) => void) | undefined => {
+    let value: unknown = globalThis;
+    for (const key of path.split('.')) {
+        value = (value as Record<string, unknown> | undefined)?.[key];
+    }
+
+    return typeof value === 'function' ? value as (...args: unknown[]) => void : undefined;
+};
+
+/**
+ * Whether a node has action_link actions to bind, and an id to find its element by.
+ *
+ * @param item The node to check.
+ * @returns True if the node's actions should be bound.
+ */
+const hasBindableActions = (item: NavNode): boolean => (item.id ?? '') !== '' && (item.actions?.length ?? 0) > 0;
 
 /**
  * Re-registers each item's action_link actions (e.g. popup_action) as plain DOM event listeners,
@@ -153,45 +176,51 @@ const useActionLinkBehavior = (items: NavNode[]): void => {
     // rather than off `items` itself, avoids tearing down and rebinding every listener on
     // each such re-render.
     const actionSignature = useMemo(
-        () => JSON.stringify(
-            items
-                .filter((item) => item.id && item.actions?.length)
-                .map((item) => [item.id, item.actions!.map(
-                    (action) => [action.event, action.jsfunction, action.jsfunctionargs],
-                )]),
-        ),
+        () => JSON.stringify(items
+            .filter(item => hasBindableActions(item))
+            .map(item => [item.id, item.actions!.map(action => [action.event, action.jsfunction, action.jsfunctionargs])])),
         [items],
     );
 
     useEffect(() => {
-        const nodesWithActions = items.filter((item) => item.id && item.actions?.length);
+        const nodesWithActions = items.filter(item => hasBindableActions(item));
         if (nodesWithActions.length === 0) {
             return undefined;
         }
 
-        const cleanups: (() => void)[] = [];
+        const cleanups: Array<() => void> = [];
 
-        nodesWithActions.forEach((item) => {
-            const el = document.getElementById(item.id!);
-            if (!el) {
-                return;
+        for (const item of nodesWithActions) {
+            const element = document.querySelector<HTMLElement>(`#${CSS.escape(item.id!)}`);
+            if (!element) {
+                continue;
             }
-            item.actions!.forEach((action) => {
-                const fn = resolveGlobalFunction(action.jsfunction);
-                if (!fn) {
-                    return;
+
+            for (const action of item.actions!) {
+                const function_ = resolveGlobalFunction(action.jsfunction);
+                if (function_ !== undefined) {
+                    const {jsfunctionargs} = action;
+                    const args: unknown = typeof jsfunctionargs === 'string' && jsfunctionargs !== ''
+                        ? JSON.parse(jsfunctionargs)
+                        : undefined;
+                    const listener = (event: Event) => {
+                        function_(event, args);
+                    };
+
+                    element.addEventListener(action.event, listener);
+                    cleanups.push(() => {
+                        element.removeEventListener(action.event, listener);
+                    });
                 }
-                const args = action.jsfunctionargs ? JSON.parse(action.jsfunctionargs) : undefined;
-                const listener = (event: Event) => fn(event, args);
-                el.addEventListener(action.event, listener);
-                cleanups.push(() => el.removeEventListener(action.event, listener));
-            });
-        });
+            }
+        }
 
         return () => {
-            cleanups.forEach((cleanup) => cleanup());
+            for (const cleanup of cleanups) {
+                cleanup();
+            }
         };
-        // ActionSignature captures everything about `items` this effect cares about (see above).
+        // The signature captures everything about `items` this effect cares about (see above).
     }, [actionSignature]);
 };
 
@@ -203,7 +232,9 @@ const useActionLinkBehavior = (items: NavNode[]): void => {
  *
  * @param event The click event.
  */
-const keepParentMenuOpen = (event: MouseEvent): void => event.stopPropagation();
+const keepParentMenuOpen = (event: MouseEvent): void => {
+    event.stopPropagation();
+};
 
 /**
  * A submenu nested inside the "More" dropdown, for a node whose children belong in a submenu but
@@ -224,26 +255,26 @@ function DropdownSubmenu({node, istablist = false}: {node: NavNode; istablist?: 
     return (
         // The wrapper only exists to give Bootstrap's dropdown JS a container, so role="none"
         // keeps the toggle a valid child of the enclosing role="menu", as the legacy <li> did.
-        <div className="dropdown dropdown-submenu" role="none" onClickCapture={keepParentMenuOpen}>
+        <div className='dropdown dropdown-submenu' role='none' onClickCapture={keepParentMenuOpen}>
             <a
                 id={toggleId}
                 className={`dropdown-item dropdown-toggle${isNodeActive(node) ? ' active' : ''}`}
-                href="#"
+                href='#'
                 title={node.title ?? undefined}
-                role="menuitem"
-                data-bs-toggle="dropdown"
+                role='menuitem'
+                data-bs-toggle='dropdown'
                 // Bootstrap only skips Popper's absolute positioning by itself inside a .navbar,
                 // so ask for it explicitly: the submenu expands in place (see moremenu.scss)
                 // rather than floating over the "More" menu it belongs to.
-                data-bs-display="static"
-                aria-haspopup="true"
-                aria-expanded="false"
+                data-bs-display='static'
+                aria-haspopup='true'
+                aria-expanded='false'
                 aria-controls={menuId}
                 aria-current={isNodeActive(node) ? 'page' : undefined}
             >
                 {node.text}
             </a>
-            <div className="dropdown-menu" id={menuId} role={istablist ? 'none' : 'menu'} aria-labelledby={toggleId}>
+            <div className='dropdown-menu' id={menuId} role={istablist ? 'none' : 'menu'} aria-labelledby={toggleId}>
                 <DropdownItems items={node.children} istablist={istablist} />
             </div>
         </div>
@@ -253,30 +284,28 @@ function DropdownSubmenu({node, istablist = false}: {node: NavNode; istablist?: 
 /**
  * Plain dropdown-item links for the "More" overflow menu and submenu dropdowns.
  *
- * @moodlehq/design-system has no menu/dropdown component yet, so this reuses Bootstrap's
+ * `@moodlehq/design-system` has no menu/dropdown component yet, so this reuses Bootstrap's
  * dropdown-item markup (matching legacy moremenu_children.mustache) rather than NavPill, which
  * is designed for the top-level tab bar only.
  *
  * @param props Component props.
  * @param props.items The nodes to render as dropdown items.
  * @param props.istablist Whether these items belong to an istablist nav's top-level overflow
- *                        dropdown (as opposed to a SubmenuTrigger's nested dropdown).
+ * dropdown (as opposed to a SubmenuTrigger's nested dropdown).
  * @param props.submenus Whether a node whose children belong in a submenu renders as a nested
- *                        submenu rather than a plain link. Only set for the "More" dropdown
- *                        itself: legacy moremenu_children.mustache went no deeper either.
+ * submenu rather than a plain link. Only set for the "More" dropdown
+ * itself: legacy moremenu_children.mustache went no deeper either.
  * @returns The rendered dropdown items.
  */
-function DropdownItems(
-    {items, istablist = false, submenus = false}:
-    {items: NavNode[]; istablist?: boolean; submenus?: boolean},
-) {
+function DropdownItems({items, istablist = false, submenus = false}:
+{items: NavNode[]; istablist?: boolean; submenus?: boolean}) {
     useActionLinkBehavior(items);
 
     return (
         <>
-            {items.map((item) => {
+            {items.map(item => {
                 if (item.divider) {
-                    return <div key={item.key} className="dropdown-divider" role="separator" />;
+                    return <div key={item.key} className='dropdown-divider' role='separator' />;
                 }
 
                 if (submenus && item.showchildreninsubmenu && item.children.length > 0) {
@@ -308,7 +337,7 @@ function DropdownItems(
                         // forces aria-current onto whichever dropdown item was clicked even when
                         // the click doesn't actually navigate anywhere (e.g. a stubbed-out href in
                         // tests, or any other no-op link).
-                        data-disableactive="true"
+                        data-disableactive='true'
                         {...toAttributeRecord(item.attributes)}
                         // Item.text is exported raw HTML (e.g. an icon plus a visually-hidden "opens in
                         // a new window" span), matching the legacy moremenu_children.mustache's unescaped {{{text}}}.
@@ -323,7 +352,7 @@ function DropdownItems(
 
 /**
  * A dropdown-toggle styled to match NavPill's own markup (indicator dot + label span), for
- * visual consistency with the pills either side of it. @moodlehq/design-system has no
+ * visual consistency with the pills either side of it. `@moodlehq/design-system` has no
  * menu/dropdown-trigger component, so this reuses NavPill's CSS classes directly on a plain
  * Bootstrap dropdown-toggle anchor.
  *
@@ -342,18 +371,16 @@ function DropdownItems(
  * @param props.selected Whether one of the dropdown's own items is currently active.
  * @param props.title The toggle's tooltip, when the node carries one that differs from its label.
  * @param props.istablist Whether the toggle sits inside an `istablist` nav. When true, the toggle
- *                        gets `role="tab"` to be a valid tablist child; when false it gets
- *                        `role="menuitem"` to be a valid child of the top-level `<ul
- *                        role="menubar">`. (NavPill's plain leaf items get the same treatment from
- *                        stampMenuItemRole below, since @moodlehq/design-system's NavPillProps
- *                        type omits `role` and the component always sets its own.)
+ * gets `role="tab"` to be a valid tablist child; when false it gets
+ * `role="menuitem"` to be a valid child of the top-level `<ul
+ * role="menubar">`. (NavPill's plain leaf items get the same treatment from
+ * stampMenuItemRole below, since `@moodlehq/design-system`'s NavPillProps
+ * type omits `role` and the component always sets its own.)
  * @param props.children The dropdown menu to render alongside the toggle.
  * @returns The rendered dropdown toggle and menu.
  */
-function PillDropdownToggle(
-    {label, selected, title, istablist = false, children}:
-    {label: string; selected: boolean; title?: string; istablist?: boolean; children: ReactNode},
-) {
+function PillDropdownToggle({label, selected, title, istablist = false, children}:
+{label: string; selected: boolean; title?: string; istablist?: boolean; children: ReactNode}) {
     const classes = ['mds-nav-pill', 'dropdown-toggle', selected ? 'mds-nav-pill--selected' : null]
         .filter(Boolean)
         .join(' ');
@@ -376,14 +403,14 @@ function PillDropdownToggle(
     return (
         <Fragment>
             <a
-                href="#"
+                href='#'
                 id={toggleId}
                 className={classes}
                 title={title}
                 role={istablist ? 'tab' : 'menuitem'}
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
+                data-bs-toggle='dropdown'
+                aria-haspopup='true'
+                aria-expanded='false'
                 aria-controls={menuId}
                 aria-current={selected ? 'page' : undefined}
                 // Roving tabindex, matching legacy moremenu_children.mustache/moremenu.js: the
@@ -391,9 +418,9 @@ function PillDropdownToggle(
                 // or an overflowed top-level item for the "More" toggle).
                 tabIndex={selected ? 0 : -1}
             >
-                {selected && <span className="mds-nav-pill__indicator" aria-hidden="true" />}
+                {selected && <span className='mds-nav-pill__indicator' aria-hidden='true' />}
                 {/* Label may carry raw HTML (see DropdownItems' dangerouslySetInnerHTML above). */}
-                <span className="mds-nav-pill__label" dangerouslySetInnerHTML={{__html: label}} />
+                <span className='mds-nav-pill__label' dangerouslySetInnerHTML={{__html: label}} />
             </a>
             {menu}
         </Fragment>
@@ -415,15 +442,15 @@ function TabPill({node}: {node: NavNode}) {
             href={node.href ?? '#'}
             className={`mds-nav-pill${selected ? ' active' : ''}`}
             title={node.title ?? undefined}
-            role="tab"
-            data-bs-toggle="tab"
+            role='tab'
+            data-bs-toggle='tab'
             data-text={node.text}
-            data-disableactive="true"
+            data-disableactive='true'
             aria-selected={selected ? 'true' : 'false'}
             tabIndex={selected ? 0 : -1}
         >
             {/* Node.text may carry raw HTML (see DropdownItems' dangerouslySetInnerHTML above). */}
-            <span className="mds-nav-pill__label" dangerouslySetInnerHTML={{__html: node.text}} />
+            <span className='mds-nav-pill__label' dangerouslySetInnerHTML={{__html: node.text}} />
         </a>
     );
 }
@@ -444,7 +471,7 @@ function SubmenuTrigger({node, istablist = false}: {node: NavNode; istablist?: b
             title={node.title ?? undefined}
             istablist={istablist}
         >
-            <div className="dropdown-menu">
+            <div className='dropdown-menu'>
                 <DropdownItems items={node.children} istablist={istablist} />
             </div>
         </PillDropdownToggle>
@@ -454,7 +481,7 @@ function SubmenuTrigger({node, istablist = false}: {node: NavNode; istablist?: b
 /**
  * Ref callback stamping role="menuitem" onto a NavPill's anchor.
  *
- * A NavPill cannot be given a role: @moodlehq/design-system's NavPillProps omits `role`, and the
+ * A NavPill cannot be given a role: `@moodlehq/design-system`'s NavPillProps omits `role`, and the
  * component overwrites whatever is spread in with its own value, which is undefined unless the
  * pill is disabled. Its <li> is role="none", so the roleless anchor is exposed as an owned child
  * of the enclosing <ul role="menubar"> — a critical axe aria-required-children violation
@@ -464,10 +491,10 @@ function SubmenuTrigger({node, istablist = false}: {node: NavNode; istablist?: b
  * So set it on the DOM node instead, until NavPill accepts a role of its own. React never undoes
  * this: `role` is undefined in both the previous and the next props, so it is never diffed.
  *
- * @param el The pill's anchor, or null once it is unmounted.
+ * @param element The pill's anchor, or null once it is unmounted.
  */
-const stampMenuItemRole = (el: HTMLAnchorElement | null): void => {
-    el?.setAttribute('role', 'menuitem');
+const stampMenuItemRole = (element: HTMLAnchorElement | null): void => {
+    element?.setAttribute('role', 'menuitem');
 };
 
 /**
@@ -481,9 +508,11 @@ const renderPill = (item: NavNode, istablist: boolean) => {
     if (item.showchildreninsubmenu && item.children.length > 0) {
         return <SubmenuTrigger node={item} istablist={istablist} />;
     }
+
     if (istablist) {
         return <TabPill node={item} />;
     }
+
     const selected = isNodeActive(item);
     return (
         <NavPill
@@ -503,7 +532,7 @@ const renderPill = (item: NavNode, istablist: boolean) => {
             // href in tests, or any other no-op link), leaving the old and new active items both
             // (or neither) marked correctly. TabPill and DropdownItems' istablist items already opt
             // out the same way.
-            data-disableactive="true"
+            data-disableactive='true'
         />
     );
 };
@@ -526,10 +555,8 @@ const MEASURED_CLASS = 'secondarynav-measured';
  * @param props.navlabel Accessible name for the navigation landmark wrapping the menu.
  * @returns The rendered navigation pill.
  */
-export default function Nav(
-    {items, morelabel, istablist, navbarstyle, measuredclass = MEASURED_CLASS, navlabel}: NavProps,
-) {
-    const menuRef = useRef<HTMLUListElement>(null);
+export default function Nav({items, morelabel, istablist, navbarstyle, measuredclass = MEASURED_CLASS, navlabel}: NavProps) {
+    const menuReference = useRef<HTMLUListElement>(null);
 
     // Bootstrap's Tab component (data-bs-toggle="tab") can activate a tab client-side. React never hears about
     // that on its own. Track the href Bootstrap actually activates and use it to override the server's `active` flags.
@@ -539,8 +566,9 @@ export default function Nav(
         if (!istablist) {
             return null;
         }
-        const hash = window.location.hash;
-        return hash && hasNodeWithHref(items, hash) ? hash : null;
+
+        const {hash} = globalThis.location;
+        return hash !== '' && hasNodeWithHref(items, hash) ? hash : null;
     });
 
     useEffect(() => {
@@ -549,32 +577,35 @@ export default function Nav(
         }
 
         const handleShown = (event: Event) => {
-            const target = event.target;
-            if (!(target instanceof HTMLElement) || !menuRef.current?.contains(target)) {
+            const {target} = event;
+            if (!(target instanceof HTMLElement) || !menuReference.current?.contains(target)) {
                 return;
             }
+
             const href = target.getAttribute('href');
-            if (href && href !== '#') {
+            if (href !== null && !['', '#'].includes(href)) {
                 setActiveOverrideHref(href);
             }
         };
 
         document.addEventListener('shown.bs.tab', handleShown);
-        return () => document.removeEventListener('shown.bs.tab', handleShown);
+        return () => {
+            document.removeEventListener('shown.bs.tab', handleShown);
+        };
     }, [istablist]);
 
-    const effectiveItems = istablist && activeOverrideHref ? withActiveHref(items, activeOverrideHref) : items;
+    const effectiveItems = istablist && activeOverrideHref !== null ? withActiveHref(items, activeOverrideHref) : items;
 
     // Dividers are a dropdown-only concept (see DropdownItems); the server side export already
     // drops them at the top level, but guard here too so one could never render as a bare pill.
-    const toplevel = effectiveItems.filter((item) => !item.divider);
-    const forced = toplevel.filter((item) => item.forceintomoremenu);
-    const rest = toplevel.filter((item) => !item.forceintomoremenu);
+    const toplevel = effectiveItems.filter(item => !item.divider);
+    const forced = toplevel.filter(item => item.forceintomoremenu);
+    const rest = toplevel.filter(item => !item.forceintomoremenu);
 
     // The landmark, when one is rendered. The measurement below sizes the menu against the React
     // mount point, so it must resolve the container from whichever element is outermost here
     // rather than from the <ul>, whose parent is the landmark once there is one.
-    const landmarkRef = useRef<HTMLElement>(null);
+    const landmarkReference = useRef<HTMLElement>(null);
     const [autoOverflowCount, setAutoOverflowCount] = useState(0);
     const [measured, setMeasured] = useState(false);
 
@@ -592,30 +623,31 @@ export default function Nav(
     //   doesn't fit, grow more" apart from "that shrink attempt didn't pay off, revert it".
     // - shrinkExhaustedRef: once a shrink attempt is reverted this cycle, don't try another until
     //   the next cycle, otherwise it would just bounce between the two states forever.
-    const stepsRef = useRef(0);
-    const lastActionRef = useRef<'grow' | 'shrink' | null>(null);
-    const shrinkExhaustedRef = useRef(false);
+    const stepsReference = useRef(0);
+    const lastActionReference = useRef<'grow' | 'shrink' | null>(null);
+    const shrinkExhaustedReference = useRef(false);
 
     // Lets the measurement effect (which has no dependency array) detect an `items` prop change
     // from inside itself.
-    const itemsKey = items.map((item) => item.key).join(' ');
-    const prevItemsKeyRef = useRef(itemsKey);
+    const itemsKey = items.map(item => item.key).join(' ');
+    const previousItemsKeyReference = useRef(itemsKey);
 
     // Keyboard arrow-key/Home/End navigation, via the existing core/menu_navigation module.
     // Bootstrap's data-bs-toggle="tab"/"dropdown" APIs handle panel-switching/opening separately.
     // Legacy moremenu.js called this unconditionally for every nav, not just istablist ones: it's
     // also what makes Space (not just Enter) activate a pill/menuitem.
     useEffect(() => {
-        if (!menuRef.current) {
+        if (!menuReference.current) {
             return undefined;
         }
 
         let cancelled = false;
 
-        requireAsync<(menu: HTMLElement) => void>('core/menu_navigation').then((menuNavigation) => {
-            if (!cancelled && menuRef.current) {
-                menuNavigation(menuRef.current);
+        void requireAsync<(menu: HTMLElement) => void>('core/menu_navigation').then(menuNavigation => {
+            if (!cancelled && menuReference.current) {
+                menuNavigation(menuReference.current);
             }
+
             return undefined;
         });
 
@@ -628,19 +660,19 @@ export default function Nav(
     // autoOverflowCount by one step per pass until the split converges. Runs pre-paint, so
     // intermediate states are never visible; measuredclass/opacity cover the first convergence.
     useLayoutEffect(() => {
-        if (prevItemsKeyRef.current !== itemsKey) {
-            prevItemsKeyRef.current = itemsKey;
-            stepsRef.current = 0;
-            lastActionRef.current = null;
-            shrinkExhaustedRef.current = false;
+        if (previousItemsKeyReference.current !== itemsKey) {
+            previousItemsKeyReference.current = itemsKey;
+            stepsReference.current = 0;
+            lastActionReference.current = null;
+            shrinkExhaustedReference.current = false;
             if (autoOverflowCount !== 0) {
                 setAutoOverflowCount(0);
                 return;
             }
         }
 
-        const menu = menuRef.current;
-        const container = (landmarkRef.current ?? menu)?.parentElement;
+        const menu = menuReference.current;
+        const container = (landmarkReference.current ?? menu)?.parentElement;
         if (!menu || !container) {
             // Fail open: show the tab bar unmeasured rather than hide it forever.
             setMeasured(true);
@@ -660,19 +692,19 @@ export default function Nav(
         const bound = (2 * rest.length) + 2;
 
         if (wrapped) {
-            if (lastActionRef.current === 'shrink') {
+            if (lastActionReference.current === 'shrink') {
                 // The previous shrink didn't pay off: revert it, don't try shrinking again this cycle.
-                lastActionRef.current = null;
-                shrinkExhaustedRef.current = true;
-                if (stepsRef.current < bound) {
-                    stepsRef.current += 1;
-                    setAutoOverflowCount((count) => count + 1);
+                lastActionReference.current = null;
+                shrinkExhaustedReference.current = true;
+                if (stepsReference.current < bound) {
+                    stepsReference.current += 1;
+                    setAutoOverflowCount(count => count + 1);
                     return;
                 }
-            } else if (autoOverflowCount < rest.length && stepsRef.current < bound) {
-                stepsRef.current += 1;
-                lastActionRef.current = 'grow';
-                setAutoOverflowCount((count) => count + 1);
+            } else if (autoOverflowCount < rest.length && stepsReference.current < bound) {
+                stepsReference.current += 1;
+                lastActionReference.current = 'grow';
+                setAutoOverflowCount(count => count + 1);
                 return;
             }
 
@@ -681,15 +713,15 @@ export default function Nav(
             return;
         }
 
-        if (autoOverflowCount > 0 && !shrinkExhaustedRef.current && stepsRef.current < bound) {
+        if (autoOverflowCount > 0 && !shrinkExhaustedReference.current && stepsReference.current < bound) {
             // Try recovering one item back out of overflow, in case there's now room for it.
-            stepsRef.current += 1;
-            lastActionRef.current = 'shrink';
-            setAutoOverflowCount((count) => Math.max(count - 1, 0));
+            stepsReference.current += 1;
+            lastActionReference.current = 'shrink';
+            setAutoOverflowCount(count => Math.max(count - 1, 0));
             return;
         }
 
-        lastActionRef.current = null;
+        lastActionReference.current = null;
         reveal();
         setMeasured(true);
     });
@@ -706,15 +738,15 @@ export default function Nav(
     //   what's left: widening the window resizes it by nothing, and they would never come back out.
     useEffect(() => {
         const remeasure = () => {
-            stepsRef.current = 0;
-            lastActionRef.current = null;
-            shrinkExhaustedRef.current = false;
-            forceRemeasure((tick) => tick + 1);
+            stepsReference.current = 0;
+            lastActionReference.current = null;
+            shrinkExhaustedReference.current = false;
+            forceRemeasure(tick => tick + 1);
         };
 
         window.addEventListener('resize', remeasure);
 
-        const container = (landmarkRef.current ?? menuRef.current)?.parentElement;
+        const container = (landmarkReference.current ?? menuReference.current)?.parentElement;
         let observer: ResizeObserver | null = null;
         if (container && typeof ResizeObserver !== 'undefined') {
             observer = new ResizeObserver(remeasure);
@@ -753,10 +785,10 @@ export default function Nav(
             return undefined;
         }
 
-        const keys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', ' '];
+        const keys = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', ' ']);
         const handleKeyDown = (event: globalThis.KeyboardEvent) => {
-            const target = event.target;
-            if (!keys.includes(event.key) || !(target instanceof HTMLElement) || target.closest('.dropdown-menu')) {
+            const {target} = event;
+            if (!keys.has(event.key) || !(target instanceof HTMLElement) || target.closest('.dropdown-menu')) {
                 return;
             }
 
@@ -765,8 +797,8 @@ export default function Nav(
                 return;
             }
 
-            const stops = Array.from(menuRef.current?.querySelectorAll<HTMLElement>(':scope > li > a[role="tab"]') ?? [])
-                .filter((stop) => !stop.closest('.d-none'));
+            const stops = [...menuReference.current?.querySelectorAll<HTMLElement>(':scope > li > a[role="tab"]') ?? []]
+                .filter(stop => !stop.closest('.d-none'));
             const index = stops.indexOf(target);
             if (index === -1) {
                 return;
@@ -790,20 +822,23 @@ export default function Nav(
                 const step = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1;
                 next = stops[(index + step + stops.length) % stops.length];
             }
+
             next.focus();
         };
 
-        window.addEventListener('keydown', handleKeyDown, true);
-        return () => window.removeEventListener('keydown', handleKeyDown, true);
+        globalThis.addEventListener('keydown', handleKeyDown, {capture: true});
+        return () => {
+            globalThis.removeEventListener('keydown', handleKeyDown, true);
+        };
     }, [istablist]);
 
     const menu = (
         <ul
-            ref={menuRef}
+            ref={menuReference}
             className={['nav', 'more-nav', navbarstyle].filter(Boolean).join(' ')}
             role={istablist ? 'tablist' : 'menubar'}
         >
-            {visible.map((item) => {
+            {visible.map(item => {
                 const isSubmenuTrigger = item.showchildreninsubmenu && item.children.length > 0;
                 return (
                     <li
@@ -819,8 +854,8 @@ export default function Nav(
                 role={itemRole}
                 className={`nav-item d-flex align-items-center dropdown dropdownmoremenu${overflow.length === 0 ? ' d-none' : ''}`}
             >
-                <PillDropdownToggle label={morelabel} selected={overflow.some(isNodeActive)} istablist={istablist}>
-                    <div className="dropdown-menu dropdown-menu-start" data-region="moredropdown">
+                <PillDropdownToggle label={morelabel} selected={overflow.some(node => isNodeActive(node))} istablist={istablist}>
+                    <div className='dropdown-menu dropdown-menu-start' data-region='moredropdown'>
                         <DropdownItems items={overflow} istablist={istablist} submenus />
                     </div>
                 </PillDropdownToggle>
@@ -828,7 +863,7 @@ export default function Nav(
         </ul>
     );
 
-    if (!navlabel) {
+    if (navlabel === undefined || navlabel === '') {
         return menu;
     }
 
@@ -841,7 +876,7 @@ export default function Nav(
     // .secondary-navigation .navigation sets padding on a descendant match, so repeating those
     // classes inside the mount point (which already has .navigation) would indent the menu twice.
     return (
-        <nav ref={landmarkRef} aria-label={navlabel}>
+        <nav ref={landmarkReference} aria-label={navlabel}>
             {menu}
         </nav>
     );

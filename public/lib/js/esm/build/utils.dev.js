@@ -10,22 +10,22 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  */
 import Pending from "./pending";
 const throttle = /* @__PURE__ */ __name((func, wait) => {
-  let onCooldown = false;
-  let runAgain = false;
+  let isOnCooldown = false;
+  let isRunAgain = false;
   let latestArgs;
   const run = /* @__PURE__ */ __name(function(...args) {
     latestArgs = args;
-    if (onCooldown) {
-      runAgain = true;
+    if (isOnCooldown) {
+      isRunAgain = true;
       return;
     }
     func.apply(this, args);
-    onCooldown = true;
+    isOnCooldown = true;
     setTimeout(() => {
-      const recurse = runAgain;
-      onCooldown = false;
-      runAgain = false;
-      if (recurse) {
+      const isRecurse = isRunAgain;
+      isOnCooldown = false;
+      isRunAgain = false;
+      if (isRecurse) {
         run.apply(this, latestArgs);
       }
     }, wait);
@@ -45,11 +45,14 @@ const debounce = /* @__PURE__ */ __name((func, wait, {
     if (timeout !== null) {
       clearTimeout(timeout);
     }
-    timeout = setTimeout(async () => {
+    const flush = /* @__PURE__ */ __name(async () => {
       const pendingPromise = debounceMap.get(returnedFunction);
       debounceMap.delete(returnedFunction);
-      await func.apply(void 0, args);
+      await func(...args);
       pendingPromise?.resolve();
+    }, "flush");
+    timeout = setTimeout(() => {
+      void flush();
     }, wait);
   }, "returnedFunction");
   if (cancel) {
@@ -64,16 +67,17 @@ const debounce = /* @__PURE__ */ __name((func, wait, {
   return returnedFunction;
 }, "debounce");
 const getNormalisedComponent = /* @__PURE__ */ __name((component) => {
-  if (component && component !== "moodle" && component !== "core") {
+  if (component !== void 0 && component !== null && !["", "moodle", "core"].includes(component)) {
     return component;
   }
   return "core";
 }, "getNormalisedComponent");
-var utils_default = {
+const utils = {
   throttle,
   debounce,
   getNormalisedComponent
 };
+var utils_default = utils;
 export {
   debounce,
   utils_default as default,

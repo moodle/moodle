@@ -27,21 +27,21 @@
  * @since      2.9
  */
 
+import {getGlobalAbortSignal} from './abort';
 import config from '@moodle/lms/core/config';
 import Pending from '@moodle/lms/core/pending';
 import log from '@moodle/lms/core/log';
 import {redirect} from '@moodle/lms/core/location';
 import {relativeUrl} from '@moodle/lms/core/url';
-import {getGlobalAbortSignal} from './abort';
 
 /** A single web service request descriptor. */
-export interface AjaxRequest {
+export type AjaxRequest = {
     methodname: string;
     args: Record<string, unknown>;
-}
+};
 
 /** Options for web service calls. */
-export interface AjaxOptions {
+export type AjaxOptions = {
     /** When false, calls a no-login endpoint. Default true. */
     loginrequired?: boolean;
     /** When true, the request will not extend the session timer. Default false. */
@@ -50,26 +50,26 @@ export interface AjaxOptions {
     timeout?: number;
     /** A cache key for browser-side caching (only with loginrequired=false). */
     cachekey?: number | null;
-}
+};
 
 /** Shape of a Moodle web service error rejection. */
-export interface MoodleAjaxError {
+export type MoodleAjaxError = {
     message: string;
     errorcode: string;
     link?: string;
     moreinfourl?: string;
     debuginfo?: string;
-}
+};
 
 /**
  * Type guard that narrows an unknown catch value to {@link MoodleAjaxError}.
  */
-export function isMoodleAjaxError(err: unknown): err is MoodleAjaxError {
+export function isMoodleAjaxError(error: unknown): error is MoodleAjaxError {
     return (
-        typeof err === 'object' &&
-        err !== null &&
-        'message' in err &&
-        'errorcode' in err
+        typeof error === 'object'
+        && error !== null
+        && 'message' in error
+        && 'errorcode' in error
     );
 }
 
@@ -77,33 +77,34 @@ export function isMoodleAjaxError(err: unknown): err is MoodleAjaxError {
 const MAX_URL_LENGTH = 2000;
 
 /** Tracks whether the page is unloading (to suppress errors during navigation). */
-let unloading = false;
+let isUnloading = false;
 
 if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', () => {
-        unloading = true;
+        isUnloading = true;
     });
 }
 
 /** Internal request payload shape sent to service.php. */
-export interface ServiceRequest {
+export type ServiceRequest = {
     index: number;
     methodname: string;
     args: Record<string, unknown>;
-}
+};
 
 /** Shape of a single response item from service.php. */
-export interface ServiceResponse {
-    error: boolean;
+export type ServiceResponse = {
+    // Optional because it comes off the network; only an explicit false is a success.
+    error?: boolean;
     data?: unknown;
     exception?: MoodleAjaxError;
-}
+};
 
 /** Shape when the entire batch fails. */
-export interface ServiceErrorResponse {
+export type ServiceErrorResponse = {
     error: true;
     exception?: MoodleAjaxError;
-}
+};
 
 export type ServiceResult = ServiceResponse[] | ServiceErrorResponse;
 
@@ -111,10 +112,10 @@ export type ServiceResult = ServiceResponse[] | ServiceErrorResponse;
 // so we can't be more specific than unknown here.
 export type FetchResultSuccess = unknown;
 
-export interface FetchResultError {
+export type FetchResultError = {
     error: true;
     exception?: MoodleAjaxError;
-}
+};
 
 export type FetchResult = FetchResultSuccess[] | FetchResultError[];
 
@@ -127,9 +128,9 @@ function buildRequest(
 ): {url: string; init: RequestInit} {
     const {loginrequired, nosessionupdate, cachekey} = options;
 
-    const methodInfo = requestData.map((r) => r.methodname);
+    const methodInfo = requestData.map(r => r.methodname);
     const requestInfo = methodInfo.length <= 5
-        ? methodInfo.sort().join()
+        ? methodInfo.sort().join(',')
         : `${methodInfo.length}-method-calls`;
 
     const ajaxRequestData = JSON.stringify(requestData);
@@ -138,16 +139,16 @@ function buildRequest(
     let url: string;
     let method = 'POST';
 
-    if (!loginrequired) {
+    if (loginrequired) {
+        script = 'service.php';
+        url = `${config.wwwroot}/lib/ajax/${script}?sesskey=${config.sesskey}&info=${requestInfo}`;
+    } else {
         script = 'service-nologin.php';
         url = `${config.wwwroot}/lib/ajax/${script}?info=${requestInfo}`;
-        if (cachekey) {
+        if (cachekey !== null) {
             url += `&cachekey=${cachekey}`;
             method = 'GET';
         }
-    } else {
-        script = 'service.php';
-        url = `${config.wwwroot}/lib/ajax/${script}?sesskey=${config.sesskey}&info=${requestInfo}`;
     }
 
     if (nosessionupdate) {
@@ -156,8 +157,8 @@ function buildRequest(
 
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'pageparent': config.traceId || '',
+        Accept: 'application/json',
+        pageparent: config.traceId ?? '',
     };
 
     let body: string | undefined;
@@ -182,7 +183,7 @@ function buildRequest(
         signal: getGlobalAbortSignal(),
     };
 
-    if (body) {
+    if (body !== undefined) {
         init.body = body;
     }
 
@@ -202,24 +203,26 @@ function processResponse(
         for (const {reject} of resolvers) {
             reject(responses);
         }
+
         return;
     }
 
     const items = responses as ServiceResponse[];
     let exception: MoodleAjaxError | Error | null = null;
 
-    for (let i = 0; i < resolvers.length; i++) {
-        const response = items[i];
-        if (typeof response === 'undefined') {
+    for (const [index, resolver] of resolvers.entries()) {
+        const response = items[index];
+        if (response === undefined) {
             exception = new Error('missing response');
             break;
         }
-        if (response.error === false) {
-            resolvers[i].resolve(response.data);
-        } else {
-            exception = response.exception || new Error('Unknown error');
+
+        if (response.error !== false) {
+            exception = response.exception ?? new Error('Unknown error');
             break;
         }
+
+        resolver.resolve(response.data);
     }
 
     if (exception !== null) {
@@ -239,8 +242,10 @@ function processResponse(
  * Returns an array of individual Promises — one per request — that each
  * resolve/reject independently as the server response is processed.
  *
- * @internal Used by the AMD backward-compatibility wrapper. Prefer
- *           {@link fetchOne} or {@link fetchMany} in new code.
+ * Used by the AMD backward-compatibility wrapper. Prefer {@link fetchOne} or
+ * {@link fetchMany} in new code.
+ *
+ * @internal
  * @param requests Array of web service request descriptors.
  * @param options Call options.
  * @returns An array of Promises, one per request, in the same order.
@@ -248,7 +253,7 @@ function processResponse(
 export function performFetch(
     requests: AjaxRequest[],
     options: AjaxOptions = {},
-): Promise<unknown>[] {
+): Array<Promise<unknown>> {
     const {
         loginrequired = true,
         nosessionupdate = false,
@@ -260,17 +265,17 @@ export function performFetch(
         loginrequired,
         nosessionupdate,
         timeout,
-        cachekey: cachekey && Number(cachekey) > 0 ? Number(cachekey) : null,
+        cachekey: cachekey !== null && cachekey > 0 ? cachekey : null,
     };
 
-    const requestData: ServiceRequest[] = requests.map((req, index) => ({
+    const requestData: ServiceRequest[] = requests.map((request, index) => ({
         index,
-        methodname: req.methodname,
-        args: req.args,
+        methodname: request.methodname,
+        args: request.args,
     }));
 
     const resolvers: Array<{resolve: (value: unknown) => void; reject: (reason: unknown) => void}> = [];
-    const promises: Promise<unknown>[] = requests.map(() => {
+    const promises: Array<Promise<unknown>> = requests.map(async () => {
         let outerResolve!: (value: unknown) => void;
         let outerReject!: (reason: unknown) => void;
         const promise = new Promise<unknown>((resolve, reject) => {
@@ -289,9 +294,12 @@ export function performFetch(
     let controller: AbortController | undefined;
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     if (timeout > 0) {
-        controller = new AbortController();
-        init.signal = controller.signal;
-        timeoutId = setTimeout(() => controller!.abort(), timeout);
+        const timeoutController = new AbortController();
+        controller = timeoutController;
+        init.signal = timeoutController.signal;
+        timeoutId = setTimeout(() => {
+            timeoutController.abort();
+        }, timeout);
 
         // Also abort if the global abort controller is triggered (e.g. on page unload) to avoid hanging requests.
         getGlobalAbortSignal().addEventListener('abort', () => {
@@ -300,19 +308,20 @@ export function performFetch(
     }
 
     fetch(url, init)
-        .then((response) => {
+        .then(async response => {
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
+
             return response.json() as Promise<ServiceResult>;
         })
-        .then((data) => {
+        .then(data => {
             processResponse(data, resolvers, nosessionupdate);
 
             return data;
         })
-        .catch((error) => {
-            if (unloading) {
+        .catch((error: unknown) => {
+            if (isUnloading) {
                 log.error('Page unloaded.');
                 log.error(error);
             } else {
@@ -325,6 +334,7 @@ export function performFetch(
             if (timeoutId) {
                 clearTimeout(timeoutId);
             }
+
             pendingPromise.resolve();
         });
 
@@ -338,7 +348,7 @@ export function performFetch(
  * @param options Call options.
  * @returns A Promise that resolves with the web service response data.
  */
-export function fetchOne<T = unknown>(
+export async function fetchOne<T = unknown>(
     request: AjaxRequest,
     options: AjaxOptions = {},
 ): Promise<T> {
@@ -352,7 +362,7 @@ export function fetchOne<T = unknown>(
  * @param options Call options.
  * @returns A Promise that resolves to an array of responses in the same order as requests.
  */
-export function fetchMany<T = unknown>(
+export async function fetchMany<T = unknown>(
     requests: AjaxRequest[],
     options: AjaxOptions = {},
 ): Promise<T[]> {

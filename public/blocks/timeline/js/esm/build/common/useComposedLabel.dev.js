@@ -18,7 +18,7 @@ function useComposedLabel(labelKey, activeLabelKey, activeLabelComponent = "bloc
   const [label, setLabel] = useState("");
   useEffect(() => {
     let current = true;
-    getString(activeLabelKey, activeLabelComponent).then((activeLabel) => getString(labelKey, "block_timeline", activeLabel)).then((composed) => {
+    void getString(activeLabelKey, activeLabelComponent).then(async (activeLabel) => getString(labelKey, "block_timeline", activeLabel)).then((composed) => {
       if (current) {
         setLabel(composed);
       }

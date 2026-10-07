@@ -33,7 +33,7 @@ type EditSwitchModule = {
     init: (editingSwitchId: string) => void;
 };
 
-export interface EditModeSwitchProps {
+export type EditModeSwitchProps = {
     /** The id shared with the NonJS fallback markup, so behaviour attaches to the same element. */
     id: string;
     /** The contextid editing is being toggled for. */
@@ -44,7 +44,7 @@ export interface EditModeSwitchProps {
     checked: boolean;
     /** The visible/accessible label, e.g. "Edit mode". */
     label: string;
-}
+};
 
 /**
  * Render the Edit mode switch and wire it up to the existing core/edit_switch behaviour.
@@ -79,10 +79,11 @@ export default function EditModeSwitch({id, context, pageurl, checked, label}: E
         // considering the page ready the instant react_autoinit's own mount-tracking Pending
         // resolves (which happens before this effect even runs).
         const pending = new Pending('core/EditModeSwitch:init');
-        requireAsync<EditSwitchModule>('core/edit_switch').then((editSwitch) => {
+        void requireAsync<EditSwitchModule>('core/edit_switch').then(editSwitch => {
             if (!cancelled) {
                 editSwitch.init(id);
             }
+
             return undefined;
         }).finally(() => {
             pending.resolve();
@@ -97,9 +98,9 @@ export default function EditModeSwitch({id, context, pageurl, checked, label}: E
     return (
         <Switch
             id={id}
-            name="setmode"
-            variant="enable"
-            labelSide="start"
+            name='setmode'
+            variant='enable'
+            labelSide='start'
             label={label}
             defaultChecked={checked}
             data-context={context}

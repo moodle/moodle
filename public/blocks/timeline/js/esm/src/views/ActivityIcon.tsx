@@ -17,7 +17,7 @@
  * Swizzlable wrapper around the design system ActivityIcon.
  *
  * Themes that need a custom icon can eject this component via the swizzle
- * manifest. All other code imports from @moodle/lms/block_timeline/views/ActivityIcon
+ * manifest. All other code imports from `@moodle/lms/block_timeline/views/ActivityIcon`
  * so the override applies everywhere without touching call sites.
  *
  * @module     block_timeline/views/ActivityIcon
@@ -30,15 +30,15 @@ import {ActivityIcon as DSActivityIcon} from '@moodlehq/design-system';
 // Names omitted here match the DS icon name directly (e.g. quiz, forum, wiki)
 // and fall through to the modulename itself.
 const MODULE_NAME_MAP: Record<string, string> = {
-    assign:          'assignment',
+    assign: 'assignment',
     bigbluebuttonbn: 'bigbluebutton',
-    data:            'database',
-    h5pactivity:     'h5p',
-    imscp:           'ims-package',
-    label:           'text-and-media',
-    lti:             'external-tool',
-    scorm:           'scorm-package',
-    qbank:           'file-database',
+    data: 'database',
+    h5pactivity: 'h5p',
+    imscp: 'ims-package',
+    label: 'text-and-media',
+    lti: 'external-tool',
+    scorm: 'scorm-package',
+    qbank: 'file-database',
 };
 
 // Resource module icons vary per uploaded file's mimetype (file_file_icon() in
@@ -47,43 +47,43 @@ const MODULE_NAME_MAP: Record<string, string> = {
 // ponytail: regex-sniffs an internal URL format rather than a stable field —
 // upgrade to a dedicated filetype field on the calendar event_icon_exporter if this breaks.
 const FILE_TYPE_MAP: Record<string, string> = {
-    archive:     'file-archive',
-    audio:       'file-audio',
-    calc:        'file-spreadsheet',
-    chart:       'file-graphic',
-    database:    'file-database',
-    document:    'file-doc',
-    draw:        'file-draw',
-    eps:         'file-eps',
-    epub:        'file-epub',
-    flash:       'file-flash',
-    gif:         'file-gif',
-    h5p:         'file-h5p',
-    image:       'file-image',
-    impress:     'file-presentation',
-    isf:         'file-isf-flowchart',
-    json:        'file-json',
-    markup:      'file-code',
-    math:        'file-math',
-    moodle:      'file-moodle',
-    oth:         'file-oth',
-    pdf:         'file-pdf',
-    powerpoint:  'file-ppt',
-    psd:         'file-psd',
-    publisher:   'file-pub',
-    sourcecode:  'file-source-code',
+    archive: 'file-archive',
+    audio: 'file-audio',
+    calc: 'file-spreadsheet',
+    chart: 'file-graphic',
+    database: 'file-database',
+    document: 'file-doc',
+    draw: 'file-draw',
+    eps: 'file-eps',
+    epub: 'file-epub',
+    flash: 'file-flash',
+    gif: 'file-gif',
+    h5p: 'file-h5p',
+    image: 'file-image',
+    impress: 'file-presentation',
+    isf: 'file-isf-flowchart',
+    json: 'file-json',
+    markup: 'file-code',
+    math: 'file-math',
+    moodle: 'file-moodle',
+    oth: 'file-oth',
+    pdf: 'file-pdf',
+    powerpoint: 'file-ppt',
+    psd: 'file-psd',
+    publisher: 'file-pub',
+    sourcecode: 'file-source-code',
     spreadsheet: 'file-xls',
-    text:        'file-plain-text',
-    unknown:     'file-unknown',
-    video:       'file-video',
-    writer:      'file-text-editor',
+    text: 'file-plain-text',
+    unknown: 'file-unknown',
+    video: 'file-video',
+    writer: 'file-text-editor',
 };
 
-interface ActivityIconProps {
-    modulename: string;
+type ActivityIconProps = {
+    modulename: string | null;
     iconurl: string;
     alt?: string;
-}
+};
 
 /**
  * Extracts the "f/<type>" file-type segment Moodle embeds in resource icon
@@ -92,8 +92,7 @@ interface ActivityIconProps {
  * @param iconurl the resource's icon URL, as returned by the calendar event_icon_exporter.
  */
 function resolveResourceIcon(iconurl: string): string {
-    const match = iconurl.match(/f(?:\/|%2f)([a-z0-9_-]+)/i);
-    const filetype = match ? match[1].toLowerCase() : '';
+    const filetype = /f(?:\/|%2f)(?<filetype>[\w-]+)/iu.exec(iconurl)?.groups?.filetype.toLowerCase() ?? '';
     return FILE_TYPE_MAP[filetype] ?? 'file';
 }
 
@@ -104,17 +103,19 @@ function resolveResourceIcon(iconurl: string): string {
  * @param modulename Moodle module name, e.g. "assign", "resource"; may be missing.
  * @param iconurl the activity's icon URL, only inspected when modulename is "resource".
  */
-function resolveIcon(modulename: string, iconurl: string): string {
-    if (!modulename || modulename === 'undefined') {
+function resolveIcon(modulename: string | null | undefined, iconurl: string): string {
+    if (modulename === undefined || modulename === null || ['', 'undefined'].includes(modulename)) {
         return 'file-unknown';
     }
+
     if (modulename === 'resource') {
         return resolveResourceIcon(iconurl);
     }
+
     return MODULE_NAME_MAP[modulename] ?? modulename;
 }
 
 /** Renders an activity's icon via the design system ActivityIcon. */
 export function ActivityIcon({modulename, iconurl, alt = ''}: ActivityIconProps) {
-    return <DSActivityIcon icon={resolveIcon(modulename, iconurl)} alt={alt} container="none" size="xl" />;
+    return <DSActivityIcon icon={resolveIcon(modulename, iconurl)} alt={alt} container='none' size='xl' />;
 }

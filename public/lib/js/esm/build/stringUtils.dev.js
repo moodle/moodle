@@ -1,10 +1,10 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
+import config from "./config";
+import { localStore } from "./Storage";
 import {
   fetchMany
 } from "@moodle/lms/core/ajax";
-import config from "./config";
-import { localStore } from "./Storage";
 const promiseCache = /* @__PURE__ */ new Map();
 const stringPromiseCache = /* @__PURE__ */ new Map();
 const getCacheKey = /* @__PURE__ */ __name((key, component, lang) => `core_str/${key}/${component}/${lang}`, "getCacheKey");
@@ -13,53 +13,57 @@ const getResolvedPromise = /* @__PURE__ */ __name((value) => (
   Object.assign(Promise.resolve(value), { status: "fulfilled", value })
 ), "getResolvedPromise");
 const getRequestedStrings = /* @__PURE__ */ __name((requests) => {
-  const stringPromises = new Array(requests.length);
+  const stringPromises = Array.from({ length: requests.length });
   const pendingFetches = [];
-  for (let i = 0; i < requests.length; i++) {
-    const { key, component: rawComponent = "core", param = null, lang = config.language } = requests[i];
-    const component = rawComponent || "core";
+  for (const [index, request] of requests.entries()) {
+    const { key, param: parameter = null, lang = config.language } = request;
+    const requestedComponent = request.component ?? "";
+    const component = requestedComponent === "" ? "core" : requestedComponent;
     const cacheKey = getCacheKey(key, component, lang);
     if (M.str[component]?.[key] !== void 0) {
-      const promise = getResolvedPromise(M.util.get_string(key, component, param));
+      const promise = getResolvedPromise(M.util.get_string(key, component, parameter));
       promiseCache.set(cacheKey, promise);
-      stringPromises[i] = promise;
+      stringPromises[index] = promise;
       continue;
     }
     const cached = localStore.get(cacheKey);
     if (cached !== null) {
-      if (!M.str[component]) {
+      if (M.str[component] === void 0) {
         M.str[component] = {};
       }
       M.str[component][key] = cached;
-      const promise = getResolvedPromise(M.util.get_string(key, component, param));
+      const promise = getResolvedPromise(M.util.get_string(key, component, parameter));
       promiseCache.set(cacheKey, promise);
-      stringPromises[i] = promise;
+      stringPromises[index] = promise;
       continue;
     }
     if (promiseCache.has(cacheKey)) {
-      stringPromises[i] = promiseCache.get(cacheKey).then(
-        () => M.util.get_string(key, component, param)
-      );
+      stringPromises[index] = promiseCache.get(cacheKey).then(() => M.util.get_string(key, component, parameter));
       continue;
     }
     const fetchPromise = new Promise((resolve, reject) => {
       pendingFetches.push({
         request: {
           methodname: "core_get_string",
-          args: { stringid: key, stringparams: [], component, lang }
+          args: {
+            stringid: key,
+            stringparams: [],
+            component,
+            lang
+          }
         },
         resolve,
         reject
       });
     });
     promiseCache.set(cacheKey, fetchPromise);
-    stringPromises[i] = fetchPromise.then((str) => {
-      if (!M.str[component]) {
+    stringPromises[index] = fetchPromise.then((string_) => {
+      if (M.str[component] === void 0) {
         M.str[component] = {};
       }
-      M.str[component][key] = str;
-      localStore.set(cacheKey, str);
-      return M.util.get_string(key, component, param);
+      M.str[component][key] = string_;
+      localStore.set(cacheKey, string_);
+      return M.util.get_string(key, component, parameter);
     });
   }
   if (pendingFetches.length > 0) {
@@ -70,24 +74,26 @@ const getRequestedStrings = /* @__PURE__ */ __name((requests) => {
       timeout: 0,
       cachekey: config.langrev
     }).then((results) => {
-      results.forEach((result, index) => {
+      for (const [index, result] of results.entries()) {
         pendingFetches[index].resolve(result);
-      });
+      }
       return results;
-    }).catch((err) => {
-      pendingFetches.forEach((pf) => pf.reject(err));
+    }).catch((error) => {
+      for (const pf of pendingFetches) {
+        pf.reject(error);
+      }
     });
   }
   return stringPromises;
 }, "getRequestedStrings");
-const getStrings = /* @__PURE__ */ __name((requests) => Promise.all(getRequestedStrings(requests)), "getStrings");
+const getStrings = /* @__PURE__ */ __name(async (requests) => Promise.all(getRequestedStrings(requests)), "getStrings");
 const cacheStrings = /* @__PURE__ */ __name((strings) => {
   for (const { key, component = "core", value, lang = config.language } of strings) {
     const cacheKey = getCacheKey(key, component, lang);
-    if (!M.str[component]) {
+    if (M.str[component] === void 0) {
       M.str[component] = {};
     }
-    if (!(key in M.str[component])) {
+    if (M.str[component][key] === void 0) {
       M.str[component][key] = value;
     }
     localStore.set(cacheKey, value);
@@ -96,12 +102,12 @@ const cacheStrings = /* @__PURE__ */ __name((strings) => {
     }
   }
 }, "cacheStrings");
-const getString = /* @__PURE__ */ __name((identifier, component = "core", params) => {
-  const key = `${component}::${identifier}::${JSON.stringify(params)}`;
+const getString = /* @__PURE__ */ __name((identifier, component = "core", parameters) => {
+  const key = `${component}::${identifier}::${JSON.stringify(parameters)}`;
   if (!stringPromiseCache.has(key)) {
     stringPromiseCache.set(
       key,
-      getRequestedStrings([{ key: identifier, component, param: params }])[0]
+      getRequestedStrings([{ key: identifier, component, param: parameters }])[0]
     );
   }
   return stringPromiseCache.get(key);

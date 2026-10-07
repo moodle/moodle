@@ -40,10 +40,10 @@ declare const M: {
 };
 
 /** A Promise extended with `resolve` and `reject` methods for external settlement. */
-interface PendingPromise<T> extends Promise<T> {
+type PendingPromise<T> = {
     resolve: (value?: any) => void;
     reject: (reason?: any) => void;
-}
+} & Promise<T>;
 
 /**
  * A helper used to register any long-running operations that are in-progress
@@ -61,13 +61,6 @@ interface PendingPromise<T> extends Promise<T> {
  *     .then(okay => stringPromise.resolve(okay));
  */
 export default class Pending {
-    /** Resolve the pending promise, marking the operation as complete. */
-    declare resolve: (value?: any) => void;
-    /** Reject the pending promise. */
-    declare reject: (reason?: any) => void;
-
-    #internalPromise: Promise<void>;
-
     /**
      * Register a pending operation with Moodle's Behat integration.
      *
@@ -84,45 +77,6 @@ export default class Pending {
      */
     static complete(key: string): void {
         M.util.js_complete(key);
-    }
-
-    /**
-     * Request a new pendingPromise for later resolution.
-     *
-     * When the action you are performing is complete, simply call `resolve` on the returned Promise.
-     *
-     * @param pendingKey An identifier to help in debugging.
-     * @returns A Promise with `resolve` and `reject` methods attached.
-     */
-    constructor(pendingKey = 'pendingPromise') {
-        let resolver!: (value: void) => void;
-        let rejector!: (reason?: void) => void;
-
-        this.#internalPromise = Pending.Promise((resolve, reject) => {
-            resolver = resolve;
-            rejector = reject;
-        }, pendingKey);
-
-        this.resolve = resolver;
-        this.reject = rejector;
-    }
-
-    then<TResult1 = void, TResult2 = never>(
-        onfulfilled?: ((value: void) => TResult1 | PromiseLike<TResult1>) | undefined | null,
-        onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null
-    ): Promise<TResult1 | TResult2> {
-        return this.#internalPromise.then(onfulfilled, onrejected);
-    }
-
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(
-        onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null
-    ): Promise<void | TResult> {
-        return this.#internalPromise.catch(onrejected);
     }
 
     /**
@@ -149,23 +103,71 @@ export default class Pending {
      *     }, 'mod_myexample/setup:init');
      * };
      */
+    /* eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/promise-function-async --
+       Released API name from core/pending. Not async: that would return a new promise without the catch below,
+       so a rejection the caller does not catch would be reported as unhandled. */
     static Promise<T>(
-        fn: (resolve: (value: T) => void, reject: (reason?: unknown) => void) => void,
+        executor: (resolve: (value: T) => void, reject: (reason?: unknown) => void) => void,
         pendingKey = 'pendingPromise',
     ): Promise<T> {
         const resolver = new Promise<T>((resolve, reject) => {
-            Pending.pending(pendingKey);
-            fn(resolve, reject);
+            this.pending(pendingKey);
+            executor(resolve, reject);
         });
 
         resolver.then(() => {
-            Pending.complete(pendingKey);
-            return;
+            this.complete(pendingKey);
         }).catch(() => {
             // Intentionally empty — swallow rejection to avoid unhandled promise warnings.
             // The caller's own .catch() will handle the error.
         });
 
         return resolver;
+    }
+
+    readonly #internalPromise: Promise<void>;
+
+    /** Resolve the pending promise, marking the operation as complete. */
+    declare resolve: (value?: any) => void;
+    /** Reject the pending promise. */
+    declare reject: (reason?: any) => void;
+
+    /**
+     * Request a new pendingPromise for later resolution.
+     *
+     * When the action you are performing is complete, simply call `resolve` on the returned Promise.
+     *
+     * @param pendingKey An identifier to help in debugging.
+     * @returns A Promise with `resolve` and `reject` methods attached.
+     */
+    constructor(pendingKey = 'pendingPromise') {
+        let resolver!: (value: void) => void;
+        let rejector!: (reason?: void) => void;
+
+        /* eslint-disable-next-line new-cap -- Pending.Promise is released API; see the method below. */
+        this.#internalPromise = Pending.Promise((resolve, reject) => {
+            resolver = resolve;
+            rejector = reject;
+        }, pendingKey);
+
+        this.resolve = resolver;
+        this.reject = rejector;
+    }
+
+    /* eslint-disable-next-line unicorn/no-thenable -- Pending is documented as awaitable. */
+    async then<TResult1 = void, TResult2 = never>(
+        onfulfilled?: ((value: void) => TResult1 | PromiseLike<TResult1>),
+        onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>),
+    ): Promise<TResult1 | TResult2> {
+        return this.#internalPromise.then(onfulfilled, onrejected);
+    }
+
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    async catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>)): Promise<void | TResult> {
+        return this.#internalPromise.catch(onrejected);
     }
 }
