@@ -81,6 +81,20 @@ class tool_customlang_utils {
     }
 
     /**
+     * Calculates the in-progress checkout percentage for a given number of processed strings.
+     *
+     * The result is capped below 100 so that the progress bar never reports full completion
+     * while the checkout loop is still running. Only the final update, sent once the whole
+     * checkout has actually finished, reports 100.
+     *
+     * @param int $done number of strings processed so far
+     * @return int percentage from 0 to 99
+     */
+    public static function calculate_checkout_percent(int $done): int {
+        return (int) floor(min($done, self::ROUGH_NUMBER_OF_STRINGS) / self::ROUGH_NUMBER_OF_STRINGS * 99);
+    }
+
+    /**
      * Updates the translator database with the strings from files
      *
      * This should be executed each time before going to the translation page
@@ -154,7 +168,7 @@ class tool_customlang_utils {
 
                 if (!is_null($progressbar)) {
                     $done++;
-                    $donepercent = floor(min($done, self::ROUGH_NUMBER_OF_STRINGS) / self::ROUGH_NUMBER_OF_STRINGS * 100);
+                    $donepercent = self::calculate_checkout_percent($done);
                     $progressbar->update_full($donepercent, $strinprogress);
                 }
 
