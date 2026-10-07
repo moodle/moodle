@@ -9134,6 +9134,9 @@ class assign {
             if ($gradinglocked && $mform->elementExists('mark')) {
                 $mform->freeze('mark');
             }
+            if ($gradinglocked && $markerpage) {
+                $mform->freeze('workflowstate');
+            }
             if ($gradingstatus != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
                 if ($grade->grade && $grade->grade != -1) {
                     if ($settings->grade > 0) {
@@ -9988,7 +9991,7 @@ class assign {
         global $USER, $CFG, $DB;
         // If we are using marker allocation, are we allocated to this student? If not, we should not be able to update
         // their marks, even if they are in the same group as a student we are allocated to.
-        if (isset($formdata->mark) && $this->get_instance()->markingworkflow && $this->get_instance()->markingallocation) {
+        if ($this->is_marking() && $this->get_instance()->markingworkflow && $this->get_instance()->markingallocation) {
             $markerids = array_column($this->get_marker_allocations($userid, false), 'marker');
             if (!in_array($USER->id, $markerids)) {
                 return;
@@ -10008,7 +10011,7 @@ class assign {
 
         // This must run even when grading is disabled, otherwise a grade could never be released
         // (or sent back for review) once its current state makes it read-only.
-        if (isset($formdata->workflowstate) && !property_exists($formdata, 'mark')) {
+        if (isset($formdata->workflowstate) && !$this->is_marking()) {
             $flags = $this->get_user_flags($userid, true);
             $oldworkflowstate = $flags->workflowstate;
             $validstates = $this->get_marking_workflow_states_for_current_user();
