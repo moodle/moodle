@@ -136,6 +136,13 @@ Feature: Create OAuth2 clients
     And I set the field "redirecturi[0]" to "http://localhost/callback"
     And I press "Create client"
     And I should see "You must select at least one scope." in the "Scopes" "form_row"
+    # The scopes checkboxes sit in a fieldset so the error names the group as a unit, rather
+    # than any single checkbox, to a screen reader: it is part of the legend, the fieldset's
+    # accessible name, which every screen reader announces on focus.
+    And "#id_scopesfieldset" "css_element" should exist
+    And the "aria-invalid" attribute of "#id_scopesfieldset" "css_element" should contain "true"
+    And I should see "You must select at least one scope." in the "#id_scopesfieldset legend" "css_element"
+    And the "class" attribute of "#id_scopesfieldset" "css_element" should contain "border-danger"
 
   Scenario: Generate secrets for a confidential OAuth2 client
     Given I click on "Create client" "link"
