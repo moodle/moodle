@@ -1,0 +1,11 @@
+issueNumber: MDL-62843
+notes:
+  core_user:
+    - message: >-
+        A new hook, \core_user\hook\before_deletion_confirmation_html_generation,
+        has been added to allow plugins to extend user deletion confirmation
+        messaging. The hook is dispatched by
+        \core\user::get_deletion_confirmation_text(). Plugins can append HTML to
+        the confirmation dialog by registering a callback in db/hooks.php and
+        calling $hook->add_html($html).
+      type: improved

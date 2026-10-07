@@ -117,3 +117,4 @@ supportandservices,core_admin
 userfeedbackencouragement,core_admin
 noscales,core_grades
 homeheader,core
+deletecheckfull,core

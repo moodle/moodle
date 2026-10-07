@@ -550,12 +550,12 @@ $string['deletecheck'] = 'Delete {$a} ?';
 $string['deletechecktype'] = 'Are you sure that you want to delete this {$a->type}?';
 $string['deletechecktypename'] = 'Are you sure that you want to delete the {$a->type} "{$a->name}"?';
 $string['deletecheckfiles'] = 'Are you absolutely sure you want to delete these files?';
-$string['deletecheckfull'] = 'Are you sure you want to delete user {$a}, including data such as profile details, enrolments, group and cohort membership and some user activity data?';
 $string['deletecheckwarning'] = 'You are about to delete these files';
 $string['deletepicture'] = 'Delete picture';
 $string['deletesection'] = 'Delete';
 $string['deleteselected'] = 'Delete selected';
 $string['deleteselectedkey'] = 'Delete selected key';
+$string['deleteuserdatawarning'] = 'This action will remove data such as profile information, enrolments, group and cohort memberships, and certain user activity records.';
 $string['deletingcourse'] = 'Deleting {$a}';
 $string['deletingexistingcoursedata'] = 'Deleting existing course data';
 $string['deletingolddata'] = 'Deleting old data';
@@ -2567,3 +2567,6 @@ $string['resources_help'] = 'Resource types enable almost any kind of web conten
 // Deprecated since Moodle 5.3.
 $string['modhidden'] = 'Availability';
 $string['modhidden_help'] = '* Hide on course page: Not available to students. This module cannot be shown to students.';
+
+// Deprecated since Moodle 6.0.
+$string['deletecheckfull'] = 'Are you sure you want to delete user {$a}, including data such as profile details, enrolments, group and cohort membership and some user activity data?';

@@ -1099,5 +1099,23 @@ final class user_test extends \advanced_testcase {
         ];
         \core_user::update_user($updateduser);
         $this->assertFalse($DB->record_exists('user_password_resets', ['userid' => $user->id]));
+
+    }
+
+    /**
+     * Test the user deletion confirmation text includes HTML added via the hook.
+     */
+    public function test_get_deletion_confirmation_text(): void {
+        $this->redirectHook(
+            \core_user\hook\before_deletion_confirmation_html_generation::class,
+            static function (\core_user\hook\before_deletion_confirmation_html_generation $hook): void {
+                $hook->add_html('<p>Plugin addition</p>');
+            },
+        );
+
+        $this->assertSame(
+            '<p>' . get_string('deleteuserdatawarning') . '</p><p>Plugin addition</p>',
+            \core\user::get_deletion_confirmation_text(),
+        );
     }
 }

@@ -120,3 +120,21 @@ Feature: Deleting users
     And I click on "Delete" "button" in the "Delete user" "dialogue"
     And I navigate to "Users > Accounts > Bulk user actions" in site administration
     Then I should not see "User One"
+
+  @javascript
+  Scenario Outline: Bulk deletion confirmation title depends on the number of users selected
+    When I log in as "admin"
+    And I navigate to "Users > Accounts > Bulk user actions" in site administration
+    And I set the field "Available" to "<users>"
+    And I press "Add to selection"
+    And I set the field "id_action" to "Delete"
+    And I press "Go"
+    Then "<title>" "dialogue" should be visible
+    And I should see "This action will remove data such as profile information, enrolments, group and cohort memberships, and certain user activity records." in the "<title>" "dialogue"
+    And I press "Delete"
+    And I should see "Changes saved"
+
+    Examples:
+      | users                                     | title                                        |
+      | User One, User Three, User Two            | Delete users User One, User Three, User Two? |
+      | User Four, User One, User Three, User Two | Delete selected users?                       |
