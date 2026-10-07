@@ -41,6 +41,7 @@ $string['automaticdataexportapproval'] = 'Automatic data export request approval
 $string['automaticdataexportapproval_desc'] = 'If enabled, data export requests are automatically approved.<br/>Note that the automatic approval will only apply to new data export requests with this setting enabled. Existing data export requests pending approval will still have to be manually approved by the privacy officer.';
 $string['automaticdeletionrequests'] = 'Create automatic data deletion requests';
 $string['automaticdeletionrequests_desc'] = 'If enabled, a data deletion request will be created automatically for any user accounts deleted manually.';
+$string['automaticdeletionrequestswarning'] = 'As "Create automatic data deletion requests" is enabled, a data deletion request will also be created. When the request is approved, additional data will be deleted. However, some user data may be retained for data registry compliance purposes.';
 $string['bulkapproverequests'] = 'Approve requests';
 $string['bulkdenyrequests'] = 'Deny requests';
 $string['cachedef_purpose'] = 'Data purposes';
