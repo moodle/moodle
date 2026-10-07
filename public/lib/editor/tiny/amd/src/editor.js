@@ -497,7 +497,8 @@ const getEditorConfiguration = async(target, tinyMCE, options, pluginValues) => 
     // For example, to add themselves to any menu, toolbar, and so on.
     // Any plugin which wishes to have configuration options must register those options here.
     pluginConfig.filter((pluginConfig) => typeof pluginConfig.configure === 'function').forEach((pluginConfig) => {
-        const pluginInstanceOverride = pluginConfig.configure(instanceConfig, options);
+        const pluginOptions = JSON.parse(JSON.stringify(options));
+        const pluginInstanceOverride = pluginConfig.configure(instanceConfig, pluginOptions);
         Object.assign(instanceConfig, pluginInstanceOverride);
     });
 
