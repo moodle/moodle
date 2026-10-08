@@ -1,0 +1,14 @@
+issueNumber: MDL-87838
+notes:
+  core_course:
+    - message: >-
+        The `core_course/activity_date` and `core_course/activity_dates`
+        templates, and the `core_course\output\activity_dates` class, are
+        deprecated and are no longer used by core. The activity dates are now
+        rendered by the `core_course/ActivityDates` React component, using the
+        design system Badge. Use `core_course\output\activity_dates_component`
+        instead, which formats the dates, including the dates relative to
+        another date. Theme overrides of those templates, and of the
+        `core_course/activity_date` block of
+        `core_courseformat/local/content/cm/activity`, are no longer used.
+      type: deprecated

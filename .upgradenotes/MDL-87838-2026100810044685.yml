@@ -1,0 +1,9 @@
+issueNumber: MDL-87838
+notes:
+  core_course:
+    - message: >-
+        In the `dates` context of `core_courseformat/local/content/cm/activity`,
+        `activitydates` is now the rendered dates component instead of a list of
+        dates. Likewise, the `activitydates` context of the activity header now
+        provides `hasdates` and the rendered `activitydates` component.
+      type: changed

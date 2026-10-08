@@ -418,13 +418,24 @@ button.section-collapsemenu {
         color: var(--#{$prefix}gray-700);
         display: flex;
         flex-wrap: wrap;
-        column-gap: 0.75rem;
-        @include media-breakpoint-down(sm) {
-            margin-top: map-get($spacers, 2);
+        gap: var(--mds-spacing-xs, 0.5rem);
+        margin-block: var(--mds-spacing-md, 1rem);
+        > [data-react-component] {
+            display: contents;
         }
-        .date-item-label {
-            font-weight: 600;
-            margin-right: map-get($spacers, 1);
+        .mds-badge {
+            display: inline-flex;
+            padding: var(--mds-spacing-xxs, 0.25rem) var(--mds-spacing-xs, 0.5rem);
+            border-radius: var(--mds-border-radius-sm);
+            // Follow the card background, including on hover, instead of the fixed subtle badge colour.
+            background-color: transparent;
+            gap: var(--mds-spacing-xxs, 0.25rem);
+            font-size: var(--mds-font-size-paragraph-small);
+            font-weight: var(--mds-font-weight-medium);
+            line-height: var(--mds-line-height-paragraph-xs);
+            flex-wrap: wrap;
+            white-space: normal;
+            max-width: 100%;
         }
     }
     .activity-name-area {

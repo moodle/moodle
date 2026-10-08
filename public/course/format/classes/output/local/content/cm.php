@@ -227,10 +227,14 @@ class cm implements named_templatable, renderable {
             return false;
         }
         $activitydates = \core\activity_dates::get_dates_for_module($this->mod, $USER->id);
-        $templatedata = new \core_course\output\activity_dates($activitydates);
-        $data->dates = $templatedata->export_for_template($output);
+        $component = new \core_course\output\activity_dates_component($activitydates);
+        $hasdates = $component->has_dates();
+        $data->dates = (object) [
+            'hasdates' => $hasdates,
+            'activitydates' => $hasdates ? $output->render($component) : '',
+        ];
 
-        return $data->dates->hasdates;
+        return $hasdates;
     }
 
     /**
