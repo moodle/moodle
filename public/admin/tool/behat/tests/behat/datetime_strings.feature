@@ -4,6 +4,7 @@ Feature: Transform date time string arguments
   As a user
   I need to apply some transformations to the steps arguments
 
+  @javascript
   Scenario: Set date in table and check date with specific format
     Given I am on site homepage
     And the following "users" exist:

@@ -57,6 +57,7 @@ Feature: Assign user override
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I should see "Sam2 Student2"
 
+  @javascript
   Scenario: Allow a user to have a different due date
     Given the following "mod_assign > user overrides" exist:
       | assignment            | user     | duedate              |
@@ -115,6 +116,7 @@ Feature: Assign user override
     And I am on the "Test assignment name" Activity page logged in as student1
     And I should see "Add submission"
 
+  @javascript
   Scenario: Allow a user to have a different start date
     Given the following "mod_assign > user overrides" exist:
       | assignment            | user     | allowsubmissionsfromdate |

@@ -18,9 +18,10 @@ Feature: Allow teachers to edit the visibility of activity dates in a course
       | activity | course | idnumber | name          | intro                   | timeopen      | timeclose     |
       | choice   | C1     | choice1  | Test choice   | Test choice description | ##yesterday## | ##tomorrow##  |
 
+  @javascript
   Scenario: Activity dates setting can be enabled to display activity dates in a course
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+    And I am on "Course 1" course homepage
     And I navigate to "Settings" in current page administration
     When I set the following fields to these values:
       | Show activity dates | Yes |
@@ -35,9 +36,10 @@ Feature: Allow teachers to edit the visibility of activity dates in a course
     And the activity date in "Test choice" should contain "Opened:"
     And the activity date in "Test choice" should contain "Closes:"
 
+  @javascript
   Scenario: Activity dates setting can be disabled to hide activity dates in a course
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+    And I am on "Course 1" course homepage
     And I navigate to "Settings" in current page administration
     When I set the following fields to these values:
       | Show activity dates | No |

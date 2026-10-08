@@ -69,6 +69,7 @@ Feature: Assign group override
     And I should see "Tuesday, 1 January 2030, 8:00"
     And I should see "Group 2"
 
+  @javascript
   Scenario: Allow a group to have a different due date
     Given the following "mod_assign > group overrides" exist:
       | assignment            | group | duedate              |
@@ -101,6 +102,7 @@ Feature: Assign group override
     And I am on the "Test assignment name" Activity page logged in as student1
     And I should see "No submissions have been made yet"
 
+  @javascript
   Scenario: Allow a group to have a different start date
     Given the following "mod_assign > group overrides" exist:
       | assignment            | group | allowsubmissionsfromdate  |

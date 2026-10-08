@@ -26,6 +26,7 @@ Feature: Quiz availability can be set
       | questioncategory | qtype     | name | questiontext    |
       | Test questions   | truefalse | TF1  | First question  |
 
+  @javascript
   Scenario Outline: Set quiz opening time while closing time is disabled
     Given the following "activities" exist:
       | activity | course | name   | timeopen   |
@@ -48,6 +49,7 @@ Feature: Quiz availability can be set
       # Case 4 - open is set to past date, close is disabled.
       | Opened   | ##yesterday## | should           | should not        |
 
+  @javascript
   Scenario Outline: Set quiz closing time while opening time is disabled
     Given the following "activities" exist:
       | activity | course | name   | timeclose   |
@@ -69,6 +71,7 @@ Feature: Quiz availability can be set
       # Case 5 - open is disabled, close is set to future date.
       | Closes    | ##tomorrow##   | should            | should not       |
 
+  @javascript
   Scenario Outline: Set quiz opening and closing times
     Given the following "activities" exist:
       | activity | course | name   | timeopen   | timeclose   |

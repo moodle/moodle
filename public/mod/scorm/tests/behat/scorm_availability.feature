@@ -20,6 +20,7 @@ Feature: Scorm availability
       | scorm    | C1     | Current SCORM | mod/scorm/tests/packages/singlesco_scorm12.zip | ##yesterday## | ##tomorrow##  |
       | scorm    | C1     | Future SCORM  | mod/scorm/tests/packages/singlesco_scorm12.zip | ##tomorrow##  | ##tomorrow##  |
 
+  @javascript
   Scenario: Scorm activity with dates in the past should not be available.
     When I am on the "Past SCORM" "scorm activity" page logged in as "student1"
     Then the activity date in "Past SCORM" should contain "Opened:"
