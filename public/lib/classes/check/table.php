@@ -186,14 +186,9 @@ class table implements \core\output\renderable {
                 // Detail page: call get_results() to preserve the per-sub-result breakdown.
                 // The placeholder has one <tr>; replace its outerHTML with one row per result.
                 $results = $check->get_results();
-                $fails = [];
                 $rowshtml = '';
 
                 foreach ($results as $result) {
-                    if ($result->get_status() !== result::OK) {
-                        $fails[] = $result;
-                    }
-
                     $actionlink = $result->get_action_link() ?? $check->get_action_link();
                     $cells  = html_writer::tag('td', $output->check_result($result), ['class' => 'rightalign status']);
                     $cells .= html_writer::tag(
@@ -216,8 +211,9 @@ class table implements \core\output\renderable {
                 // Replace the single placeholder row with all sub-result rows.
                 echo $output->select_element_for_replace("#$id", $rowshtml, true);
 
-                // Build and stream the details section from all failing sub-results.
-                $details = array_filter(array_map(fn($r) => $r->get_details(), $fails));
+                // Build and stream the details section from all sub-results (not just failing ones),
+                // so that a result's details are shown regardless of its status.
+                $details = array_filter(array_map(fn($r) => $r->get_details(), $results));
                 if (count($details) === 1) {
                     $detailhtml = reset($details);
                 } else if (count($details) > 1) {
