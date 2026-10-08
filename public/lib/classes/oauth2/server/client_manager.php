@@ -69,6 +69,12 @@ class client_manager {
                    FROM {oauth2_server_client_access_tokens}
                   WHERE clientidentifier = :clientidentifier)';
 
+    /** @var string The config log name for changes to a client and its redirect URIs. */
+    protected const string CONFIG_LOG_CLIENT = 'oauth2serverclient';
+
+    /** @var string The config log name for changes to a client secret. */
+    protected const string CONFIG_LOG_SECRET = 'oauth2serverclientsecret';
+
     /**
      * Constructor.
      *
@@ -135,6 +141,7 @@ class client_manager {
         $transaction = $this->db->start_delegated_transaction();
         $record->id = $this->db->insert_record('oauth2_server_clients', $record);
         $this->insert_redirect_uris($record->clientidentifier, $redirecturis);
+        $this->log_change(self::CONFIG_LOG_CLIENT, null, $this->get_client_snapshot($record, $redirecturis));
         $transaction->allow_commit();
 
         // Everything the entity needs is already in hand, so build it rather than reading it back.
@@ -198,6 +205,8 @@ class client_manager {
         }
 
         $client = $this->get_client_record($clientid);
+        $uris = $this->get_uris($client->clientidentifier);
+        $oldsnapshot = $this->get_client_snapshot($client, $uris);
 
         foreach ($filteredupdates as $field => $value) {
             $client->{$field} = $value;
@@ -214,6 +223,7 @@ class client_manager {
         $client->timemodified = $this->clock->time();
 
         $this->db->update_record('oauth2_server_clients', $client);
+        $this->log_change(self::CONFIG_LOG_CLIENT, $oldsnapshot, $this->get_client_snapshot($client, $uris));
     }
 
     /**
@@ -234,6 +244,8 @@ class client_manager {
     public function disable_client(int $clientid): void {
         $client = $this->get_client_record($clientid);
         $params = ['clientidentifier' => $client->clientidentifier];
+        $uris = $this->get_uris($client->clientidentifier);
+        $oldsnapshot = $this->get_client_snapshot($client, $uris);
 
         $transaction = $this->db->start_delegated_transaction();
 
@@ -265,6 +277,7 @@ class client_manager {
             $params,
         );
 
+        $this->log_change(self::CONFIG_LOG_CLIENT, $oldsnapshot, $this->get_client_snapshot($client, $uris));
         $transaction->allow_commit();
     }
 
@@ -280,11 +293,14 @@ class client_manager {
      */
     public function reactivate_client(int $clientid): void {
         $client = $this->get_client_record($clientid);
+        $uris = $this->get_uris($client->clientidentifier);
+        $oldsnapshot = $this->get_client_snapshot($client, $uris);
 
         $client->status = client_entity::STATUS_ACTIVE;
         $client->timemodified = $this->clock->time();
 
         $this->db->update_record('oauth2_server_clients', $client);
+        $this->log_change(self::CONFIG_LOG_CLIENT, $oldsnapshot, $this->get_client_snapshot($client, $uris));
     }
 
     /**
@@ -306,6 +322,7 @@ class client_manager {
         }
 
         $params = ['clientidentifier' => $client->clientidentifier];
+        $oldsnapshot = $this->get_client_snapshot($client);
 
         $transaction = $this->db->start_delegated_transaction();
 
@@ -322,6 +339,7 @@ class client_manager {
         $this->db->delete_records('oauth2_server_client_redirect_uris', $params);
         $this->db->delete_records('oauth2_server_clients', ['id' => $clientid]);
 
+        $this->log_change(self::CONFIG_LOG_CLIENT, $oldsnapshot, null);
         $transaction->allow_commit();
     }
 
@@ -353,13 +371,15 @@ class client_manager {
         $now = $this->clock->time();
         $secret = bin2hex(random_bytes(32));
 
-        $this->db->insert_record('oauth2_server_client_secrets', (object) [
+        $secretrecord = (object) [
             'clientidentifier' => $client->clientidentifier,
             'secret' => password_hash($secret, PASSWORD_DEFAULT),
             'expirytime' => $expirytime ?? $now + self::SECRET_LIFETIME,
             'revoked' => client_entity::SECRET_REVOKED_NO,
             'timecreated' => $now,
-        ]);
+        ];
+        $secretrecord->id = $this->db->insert_record('oauth2_server_client_secrets', $secretrecord);
+        $this->log_change(self::CONFIG_LOG_SECRET, null, $this->get_secret_snapshot($secretrecord));
 
         return $secret;
     }
@@ -412,12 +432,23 @@ class client_manager {
      * @return void
      */
     public function revoke_secret(int $secretid): void {
+        $secretrecord = $this->db->get_record('oauth2_server_client_secrets', ['id' => $secretid]);
+
+        // Revoking a secret which does not exist does nothing.
+        if (!$secretrecord) {
+            return;
+        }
+
+        $oldsnapshot = $this->get_secret_snapshot($secretrecord);
+        $secretrecord->revoked = client_entity::SECRET_REVOKED_YES;
+
         $this->db->set_field(
             'oauth2_server_client_secrets',
             'revoked',
-            client_entity::SECRET_REVOKED_YES,
+            $secretrecord->revoked,
             ['id' => $secretid],
         );
+        $this->log_change(self::CONFIG_LOG_SECRET, $oldsnapshot, $this->get_secret_snapshot($secretrecord));
     }
 
     /**
@@ -454,7 +485,9 @@ class client_manager {
             return;
         }
 
+        $oldsnapshot = $this->get_client_snapshot($client);
         $this->insert_redirect_uris($client->clientidentifier, [$uri]);
+        $this->log_change(self::CONFIG_LOG_CLIENT, $oldsnapshot, $this->get_client_snapshot($client));
     }
 
     /**
@@ -476,8 +509,10 @@ class client_manager {
             return;
         }
 
+        $oldsnapshot = $this->get_client_snapshot($client);
         [$insql, $params] = $this->db->get_in_or_equal($matches, SQL_PARAMS_NAMED);
         $this->db->delete_records_select('oauth2_server_client_redirect_uris', "id {$insql}", $params);
+        $this->log_change(self::CONFIG_LOG_CLIENT, $oldsnapshot, $this->get_client_snapshot($client));
     }
 
     /**
@@ -504,6 +539,56 @@ class client_manager {
      */
     protected function get_client_record(int $clientid): \stdClass {
         return $this->db->get_record('oauth2_server_clients', ['id' => $clientid], '*', MUST_EXIST);
+    }
+
+    /**
+     * Describe a client and its redirect URIs for the config log.
+     *
+     * @param \stdClass $client The client record.
+     * @param string[]|null $uris The client's redirect URIs, if already known. Read from the database if null.
+     * @return string The client state, as JSON.
+     */
+    protected function get_client_snapshot(\stdClass $client, ?array $uris = null): string {
+        return json_encode([
+            'clientidentifier' => $client->clientidentifier,
+            'name' => $client->name,
+            'description' => $client->description,
+            'status' => (int) $client->status,
+            'isconfidential' => (int) $client->isconfidential,
+            'ispkcerequired' => (int) $client->ispkcerequired,
+            'granttypes' => $client->granttypes,
+            'scopes' => $client->scopes,
+            'redirecturis' => array_values($uris ?? $this->get_uris($client->clientidentifier)),
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Describe a client secret for the config log, leaving out the secret hash.
+     *
+     * @param \stdClass $secret The secret record.
+     * @return string The secret state, as JSON.
+     */
+    protected function get_secret_snapshot(\stdClass $secret): string {
+        return json_encode([
+            'clientidentifier' => $secret->clientidentifier,
+            'secretid' => (int) $secret->id,
+            'expirytime' => (int) $secret->expirytime,
+            'revoked' => (int) $secret->revoked,
+        ]);
+    }
+
+    /**
+     * Record a change in the config log, unless nothing actually changed.
+     *
+     * @param string $name The config log name.
+     * @param string|null $oldvalue The state before the change, or null if it was created.
+     * @param string|null $newvalue The state after the change, or null if it was deleted.
+     * @return void
+     */
+    protected function log_change(string $name, ?string $oldvalue, ?string $newvalue): void {
+        if ($oldvalue !== $newvalue) {
+            add_to_config_log($name, $oldvalue, $newvalue, 'core');
+        }
     }
 
     /**
