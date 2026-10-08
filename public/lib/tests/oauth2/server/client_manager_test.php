@@ -1038,4 +1038,191 @@ final class client_manager_test extends \advanced_testcase {
 
         $this->assertFalse($manager->validate_redirect_uri('no-such-client', 'https://example.com/callback'));
     }
+
+    /**
+     * Get the config log entries recorded under a name, oldest first, with their values decoded.
+     *
+     * @param string $name The config log name.
+     * @return \stdClass[] The config log entries.
+     */
+    private function get_config_log(string $name): array {
+        global $DB;
+
+        $entries = array_values($DB->get_records('config_log', ['name' => $name], 'id ASC'));
+        foreach ($entries as $entry) {
+            $entry->oldvalue = $entry->oldvalue === null ? null : json_decode($entry->oldvalue, true);
+            $entry->value = $entry->value === null ? null : json_decode($entry->value, true);
+        }
+
+        return $entries;
+    }
+
+    /**
+     * Test that creating a client is logged with the client as created.
+     *
+     * @return void
+     */
+    public function test_create_client_is_logged(): void {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $manager = $this->get_manager();
+        $record = $this->create_fixture_client($manager, ['https://example.com/callback']);
+
+        $entries = $this->get_config_log('oauth2serverclient');
+        $this->assertCount(1, $entries);
+        $this->assertSame('core', $entries[0]->plugin);
+        $this->assertEquals($USER->id, $entries[0]->userid);
+        $this->assertNull($entries[0]->oldvalue);
+        $this->assertSame($record->clientidentifier, $entries[0]->value['clientidentifier']);
+        $this->assertSame('Test client', $entries[0]->value['name']);
+        $this->assertSame(client_entity::STATUS_ACTIVE, $entries[0]->value['status']);
+        $this->assertSame(['https://example.com/callback'], $entries[0]->value['redirecturis']);
+    }
+
+    /**
+     * Test that updating a client is logged with its state before and after.
+     *
+     * @return void
+     */
+    public function test_update_client_is_logged(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $manager = $this->get_manager();
+        $record = $this->create_fixture_client($manager);
+
+        $manager->update_client((int) $record->id, ['name' => 'Renamed client']);
+
+        $entries = $this->get_config_log('oauth2serverclient');
+        $this->assertCount(2, $entries);
+        $this->assertSame('Test client', $entries[1]->oldvalue['name']);
+        $this->assertSame('Renamed client', $entries[1]->value['name']);
+    }
+
+    /**
+     * Test that saving a client without changing anything is not logged.
+     *
+     * @return void
+     */
+    public function test_update_client_without_changes_is_not_logged(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $manager = $this->get_manager();
+        $record = $this->create_fixture_client($manager);
+
+        $manager->update_client((int) $record->id, ['name' => 'Test client']);
+
+        $entries = $this->get_config_log('oauth2serverclient');
+        $this->assertCount(1, $entries);
+        $this->assertNull($entries[0]->oldvalue);
+    }
+
+    /**
+     * Test that disabling and reactivating a client are each logged as a status change.
+     *
+     * @return void
+     */
+    public function test_client_status_changes_are_logged(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $manager = $this->get_manager();
+        $record = $this->create_fixture_client($manager);
+
+        $manager->disable_client((int) $record->id);
+        $manager->reactivate_client((int) $record->id);
+
+        $entries = $this->get_config_log('oauth2serverclient');
+        $this->assertCount(3, $entries);
+        $this->assertSame(client_entity::STATUS_ACTIVE, $entries[1]->oldvalue['status']);
+        $this->assertSame(client_entity::STATUS_DISABLED, $entries[1]->value['status']);
+        $this->assertSame(client_entity::STATUS_DISABLED, $entries[2]->oldvalue['status']);
+        $this->assertSame(client_entity::STATUS_ACTIVE, $entries[2]->value['status']);
+    }
+
+    /**
+     * Test that deleting a client is logged with the client as it was before deletion.
+     *
+     * @return void
+     */
+    public function test_delete_client_is_logged(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $manager = $this->get_manager();
+        $record = $this->create_fixture_client($manager);
+        $manager->disable_client((int) $record->id);
+
+        $manager->delete_client((int) $record->id);
+
+        $entries = $this->get_config_log('oauth2serverclient');
+        $this->assertCount(3, $entries);
+        $this->assertSame($record->clientidentifier, $entries[2]->oldvalue['clientidentifier']);
+        $this->assertNull($entries[2]->value);
+    }
+
+    /**
+     * Test that adding and removing redirect URIs is logged, and that no-op changes are not.
+     *
+     * @return void
+     */
+    public function test_redirect_uri_changes_are_logged(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $manager = $this->get_manager();
+        $record = $this->create_fixture_client($manager, ['https://example.com/first']);
+        $clientid = (int) $record->id;
+
+        $manager->add_redirect_uri($clientid, 'https://example.com/second');
+        $manager->add_redirect_uri($clientid, 'https://example.com/second');
+        $manager->remove_redirect_uri($clientid, 'https://example.com/first');
+        $manager->remove_redirect_uri($clientid, 'https://example.com/never-registered');
+
+        $entries = $this->get_config_log('oauth2serverclient');
+        $this->assertCount(3, $entries);
+        $this->assertSame(['https://example.com/first'], $entries[1]->oldvalue['redirecturis']);
+        $this->assertSame(
+            ['https://example.com/first', 'https://example.com/second'],
+            $entries[1]->value['redirecturis'],
+        );
+        $this->assertSame(['https://example.com/second'], $entries[2]->value['redirecturis']);
+    }
+
+    /**
+     * Test that creating and revoking a secret is logged without the secret or its hash.
+     *
+     * @return void
+     */
+    public function test_secret_changes_are_logged_without_the_secret(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $manager = $this->get_manager();
+        $record = $this->create_fixture_client($manager);
+
+        $secret = $manager->create_secret((int) $record->id);
+        $secretrecord = $DB->get_record('oauth2_server_client_secrets', ['clientidentifier' => $record->clientidentifier]);
+        $manager->revoke_secret((int) $secretrecord->id);
+        $manager->revoke_secret((int) $secretrecord->id);
+
+        $entries = $this->get_config_log('oauth2serverclientsecret');
+        $this->assertCount(2, $entries);
+        $this->assertNull($entries[0]->oldvalue);
+        $this->assertSame($record->clientidentifier, $entries[0]->value['clientidentifier']);
+        $this->assertSame((int) $secretrecord->id, $entries[0]->value['secretid']);
+        $this->assertSame(client_entity::SECRET_REVOKED_NO, $entries[0]->value['revoked']);
+        $this->assertSame(client_entity::SECRET_REVOKED_NO, $entries[1]->oldvalue['revoked']);
+        $this->assertSame(client_entity::SECRET_REVOKED_YES, $entries[1]->value['revoked']);
+
+        $rawlog = json_encode($DB->get_records('config_log', ['name' => 'oauth2serverclientsecret']));
+        $this->assertStringNotContainsString($secret, $rawlog);
+        $this->assertStringNotContainsString(json_encode($secretrecord->secret), $rawlog);
+    }
 }
