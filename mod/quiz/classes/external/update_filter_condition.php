@@ -81,6 +81,10 @@ class update_filter_condition extends external_api {
         self::validate_context($thiscontext);
         require_capability('mod/quiz:manage', $thiscontext);
 
+        // Validate the slot belongs to the quiz identified by cmid. create_for_cmid() throws if cmid is not a quiz.
+        $quizobj = \mod_quiz\quiz_settings::create_for_cmid($cmid);
+        $DB->get_record('quiz_slots', ['id' => $slotid, 'quizid' => $quizobj->get_quizid()], 'id', MUST_EXIST);
+
         // Validate question category is supplied in filter.
         $decodedfiltercondition = json_decode($filtercondition, true);
         $categoryid = (isset($decodedfiltercondition['filter']['category']['values'][0])) ?
@@ -91,6 +95,10 @@ class update_filter_condition extends external_api {
 
         // Validate question category exists.
         $categorycontextid = $DB->get_field('question_categories', 'contextid', ['id' => $categoryid], MUST_EXIST);
+
+        // Require permission to use questions from the target category's context.
+        $catcontext = \context::instance_by_id($categorycontextid);
+        require_capability('moodle/question:useall', $catcontext);
 
         // Validate set_reference record exists for this quiz and slot.
         $setreferenceid = $DB->get_field('question_set_references', 'id', [

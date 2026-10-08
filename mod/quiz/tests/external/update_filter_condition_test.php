@@ -170,4 +170,101 @@ final class update_filter_condition_test extends advanced_testcase {
 
     }
 
+    /**
+     * Test that a slot can only be updated through the cmid of the quiz that owns it.
+     * @runInSeparateProcess
+     * @return void
+     */
+    public function test_update_filter_condition_with_slot_from_another_quiz(): void {
+
+        global $DB;
+
+        // The first quiz provides the cmid used in the call.
+        [, $cm, , $filtercondition] = $this->create_quiz_with_random_questions();
+
+        // The second quiz owns the slot being targeted.
+        [, , , , $quizcontext2] = $this->create_quiz_with_random_questions();
+        $qsetref2 = $DB->get_record('question_set_references', [
+            'usingcontextid' => $quizcontext2->id,
+        ]);
+        $originalcontextid = $qsetref2->questionscontextid;
+        $originalfiltercondition = $qsetref2->filtercondition;
+
+        // Calling with the first quiz's cmid and the second quiz's slot id must be rejected.
+        try {
+            update_filter_condition::execute($cm->id, $qsetref2->itemid, json_encode($filtercondition));
+            $this->fail('Expected an exception for a slot that does not belong to the quiz.');
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf(\dml_missing_record_exception::class, $e);
+        }
+
+        // The second quiz's slot reference must be unchanged.
+        $qsetref2after = $DB->get_record('question_set_references', [
+            'usingcontextid' => $quizcontext2->id,
+        ]);
+        $this->assertEquals($originalcontextid, $qsetref2after->questionscontextid);
+        $this->assertEquals($originalfiltercondition, $qsetref2after->filtercondition);
+    }
+
+    /**
+     * Test that a cmid that does not belong to a quiz is rejected.
+     * @runInSeparateProcess
+     * @return void
+     */
+    public function test_update_filter_condition_with_non_quiz_cmid(): void {
+
+        global $DB;
+
+        [$course, , , $filtercondition, $quizcontext] = $this->create_quiz_with_random_questions();
+        $qsetref = $DB->get_record('question_set_references', [
+            'usingcontextid' => $quizcontext->id,
+        ]);
+
+        // A page activity in the same course provides a cmid that is not a quiz.
+        $page = $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
+
+        $this->expectException(\moodle_exception::class);
+        update_filter_condition::execute($page->cmid, $qsetref->itemid, json_encode($filtercondition));
+    }
+
+    /**
+     * Test that a slot cannot be pointed at a question category the user is not allowed to use.
+     * @runInSeparateProcess
+     * @return void
+     */
+    public function test_update_filter_condition_with_category_user_cannot_use(): void {
+
+        global $DB;
+
+        [$course, $cm, , $filtercondition, $quizcontext] = $this->create_quiz_with_random_questions();
+        $qsetref = $DB->get_record('question_set_references', [
+            'usingcontextid' => $quizcontext->id,
+        ]);
+
+        // A teacher who can manage the quiz, but who has no role in the course holding the other category.
+        $teacher = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, 'editingteacher');
+
+        // A question category in a course the teacher is not enrolled in.
+        $othercourse = $this->getDataGenerator()->create_course();
+        $othercontext = \core\context\course::instance($othercourse->id);
+        $othercategory = $this->getDataGenerator()->get_plugin_generator('core_question')->create_question_category([
+            'contextid' => $othercontext->id,
+        ]);
+
+        $this->setUser($teacher);
+        $filtercondition['filter']['category']['values'] = [$othercategory->id];
+
+        try {
+            update_filter_condition::execute($cm->id, $qsetref->itemid, json_encode($filtercondition));
+            $this->fail('Expected an exception for a category the user is not allowed to use.');
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf(\required_capability_exception::class, $e);
+        }
+
+        // The slot reference must be unchanged.
+        $after = $DB->get_record('question_set_references', ['id' => $qsetref->id]);
+        $this->assertEquals($qsetref->filtercondition, $after->filtercondition);
+        $this->assertEquals($qsetref->questionscontextid, $after->questionscontextid);
+    }
 }
