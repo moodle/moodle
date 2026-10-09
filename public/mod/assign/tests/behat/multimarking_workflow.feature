@@ -301,7 +301,10 @@ Feature: Complete multi-marking workflow
     And the following fields match these values:
       | Mark out of 100 | 50.00 |
     And the "Mark out of 100" "field" should be readonly
+    And "Marking workflow state" "field" should not exist
+    And I press "Save changes"
     And I follow "View all submissions"
+    And I should see "Released" in the "Student One" "table_row"
     # The mark is editable again when the status it changed into an editable state.
     And I click on "Quick grading" "checkbox"
     And I set the field "selectall" to "1"
