@@ -41,6 +41,8 @@ $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
 
+\mod_feedback\manager::get_template_record_if_accessible($templateid, $course->id);
+
 $feedback = $PAGE->activityrecord;
 $feedbackstructure = new mod_feedback_structure($feedback, $cm, 0, $templateid);
 

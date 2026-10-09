@@ -17,6 +17,7 @@
 namespace mod_feedback;
 
 use cm_info;
+use stdClass;
 
 /**
  * Class manager for feedback
@@ -26,6 +27,24 @@ use cm_info;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
+    /**
+     * Get a template record if it can be used within the given course.
+     *
+     * Course templates are only usable in the course they belong to; public
+     * templates are available everywhere.
+     *
+     * @param int $templateid
+     * @param int $courseid The course in which the template is going to be used.
+     * @return stdClass
+     * @throws \dml_missing_record_exception If the template doesn't exist or belongs to a different course.
+     */
+    public static function get_template_record_if_accessible(int $templateid, int $courseid): stdClass {
+        global $DB;
+        $select = 'id = :id AND (ispublic = 1 OR course = :courseid)';
+        $params = ['id' => $templateid, 'courseid' => $courseid];
+        return $DB->get_record_select('feedback_template', $select, $params, '*', MUST_EXIST);
+    }
+
     /**
      * Check if the current user can see other users if in groups
      *
