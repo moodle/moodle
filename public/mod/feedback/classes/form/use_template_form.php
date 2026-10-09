@@ -81,6 +81,10 @@ class use_template_form extends dynamic_form {
         $formdata = $this->get_data();
         $templateid = $this->optional_param('templateid', null, PARAM_INT);
         $id = $this->optional_param('id', null, PARAM_INT);
+
+        [$course] = get_course_and_cm_from_cmid($id, 'feedback');
+        \mod_feedback\manager::get_template_record_if_accessible($templateid, $course->id);
+
         $response = feedback_items_from_template($PAGE->activityrecord, $templateid, $formdata->deleteolditems);
         $url = new moodle_url('/mod/feedback/edit.php', ['id' => $id]);
 
