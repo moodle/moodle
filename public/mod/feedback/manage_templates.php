@@ -58,7 +58,7 @@ $PAGE->add_body_class('limitedwidth');
 if ($templateid) {
     require_sesskey();
     require_capability('mod/feedback:deletetemplate', $context);
-    $template = $DB->get_record('feedback_template', ['id' => $templateid], '*', MUST_EXIST);
+    $template = \mod_feedback\manager::get_template_record_if_accessible($templateid, $course->id);
 
     if ($template->ispublic) {
         require_capability('mod/feedback:createpublictemplate', $systemcontext);
