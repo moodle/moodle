@@ -141,7 +141,7 @@ class core_role_view_role_definition_table extends core_role_define_role_table_a
                 'small',
                 $OUTPUT->action_link($filterurl, get_string('risksfilterwithcount', 'role', $count))
             );
-            $html .= html_writer::tag('p', get_string($type, 'admin'), ['class' => 'ml-5']);
+            $html .= html_writer::tag('p', get_string($type, 'admin'), ['class' => 'ms-5']);
         }
 
         if ($riskcount == 0) {
