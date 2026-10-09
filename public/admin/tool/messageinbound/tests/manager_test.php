@@ -308,4 +308,76 @@ final class manager_test extends provider_testcase {
         $this->assertSame('', $contentplain);
         $this->assertSame('', $contenthtml);
     }
+
+    /**
+     * Invoke the private process_message_body_structure_parameters() method directly.
+     *
+     * @param manager $manager    The manager instance.
+     * @param array   $attributes Flat [attribute, value, ...] list.
+     * @param array   $parameters Existing parameters to merge into.
+     * @return array
+     */
+    private function invoke_parse_parameters(
+        manager $manager,
+        array $attributes,
+        array $parameters = [],
+    ): array {
+        $caller = function (array $attrs, array $params): array {
+            return $this->process_message_body_structure_parameters(
+                attributes: $attrs,
+                parameters: $params,
+            );
+        };
+        $bound = \Closure::bind($caller, $manager, manager::class);
+        return $bound($attributes, $parameters);
+    }
+
+    /**
+     * MIME attribute names in varying case, paired with their expected upper-case key.
+     *
+     * @return array
+     */
+    public static function mime_attribute_casing_provider(): array {
+        return [
+            'all-lowercase charset' => ['charset', 'CHARSET'],
+            'all-uppercase name' => ['NAME', 'NAME'],
+            'Title-Case filename' => ['FileName', 'FILENAME'],
+            'MiXeD-case boundary' => ['BoUnDaRy', 'BOUNDARY'],
+            'lowercase format' => ['format', 'FORMAT'],
+        ];
+    }
+
+    /**
+     * MDL-89654: attribute keys must normalise to uppercase, since the IMAP parser
+     * preserves the sender's casing but callers look up fixed-case keys like CHARSET.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('mime_attribute_casing_provider')]
+    public function test_process_parameters_normalises_attribute_case(string $rawattribute, string $expectedkey): void {
+        $manager = new manager();
+
+        $result = $this->invoke_parse_parameters($manager, [$rawattribute, 'somevalue']);
+
+        $this->assertArrayHasKey($expectedkey, $result);
+        $this->assertSame('somevalue', $result[$expectedkey]);
+    }
+
+    /**
+     * MDL-89654: differently-cased attributes in one part must normalise independently,
+     * since a real Content-Type header commonly has multiple parameters together.
+     */
+    public function test_process_parameters_normalises_multiple_attributes_independently(): void {
+        $manager = new manager();
+
+        $result = $this->invoke_parse_parameters($manager, [
+            'charset', 'iso-8859-1',
+            'NAME', 'report.pdf',
+            'BoUnDaRy', 'Part-123',
+        ]);
+
+        $this->assertSame([
+            'CHARSET' => 'iso-8859-1',
+            'NAME' => 'report.pdf',
+            'BOUNDARY' => 'Part-123',
+        ], $result);
+    }
 }

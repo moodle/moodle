@@ -868,7 +868,7 @@ class manager {
             }
         }
 
-        return $params;
+        return array_change_key_case($params, CASE_UPPER);
     }
 
     /**
