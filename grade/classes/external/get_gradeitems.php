@@ -72,6 +72,7 @@ class get_gradeitems extends external_api {
         $warnings = [];
         $context = context_course::instance($params['courseid']);
         parent::validate_context($context);
+        require_capability('moodle/grade:viewall', $context);
 
         $allgradeitems = grade_item::fetch_all(['courseid' => $params['courseid']]);
         $gradeitems = array_filter($allgradeitems, function($item) {
