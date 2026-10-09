@@ -111,4 +111,23 @@ final class manager_test extends advanced_testcase {
         $cm = get_fast_modinfo($course)->cms[$feedback->cmid];
         $this->assertEquals($expected, manager::can_see_others_in_groups($cm));
     }
+
+    /**
+     * Test get_template_record_if_accessible() only returns templates usable in the course.
+     */
+    public function test_get_template_record_if_accessible(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $private = $DB->insert_record('feedback_template', ['course' => $course1->id, 'name' => 'Private', 'ispublic' => 0]);
+        $public = $DB->insert_record('feedback_template', ['course' => $course1->id, 'name' => 'Public', 'ispublic' => 1]);
+
+        $this->assertEquals($private, manager::get_template_record_if_accessible($private, $course1->id)->id);
+        $this->assertEquals($public, manager::get_template_record_if_accessible($public, $course2->id)->id);
+
+        $this->expectException(\dml_missing_record_exception::class);
+        manager::get_template_record_if_accessible($private, $course2->id);
+    }
 }

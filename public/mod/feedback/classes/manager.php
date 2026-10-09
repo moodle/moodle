@@ -41,6 +41,25 @@ class manager {
     }
 
     /**
+     * Get a template record if it can be used within the given course.
+     *
+     * Course templates are only usable in the course they belong to; public
+     * templates are available everywhere.
+     *
+     * @param int $templateid
+     * @param int $courseid The course in which the template is going to be used.
+     * @return stdClass
+     * @throws \dml_missing_record_exception If the template doesn't exist or belongs to a different course.
+     */
+    public static function get_template_record_if_accessible(int $templateid, int $courseid): stdClass {
+        $template = self::get_template_record($templateid);
+        if (!$template->ispublic && $template->course != $courseid) {
+            throw new \dml_missing_record_exception('feedback_template');
+        }
+        return $template;
+    }
+
+    /**
      * Check if the current user can see other users if in groups
      *
      * @param cm_info $cm
