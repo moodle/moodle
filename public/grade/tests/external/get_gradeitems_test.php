@@ -55,4 +55,51 @@ final class get_gradeitems_test extends \core_external\tests\externallib_testcas
         }, array_values($gradeitems));
         $this->assertEquals($mapped, $result['gradeItems']);
     }
+
+    /**
+     * Test that a teacher with the moodle/grade:viewall capability can fetch the grade items, including hidden ones.
+     */
+    public function test_execute_as_teacher(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->create_module('assign', ['course' => $course->id, 'name' => 'Assignment']);
+        $hiddenassign = $this->getDataGenerator()->create_module('assign', [
+            'course' => $course->id,
+            'name' => 'Hidden assignment',
+        ]);
+
+        // Hide the second grade item from students.
+        $hiddengradeitem = grade_item::fetch([
+            'courseid' => $course->id,
+            'itemtype' => 'mod',
+            'itemmodule' => 'assign',
+            'iteminstance' => $hiddenassign->id,
+        ]);
+        $hiddengradeitem->set_hidden(1);
+        $this->assertTrue($hiddengradeitem->is_hidden());
+
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $this->setUser($teacher);
+
+        $result = get_gradeitems::execute($course->id);
+        $result = external_api::clean_returnvalue(get_gradeitems::execute_returns(), $result);
+        $itemnames = array_column($result['gradeItems'], 'itemname');
+        $this->assertEqualsCanonicalizing(['Assignment', 'Hidden assignment'], $itemnames);
+    }
+
+    /**
+     * Test that a student without the moodle/grade:viewall capability cannot fetch the grade items.
+     */
+    public function test_execute_without_capability(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+
+        // A student does not have the capability to view all grade items.
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->setUser($student);
+
+        $this->expectException(\required_capability_exception::class);
+        get_gradeitems::execute($course->id);
+    }
 }
