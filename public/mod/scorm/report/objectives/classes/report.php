@@ -185,6 +185,7 @@ class report extends \mod_scorm\report {
             $nosort = array();
             foreach ($objectives as $scoid => $sco) {
                 foreach ($sco as $id => $objectivename) {
+                    $objectivename = s($objectivename);
                     $colid = $scoid.'objectivestatus' . $id;
                     $columns[] = $colid;
                     $nosort[] = $colid;
