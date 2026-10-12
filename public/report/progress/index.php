@@ -227,9 +227,11 @@ if ($dataformat !== '' && $grandtotal && count($activities) > 0) {
                     $completiontype = 'y' . ($overrideby ? '-override' : '');
                     break;
                 case COMPLETION_COMPLETE_PASS:
-                    $completiontype = 'pass';
+                    $completiontype = 'pass' . ($overrideby ? '-override' : '');
                     break;
                 case COMPLETION_COMPLETE_FAIL:
+                    // No '-override' variant: an override can never produce this state (see
+                    // update_state()'s override switch), only automatic tracking can.
                     $completiontype = 'fail';
                     break;
             }
@@ -459,9 +461,11 @@ foreach($progress as $user) {
                 $completiontype = 'y'.($overrideby ? '-override' : '');
                 break;
             case COMPLETION_COMPLETE_PASS :
-                $completiontype = 'pass';
+                $completiontype = 'pass' . ($overrideby ? '-override' : '');
                 break;
             case COMPLETION_COMPLETE_FAIL :
+                // No '-override' variant: an override can never produce this state (see
+                // update_state()'s override switch), only automatic tracking can.
                 $completiontype = 'fail';
                 break;
         }
@@ -484,9 +488,11 @@ foreach($progress as $user) {
         $celltext = $OUTPUT->pix_icon('i/' . $completionicon, s($fulldescribe));
         if (
             has_capability('moodle/course:overridecompletion', $context) &&
-            $state != COMPLETION_COMPLETE_PASS && $state != COMPLETION_COMPLETE_FAIL
+            ($overrideby || ($state != COMPLETION_COMPLETE_PASS && $state != COMPLETION_COMPLETE_FAIL))
         ) {
-            $newstate = ($state == COMPLETION_COMPLETE) ? COMPLETION_INCOMPLETE : COMPLETION_COMPLETE;
+            // An overridden pass/fail state must stay revertable, same as any other override; only an
+            // automatically-computed pass/fail state is left alone.
+            $newstate = ($state == COMPLETION_INCOMPLETE) ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
             $changecompl = $user->id . '-' . $activity->id . '-' . $newstate;
             $url = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
             $celltext = html_writer::link($url, $celltext, ['class' => 'changecompl', 'data-changecompl' => $changecompl,
