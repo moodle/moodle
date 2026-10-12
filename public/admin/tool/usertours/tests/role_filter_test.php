@@ -22,8 +22,8 @@ namespace tool_usertours;
  * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \tool_usertours\local\filter\role
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_usertours\local\filter\role::class)]
 final class role_filter_test extends \advanced_testcase {
     /**
      * @var $course Test course

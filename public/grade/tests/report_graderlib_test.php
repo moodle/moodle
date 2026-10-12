@@ -30,11 +30,13 @@ require_once($CFG->dirroot.'/grade/report/grader/lib.php');
  * Tests grade_report_grader (the grader report)
  *
  * @package  core_grades
- * @covers   \grade_report_grader
  * @category test
  * @copyright 2012 Andrew Davis
  * @license  http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\grade_report_grader::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_report_grader::class, 'get_collapsed_preferences')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_report_grader::class, 'filter_collapsed_categories')]
 final class report_graderlib_test extends \advanced_testcase {
 
     /**
@@ -235,9 +237,6 @@ final class report_graderlib_test extends \advanced_testcase {
 
     /**
      * Test some special cases of the conversion from old preferences to new ones
-     *
-     * @covers \grade_report_grader::get_collapsed_preferences
-     * @covers \grade_report_grader::filter_collapsed_categories
      */
     public function test_old_collapsed_preferences(): void {
         $this->resetAfterTest(true);

@@ -31,10 +31,13 @@ require_once($CFG->libdir . '/badgeslib.php');
  * Unit tests for award_selector_base abstract class.
  *
  * @package     core_badges
- * @covers      \core_badges\award_manager
  * @copyright   2025 Dai Nguyen Trong <ngtrdai@hotmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\award_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_badges\award_selector_base::class, '__construct')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_badges\award_selector_base::class, 'get_options')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_badges\award_selector_base::class, 'get_groups_sql')]
 final class award_selector_base_test extends badges_testcase {
     /**
      * Data provider for context types and badge configurations.
@@ -79,12 +82,11 @@ final class award_selector_base_test extends badges_testcase {
     /**
      * Test constructor with different context types.
      *
-     * @dataProvider context_badge_provider
-     * @covers       \core_badges\award_selector_base::__construct
      * @param string $contexttype The type of context to test.
      * @param int $badgetype The type of badge to create.
      * @param mixed $courseid Course ID configuration.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('context_badge_provider')]
     public function test_constructor_with_context(string $contexttype, int $badgetype, $courseid): void {
         $this->resetAfterTest();
 
@@ -137,8 +139,6 @@ final class award_selector_base_test extends badges_testcase {
 
     /**
      * Test constructor with default currentgroup from global COURSE.
-     *
-     * @covers \core_badges\award_selector_base::__construct
      */
     public function test_constructor_with_default_currentgroup(): void {
         global $COURSE;
@@ -169,8 +169,6 @@ final class award_selector_base_test extends badges_testcase {
 
     /**
      * Test get_options method.
-     *
-     * @covers \core_badges\award_selector_base::get_options
      */
     public function test_get_options(): void {
         $this->resetAfterTest();
@@ -204,13 +202,12 @@ final class award_selector_base_test extends badges_testcase {
     /**
      * Test get_groups_sql method with different group configurations.
      *
-     * @dataProvider group_configurations_provider
-     * @covers       \core_badges\award_selector_base::get_groups_sql
      * @param int $currentgroup The current group ID.
      * @param string $expectedsql Expected group SQL.
      * @param string $expectedwhere Expected where clause.
      * @param array $expectedparams Expected parameters.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('group_configurations_provider')]
     public function test_get_groups_sql(
         int $currentgroup,
         string $expectedsql,

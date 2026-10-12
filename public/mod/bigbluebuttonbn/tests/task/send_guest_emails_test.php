@@ -24,9 +24,9 @@ use advanced_testcase;
  * @package   mod_bigbluebuttonbn
  * @copyright 2019 onwards, Blindside Networks Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_bigbluebuttonbn\task\send_guest_emails
- * @coversDefaultClass \mod_bigbluebuttonbn\task\send_guest_emails
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\task\send_guest_emails::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\task\send_guest_emails::class)]
 final class send_guest_emails_test extends advanced_testcase {
     /**
      * Check if set instance ID works correctly

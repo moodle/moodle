@@ -32,10 +32,10 @@ require_once("{$CFG->libdir}/badgeslib.php");
  * Unit tests for user badges datasource
  *
  * @package     core_badges
- * @covers      \core_badges\reportbuilder\datasource\users
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\reportbuilder\datasource\users::class)]
 final class users_test extends core_reportbuilder_testcase {
 
     /**
@@ -309,9 +309,8 @@ final class users_test extends core_reportbuilder_testcase {
      * @param string $filtername
      * @param array $filtervalues
      * @param bool $expectmatch
-     *
-     * @dataProvider datasource_filters_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('datasource_filters_provider')]
     public function test_datasource_filters(string $filtername, array $filtervalues, bool $expectmatch): void {
         $this->resetAfterTest();
 

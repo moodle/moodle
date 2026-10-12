@@ -22,11 +22,11 @@ use core_external\external_api;
  * Tests for add_instances external class
  *
  * @package    enrol_meta
- * @group      enrol_meta
  * @category   test
  * @copyright  2021 WKS KV Bildung
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\Group('enrol_meta')]
 final class add_instances_test extends \core_external\tests\externallib_testcase {
     /**
      * Test setup

@@ -26,8 +26,8 @@ use GuzzleHttp\Psr7\Response;
  * @package    aiprovider_azureai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiprovider_azureai\process_generate_image
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_azureai\process_generate_image::class)]
 final class process_generate_image_test extends \advanced_testcase {
     /** @var string A successful response in JSON format. */
     protected string $responsebodyjson;

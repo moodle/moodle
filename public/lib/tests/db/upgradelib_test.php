@@ -26,6 +26,10 @@ namespace core\db;
  * @copyright 2022 Andrew Lyons <andrew@thelyons.family>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('upgrade_block_set_defaultregion')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('upgrade_block_delete_instances')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('upgrade_block_set_my_user_parent_context')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('upgrade_create_async_mimetype_upgrade_task')]
 final class upgradelib_test extends \advanced_testcase {
 
     /**
@@ -43,8 +47,6 @@ final class upgradelib_test extends \advanced_testcase {
      * Ensure that the upgrade_block_set_defaultregion function performs as expected.
      *
      * Only targetted blocks and pages should be affected.
-     *
-     * @covers ::upgrade_block_set_defaultregion
      */
     public function test_upgrade_block_set_defaultregion(): void {
         global $DB;
@@ -140,8 +142,6 @@ final class upgradelib_test extends \advanced_testcase {
      * Ensure that the upgrade_block_set_defaultregion function performs as expected.
      *
      * Missing block entries will be created.
-     *
-     * @covers ::upgrade_block_set_defaultregion
      */
     public function test_upgrade_block_set_defaultregion_create_missing(): void {
         global $DB;
@@ -214,8 +214,6 @@ final class upgradelib_test extends \advanced_testcase {
      * Ensure that the upgrade_block_delete_instances function performs as expected.
      *
      * Missing block entries will be created.
-     *
-     * @covers ::upgrade_block_delete_instances
      */
     public function test_upgrade_block_delete_instances(): void {
         global $DB;
@@ -447,8 +445,6 @@ final class upgradelib_test extends \advanced_testcase {
 
     /**
      * Ensrue that the upgrade_block_set_my_user_parent_context function performs as expected.
-     *
-     * @covers ::upgrade_block_set_my_user_parent_context
      */
     public function test_upgrade_block_set_my_user_parent_context(): void {
         global $DB;
@@ -543,8 +539,6 @@ final class upgradelib_test extends \advanced_testcase {
 
     /**
      * Ensure that the upgrade_create_async_mimetype_upgrade_task function performs as expected.
-     *
-     * @covers ::upgrade_create_async_mimetype_upgrade_task
      */
     public function test_upgrade_create_async_mimetype_upgrade_task(): void {
         global $DB;

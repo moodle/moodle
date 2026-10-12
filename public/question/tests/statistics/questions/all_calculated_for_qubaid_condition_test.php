@@ -30,8 +30,8 @@ require_once($CFG->dirroot . '/question/engine/lib.php');
  * @package   core_question
  * @copyright 2026 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_question\statistics\questions\all_calculated_for_qubaid_condition::get_cached
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_question\statistics\questions\all_calculated_for_qubaid_condition::class, 'get_cached')]
 final class all_calculated_for_qubaid_condition_test extends advanced_testcase {
     /**
      * Test that get_cached() gracefully skips a DB row whose slot is not in questionstats.

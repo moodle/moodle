@@ -23,8 +23,8 @@ namespace quizaccess_seb;
  * @author    Andrew Madden <andrewmadden@catalyst-au.net>
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \quizaccess_seb\config_key
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\quizaccess_seb\config_key::class)]
 final class config_key_test extends \advanced_testcase {
 
     /**
@@ -49,9 +49,8 @@ final class config_key_test extends \advanced_testcase {
      *
      * @param string $config The SEB config file name.
      * @param string $hash The correct config key hash for this file.
-     *
-     * @dataProvider real_ck_hash_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('real_ck_hash_provider')]
     public function test_config_key_hash_is_derived_correctly($config, $hash): void {
         $xml = file_get_contents(self::get_fixture_path(__NAMESPACE__, $config));
         $derivedhash = config_key::generate($xml)->get_hash();

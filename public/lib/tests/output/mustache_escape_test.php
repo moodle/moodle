@@ -25,11 +25,10 @@ use Mustache\Loader\ArrayLoader;
  * @copyright 2025 Petr Skoda
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\renderer_base::class, 'render_from_template')]
 final class mustache_escape_test extends \advanced_testcase {
     /**
      * Test escaping of characters in {{ }} placeholders.
-     *
-     * @covers \renderer_base::render_from_template
      */
     public function test_escape(): void {
         $page = new \moodle_page();
@@ -107,8 +106,6 @@ final class mustache_escape_test extends \advanced_testcase {
 
     /**
      * Test that there is no escaping of characters in {{{ }}} placeholders.
-     *
-     * @covers \renderer_base::render_from_template
      */
     public function test_no_escape(): void {
         $page = new \moodle_page();

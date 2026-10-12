@@ -31,8 +31,8 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package   qtype_essay
  * @copyright 2009 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \qtype_essay_question
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_essay_question::class)]
 final class question_test extends \advanced_testcase {
     public function test_get_question_summary(): void {
         $essay = \test_question_maker::make_an_essay_question();
@@ -44,13 +44,13 @@ final class question_test extends \advanced_testcase {
      * Test summarise_response() when teachers view quiz attempts and then
      * review them to see what has been saved in the response history table.
      *
-     * @dataProvider summarise_response_provider
      * @param int $responserequired
      * @param int $attachmentsrequired
      * @param string $answertext
      * @param int $attachmentuploaded
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('summarise_response_provider')]
     public function test_summarise_response(int $responserequired, int $attachmentsrequired,
                                             string $answertext, int $attachmentuploaded, string $expected): void {
         $this->resetAfterTest();
@@ -104,11 +104,11 @@ final class question_test extends \advanced_testcase {
     /**
      * Test un_summarise_response().
      *
-     * @dataProvider un_summarise_response_provider
      * @param string $responseformat
      * @param string $summary
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('un_summarise_response_provider')]
     public function test_un_summarise_response(string $responseformat, string $summary, array $expected): void {
         $this->resetAfterTest();
 
@@ -384,12 +384,12 @@ final class question_test extends \advanced_testcase {
      *
      * (The tests are done with a fixed 14-word response.)
      *
-     * @dataProvider get_min_max_wordlimit_test_cases
      * @param  int $responserequired whether response required (yes = 1, no = 0)
      * @param  int $minwordlimit minimum word limit
      * @param  int $maxwordlimit maximum word limit
      * @param  string $expected error message | null
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_min_max_wordlimit_test_cases')]
     public function test_get_validation_error(int $responserequired,
                                               int $minwordlimit, int $maxwordlimit, string $expected): void {
         $question = \test_question_maker::make_an_essay_question();
@@ -438,11 +438,11 @@ final class question_test extends \advanced_testcase {
      *
      * (The tests are done with a fixed 14-word response.)
      *
-     * @dataProvider get_word_count_message_for_review_test_cases
      * @param int|null $minwordlimit minimum word limit
      * @param int|null $maxwordlimit maximum word limit
      * @param string $expected error message | null
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_word_count_message_for_review_test_cases')]
     public function test_get_word_count_message_for_review(?int $minwordlimit, ?int $maxwordlimit, string $expected): void {
         $question = \test_question_maker::make_an_essay_question();
         $question->minwordlimit = $minwordlimit;

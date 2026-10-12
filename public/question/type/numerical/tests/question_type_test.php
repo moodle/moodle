@@ -34,10 +34,9 @@ require_once($CFG->dirroot . '/question/type/numerical/edit_numerical_form.php')
  * @package    qtype_numerical
  * @copyright  2006 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \question_type
- * @covers \qtype_numerical
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_type::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_numerical::class)]
 final class question_type_test extends \advanced_testcase {
     protected $tolerance = 0.00000001;
     protected $qtype;

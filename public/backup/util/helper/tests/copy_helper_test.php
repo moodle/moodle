@@ -35,8 +35,9 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright  2020 onward The Moodle Users Association <https://moodleassociation.org/>
  * @author     Matt Porritt <mattp@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \copy_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\copy_helper::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_backup\hook\copy_helper_process_formdata::class)]
 final class copy_helper_test extends \advanced_testcase {
 
     /**
@@ -150,8 +151,6 @@ final class copy_helper_test extends \advanced_testcase {
 
     /**
      * Test process form data with invalid data.
-     *
-     * @covers ::process_formdata
      */
     public function test_process_formdata_missing_fields(): void {
         $this->expectException(\moodle_exception::class);
@@ -160,8 +159,6 @@ final class copy_helper_test extends \advanced_testcase {
 
     /**
      * Test processing form data.
-     *
-     * @covers ::process_formdata
      */
     public function test_process_formdata(): void {
         $validformdata = [
@@ -196,8 +193,6 @@ final class copy_helper_test extends \advanced_testcase {
 
     /**
      * Test orphaned controller cleanup.
-     *
-     * @covers ::cleanup_orphaned_copy_controllers
      */
     public function test_cleanup_orphaned_copy_controllers(): void {
         global $DB;
@@ -290,8 +285,6 @@ final class copy_helper_test extends \advanced_testcase {
 
     /**
      * Test creating a course copy.
-     *
-     * @covers ::create_copy
      */
     public function test_create_copy(): void {
 
@@ -343,8 +336,6 @@ final class copy_helper_test extends \advanced_testcase {
 
     /**
      * Test getting the current copies.
-     *
-     * @covers ::get_copies
      */
     public function test_get_copies(): void {
         global $USER;
@@ -417,8 +408,6 @@ final class copy_helper_test extends \advanced_testcase {
 
     /**
      * Test getting the current copies when they are in an invalid state.
-     *
-     * @covers ::get_copies
      */
     public function test_get_copies_invalid_state(): void {
         global $DB, $USER;
@@ -476,8 +465,6 @@ final class copy_helper_test extends \advanced_testcase {
 
     /**
      * Test getting the current copies for specific course.
-     *
-     * @covers ::get_copies
      */
     public function test_get_copies_course(): void {
         global $USER;
@@ -508,8 +495,6 @@ final class copy_helper_test extends \advanced_testcase {
 
     /**
      * Test getting the current copies if course has been deleted.
-     *
-     * @covers ::get_copies
      */
     public function test_get_copies_course_deleted(): void {
         global $USER;
@@ -846,8 +831,6 @@ final class copy_helper_test extends \advanced_testcase {
 
     /**
      * Test copy_helper_process_formdata hook.
-     *
-     * @covers \core_backup\hook\copy_helper_process_formdata
      */
     public function test_copy_helper_process_formdata_hook(): void {
         // Load the callback classes.

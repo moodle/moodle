@@ -32,6 +32,7 @@ use ReflectionProperty;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(component::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\component::class, 'get_path')]
 final class component_test extends \advanced_testcase {
     use fake_plugins_test_trait;
 
@@ -1698,9 +1699,9 @@ final class component_test extends \advanced_testcase {
     /**
      * Test various core_component APIs when dealing with deleted plugin types.
      *
-     * @runInSeparateProcess
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_core_component_deleted_plugintype(): void {
         $this->resetAfterTest();
 
@@ -1967,8 +1968,6 @@ final class component_test extends \advanced_testcase {
 
     /**
      * Ensure that get_path() returns absolute paths using the correct directory separator.
-     *
-     * @covers \core\component::get_path
      */
     public function test_get_path(): void {
         global $CFG;

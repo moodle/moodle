@@ -31,16 +31,16 @@ require_once($CFG->dirroot . '/repository/googledocs/lib.php');
  * @copyright  2021 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\repository_googledocs::class)]
 final class googledocs_root_content_test extends \googledocs_content_testcase {
     /**
      * Test get_content_nodes().
      *
-     * @dataProvider get_content_nodes_provider
      * @param array $shareddrives The array containing the existing shared drives
      * @param array $expected The expected array which contains the generated repository content nodes
      * @param bool $expectshared Whether shared drives should be tested
-     * @covers \repository_googledocs
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_content_nodes_provider')]
     public function test_get_content_nodes(array $shareddrives, array $expected, bool $expectshared): void {
         $scopessupportshared = $this->shared_drives_supported();
 

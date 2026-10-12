@@ -23,19 +23,18 @@ namespace core_adminpresets\local\setting;
  * @category   test
  * @copyright  2026 Anupama Sarjoshi <anupama.sarjoshi@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_adminpresets\local\setting\adminpresets_admin_setting_configexecutable
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_adminpresets\local\setting\adminpresets_admin_setting_configexecutable::class)]
 final class adminpresets_admin_setting_configexecutable_test extends \advanced_testcase {
     /**
      * Test the behaviour of save_value() method.
      *
-     * @covers ::save_value
-     * @dataProvider save_value_provider
      *
      * @param bool $preventexecpath Whether to set $CFG->preventexecpath.
      * @param string $newpath Executable path value to save.
      * @param bool $expectedsaved Whether the value should be saved (true) or rejected (false).
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('save_value_provider')]
     public function test_save_value(bool $preventexecpath, string $newpath, bool $expectedsaved): void {
         global $CFG, $DB;
 
@@ -104,8 +103,6 @@ final class adminpresets_admin_setting_configexecutable_test extends \advanced_t
 
     /**
      * Test that save_value() returns false for a file that exists but is not executable.
-     *
-     * @covers ::save_value
      */
     public function test_save_value_non_executable_file(): void {
         global $CFG;

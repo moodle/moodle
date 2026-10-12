@@ -47,8 +47,8 @@ use core_question\local\bank\question_version_status;
  * @copyright  2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author     Simon Adams <simon.adams@catalyst-eu.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_qbank\task\transfer_question_categories
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_qbank\task\transfer_question_categories::class)]
 final class transfer_question_categories_test extends \advanced_testcase {
 
     /** @var \core\context\coursecat test course category context */

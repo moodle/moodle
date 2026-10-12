@@ -43,6 +43,12 @@ require_once($CFG->dirroot . '/grade/lib.php');
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_report::class, 'ungraded_counts')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_report::class, 'calculate_average')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_report::class, 'item_types')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_gradable_users')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('print_natural_aggregation_upgrade_notice')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_grades\penalty_manager::class, 'repair_penalised_rawgrade')]
 final class lib_test extends \advanced_testcase {
 
     /**
@@ -179,8 +185,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests that ungraded_counts calculates count and sum of grades correctly when there are graded users.
-     *
-     * @covers \grade_report::ungraded_counts
      */
     public function test_ungraded_counts_count_sumgrades(): void {
         global $DB;
@@ -370,13 +374,12 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests that ungraded_counts calculates count and sum of grades correctly when there are hidden grades.
-     * @dataProvider ungraded_counts_hidden_grades_data
      * @param bool $hidden Whether to inlcude hidden grades or not.
      * @param array $expectedcount expected count value (i.e. number of ugraded grades)
      * @param array $expectedsumarray expceted sum of grades
      *
-     * @covers \grade_report::ungraded_counts
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ungraded_counts_hidden_grades_data')]
     public function test_ungraded_counts_hidden_grades(bool $hidden, array $expectedcount, array $expectedsumarray): void {
         $this->resetAfterTest();
 
@@ -474,8 +477,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests that ungraded_counts calculates count and sum of grades correctly for groups when there are graded users.
-     *
-     * @covers \grade_report::ungraded_counts
      */
     public function test_ungraded_count_sumgrades_groups(): void {
         global $DB;
@@ -630,15 +631,14 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests that ungraded_counts calculates count and sum of grades correctly when there are hidden grades.
-     * @dataProvider ungraded_counts_only_active_enrol_data
      * @param bool $onlyactive Site setting to show only active users.
      * @param int $hascapability Capability constant
      * @param bool|null $showonlyactiveenrolpref Show only active user preference.
      * @param array $expectedcount expected count value (i.e. number of ugraded grades)
      * @param array $expectedsumarray expected sum of grades
      *
-     * @covers \grade_report::ungraded_counts
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ungraded_counts_only_active_enrol_data')]
     public function test_ungraded_counts_only_active_enrol(bool $onlyactive,
             int $hascapability, ?bool $showonlyactiveenrolpref, array $expectedcount, array $expectedsumarray): void {
         global $CFG, $DB;
@@ -786,13 +786,12 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests for calculate_average.
-     * @dataProvider calculate_average_data
      * @param int $meanselection Whether to inlcude all grades or non-empty grades in aggregation.
      * @param array $expectedmeancount expected meancount value
      * @param array $expectedaverage expceted average value
      *
-     * @covers \grade_report::calculate_average
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('calculate_average_data')]
     public function test_calculate_average(int $meanselection, array $expectedmeancount, array $expectedaverage): void {
         global $DB;
 
@@ -899,8 +898,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests for item types.
-     *
-     * @covers \grade_report::item_types
      */
     public function test_item_types(): void {
         $this->resetAfterTest(true);
@@ -973,8 +970,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test get_gradable_users() function.
-     *
-     * @covers ::get_gradable_users
      */
     public function test_get_gradable_users(): void {
         global $DB;
@@ -1040,9 +1035,6 @@ final class lib_test extends \advanced_testcase {
      * the repair was able to identify and fix. Covers four kinds of grade item in the same course:
      * legacy-corrupted and repairable, unrelated with no deduction, legacy-corrupted but unrepairable,
      * and already correctly stored in the fixed representation.
-     *
-     * @covers ::print_natural_aggregation_upgrade_notice
-     * @covers \core_grades\penalty_manager::repair_penalised_rawgrade
      */
     public function test_accept_gradebook_freeze_repairs_and_regrades_all_grade_items(): void {
         global $DB, $USER;

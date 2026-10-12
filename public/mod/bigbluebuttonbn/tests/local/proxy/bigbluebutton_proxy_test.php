@@ -26,14 +26,14 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
- * @covers  \mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy
- * @coversDefaultClass \mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy::class, 'get_poll_interval')]
 final class bigbluebutton_proxy_test extends \advanced_testcase {
     /**
      * Test poll interval value
      *
-     * @covers  \mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy::get_poll_interval
      * @return void
      */
     public function test_get_poll_interval(): void {

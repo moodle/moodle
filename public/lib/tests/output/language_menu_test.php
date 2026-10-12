@@ -39,11 +39,11 @@ final class language_menu_test extends \advanced_testcase {
     /**
      * Test the get_lang_menu
      *
-     * @dataProvider get_lang_menu_provider
      * @param bool $withadditionallangs
      * @param string $language
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_lang_menu_provider')]
     public function test_get_lang_menu(bool $withadditionallangs, string $language, array $expected): void {
         global $CFG, $PAGE;
 

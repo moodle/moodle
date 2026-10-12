@@ -24,8 +24,8 @@ use advanced_testcase;
  * @package   mod_quiz
  * @copyright The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \mod_quiz\output\attempt_summary_information
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\output\attempt_summary_information::class)]
 final class attempt_summary_information_test extends advanced_testcase {
 
     public function test_add_item(): void {

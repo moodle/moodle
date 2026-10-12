@@ -30,10 +30,10 @@ use core_badges_generator;
  *
  * @package     core_badges
  * @category    test
- * @covers      \core_badges\achievement_credential
  * @copyright   2025 Sara Arjona <sara@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\achievement_credential::class)]
 final class achievement_credential_test extends \advanced_testcase {
     /**
      * Test the achievement_credential::instance() method.

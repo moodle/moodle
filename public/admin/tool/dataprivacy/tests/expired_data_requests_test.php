@@ -26,10 +26,10 @@ require_once('data_privacy_testcase.php');
  * Expired data requests tests.
  *
  * @package    tool_dataprivacy
- * @covers     \tool_dataprivacy\data_request
  * @copyright  2018 Michael Hawkins
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_dataprivacy\data_request::class)]
 final class expired_data_requests_test extends data_privacy_testcase {
 
     /**

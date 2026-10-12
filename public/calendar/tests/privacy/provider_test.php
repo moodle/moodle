@@ -42,8 +42,8 @@ use core_privacy\local\request\approved_userlist;
  *
  * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_calendar\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_calendar\privacy\provider::class)]
 final class provider_test extends provider_testcase {
 
     /**

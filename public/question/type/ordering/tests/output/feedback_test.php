@@ -33,9 +33,9 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package   qtype_ordering
  * @copyright 2023 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \qtype_ordering\output\renderable_base
- * @covers    \qtype_ordering\output\feedback
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering\output\renderable_base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering\output\feedback::class)]
 final class feedback_test extends qbehaviour_walkthrough_test_base {
     /** @var array The correct answers for the question, added to quickly reference. */
     const CORRECTANSWERS = [
@@ -62,13 +62,13 @@ final class feedback_test extends qbehaviour_walkthrough_test_base {
     /**
      * Test the exported data for the template that renders the feedback test to a given question attempt.
      *
-     * @dataProvider export_for_template_provider
      * @param array $answeritems The array of ordered answers.
      * @param int $gradingtype Grading type.
      * @param array $testoptions Do we want to change direction, is it in progress and do we want feedback.
      * @param array $expected The expected exported data.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_for_template_provider')]
     public function test_export_for_template(array $answeritems, int $gradingtype, array $testoptions, array $expected): void {
         global $PAGE;
 

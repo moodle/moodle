@@ -21,8 +21,8 @@ namespace mod_assign;
  * @package mod_assign
  * @copyright Frederik Pytlick <fmp@moxis.dk>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_assign_generator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign_generator::class)]
 final class generator_test extends \advanced_testcase {
     /**
      * Test creating an assignment instance using the mod_assign generator.

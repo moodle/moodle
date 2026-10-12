@@ -25,10 +25,10 @@ use core_external\external_api;
  * Unit tests for custom field convert_category external method
  *
  * @package     core_customfield
- * @covers      \core_customfield\external\convert_category
  * @copyright   2026 Yerai Rodríguez <yerai.rodriguez@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_customfield\external\convert_category::class)]
 final class convert_category_test extends \core_external\tests\externallib_testcase {
     /**
      * Test execute

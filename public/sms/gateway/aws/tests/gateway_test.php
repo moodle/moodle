@@ -25,8 +25,8 @@ use core_sms\message;
  * @category   test
  * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \smsgateway_aws\gateway
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\smsgateway_aws\gateway::class)]
 final class gateway_test extends \advanced_testcase {
 
     public function test_update_message_status(): void {

@@ -22,18 +22,17 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\user
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\entity\user::class)]
 final class user_test extends \advanced_testcase {
 
     /**
      * Test creation of a user instance using the factory method.
      *
-     * @dataProvider create_data_provider
      * @param array $args the arguments to the creation method.
      * @param array $expectations various expectations for the test cases.
-     * @covers ::create
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_data_provider')]
     public function test_create(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $user = user::create(...array_values($args));
@@ -237,11 +236,10 @@ final class user_test extends \advanced_testcase {
     /**
      * Test creation of a user instance from a resource link.
      *
-     * @dataProvider create_from_resource_link_data_provider
      * @param array $args the arguments to the creation method.
      * @param array $expectations various expectations for the test cases.
-     * @covers ::create_from_resource_link
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_from_resource_link_data_provider')]
     public function test_create_from_resource_link(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $user = user::create_from_resource_link(...array_values($args));
@@ -481,12 +479,11 @@ final class user_test extends \advanced_testcase {
     /**
      * Test the behaviour of the user setters and getters.
      *
-     * @dataProvider setters_getters_data_provider
      * @param string $methodname the name of the setter
      * @param mixed $arg the argument to the setter
      * @param array $expectations the array of expectations
-     * @covers ::__construct
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('setters_getters_data_provider')]
     public function test_setters_and_getters(string $methodname, $arg, array $expectations): void {
         $user = $this->create_test_user();
         $setter = 'set_'.$methodname;

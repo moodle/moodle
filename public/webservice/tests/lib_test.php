@@ -282,9 +282,8 @@ final class lib_test extends \advanced_testcase {
      *
      * @param int $validuntil
      * @param bool $expectedactive
-     *
-     * @dataProvider get_active_tokens_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_active_tokens_provider')]
     public function test_get_active_tokens(int $validuntil, bool $expectedactive): void {
         $this->resetAfterTest();
 

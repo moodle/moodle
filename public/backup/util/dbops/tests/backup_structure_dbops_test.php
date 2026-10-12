@@ -25,8 +25,8 @@ use backup_structure_dbops;
  * @category   test
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \backup_structure_dbops
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_structure_dbops::class)]
 final class backup_structure_dbops_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
@@ -37,11 +37,11 @@ final class backup_structure_dbops_test extends \advanced_testcase {
     /**
      * Tests for convert_params_to_values.
      *
-     * @dataProvider convert_params_to_values_provider
      * @param array $params
      * @param mixed $processor
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('convert_params_to_values_provider')]
     public function test_convert_params_to_values(
         array $params,
         $processor,

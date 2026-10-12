@@ -41,6 +41,13 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  */
 #[CoversFunction('quiz_add_instance')]
 #[CoversFunction('quiz_update_instance')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('quiz_delete_instance')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('mod_quiz_core_calendar_provide_event_action')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('mod_quiz_inplace_editable')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('quiz_num_attempt_summary')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('quiz_num_attempts')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('quiz_num_users_who_attempted')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('quiz_num_users_who_can_attempt')]
 final class lib_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
@@ -203,8 +210,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test deleting a quiz when the course is deleted.
-     *
-     * @covers ::quiz_delete_instance
      */
     public function test_quiz_when_delete_course(): void {
         global $DB, $USER;
@@ -523,7 +528,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test event actions for due event.
-     * @covers ::mod_quiz_core_calendar_provide_event_action
      */
     public function test_quiz_core_calendar_provide_event_action_due(): void {
         $this->resetAfterTest();
@@ -1078,11 +1082,10 @@ final class lib_test extends \advanced_testcase {
     /**
      * Test customised and automated question numbering for a given slot number and customised value.
      *
-     * @dataProvider mod_quiz_inplace_editable_provider
      * @param int $slotnumber
      * @param string $newvalue
-     * @covers ::mod_quiz_inplace_editable
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('mod_quiz_inplace_editable_provider')]
     public function test_mod_quiz_inplace_editable(int $slotnumber, string $newvalue): void {
         global $CFG;
         require_once($CFG->dirroot . '/lib/external/externallib.php');
@@ -1139,9 +1142,8 @@ final class lib_test extends \advanced_testcase {
      *
      * @param int $groupmode The group mode to use for the test.
      * @param array $expected The expected results for each user.
-     * @covers ::quiz_num_attempt_summary
-     * @dataProvider num_attempts_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('num_attempts_data_provider')]
     public function test_quiz_num_attempt_summary(int $groupmode, array $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -1260,9 +1262,8 @@ final class lib_test extends \advanced_testcase {
      *
      * @param int $groupmode The group mode to use for the test.
      * @param array $expected The expected results for each group setting.
-     * @covers ::quiz_num_attempts
-     * @dataProvider quiz_num_attempts_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('quiz_num_attempts_data_provider')]
     public function test_quiz_num_attempts(int $groupmode, array $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -1322,8 +1323,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test the quiz_num_attempts function with the student only flag.
-     *
-     * @covers ::quiz_num_attempts
      */
     public function test_quiz_num_attempts_student_only(): void {
         $this->resetAfterTest();
@@ -1345,9 +1344,8 @@ final class lib_test extends \advanced_testcase {
      *
      * @param int $groupmode The group mode to use for the test.
      * @param array $expected The expected results for each user.
-     * @covers ::quiz_num_users_who_attempted
-     * @dataProvider quiz_num_users_who_attempted_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('quiz_num_users_who_attempted_data_provider')]
     public function test_quiz_num_users_who_attempted(int $groupmode, array $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -1412,9 +1410,8 @@ final class lib_test extends \advanced_testcase {
      *
      * @param int $groupmode The group mode to use for the test.
      * @param array $expected The expected results for each user.
-     * @covers ::quiz_num_users_who_can_attempt
-     * @dataProvider quiz_num_users_who_can_attempt_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('quiz_num_users_who_can_attempt_data_provider')]
     public function test_quiz_num_users_who_can_attempt(int $groupmode, array $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();

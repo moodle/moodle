@@ -27,10 +27,10 @@ use invalid_response_exception;
  * @category   test
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_h5p\core
  *
- * @runTestsInSeparateProcesses
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_h5p\core::class)]
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class h5p_core_test extends \advanced_testcase {
 
     /** @var core */

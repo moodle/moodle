@@ -33,12 +33,12 @@ final class repository_test extends \advanced_testcase {
     /**
      * Test the enable_plugin function to check that it enables and disables repository plugins properly.
      *
-     * @dataProvider enable_plugin_provider
      * @param string $pluginname Repository to enable.
      * @param int|null $initialvisibility Initialvalue for visibility field.
      * @param int $newstatus New enabled status for the plugin.
      * @param bool $result Wether the repository is part of enabled plugin list or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('enable_plugin_provider')]
     public function test_enable_plugin(string $pluginname, ?int $initialvisibility, int $newstatus, bool $result): void {
         global $DB;
 

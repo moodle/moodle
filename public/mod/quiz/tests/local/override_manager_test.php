@@ -29,8 +29,9 @@ use mod_quiz\quiz_settings;
  * @package   mod_quiz
  * @copyright 2024 Matthew Hilton <matthewhilton@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \mod_quiz\local\override_manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\local\override_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_quiz\local\override_manager::class, 'get_effective_open_close_times')]
 final class override_manager_test extends \advanced_testcase {
     /** @var array Default quiz settings **/
     private const TEST_QUIZ_SETTINGS = [
@@ -144,9 +145,8 @@ final class override_manager_test extends \advanced_testcase {
      * @param bool $grouptwoview
      * @param bool $studentoneview
      * @param bool $studenttwoview
-     *
-     * @dataProvider can_view_override_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_view_override_provider')]
     public function test_can_view_override(
         string $currentuser,
         bool $grouponeview,
@@ -510,8 +510,8 @@ final class override_manager_test extends \advanced_testcase {
      * @param array $formdata The data being tested, simulating being submitted
      * @param int $expectedrecordscreated The number of records that are expected to be created by upsert
      * @param string $expectedeventclass an event class, which is expected to the emitted by upsert
-     * @dataProvider save_and_get_override_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('save_and_get_override_provider')]
     public function test_save_and_get_override(
         array $existingdata,
         array $formdata,
@@ -1071,8 +1071,8 @@ final class override_manager_test extends \advanced_testcase {
      * @param array $existingdata If given, an existing override will be created.
      * @param array $formdata The data being tested, simulating being submitted
      * @param array $expectedreturn expected keys and associated values expected to be returned from validate_data
-     * @dataProvider validate_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validate_data_provider')]
     public function test_validate_data(array $existingdata, array $formdata, array $expectedreturn): void {
         $this->setAdminUser();
         $this->resetAfterTest();
@@ -1148,8 +1148,6 @@ final class override_manager_test extends \advanced_testcase {
      * Test the deprecated get_effective_open_close_times() still works and preserves its
      * original 'timeopen'/'timeclose'-only return contract, without the 'duedate' key that
      * get_effective_times() also returns.
-     *
-     * @covers \mod_quiz\local\override_manager::get_effective_open_close_times
      */
     public function test_get_effective_open_close_times_is_deprecated_wrapper(): void {
         $this->setAdminUser();
@@ -1176,8 +1174,6 @@ final class override_manager_test extends \advanced_testcase {
     /**
      * Test the deprecated get_effective_open_close_times() returns an empty array when there
      * are no overrides at all.
-     *
-     * @covers \mod_quiz\local\override_manager::get_effective_open_close_times
      */
     public function test_get_effective_open_close_times_no_overrides(): void {
         $this->setAdminUser();
@@ -1196,8 +1192,6 @@ final class override_manager_test extends \advanced_testcase {
     /**
      * Test the deprecated get_effective_open_close_times() strips the 'duedate' key when only
      * a duedate override is set, with no timeopen/timeclose override.
-     *
-     * @covers \mod_quiz\local\override_manager::get_effective_open_close_times
      */
     public function test_get_effective_open_close_times_duedate_only_override(): void {
         $this->setAdminUser();
@@ -1335,8 +1329,8 @@ final class override_manager_test extends \advanced_testcase {
      *
      * @param \Closure $deletefunction delete function to be called.
      * @param bool $checkeventslogged if true, will check that events were logged.
-     * @dataProvider delete_override_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('delete_override_provider')]
     public function test_delete_override(\Closure $deletefunction, bool $checkeventslogged): void {
         $this->setAdminUser();
         $this->resetAfterTest();
@@ -1449,8 +1443,8 @@ final class override_manager_test extends \advanced_testcase {
      * @param array $capabilitiestogive array of capability => value to give to test user
      * @param bool $expectedallowed if false, will expect required_capability_exception to be thrown
      * @param \Closure $functionbeingtested is passed the manager and calls the function being tested (usually require_*_capability)
-     * @dataProvider require_read_capability_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('require_read_capability_provider')]
     public function test_require_read_capability(
         array $capabilitiestogive,
         bool $expectedallowed,

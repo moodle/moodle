@@ -28,8 +28,8 @@ use core_question_generator;
  * @category  test
  * @copyright 2011 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_question\question_reference_manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\question_reference_manager::class)]
 final class question_reference_manager_test extends advanced_testcase {
 
     public function test_questions_with_references(): void {

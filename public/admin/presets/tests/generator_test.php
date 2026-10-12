@@ -23,15 +23,13 @@ namespace core_adminpresets;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass core_adminpresets_generator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(core_adminpresets_generator::class)]
 final class generator_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of create_preset() method.
      *
-     * @covers ::create_preset
-     * @dataProvider create_preset_provider
      *
      * @param string|null $name Preset name field.
      * @param string|null $comments Preset comments field.
@@ -40,6 +38,7 @@ final class generator_test extends \advanced_testcase {
      * @param int|null $iscore Whether the preset is a core preset or not.
      * @param int|null $iscoreresult Expected iscore value for the result preset.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_preset_provider')]
     public function test_create_preset(?string $name = null, ?string $comments = null, ?string $author = null,
             bool $applypreset = false, ?int $iscore = null, ?int $iscoreresult = null): void {
         global $CFG, $DB;

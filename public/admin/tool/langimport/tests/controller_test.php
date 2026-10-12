@@ -21,19 +21,18 @@ namespace tool_langimport;
  *
  * @package    tool_langimport
  * @category   test
- * @coversDefaultClass \tool_langimport\controller
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_langimport\controller::class)]
 final class controller_test extends \advanced_testcase {
 
     /**
      * Test uninstall of language with invalid values.
      *
-     * @covers ::uninstall_lang
-     * @dataProvider uninstall_lang_invalid_provider
      * @params string $lang
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('uninstall_lang_invalid_provider')]
     public function test_uninstall_lang_invalid(string $lang): void {
         global $CFG;
 

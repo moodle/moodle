@@ -32,19 +32,19 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @package   qtype_ordering
  * @copyright 2023 Mihail Geshoski <mihail@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \qtype_ordering\output\renderable_base
- * @covers    \qtype_ordering\output\correct_response
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering\output\renderable_base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering\output\correct_response::class)]
 final class correct_response_test extends advanced_testcase {
     /**
      * Test the exported data for the template that renders the correct response to a given question attempt.
      *
-     * @dataProvider export_for_template_provider
      * @param array $currentresponse The array of items representing the current response.
      * @param string $layouttype The type of the layout.
      * @param array $expected The expected exported data.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_for_template_provider')]
     public function test_export_for_template(array $currentresponse, string $layouttype, array $expected): void {
         global $PAGE;
 

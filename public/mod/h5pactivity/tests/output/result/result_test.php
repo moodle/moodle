@@ -22,11 +22,12 @@ use mod_h5pactivity\local\manager;
  * Result test class for H5P activity.
  *
  * @package    mod_h5pactivity
- * @covers     \mod_h5pactivity\output\result
  * @category   test
  * @copyright  2023 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_h5pactivity\output\result::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mod_h5pactivity\output\result::class, 'export_options')]
 final class result_test extends \advanced_testcase {
     /**
      * Data provider for result export_options test
@@ -172,9 +173,8 @@ final class result_test extends \advanced_testcase {
      * @param array $providedresultdata
      * @param array $expecteduseranswers
      * @return void
-     * @dataProvider result_data_provider
-     * @covers       \mod_h5pactivity\output\result::export_options
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('result_data_provider')]
     public function test_result_options(array $providedresultdata, array $expecteduseranswers): void {
         $this->resetAfterTest();
         $this->setAdminUser();

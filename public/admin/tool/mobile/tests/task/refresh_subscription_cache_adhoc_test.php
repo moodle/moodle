@@ -19,11 +19,11 @@ namespace tool_mobile\task;
 /**
  * Tests for the adhoc subscription cache refresh task.
  *
- * @covers \tool_mobile\task\refresh_subscription_cache_adhoc
  * @package    tool_mobile
  * @copyright  2026 Daniel Ureña <daniel.urena@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_mobile\task\refresh_subscription_cache_adhoc::class)]
 final class refresh_subscription_cache_adhoc_test extends \advanced_testcase {
     /**
      * Test the task refreshes the cache and logs success.

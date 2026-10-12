@@ -34,9 +34,9 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
- * @covers \mod_bigbluebuttonbn\meeting
- * @coversDefaultClass \mod_bigbluebuttonbn\meeting
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\meeting::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\meeting::class)]
 final class meeting_test extends \advanced_testcase {
     use testcase_helper_trait;
 
@@ -113,13 +113,10 @@ final class meeting_test extends \advanced_testcase {
     /**
      * Test that create meeing is working for all types.
      *
-     * @dataProvider get_instance_types_meeting_info
      * @param int $type
      * @param string|null $groupname
-     * @covers ::create_meeting
-     * @covers ::create_meeting_data
-     * @covers ::create_meeting_metadata
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_instance_types_meeting_info')]
     public function test_create_meeting(int $type, ?string $groupname, $groupmode, $canjoin): void {
         $this->resetAfterTest();
         [$meeting, $useringroup, $usernotingroup, $groupid, $activity] =
@@ -138,10 +135,8 @@ final class meeting_test extends \advanced_testcase {
      *
      * @param int $type
      * @param string|null $groupname
-     * @dataProvider get_instance_types_meeting_info
-     * @covers ::get_meeting_info
-     * @covers ::do_get_meeting_info
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_instance_types_meeting_info')]
     public function test_get_meeting_info(int $type, ?string $groupname, $groupmode, $canjoin): void {
         $this->resetAfterTest();
         [$meeting, $useringroup, $usernotingroup, $groupid, $activity] = $this->prepare_meeting($type, $groupname);
@@ -176,9 +171,8 @@ final class meeting_test extends \advanced_testcase {
      * @param string|null $groupname
      * @param int $groupmode
      * @param array $canjoin
-     * @dataProvider get_instance_types_meeting_info
-     * @covers ::can_join
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_instance_types_meeting_info')]
     public function test_can_join(int $type, ?string $groupname, int $groupmode, array $canjoin): void {
         $this->resetAfterTest();
         [$meeting, $useringroup, $usernotingroup, $groupid, $activity] = $this->prepare_meeting($type, $groupname, $groupmode);
@@ -204,9 +198,8 @@ final class meeting_test extends \advanced_testcase {
      * @param int $groupmode
      * @param array $canjoin
      * @param array $dates
-     * @dataProvider get_data_can_join_with_dates
-     * @covers ::can_join
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_data_can_join_with_dates')]
     public function test_can_join_with_dates(int $type, ?string $groupname, int $groupmode, array $canjoin, array $dates): void {
         // Apply the data provider relative values to now.
         array_walk($dates, function(&$val) {
@@ -232,9 +225,6 @@ final class meeting_test extends \advanced_testcase {
 
     /**
      * Test can join is working if the "Wait for moderator to join" setting is set and a moderator has not yet joined.
-     *
-     * @covers ::join
-     * @covers ::join_meeting
      */
     public function test_join_wait_for_moderator_not_joined(): void {
         $this->resetAfterTest();
@@ -265,9 +255,6 @@ final class meeting_test extends \advanced_testcase {
 
     /**
      * Test can join is working if the "Wait for moderator to join" setting is set and a moderator has already joined.
-     *
-     * @covers ::join
-     * @covers ::join_meeting
      */
     public function test_join_wait_for_moderator_is_joined(): void {
         $this->resetAfterTest();
@@ -314,9 +301,6 @@ final class meeting_test extends \advanced_testcase {
 
     /**
      * Test can join is working if the "user limit" setting is set and reached.
-     *
-     * @covers ::join
-     * @covers ::join_meeting
      */
     public function test_join_user_limit_reached(): void {
         $this->resetAfterTest();
@@ -362,8 +346,6 @@ final class meeting_test extends \advanced_testcase {
 
     /**
      * Test that attendees returns the right list of attendees
-     *
-     * @covers ::get_attendees
      */
     public function test_get_attendees(): void {
         $this->resetAfterTest();
@@ -383,8 +365,6 @@ final class meeting_test extends \advanced_testcase {
 
     /**
      * Test that attendees returns the right list of attendees
-     *
-     * @covers ::get_attendees
      */
     public function test_participant_count(): void {
         $this->resetAfterTest();
@@ -493,8 +473,6 @@ final class meeting_test extends \advanced_testcase {
 
     /**
      * Test process_meeting_events.
-     *
-     * @covers ::meeting_events
      */
     public function test_process_meeting_events(): void {
         global $DB;

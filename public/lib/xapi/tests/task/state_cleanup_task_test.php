@@ -25,10 +25,10 @@ use core_xapi\test_helper;
  *
  * @package    core_xapi
  * @since      Moodle 4.2
- * @covers     \core_xapi\task\state_cleanup_task
  * @copyright  2023 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_xapi\task\state_cleanup_task::class)]
 final class state_cleanup_task_test extends advanced_testcase {
 
     /**

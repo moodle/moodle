@@ -24,9 +24,8 @@ namespace tool_mfa;
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \tool_mfa\table\admin_setting_managemfa
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_mfa\table\admin_setting_managemfa::class)]
 final class admin_setting_managemfa_test extends \advanced_testcase {
 
     use \tool_mfa\tests\mfa_settings_trait;
@@ -142,10 +141,10 @@ final class admin_setting_managemfa_test extends \advanced_testcase {
     /**
      * Tests getting the factor combinations with data provider
      *
-     * @dataProvider get_factor_combinations_provider
      * @param array $factorset configured factors
      * @param int $combinationscount expected count of available combinations
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_factor_combinations_provider')]
     public function test_get_factor_combinations_with_data_provider(array $factorset, int $combinationscount): void {
         $enabledcount = 0;
 

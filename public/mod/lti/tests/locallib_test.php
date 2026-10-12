@@ -65,11 +65,15 @@ require_once($CFG->dirroot . '/mod/lti/tests/mod_lti_testcase.php');
  * @copyright  Copyright (c) 2012 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('lti_split_parameters')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('lti_get_tools_by_domain')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('lti_tool_configuration_from_content_item')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('lti_get_launch_data')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('lti_get_ims_role')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('lti_load_cartridge')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('lti_get_lti_types_by_course')]
 final class locallib_test extends mod_lti_testcase {
-
     /**
-     * @covers ::lti_split_parameters()
-     *
      * Test the split parameters function
      */
     public function test_split_parameters(): void {
@@ -613,21 +617,16 @@ final class locallib_test extends mod_lti_testcase {
     /**
      * Test lti_get_best_tool_by_url.
      *
-     * @dataProvider lti_get_best_tool_by_url_provider
      * @param string $url The URL to test.
      * @param object $expected The expected tool matching the URL.
      * @param array $tools The pool of tools to match the URL with.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('lti_get_best_tool_by_url_provider')]
     public function test_lti_get_best_tool_by_url($url, $expected, $tools): void {
         $actual = lti_get_best_tool_by_url($url, $tools, null);
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @covers ::lti_get_tools_by_domain()
-     *
-     * Test lti_get_tools_by_domain.
-     */
     public function test_lti_get_tools_by_domain(): void {
         $this->resetAfterTest();
 
@@ -660,11 +659,6 @@ final class locallib_test extends mod_lti_testcase {
         ));
     }
 
-    /**
-     * @covers ::lti_get_tools_by_domain()
-     *
-     * Test test_lti_get_tools_by_domain_restrict_types_category.
-     */
     public function test_lti_get_tools_by_domain_restrict_types_category(): void {
         $this->resetAfterTest();
 
@@ -1469,8 +1463,6 @@ MwIDAQAB
     }
 
     /**
-     * @covers ::lti_tool_configuration_from_content_item()
-     *
      * Test adding a single gradable item through content item with an empty subreview url.
      */
     public function test_lti_tool_configuration_from_content_item_single_gradable_subreview_default_emptyurl(): void {
@@ -1513,8 +1505,6 @@ MwIDAQAB
     }
 
     /**
-     * @covers ::lti_tool_configuration_from_content_item()
-     *
      * Test adding a single gradable item through content item.
      */
     public function test_lti_tool_configuration_from_content_item_single_gradable_subreview_default(): void {
@@ -1884,8 +1874,6 @@ MwIDAQAB
     }
 
     /**
-     * @covers ::lti_get_launch_data()
-     *
      * Test for_user is passed as parameter when specified.
      */
     public function test_lti_get_launch_data_with_for_user(): void {
@@ -1991,14 +1979,13 @@ MwIDAQAB
     /**
      * Test the lti_get_ims_role helper function.
      *
-     * @dataProvider lti_get_ims_role_provider
-     * @covers ::lti_get_ims_role()
      *
      * @param bool $islti2 whether the method is called with LTI 2.0 role names or not.
      * @param string $rolename the name of the role (student, teacher, admin)
      * @param null|string $switchedto the role to switch to, or false if not using the 'switch to' functionality.
      * @param string $expected the expected role name.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('lti_get_ims_role_provider')]
     public function test_lti_get_ims_role(bool $islti2, string $rolename, ?string $switchedto, string $expected): void {
         global $DB;
         $this->resetAfterTest();
@@ -2190,8 +2177,6 @@ MwIDAQAB
 
     /**
      * Verify that empty curl responses lead to the proper moodle_exception, not to XML ValueError.
-     *
-     * @covers ::lti_load_cartridge()
      */
     public function test_empty_reponse_lti_load_cartridge(): void {
         // Mock the curl response to empty string, this is hardly
@@ -2273,7 +2258,6 @@ MwIDAQAB
      * 'mod/lti:addpreconfiguredinstance' (to include site tools). This behaviour is deprecated in 4.3 and all preconfigured tools
      * are controlled by the single capability 'mod/lti:addpreconfiguredinstance'.
      *
-     * @covers ::lti_get_lti_types_by_course()
      * @return void
      */
     public function test_lti_get_lti_types_by_course(): void {

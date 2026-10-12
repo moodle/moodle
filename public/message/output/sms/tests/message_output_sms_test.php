@@ -27,8 +27,8 @@ use mod_assign\notification_helper;
  * @package    message_sms
  * @copyright  2025 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \message_output_sms
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\message_output_sms::class)]
 final class message_output_sms_test extends \advanced_testcase {
 
     /**

@@ -163,12 +163,12 @@ final class helper_test extends advanced_testcase {
     /**
      * Test for test_format_cost function
      *
-     * @dataProvider get_rounded_cost_provider
      * @param float $amount
      * @param string $currency
      * @param float $surcharge
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_rounded_cost_provider')]
     public function test_get_rounded_cost(float $amount, string $currency, float $surcharge, float $expected): void {
         $this->assertEquals($expected, helper::get_rounded_cost($amount, $currency, $surcharge));
     }
@@ -176,12 +176,12 @@ final class helper_test extends advanced_testcase {
     /**
      * Test for get_cost_as_string function
      *
-     * @dataProvider get_cost_as_string_provider
      * @param float $amount
      * @param string $currency
      * @param float $surcharge
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_cost_as_string_provider')]
     public function test_get_cost_as_string(float $amount, string $currency, float $surcharge, string $expected): void {
         // Some old ICU versions have a bug, where they don't follow the CLDR and they are
         // missing the non-breaking-space between the currency abbreviation and the value.

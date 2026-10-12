@@ -29,16 +29,11 @@ use advanced_testcase;
 
 /**
  * Unit tests for the `icon_system` class.
- *
- * @coversDefaultClass \core\output\choicelist
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\choicelist::class)]
 final class choicelist_test extends advanced_testcase {
     /**
      * Test for a choice without options.
-     *
-     * @covers ::__construct
-     * @covers ::add_option
-     * @covers ::export_for_template
      */
     public function test_empty_export(): void {
         $page = new \moodle_page();
@@ -56,10 +51,6 @@ final class choicelist_test extends advanced_testcase {
 
     /**
      * Test for a choice with basic options.
-     *
-     * @covers ::__construct
-     * @covers ::add_option
-     * @covers ::export_for_template
      */
     public function test_basic_export(): void {
         $page = new \moodle_page();
@@ -81,11 +72,6 @@ final class choicelist_test extends advanced_testcase {
     }
     /**
      * Test for a choice with extras options definition.
-     *
-     * @covers ::__construct
-     * @covers ::add_option
-     * @covers ::set_option_extras
-     * @covers ::export_for_template
      */
     public function test_option_defintion_export(): void {
         $page = new \moodle_page();
@@ -125,12 +111,6 @@ final class choicelist_test extends advanced_testcase {
 
     /**
      * Test for a choice with option selected.
-     *
-     * @covers ::__construct
-     * @covers ::add_option
-     * @covers ::set_selected_value
-     * @covers ::get_selected_value
-     * @covers ::export_for_template
      */
     public function test_option_selected_export(): void {
         $page = new \moodle_page();
@@ -195,14 +175,6 @@ final class choicelist_test extends advanced_testcase {
 
     /**
      * Test for a choice with option selected.
-     *
-     * @covers ::__construct
-     * @covers ::add_option
-     * @covers ::set_selected_value
-     * @covers ::get_selected_value
-     * @covers ::set_allow_empty
-     * @covers ::get_allow_empty
-     * @covers ::export_for_template
      */
     public function test_set_allow_empty(): void {
         $choice = new choicelist('Choose an option');
@@ -235,8 +207,6 @@ final class choicelist_test extends advanced_testcase {
 
     /**
      * Test for a choice with option selected.
-     *
-     * @covers ::get_selectable_options
      */
     public function test_get_selectable_options(): void {
         $choice = new choicelist('Choose an option');
@@ -261,8 +231,6 @@ final class choicelist_test extends advanced_testcase {
 
     /**
      * Test for a choice with option selected.
-     *
-     * @covers ::get_option_extras
      */
     public function test_get_option_extras(): void {
         $choice = new choicelist('Choose an option');

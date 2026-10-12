@@ -24,10 +24,10 @@ use advanced_testcase;
  * Unit tests for task_log entity
  *
  * @package     core_admin
- * @covers      \core_admin\reportbuilder\local\entities\task_log
  * @copyright   2025 Brendan Heywood <brendan@catalyst-au.net>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_admin\reportbuilder\local\entities\task_log::class)]
 final class task_log_test extends advanced_testcase {
     /**
      * Data provider for test_format_classname
@@ -54,10 +54,10 @@ final class task_log_test extends advanced_testcase {
     /**
      * Tests format_classname output for various class inputs
      *
-     * @dataProvider format_classname_provider
      * @param string $classname the class to format
      * @param bool $expectname whether a task name should appear before the div
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_classname_provider')]
     public function test_format_classname(string $classname, bool $expectname): void {
         $result = task_log::format_classname($classname);
 

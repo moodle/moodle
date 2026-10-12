@@ -34,9 +34,8 @@ use core_h5p\local\library\autoloader;
  * @package    core_h5p
  * @copyright  2020 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @runTestsInSeparateProcesses
  */
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class editor_framework_test extends \advanced_testcase {
 
     /** @var editor_framework H5P editor_framework instance */
@@ -61,7 +60,6 @@ final class editor_framework_test extends \advanced_testcase {
     /**
      * Test that the method getLanguage retrieves the translation of a library in the requested language.
      *
-     * @dataProvider  get_language_provider
      *
      * @param  array  $datalib        Library data to create
      * @param  string $lang           Language to retrieve the translation
@@ -70,6 +68,7 @@ final class editor_framework_test extends \advanced_testcase {
      * @param  int    $majorversion   Major part of version number
      * @param  int    $minorversion   Minor part of version number
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_language_provider')]
     public function test_get_language(array $datalib, string $lang, ?bool $emptyexpected = false, ?string $machinename = '',
             ?int $majorversion = 1, ?int $minorversion = 0): void {
         $this->resetAfterTest(true);
@@ -241,7 +240,6 @@ final class editor_framework_test extends \advanced_testcase {
     /**
      * Test that the method getAvailableLanguages retrieves all the language available of a library.
      *
-     * @dataProvider  get_available_languages_provider
      *
      * @param  array  $datalib        Library data to create
      * @param  array  $expectedlangs  Available languages expected.
@@ -249,6 +247,7 @@ final class editor_framework_test extends \advanced_testcase {
      * @param  int    $majorversion   Major part of version number
      * @param  int    $minorversion   Minor part of version number
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_available_languages_provider')]
     public function test_get_available_languages(array $datalib, ?array $expectedlangs = null, ?string $machinename = '',
             ?int $majorversion = 1, ?int $minorversion = 0): void {
         $this->resetAfterTest(true);

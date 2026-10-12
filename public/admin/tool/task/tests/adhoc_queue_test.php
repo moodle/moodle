@@ -24,8 +24,8 @@ use core\check\result;
  * @package    tool_task
  * @copyright  2025 Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \tool_task\check\adhocqueue
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_task\check\adhocqueue::class)]
 final class adhoc_queue_test extends \advanced_testcase {
     /**
      * Test the get_result method.

@@ -24,6 +24,7 @@ namespace core;
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('iplookup_find_location')]
 final class geoplugin_test extends \advanced_testcase {
 
     /**
@@ -55,8 +56,6 @@ final class geoplugin_test extends \advanced_testcase {
 
     /**
      * Test IPv4 address
-     *
-     * @covers ::iplookup_find_location
      */
     public function test_ipv4(): void {
         $result = iplookup_find_location('50.0.184.0');
@@ -74,8 +73,6 @@ final class geoplugin_test extends \advanced_testcase {
 
     /**
      * Test IPv6 address (unsupported by Geoplugin)
-     *
-     * @covers ::iplookup_find_location
      */
     public function test_ipv6(): void {
         $result = iplookup_find_location('2a01:8900:2:3:8c6c:c0db:3d33:9ce6');

@@ -32,6 +32,10 @@ require_once($CFG->dirroot.'/group/lib.php');
  * @copyright 2015 Adrian Greeve <adrian@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('validate_plugin_data_context')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('fill_enrol_custom_fields')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('validate_enrol_plugin_data')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('find_instance')]
 final class lib_test extends \advanced_testcase {
 
     /**
@@ -212,8 +216,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of validate_plugin_data_context().
-     *
-     * @covers ::validate_plugin_data_context
      */
     public function test_validate_plugin_data_context(): void {
         $this->resetAfterTest();
@@ -257,8 +259,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of fill_enrol_custom_fields().
-     *
-     * @covers ::fill_enrol_custom_fields
      */
     public function test_fill_enrol_custom_fields(): void {
         $this->resetAfterTest();
@@ -312,8 +312,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of validate_enrol_plugin_data().
-     *
-     * @covers ::validate_enrol_plugin_data
      */
     public function test_validate_enrol_plugin_data(): void {
         $this->resetAfterTest();
@@ -404,8 +402,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of find_instance().
-     *
-     * @covers ::find_instance
      */
     public function test_find_instance(): void {
         global $DB;

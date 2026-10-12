@@ -20,18 +20,20 @@ namespace core;
  * This tests the static helper functions contained in the class '\core\ip_utils'.
  *
  * @package    core
- * @covers     \core\ip_utils
  * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\ip_utils::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('normalize_internet_address')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('normalize_internet_address_list')]
 final class ip_utils_test extends \basic_testcase {
     /**
      * Test for \core\ip_utils::is_domain_name().
      *
      * @param string $domainname the domain name to validate.
      * @param bool $expected the expected result.
-     * @dataProvider domain_name_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('domain_name_data_provider')]
     public function test_is_domain_name($domainname, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_domain_name($domainname));
     }
@@ -80,8 +82,8 @@ final class ip_utils_test extends \basic_testcase {
      *
      * @param string $str the string to evaluate.
      * @param bool $expected the expected result.
-     * @dataProvider domain_matching_patterns_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('domain_matching_patterns_data_provider')]
     public function test_is_domain_matching_pattern($str, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_domain_matching_pattern($str));
     }
@@ -125,8 +127,8 @@ final class ip_utils_test extends \basic_testcase {
      *
      * @param string $address the address to validate.
      * @param bool $expected the expected result.
-     * @dataProvider ip_address_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ip_address_data_provider')]
     public function test_is_ip_address($address, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_ip_address($address));
     }
@@ -172,8 +174,8 @@ final class ip_utils_test extends \basic_testcase {
      *
      * @param string $address the address to validate.
      * @param bool $expected the expected result.
-     * @dataProvider ipv4_address_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ipv4_address_data_provider')]
     public function test_is_ipv4_address($address, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_ipv4_address($address));
     }
@@ -208,8 +210,8 @@ final class ip_utils_test extends \basic_testcase {
      *
      * @param string $addressrange the address range to validate.
      * @param bool $expected the expected result.
-     * @dataProvider ipv4_range_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ipv4_range_data_provider')]
     public function test_is_ipv4_range($addressrange, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_ipv4_range($addressrange));
     }
@@ -249,8 +251,8 @@ final class ip_utils_test extends \basic_testcase {
      *
      * @param string $address the address to validate.
      * @param bool $expected the expected result.
-     * @dataProvider ipv6_address_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ipv6_address_data_provider')]
     public function test_is_ipv6_address($address, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_ipv6_address($address));
     }
@@ -289,8 +291,8 @@ final class ip_utils_test extends \basic_testcase {
      *
      * @param string $addressrange the address range to validate.
      * @param bool $expected the expected result.
-     * @dataProvider ipv6_range_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('ipv6_range_data_provider')]
     public function test_is_ipv6_range($addressrange, $expected): void {
         $this->assertEquals($expected, \core\ip_utils::is_ipv6_range($addressrange));
     }
@@ -336,8 +338,8 @@ final class ip_utils_test extends \basic_testcase {
      *
      * @param  bool $expected Expected result
      * @param  string $domain domain address
-     * @dataProvider data_domain_addresses
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_domain_addresses')]
     public function test_check_domain_against_allowed_domains($expected, $domain): void {
         $alloweddomains = ['example.com',
                            '*.moodle.com',
@@ -394,8 +396,8 @@ final class ip_utils_test extends \basic_testcase {
      * @param  string $ip IP address
      * @param  string $list list of  IP subnets
      * @param  string $delim delimiter of list
-     * @dataProvider data_is_ip_in_subnet_list
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_is_ip_in_subnet_list')]
     public function test_is_ip_in_subnet_list($expected, $ip, $list, $delim): void {
         $this->assertEquals($expected, \core\ip_utils::is_ip_in_subnet_list($ip, $list, $delim));
     }
@@ -489,13 +491,12 @@ final class ip_utils_test extends \basic_testcase {
     /**
      * Test if input address value is correctly normalized.
      *
-     * @covers ::normalize_internet_address
      *
-     * @dataProvider normalize_internet_address_provider
      *
      * @param string $input    Raw input value.
      * @param string $expected Expected value after normalization.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('normalize_internet_address_provider')]
     public function test_normalize_internet_address(string $input, string $expected): void {
         $this->assertEquals($expected, \core\ip_utils::normalize_internet_address($input));
     }
@@ -541,13 +542,12 @@ final class ip_utils_test extends \basic_testcase {
     /**
      * Test if input address list is correctly normalized.
      *
-     * @covers ::normalize_internet_address_list
      *
-     * @dataProvider normalize_internet_address_list_provider
      *
      * @param string $input    Raw input value.
      * @param string $expected Expected value after normalization.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('normalize_internet_address_list_provider')]
     public function test_normalize_internet_address_list(string $input, string $expected): void {
         $this->assertEquals($expected, \core\ip_utils::normalize_internet_address_list($input));
     }

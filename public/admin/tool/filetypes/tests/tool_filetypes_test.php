@@ -22,13 +22,11 @@ use tool_filetypes\utils;
  * @package tool_filetypes
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_filetypes\utils
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_filetypes\utils::class)]
 final class tool_filetypes_test extends advanced_testcase {
     /**
      * Tests is_extension_invalid() function.
-     *
-     * @covers ::is_extension_invalid
      */
     public function test_is_extension_invalid(): void {
         // The pdf file extension already exists in default moodle minetypes.
@@ -49,8 +47,6 @@ final class tool_filetypes_test extends advanced_testcase {
 
     /**
      * Tests is_defaulticon_allowed() function.
-     *
-     * @covers ::is_defaulticon_allowed
      */
     public function test_is_defaulticon_allowed(): void {
         // You ARE allowed to set a default icon for a MIME type that hasn't
@@ -68,8 +64,6 @@ final class tool_filetypes_test extends advanced_testcase {
 
     /**
      * Tests get_icons_from_path() function.
-     *
-     * @covers ::get_icons_from_path
      */
     public function test_get_icons_from_path(): void {
         // Get icons from the fixtures folder.
@@ -83,8 +77,6 @@ final class tool_filetypes_test extends advanced_testcase {
 
     /**
      * Test get_file_icons() function to confirm no file icons are removed by mistake.
-     *
-     * @covers ::get_file_icons
      */
     public function test_get_file_icons(): void {
         $icons = utils::get_file_icons();

@@ -19,12 +19,12 @@ namespace core_question;
 /**
  * Unit tests for {@see \question_display_options}.
  *
- * @coversDefaultClass \question_display_options
  * @package   core_question
  * @category  test
  * @copyright 2023 Jun Pataleta
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_display_options::class)]
 final class question_display_options_test extends \advanced_testcase {
 
     /**
@@ -44,12 +44,11 @@ final class question_display_options_test extends \advanced_testcase {
     /**
      * Tests for {@see \question_display_options::has_question_identifier}
      *
-     * @covers ::has_question_identifier
-     * @dataProvider has_question_identifier_provider
      * @param string|null $identifier The question identifier
      * @param bool $expected The expected return value
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('has_question_identifier_provider')]
     public function test_has_question_identifier(?string $identifier, bool $expected): void {
         $options = new \question_display_options();
         $options->questionidentifier = $identifier;
@@ -80,8 +79,6 @@ final class question_display_options_test extends \advanced_testcase {
     /**
      * Tests for {@see \question_display_options::add_question_identifier_to_label()}
      *
-     * @covers ::add_question_identifier_to_label
-     * @dataProvider add_question_identifier_to_label_provider
      * @param string $label The label string.
      * @param string|null $identifier The question identifier.
      * @param bool $sronly Whether to render the question identifier in a visually-hidden container
@@ -89,6 +86,7 @@ final class question_display_options_test extends \advanced_testcase {
      * @param string $expected The expected return value.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_question_identifier_to_label_provider')]
     public function test_add_question_identifier_to_label(
         string $label,
         ?string $identifier,

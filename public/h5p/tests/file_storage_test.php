@@ -32,9 +32,9 @@ use zip_archive;
  * @category   test
  * @copyright  2019 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @runTestsInSeparateProcesses
- * @covers \core_h5p\file_storage
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_h5p\file_storage::class)]
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class file_storage_test extends \advanced_testcase {
 
     /** @var \core_h5p\file_storage H5P file storage instance */
@@ -550,10 +550,10 @@ final class file_storage_test extends \advanced_testcase {
     /**
      * Test get_icon_url() function behaviour.
      *
-     * @dataProvider get_icon_url_provider
      * @param  string  $filename  The name of the H5P file to load.
      * @param  bool    $expected  Whether the icon should exist or not.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_icon_url_provider')]
     public function test_get_icon_url(string $filename, bool $expected): void {
         global $DB;
 

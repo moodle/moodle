@@ -27,10 +27,10 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests for custom report card view exporter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\external\custom_report_card_view_exporter
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\external\custom_report_card_view_exporter::class)]
 final class custom_report_card_view_exporter_test extends advanced_testcase {
 
     /**

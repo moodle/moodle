@@ -114,9 +114,9 @@ final class string_manager_standard_test extends \advanced_testcase {
      *
      * It will fail if the string in the wrong format or non-existing (mistyped) string was deprecated.
      *
-     * @dataProvider get_deprecated_strings_provider
      * @param   string      $string     The string to be tested
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_deprecated_strings_provider')]
     public function test_validate_deprecated_strings_files($string): void {
         $stringman = get_string_manager();
 

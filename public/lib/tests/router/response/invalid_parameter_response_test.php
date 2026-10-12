@@ -28,9 +28,9 @@ use invalid_parameter_exception;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\response\exception_response
- * @covers     \core\router\response\invalid_parameter_response
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\response\exception_response::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\response\invalid_parameter_response::class)]
 final class invalid_parameter_response_test extends route_testcase {
     public function test_basics(): void {
         $this->assertIsInt(invalid_parameter_response::get_exception_status_code());

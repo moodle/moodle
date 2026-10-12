@@ -31,8 +31,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\router\middleware\validation_middleware
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\middleware\validation_middleware::class)]
 final class validation_middleware_test extends \advanced_testcase {
     /**
      * If a request fails request validation, the next middleware will not be called.

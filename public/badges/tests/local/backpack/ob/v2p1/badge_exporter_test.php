@@ -31,8 +31,8 @@ use core_badges\local\backpack\ob\v2p0\badge_exporter_test as badge_exporter_v2p
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_badges\local\backpack\ob\v2p1\badge_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\local\backpack\ob\v2p1\badge_exporter::class)]
 final class badge_exporter_test extends badge_exporter_v2p0_test {
     /**
      * Check this class is testing the expected OB version.

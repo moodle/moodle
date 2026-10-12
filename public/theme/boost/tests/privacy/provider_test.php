@@ -24,10 +24,10 @@ use core_privacy\local\request\writer;
  *
  * @package    theme_boost
  * @category   test
- * @covers     \theme_boost\privacy\provider
  * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\theme_boost\privacy\provider::class)]
 final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**

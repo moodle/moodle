@@ -103,11 +103,11 @@ final class sessionlib_test extends \advanced_testcase {
     /**
      * Test for secure cookie
      *
-     * @dataProvider moodle_cookie_secure_provider
      *
      * @param array $config Array of key value config settings
      * @param bool $secure Wether cookies should be secure or not
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('moodle_cookie_secure_provider')]
     public function test_is_moodle_cookie_secure($config, $secure): void {
         global $CFG;
         $this->resetAfterTest();

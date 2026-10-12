@@ -36,6 +36,9 @@ require_once($CFG->dirroot . '/lib/grouplib.php');
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('groups_create_group')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('groups_get_group')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('set_groups_messaging')]
 final class lib_test extends \advanced_testcase {
 
     public function test_member_added_event(): void {
@@ -442,8 +445,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test custom field for group.
-     * @covers ::groups_create_group
-     * @covers ::groups_get_group
      */
     public function test_groups_with_customfield(): void {
         $this->resetAfterTest();
@@ -882,8 +883,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests set_groups_messaging
-     *
-     * @covers ::set_groups_messaging
      */
     public function test_set_groups_messaging(): void {
         $this->resetAfterTest();
@@ -922,8 +921,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Tests set group messaging where it doesn't exist
-     *
-     * @covers ::set_groups_messaging
      */
     public function test_set_groups_messaging_doesnt_exist(): void {
         $this->resetAfterTest();

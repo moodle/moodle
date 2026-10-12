@@ -472,8 +472,8 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test that only users within a course context are fetched.
-     * @group qtesttt
      */
+    #[\PHPUnit\Framework\Attributes\Group('qtesttt')]
     public function test_get_users_in_context(): void {
         $component = 'block_comments';
 

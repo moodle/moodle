@@ -34,8 +34,8 @@ use core_contentbank\contentbank;
  * @category   test
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\event\contentbank_content_uploaded
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\contentbank_content_uploaded::class)]
 final class contentbank_content_uploaded_test extends \advanced_testcase {
 
     /**
@@ -51,8 +51,6 @@ final class contentbank_content_uploaded_test extends \advanced_testcase {
 
     /**
      * Test the content created event.
-     *
-     * @covers ::create_from_record
      */
     public function test_content_created(): void {
         global $USER, $CFG;

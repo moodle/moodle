@@ -25,14 +25,13 @@ namespace mod_data\backup;
  * @author     Stefan Hanauska <stefan.hanauska@csg-in.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\backup_data_activity_task::class, 'encode_content_links')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_data_activity_task::class, 'define_decode_rules')]
 final class encode_links_test extends \advanced_testcase {
     /**
      * Test that links are encoded correctly.
      *
      * @return void
-     *
-     * @covers       \backup_data_activity_task::encode_content_links
-     * @covers       \restore_data_activity_task::define_decode_rules
      */
     public function test_encode_links(): void {
         global $CFG, $DB;

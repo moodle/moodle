@@ -26,14 +26,12 @@ use core\attribute\deprecated_with_reference;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\attribute\deprecated
- * @covers \core\attribute\deprecated_with_reference
- * @covers \core\deprecation
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\attribute\deprecated::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\attribute\deprecated_with_reference::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\deprecation::class)]
 final class deprecation_test extends \advanced_testcase {
-    /**
-     * @dataProvider emit_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('emit_provider')]
     public function test_emit(
         array $args,
         bool $expectdebugging,
@@ -94,9 +92,7 @@ final class deprecation_test extends \advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider get_deprecation_string_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_deprecation_string_provider')]
     public function test_get_deprecation_string(
         ?string $replacement,
         ?string $since,
@@ -193,9 +189,7 @@ final class deprecation_test extends \advanced_testcase {
         new deprecated();
     }
 
-    /**
-     * @dataProvider from_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('from_provider')]
     public function test_from($reference, bool $isdeprecated): void {
         $attribute = deprecation::from($reference);
         if ($isdeprecated) {
@@ -332,9 +326,7 @@ final class deprecation_test extends \advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider deprecated_ownership_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('deprecated_ownership_provider')]
     public function test_deprecated_class(
         array $reference,
         string $expectedowner,

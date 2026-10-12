@@ -23,8 +23,8 @@ use core_ai\aiactions\summarise_text;
  * @package    aiplacement_courseassist
  * @copyright  2025 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiplacement_courseassist\external\summarise_text
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiplacement_courseassist\external\summarise_text::class)]
 final class summarise_text_test extends \advanced_testcase {
     /**
      * Test summarise_text webservice.

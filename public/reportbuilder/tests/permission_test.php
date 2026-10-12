@@ -30,10 +30,10 @@ use core_reportbuilder\reportbuilder\audience\manual;
  * Unit tests for the report permission class
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\permission
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\permission::class)]
 final class permission_test extends advanced_testcase {
 
     /**
@@ -80,9 +80,8 @@ final class permission_test extends advanced_testcase {
      * Test that viewing reports list observes capability to do so
      *
      * @param string $capability
-     *
-     * @dataProvider require_can_view_reports_list_with_capability_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('require_can_view_reports_list_with_capability_provider')]
     public function test_require_can_view_reports_list_with_capability(string $capability): void {
         global $DB;
 
@@ -161,9 +160,8 @@ final class permission_test extends advanced_testcase {
      * Test whether user can view specific report when they have capability to view all reports
      *
      * @param string $capability
-     *
-     * @dataProvider require_can_view_report_with_capability_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('require_can_view_report_with_capability_provider')]
     public function test_require_can_view_report_with_capability(string $capability): void {
         global $DB;
 
@@ -430,8 +428,8 @@ final class permission_test extends advanced_testcase {
      * @param int $customreportslimit
      * @param int $existingreports
      * @param bool $expected
-     * @dataProvider can_create_report_limit_reached_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_create_report_limit_reached_provider')]
     public function test_can_create_report_limit_reached(int $customreportslimit, int $existingreports, bool $expected): void {
         global $CFG;
 

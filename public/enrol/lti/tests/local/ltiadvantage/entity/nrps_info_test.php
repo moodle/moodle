@@ -22,18 +22,17 @@ namespace enrol_lti\local\ltiadvantage\entity;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\entity\nrps_info
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\entity\nrps_info::class)]
 final class nrps_info_test extends \advanced_testcase {
 
     /**
      * Test creation of the object instances.
      *
-     * @dataProvider instantiation_data_provider
      * @param array $args the arguments to the creation method.
      * @param array $expectations various expectations for the test cases.
-     * @covers ::create
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('instantiation_data_provider')]
     public function test_create(array $args, array $expectations): void {
         if (!$expectations['valid']) {
             $this->expectException($expectations['exception']);
@@ -101,8 +100,6 @@ final class nrps_info_test extends \advanced_testcase {
 
     /**
      * Verify that the contextmembershipurl property can be gotten and is immutable.
-     *
-     * @covers ::get_context_memberships_url
      */
     public function test_get_context_memberships_url(): void {
         $nrpsendpoint = 'https://lms.example.com/45/memberships';

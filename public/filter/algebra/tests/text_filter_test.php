@@ -37,8 +37,8 @@ use core\context\system as context_system;
  * @package filter_algebra
  * @copyright  2012 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_algebra\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_algebra\text_filter::class)]
 final class text_filter_test extends \basic_testcase {
     /** @var text_filter The filter to test */
     protected text_filter $filter;

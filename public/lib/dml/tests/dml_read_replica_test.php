@@ -38,8 +38,8 @@ require_once(__DIR__.'/../../tests/fixtures/event_fixtures.php');
  * @category   dml
  * @copyright  2018 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \moodle_read_replica_trait
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\moodle_read_replica_trait::class)]
 final class dml_read_replica_test extends \database_driver_testcase {
 
     /** @var float */
@@ -95,8 +95,8 @@ final class dml_read_replica_test extends \database_driver_testcase {
      * moodle_read_replica_trait::table_names() test data provider
      *
      * @return array
-     * @dataProvider table_names_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('table_names_provider')]
     public static function table_names_provider(): array {
         return [
             [
@@ -141,8 +141,8 @@ final class dml_read_replica_test extends \database_driver_testcase {
      * @param string $sql
      * @param array $tables
      * @return void
-     * @dataProvider table_names_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('table_names_provider')]
     public function test_table_names($sql, $tables): void {
         $db = new read_replica_moodle_database_table_names();
 

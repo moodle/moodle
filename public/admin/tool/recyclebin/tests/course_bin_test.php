@@ -27,6 +27,7 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(course_bin::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('store_item')]
 final class course_bin_test extends \advanced_testcase {
 
     /**
@@ -191,9 +192,9 @@ final class course_bin_test extends \advanced_testcase {
     /**
      * Tests that user data is restored when module is restored.
      *
-     * @dataProvider recycle_bin_settings_provider
      * @param array $settings array of plugin, name, value stdClass().
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('recycle_bin_settings_provider')]
     public function test_coursemodule_restore_with_userdata($settings): void {
         // Force configuration changes from provider.
         foreach ($settings as $setting) {
@@ -237,10 +238,8 @@ final class course_bin_test extends \advanced_testcase {
     /**
      * Test that the activity is NOT stored in bin when
      * in Automated backup setup settings "backup_auto_activities" is disabled.
-     *
-     * @dataProvider recycle_bin_settings_provider
-     * @covers ::store_item
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('recycle_bin_settings_provider')]
     public function test_coursemodule_restore_with_activity_setting_disabled(): void {
 
         // Set the configuration to not include activities in the automated backup.
@@ -257,9 +256,9 @@ final class course_bin_test extends \advanced_testcase {
     /**
      * Tests that user data is not restored when module is restored.
      *
-     * @dataProvider recycle_bin_settings_provider
      * @param array $settings array of plugin, name, value stdClass().
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('recycle_bin_settings_provider')]
     public function test_coursemodule_restore_without_userdata($settings): void {
         // Force configuration changes from provider.
         foreach ($settings as $setting) {

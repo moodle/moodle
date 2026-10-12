@@ -24,10 +24,10 @@ use core\context\system as context_system;
  *
  * @package core
  * @author Jason den Dulk <jasondendulk@catalyst-au.net>
- * @covers \core\session\loginas_helper
  * @copyright 2025 Catalyst IT
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\session\loginas_helper::class)]
 final class loginas_helper_test extends \advanced_testcase {
     /**
      * Tests various users wanting to login as other users of the same role.
@@ -266,9 +266,8 @@ final class loginas_helper_test extends \advanced_testcase {
      * @param bool $accessallgroups
      * @param bool $canloginassamegroup
      * @param bool $canloginasdifferentgroup
-     *
-     * @dataProvider loginas_groups_providor
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('loginas_groups_providor')]
     public function test_loginas_groups(
         int $groupmode,
         bool $accessallgroups,

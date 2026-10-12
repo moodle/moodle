@@ -23,8 +23,8 @@ namespace qtype_numerical;
  * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \restore_qtype_numerical_plugin
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_qtype_numerical_plugin::class)]
 final class restore_test extends \advanced_testcase {
     /**
      * Duplicate a quiz containing a numerical question with no numerical record or numerical_options record.

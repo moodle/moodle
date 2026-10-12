@@ -20,10 +20,10 @@ namespace theme_boost;
  * Test the boostnavbar file
  *
  * @package    theme_boost
- * @covers     \theme_boost\boostnavbar
  * @copyright  2021 Peter Dias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\theme_boost\boostnavbar::class)]
 final class boostnavbar_test extends \advanced_testcase {
     /**
      * Provider for test_remove_no_link_items
@@ -179,12 +179,12 @@ final class boostnavbar_test extends \advanced_testcase {
     /**
      * Test the remove_no_link_items function
      *
-     * @dataProvider remove_no_link_items_provider
      * @param array $setup
      * @param bool $removesectionnodes Whether to remove the section nodes with an associated action.
      * @param array $expected
      * @throws \ReflectionException
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('remove_no_link_items_provider')]
     public function test_remove_no_link_items(array $setup, bool $removesectionnodes, array $expected): void {
         global $PAGE;
 
@@ -366,10 +366,10 @@ final class boostnavbar_test extends \advanced_testcase {
     /**
      * Test the remove_duplicate_items function.
      *
-     * @dataProvider remove_duplicate_items_provider
      * @param array $navbarnodes The array containing the text and action of the nodes to be added to the navbar
      * @param array $expected The array containing the text of the expected navbar nodes
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('remove_duplicate_items_provider')]
     public function test_remove_duplicate_items(array $navbarnodes, array $expected): void {
         $this->resetAfterTest();
         set_config('enablemyhome', 1);
@@ -406,10 +406,10 @@ final class boostnavbar_test extends \advanced_testcase {
     /**
      * Test the remove_duplicate_items function when the home node is disabled.
      *
-     * @dataProvider remove_duplicate_items_without_home_provider
      * @param array $navbarnodes The array containing the text and action of the nodes to be added to the navbar
      * @param array $expected The array containing the text of the expected navbar nodes
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('remove_duplicate_items_without_home_provider')]
     public function test_remove_duplicate_items_without_home(array $navbarnodes, array $expected): void {
         $this->resetAfterTest();
         set_config('enablemyhome', 0);
@@ -540,12 +540,12 @@ final class boostnavbar_test extends \advanced_testcase {
     /**
      * Test the remove_items_that_exist_in_navigation function.
      *
-     * @dataProvider remove_items_that_exist_in_navigation_provider
      * @param string $navmenu The name of the navigation menu we would like to use (primary or secondary)
      * @param array $navmenunodes The array containing the text and action of the nodes to be added to the navigation menu
      * @param array $navbarnodes Array containing the text => action of the nodes to be added to the navbar
      * @param array $expected Array containing the text of the expected navbar nodes after the filtering
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('remove_items_that_exist_in_navigation_provider')]
     public function test_remove_items_that_exist_in_navigation(string $navmenu, array $navmenunodes, array $navbarnodes,
             array $expected): void {
         global $PAGE;

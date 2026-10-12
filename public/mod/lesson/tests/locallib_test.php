@@ -41,6 +41,10 @@ require_once($CFG->dirroot.'/mod/lesson/locallib.php');
  * @copyright  2016 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\lesson::class, 'count_all_submissions')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\lesson::class, 'count_submitted_participants')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\lesson::class, 'count_all_participants')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_last_page_seen')]
 final class locallib_test extends \advanced_testcase {
 
     /**
@@ -274,11 +278,11 @@ final class locallib_test extends \advanced_testcase {
     /**
      * Test the get_last_attempt() method.
      *
-     * @dataProvider get_last_attempt_dataprovider
      * @param int $maxattempts Lesson setting.
      * @param array $attempts The list of student attempts.
      * @param object $expected Expected result.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_last_attempt_dataprovider')]
     public function test_get_last_attempt($maxattempts, $attempts, $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -334,10 +338,6 @@ final class locallib_test extends \advanced_testcase {
 
     /**
      * Test the count_all_attempts, count_attempted_participants and count_all_participants methods.
-     *
-     * @covers \lesson::count_all_submissions
-     * @covers \lesson::count_submitted_participants
-     * @covers \lesson::count_all_participants
      */
     public function test_count_attempts_and_participants(): void {
         global $DB;
@@ -391,10 +391,6 @@ final class locallib_test extends \advanced_testcase {
 
     /**
      * Test the count_all_attempts, count_attempted_participants and count_all_participants methods with groups.
-     *
-     * @covers \lesson::count_all_submissions
-     * @covers \lesson::count_submitted_participants
-     * @covers \lesson::count_all_participants
      */
     public function test_count_attempts_and_participants_with_groups(): void {
         global $DB;
@@ -574,12 +570,11 @@ final class locallib_test extends \advanced_testcase {
      * For unlimited attempts (maxattempts = 0) we should always stay on the question page.
      * For limited attempts, once count(attempts) >= maxattempts, we should go to the next page.
      *
-     * @dataProvider get_last_page_seen_dataprovider
      * @param int $maxattempts Lesson setting (0 = unlimited).
      * @param int $attemptcount Number of wrong attempts to create on the question page.
      * @param bool $expectnextpage Whether we expect the next page to be returned.
-     * @covers ::get_last_page_seen
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_last_page_seen_dataprovider')]
     public function test_get_last_page_seen_with_this_page_jumpto(int $maxattempts, int $attemptcount, bool $expectnextpage): void {
         global $DB;
 

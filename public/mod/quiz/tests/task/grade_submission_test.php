@@ -28,8 +28,8 @@ use mod_quiz\task\grade_submission;
  * @copyright 2026 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Conn Warwicker <conn.warwicker@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \mod_quiz\task\grade_submission
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\task\grade_submission::class)]
 final class grade_submission_test extends advanced_testcase {
     /**
      * Create a quiz attempt to use for testing

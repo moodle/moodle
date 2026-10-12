@@ -22,8 +22,8 @@ use core_external\external_api;
  * Tests for validate_password class.
  *
  * @package enrol_guest
- * @covers \enrol_guest\external\validate_password
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_guest\external\validate_password::class)]
 final class validate_password_test extends \advanced_testcase {
 
     public function test_execute(): void {

@@ -306,9 +306,8 @@ final class player_test extends \advanced_testcase {
      *
      * @param string $url
      * @param int $expectedstart
-     *
-     * @dataProvider youtube_start_time_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('youtube_start_time_provider')]
     public function test_youtube_start_time(string $url, int $expectedstart): void {
         set_config('youtube', 1, 'media_videojs');
 

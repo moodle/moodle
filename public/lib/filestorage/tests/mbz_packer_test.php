@@ -96,9 +96,7 @@ final class mbz_packer_test extends \advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider usezipbackups_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('usezipbackups_provider')]
     public function test_extract_to_pathname_returnvalue_successful($usezipbackups): void {
         global $CFG;
         $this->resetAfterTest();
@@ -119,9 +117,7 @@ final class mbz_packer_test extends \advanced_testcase {
         $this->assertTrue($result);
     }
 
-    /**
-     * @dataProvider usezipbackups_provider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('usezipbackups_provider')]
     public function test_extract_to_pathname_returnvalue_failure($usezipbackups): void {
         global $CFG;
         $this->resetAfterTest();

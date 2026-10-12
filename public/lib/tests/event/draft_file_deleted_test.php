@@ -32,8 +32,8 @@ namespace core\event;
  * @category  test
  * @copyright 2023 The Open University.
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\event\draft_file_deleted
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\draft_file_deleted::class)]
 final class draft_file_deleted_test extends \advanced_testcase {
     /**
      * Test draft file deleted event.

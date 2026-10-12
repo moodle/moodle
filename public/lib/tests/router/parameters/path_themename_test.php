@@ -29,9 +29,9 @@ use Slim\Routing\RouteContext;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\parameters\path_themename
- * @covers     \core\router\schema\parameters\path_parameter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\parameters\path_themename::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\parameters\path_parameter::class)]
 final class path_themename_test extends route_testcase {
     /**
      * Test that the parameter is valid when the themename is not specified.
@@ -65,8 +65,8 @@ final class path_themename_test extends route_testcase {
      * Test valid themenames.
      *
      * @param string $themename
-     * @dataProvider valid_themenames
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_themenames')]
     public function test_valid_value(string $themename): void {
         $param = new path_themename();
 
@@ -88,8 +88,8 @@ final class path_themename_test extends route_testcase {
      * Test invalid themenames.
      *
      * @param string $themename
-     * @dataProvider invalid_themenames
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_themenames')]
     public function test_invalid_value(string $themename): void {
         $this->resetAfterTest();
         $param = new path_themename();

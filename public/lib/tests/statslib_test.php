@@ -429,12 +429,12 @@ final class statslib_test extends \advanced_testcase {
     /**
      * Test the function that calculates the start of the week.
      *
-     * @dataProvider get_base_weekly_provider
      * @param int $startwday Day in which the week starts (Sunday = 0)
      * @param string $timezone Default timezone
      * @param string $timestart Date and time for which the first day of the week will be obtained
      * @param string $expected Expected date of the first day of the week
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_base_weekly_provider')]
     public function test_statslib_get_base_weekly($startwday, $timezone, $timestart, $expected): void {
         $this->setTimezone($timezone);
         $time = strtotime($timestart);
@@ -554,9 +554,8 @@ final class statslib_test extends \advanced_testcase {
 
     /**
      * Test the temporary table creation and deletion.
-     *
-     * @depends test_statslib_temp_table_create_and_drop
      */
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_temp_table_create_and_drop')]
     public function test_statslib_temp_table_fill(): void {
         global $CFG, $DB, $USER;
 
@@ -656,9 +655,8 @@ final class statslib_test extends \advanced_testcase {
 
     /**
      * Test the temporary table creation and deletion.
-     *
-     * @depends test_statslib_temp_table_create_and_drop
      */
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_temp_table_create_and_drop')]
     public function test_statslib_temp_table_setup(): void {
         global $DB;
 
@@ -674,9 +672,8 @@ final class statslib_test extends \advanced_testcase {
 
     /**
      * Test the function that clean out the temporary tables.
-     *
-     * @depends test_statslib_temp_table_create_and_drop
      */
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_temp_table_create_and_drop')]
     public function test_statslib_temp_table_clean(): void {
         global $DB;
 
@@ -708,15 +705,14 @@ final class statslib_test extends \advanced_testcase {
 
     /**
      * Test the daily stats function.
-     *
-     * @depends test_statslib_get_base_daily
-     * @depends test_statslib_get_next_day_start
-     * @depends test_statslib_get_start_from
-     * @depends test_statslib_temp_table_create_and_drop
-     * @depends test_statslib_temp_table_setup
-     * @depends test_statslib_temp_table_fill
-     * @dataProvider daily_log_provider
      */
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_get_base_daily')]
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_get_next_day_start')]
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_get_start_from')]
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_temp_table_create_and_drop')]
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_temp_table_setup')]
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_temp_table_fill')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('daily_log_provider')]
     public function test_statslib_cron_daily($xmlfile): void {
         global $CFG, $DB;
 
@@ -735,10 +731,9 @@ final class statslib_test extends \advanced_testcase {
 
     /**
      * Test the daily stats function.
-     *
-     * @depends test_statslib_get_base_daily
-     * @depends test_statslib_get_next_day_start
      */
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_get_base_daily')]
+    #[\PHPUnit\Framework\Attributes\Depends('test_statslib_get_next_day_start')]
     public function test_statslib_cron_daily_no_default_profile_id(): void {
         global $CFG, $DB;
         $CFG->defaultfrontpageroleid = 0;

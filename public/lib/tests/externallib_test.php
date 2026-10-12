@@ -43,11 +43,10 @@ class test_exernal_api extends \core_external\external_api {
  * @package core
  * @subpackage phpunit
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\test_exernal_api::class, 'get_context_wrapper')]
 final class core_externallib_test extends \advanced_testcase {
     /**
      * Test the get_context_wrapper helper.
-     *
-     * @covers \core\test_exernal_api::get_context_wrapper
      */
     public function test_get_context_wrapper(): void {
         $this->assertEquals(

@@ -19,11 +19,11 @@ namespace tool_mobile\task;
 /**
  * Tests for the push notification limit task.
  *
- * @covers \tool_mobile\task\notify_push_notification_limit_to_admins
  * @package    tool_mobile
  * @copyright  2026 Daniel Ureña <daniel.urena@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_mobile\task\notify_push_notification_limit_to_admins::class)]
 final class notify_push_notification_limit_to_admins_test extends \advanced_testcase {
     /**
      * Test that no notification is sent when there is no stats entry for this month.

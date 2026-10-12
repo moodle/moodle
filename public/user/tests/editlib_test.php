@@ -29,6 +29,7 @@ require_once($CFG->dirroot.'/user/editlib.php');
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('useredit_update_user_preference')]
 final class editlib_test extends \advanced_testcase {
 
     /**
@@ -127,13 +128,12 @@ final class editlib_test extends \advanced_testcase {
     /**
      * Tests for function useredit_update_user_preference
      *
-     * @dataProvider useredit_update_user_preference_provider
-     * @covers ::useredit_update_user_preference
      * @param int $defaulthomepage to be set as the default homepage
      * @param array $extraoptions additional options for the pref value that are added in the hook callbacks
      * @param int|string $setting what we are trying to set as a user preference
      * @param string|null $expected what will be actually set in the user preference
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('useredit_update_user_preference_provider')]
     public function test_useredit_update_user_preference(int $defaulthomepage, array $extraoptions,
             $setting, ?string $expected): void {
         global $DB, $CFG, $USER;

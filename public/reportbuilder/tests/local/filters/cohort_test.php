@@ -26,10 +26,10 @@ use core_reportbuilder\local\report\filter;
  * Unit tests for cohort report filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\cohort
  * @copyright   2024 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\cohort::class)]
 final class cohort_test extends advanced_testcase {
 
     /**
@@ -63,9 +63,8 @@ final class cohort_test extends advanced_testcase {
      *
      * @param int[]|string[] $values
      * @param string[] $expectcohorts
-     *
-     * @dataProvider get_sql_filter_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_provider')]
     public function test_get_sql_filter(array $values, array $expectcohorts): void {
         global $DB;
 

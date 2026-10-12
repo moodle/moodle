@@ -23,13 +23,11 @@ namespace block_html;
  * @copyright 2022 Open LMS (https://www.openlms.net/)
  * @author    Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @coversDefaultClass \block_html
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\block_html::class)]
 final class block_html_test extends \advanced_testcase {
     /**
      * Tests instance files copying.
-     * @covers ::instance_copy
      */
     public function test_instance_copy(): void {
         global $USER;

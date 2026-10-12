@@ -19,11 +19,11 @@ namespace core\lock;
 /**
  * Unit tests for the postgres lock factory.
  *
- * @covers \core\lock\postgres_lock_factory
  * @package core
  * @copyright 2024 Martin Gauk <martin.gauk@tu-berlin.de>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\lock\postgres_lock_factory::class)]
 final class postgres_lock_factory_test extends \advanced_testcase {
     /**
      * Set up.

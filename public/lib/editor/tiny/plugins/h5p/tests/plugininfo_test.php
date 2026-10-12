@@ -24,10 +24,10 @@ use advanced_testcase;
  * Unit tests for the \tiny_h5p\plugininfo class.
  *
  * @package     tiny_h5p
- * @covers      \tiny_h5p\plugininfo::get_plugin_configuration_for_external
  * @copyright   2025 Moodle Pty Ltd
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tiny_h5p\plugininfo::class, 'get_plugin_configuration_for_external')]
 final class plugininfo_test extends advanced_testcase {
 
     /**
@@ -41,11 +41,11 @@ final class plugininfo_test extends advanced_testcase {
     /**
      * Test the get_plugin_configuration_for_external method.
      *
-     * @dataProvider get_plugin_configuration_for_external_provider
      * @param ?string $role Role name to assign to the user. If null, no role is assigned.
      * @param array $expectedconfiguration Expected configuration.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_plugin_configuration_for_external_provider')]
     public function test_get_plugin_configuration_for_external(?string $role, array $expectedconfiguration): void {
         global $CFG;
 

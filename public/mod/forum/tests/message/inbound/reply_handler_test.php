@@ -27,10 +27,10 @@ use Throwable;
  * Unit tests for the reply handler
  *
  * @package     mod_forum
- * @covers      \mod_forum\message\inbound\reply_handler
  * @copyright   2024 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_forum\message\inbound\reply_handler::class)]
 final class reply_handler_test extends advanced_testcase {
 
     /**

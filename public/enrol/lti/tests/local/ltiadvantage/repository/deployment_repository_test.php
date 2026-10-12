@@ -24,8 +24,8 @@ use enrol_lti\local\ltiadvantage\entity\deployment;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\deployment_repository
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\repository\deployment_repository::class)]
 final class deployment_repository_test extends \advanced_testcase {
     /**
      * Helper to create test deployment objects for use with the repository tests.
@@ -90,8 +90,6 @@ final class deployment_repository_test extends \advanced_testcase {
 
     /**
      * Test saving a new deployment.
-     *
-     * @covers ::save
      */
     public function test_save_new(): void {
         $this->resetAfterTest();
@@ -107,8 +105,6 @@ final class deployment_repository_test extends \advanced_testcase {
 
     /**
      * Test saving an existing deployment.
-     *
-     * @covers ::save
      */
     public function test_save_existing(): void {
         $this->resetAfterTest();
@@ -126,8 +122,6 @@ final class deployment_repository_test extends \advanced_testcase {
 
     /**
      * Test trying to save two deployments of identical nature in sequence.
-     *
-     * @covers ::save
      */
     public function test_save_unique_constraints_not_met(): void {
         $this->resetAfterTest();
@@ -142,8 +136,6 @@ final class deployment_repository_test extends \advanced_testcase {
 
     /**
      * Test existence of a deployment within the repository.
-     *
-     * @covers ::exists
      */
     public function test_exists(): void {
         $this->resetAfterTest();
@@ -157,8 +149,6 @@ final class deployment_repository_test extends \advanced_testcase {
 
     /**
      * Test finding a deployment in the repository.
-     *
-     * @covers ::find
      */
     public function test_find(): void {
         $this->resetAfterTest();
@@ -174,8 +164,6 @@ final class deployment_repository_test extends \advanced_testcase {
 
     /**
      * Test deleting a deployment object from the repository.
-     *
-     * @covers ::delete
      */
     public function test_delete(): void {
         $this->resetAfterTest();
@@ -192,8 +180,6 @@ final class deployment_repository_test extends \advanced_testcase {
 
     /**
      * Test deleting a deployment by registration.
-     *
-     * @covers ::delete_by_registration
      */
     public function test_delete_by_registration(): void {
         $this->resetAfterTest();
@@ -220,8 +206,6 @@ final class deployment_repository_test extends \advanced_testcase {
 
     /**
      * Test counting the number of deployments for a given registration.
-     *
-     * @covers ::count_by_registration
      */
     public function test_count_by_registration(): void {
         $this->resetAfterTest();
@@ -242,8 +226,6 @@ final class deployment_repository_test extends \advanced_testcase {
 
     /**
      * Test confirming a deployment can be found by registration and deploymentid.
-     *
-     * @covers ::find_by_registration
      */
     public function test_find_by_registration(): void {
         $this->resetAfterTest();
@@ -262,8 +244,6 @@ final class deployment_repository_test extends \advanced_testcase {
 
     /**
      * Testing that all deployments for a given registration can be fetched.
-     *
-     * @covers ::find_all_by_registration
      */
     public function test_find_all_by_registration(): void {
         $this->resetAfterTest();

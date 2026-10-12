@@ -23,9 +23,9 @@ use backup;
  * @package   core_course
  * @copyright 2022 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \backup_module_structure_step
- * @covers \restore_module_structure_step
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_module_structure_step::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_module_structure_step::class)]
 final class backup_restore_activity_test extends \advanced_testcase {
     /**
      * Load the backup and restore classes.

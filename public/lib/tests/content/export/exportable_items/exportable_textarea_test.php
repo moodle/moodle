@@ -33,8 +33,8 @@ use stdClass;
  * @category    test
  * @copyright   2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \core\content\export\exportable_items\exportable_textarea
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\content\export\exportable_items\exportable_textarea::class)]
 final class exportable_textarea_test extends advanced_testcase {
 
     /**

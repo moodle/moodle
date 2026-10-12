@@ -28,8 +28,8 @@ use moodle_exception;
  * @category test
  * @copyright 2023 Catalyst IT
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers  \mysqli_native_moodle_database
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mysqli_native_moodle_database::class)]
 final class mysqli_native_moodle_database_test extends \advanced_testcase {
 
     /**

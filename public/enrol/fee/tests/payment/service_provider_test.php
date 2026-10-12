@@ -27,15 +27,12 @@ namespace enrol_fee\payment;
 
 /**
  * Unit tests for the enrol_fee's payment subsystem callback implementation.
- *
- * @coversDefaultClass \enrol_fee\payment\service_provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_fee\payment\service_provider::class)]
 final class service_provider_test extends \advanced_testcase {
 
     /**
      * Test for service_provider::get_payable().
-     *
-     * @covers ::get_payable
      */
     public function test_get_payable(): void {
         global $DB;
@@ -65,8 +62,6 @@ final class service_provider_test extends \advanced_testcase {
 
     /**
      * Test for service_provider::get_success_url().
-     *
-     * @covers ::get_success_url
      */
     public function test_get_success_url(): void {
         global $CFG, $DB;
@@ -96,8 +91,6 @@ final class service_provider_test extends \advanced_testcase {
 
     /**
      * Test for service_provider::deliver_order().
-     *
-     * @covers ::deliver_order
      */
     public function test_deliver_order(): void {
         global $DB;

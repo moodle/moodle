@@ -35,9 +35,9 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @coversDefaultClass \mod_bigbluebuttonbn\local\helpers\reset
- * @covers \mod_bigbluebuttonbn\local\helpers\reset
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\local\helpers\reset::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\local\helpers\reset::class)]
 final class reset_test extends \advanced_testcase {
     use testcase_helper_trait;
     /**

@@ -29,6 +29,7 @@ require_once(__DIR__ . '/fixtures/mock_search_area.php');
  * @copyright   2015 David Monllao {@link http://www.davidmonllao.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_search\manager::class, 'index')]
 final class manager_test extends \advanced_testcase {
 
     /**
@@ -79,8 +80,8 @@ final class manager_test extends \advanced_testcase {
      * @param bool|null $allcourses Enable searching all courses (null to leave as the default).
      * @param bool|null $enablearea Enable the course search area (null to leave as the default).
      * @param string $expected The expected course search url.
-     * @dataProvider data_course_search_url
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_course_search_url')]
     public function test_course_search_url(?bool $gsenabled, ?bool $allcourses, ?bool $enablearea, string $expected): void {
         $this->resetAfterTest();
 
@@ -128,8 +129,8 @@ final class manager_test extends \advanced_testcase {
      * @param bool|null $allcourses Enable searching all courses (null to leave as the default).
      * @param bool|null $enablearea Enable the course search area (null to leave as the default).
      * @param bool $expected The expected result.
-     * @dataProvider data_can_replace_course_search
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_can_replace_course_search')]
     public function test_can_replace_course_search(?bool $gsenabled, ?bool $allcourses, ?bool $enablearea, bool $expected): void {
         $this->resetAfterTest();
 
@@ -1514,11 +1515,11 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Test that manager class can parse area id correctly.
-     * @dataProvider parse_search_area_id_data_provider
      *
      * @param string $areaid Area id to parse.
      * @param array $expected Expected result of parsing.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('parse_search_area_id_data_provider')]
     public function test_parse_search_area_id($areaid, $expected): void {
         $this->assertEquals($expected, \core_search\manager::parse_areaid($areaid));
     }
@@ -1628,8 +1629,6 @@ final class manager_test extends \advanced_testcase {
 
     /**
      * Tests the indexing delay (used to avoid race conditions) in {@see manager::index()}.
-     *
-     * @covers \core_search\manager::index
      */
     public function test_indexing_delay(): void {
         global $USER, $CFG;

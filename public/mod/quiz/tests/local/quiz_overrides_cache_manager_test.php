@@ -26,9 +26,9 @@ use stdClass;
  * @package     mod_quiz
  * @copyright   2025 Catalyst IT Australia Pty Ltd
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \mod_quiz\cache\quiz_overrides_cache
- * @covers      \mod_quiz\local\quiz_overrides_cache_manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\cache\quiz_overrides_cache::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\local\quiz_overrides_cache_manager::class)]
 final class quiz_overrides_cache_manager_test extends advanced_testcase {
     /**
      * Builds and returns a reusable quiz overrides testing context.

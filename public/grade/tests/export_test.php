@@ -35,11 +35,11 @@ final class export_test extends \advanced_testcase {
     /**
      * Ensure that feedback is correct formatted. Test the default implementation of format_feedback
      *
-     * @dataProvider    format_feedback_provider
      * @param   string  $input The input string to test
      * @param   int     $inputformat The format of the input string
      * @param   string  $expected The expected result of the format.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_feedback_provider')]
     public function test_format_feedback($input, $inputformat, $expected): void {
         $feedback = $this->getMockForAbstractClass(
                 \grade_export::class,

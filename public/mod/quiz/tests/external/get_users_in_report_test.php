@@ -26,8 +26,8 @@ use mod_quiz\quiz_settings;
  * @copyright 2025 The Open University.
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 5.3
- * @covers \mod_quiz\external\get_users_in_report
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\external\get_users_in_report::class)]
 final class get_users_in_report_test extends \advanced_testcase {
     /**
      * Test get_users_in_report service.

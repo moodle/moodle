@@ -23,8 +23,8 @@ namespace core_files\task;
  * @category   test
  * @copyright  2025 Daniel Ziegenberg
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_files\task\asynchronous_mimetype_upgrade_task
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_files\task\asynchronous_mimetype_upgrade_task::class)]
 final class asynchronous_mimetype_upgrade_task_test extends \advanced_testcase {
 
     /**
@@ -98,12 +98,12 @@ final class asynchronous_mimetype_upgrade_task_test extends \advanced_testcase {
     /**
      * Test upgrading the mimetype of files.
      *
-     * @dataProvider upgrade_mimetype_provider
      *
      * @param array $files
      * @param string $mimetype
      * @param array $extensions
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('upgrade_mimetype_provider')]
     public function test_execute(
         array $files,
         string $mimetype,

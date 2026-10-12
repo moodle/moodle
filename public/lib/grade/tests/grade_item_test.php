@@ -28,6 +28,7 @@ require_once(__DIR__.'/fixtures/lib.php');
  * @copyright  nicolas@moodle.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\grade_item::class, 'delete')]
 final class grade_item_test extends \grade_base_testcase {
     public function test_grade_item(): void {
         $this->sub_test_grade_item_construct();
@@ -153,8 +154,6 @@ final class grade_item_test extends \grade_base_testcase {
 
     /**
      * Tests the deletion of a grade item of an activity instance that has been globally disabled.
-     *
-     * @covers \grade_item::delete
      */
     protected function sub_test_grade_item_delete_disabled_modules(): void {
         global $CFG, $DB;

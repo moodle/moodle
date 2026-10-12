@@ -24,12 +24,13 @@
  */
 namespace enrol_guest;
 
+#[\PHPUnit\Framework\Attributes\CoversFunction('validate_enrol_plugin_data')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('update_enrol_plugin_data')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('find_instance')]
 final class lib_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of validate_enrol_plugin_data().
-     *
-     * @covers ::validate_enrol_plugin_data
      */
     public function test_validate_enrol_plugin_data(): void {
         global $CFG;
@@ -70,8 +71,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of update_enrol_plugin_data().
-     *
-     * @covers ::update_enrol_plugin_data
      */
     public function test_update_enrol_plugin_data(): void {
         global $DB;
@@ -99,8 +98,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of find_instance().
-     *
-     * @covers ::find_instance
      */
     public function test_find_instance(): void {
         global $DB;

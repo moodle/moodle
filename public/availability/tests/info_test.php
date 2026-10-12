@@ -25,6 +25,8 @@ use core_courseformat\formatactions;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_availability\info_module::class, 'is_available_for_all')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\plugininfo\availability::class, 'update_display_mode')]
 final class info_test extends \advanced_testcase {
     public function setUp(): void {
         // Load the mock condition so that it can be used.
@@ -536,7 +538,6 @@ final class info_test extends \advanced_testcase {
 
     /**
      * Test for the is_available_for_all() method of the info base class.
-     * @covers \core_availability\info_module::is_available_for_all
      */
     public function test_is_available_for_all(): void {
         global $CFG, $DB;
@@ -567,12 +568,11 @@ final class info_test extends \advanced_testcase {
     /**
      * Test update_display_mode function.
      *
-     * @covers \core\plugininfo\availability::update_display_mode
-     * @dataProvider update_display_mode_provider
      *
      * @param string $plugin The plugin name.
      * @param string $expected The expected data.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('update_display_mode_provider')]
     public function test_update_display_mode(string $plugin, string $expected): void {
         global $DB;
 

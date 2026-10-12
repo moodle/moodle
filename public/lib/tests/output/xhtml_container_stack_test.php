@@ -25,8 +25,8 @@ namespace core\output;
  * @category  test
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\output\xhtml_container_stacks
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\xhtml_container_stacks::class)]
 final class xhtml_container_stack_test extends \advanced_testcase {
     public function test_push_then_pop(): void {
         // Set up.

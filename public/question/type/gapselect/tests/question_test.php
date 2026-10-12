@@ -34,9 +34,9 @@ require_once($CFG->dirroot . '/question/type/gapselect/tests/helper.php');
  * @package   qtype_gapselect
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qtype_gapselect_question_base
- * @covers \qtype_gapselect_question
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_gapselect_question_base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_gapselect_question::class)]
 final class question_test extends \basic_testcase {
 
     public function test_get_question_summary(): void {

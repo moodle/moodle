@@ -23,13 +23,11 @@ namespace core;
  * @category  test
  * @copyright 2023 Rodrigo Mady
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_renderer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_renderer::class)]
 final class outputrenderers_test extends \advanced_testcase {
     /**
      * Test generated url from course image.
-     *
-     * @covers ::get_generated_url_for_course
      */
     public function test_get_generated_url_for_course_image(): void {
         global $OUTPUT;

@@ -30,6 +30,7 @@ require_once($CFG->libdir . '/completionlib.php');
  * @copyright 2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_gradebook_structure_step::class, 'gradebook_calculation_freeze')]
 final class restore_gradebook_structure_step_test extends \advanced_testcase {
 
     /**
@@ -60,10 +61,10 @@ final class restore_gradebook_structure_step_test extends \advanced_testcase {
     }
 
     /**
-     * @dataProvider rewrite_step_backup_file_for_legacy_freeze_provider
      * @param   string  $source     The source file to test
      * @param   string  $expected   The expected result of the transformation
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('rewrite_step_backup_file_for_legacy_freeze_provider')]
     public function test_rewrite_step_backup_file_for_legacy_freeze($source, $expected): void {
         $restore = $this->getMockBuilder('\restore_gradebook_structure_step')
             ->onlyMethods([])
@@ -105,11 +106,10 @@ final class restore_gradebook_structure_step_test extends \advanced_testcase {
      * Tests that gradebook_calculation_freeze() applies the MDL-88407 penalty freeze for
      * the correct backup version ranges and not for versions that already contain the fix.
      *
-     * @dataProvider penalty_calculation_freeze_version_provider
-     * @covers \restore_gradebook_structure_step::gradebook_calculation_freeze
      * @param float $version The moodle_version stored in the backup.
      * @param bool $expectfreeze Whether a gradebook freeze should be applied for this version.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('penalty_calculation_freeze_version_provider')]
     public function test_gradebook_calculation_freeze_penalty_version_boundary(
         float $version,
         bool $expectfreeze,

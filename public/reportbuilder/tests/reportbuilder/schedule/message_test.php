@@ -34,10 +34,10 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests for message schedule class
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\reportbuilder\schedule\message
  * @copyright   2025 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\reportbuilder\schedule\message::class)]
 final class message_test extends advanced_testcase {
     /**
      * Data provider for {@see test_execute_viewas_user}
@@ -59,9 +59,8 @@ final class message_test extends advanced_testcase {
      * @param string|null $viewasusername
      * @param string $useronesees
      * @param string $usertwosees
-     *
-     * @dataProvider execute_report_viewas_user_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_report_viewas_user_provider')]
     public function test_execute_report_viewas_user(
         ?int $viewasuser,
         ?string $viewasusername,

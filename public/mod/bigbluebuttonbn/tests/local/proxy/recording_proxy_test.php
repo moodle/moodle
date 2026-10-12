@@ -26,9 +26,9 @@ use mod_bigbluebuttonbn\test\testcase_helper_trait;
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
- * @covers  \mod_bigbluebuttonbn\local\proxy\recording_proxy
- * @coversDefaultClass \mod_bigbluebuttonbn\local\proxy\recording_proxy
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\local\proxy\recording_proxy::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\local\proxy\recording_proxy::class)]
 final class recording_proxy_test extends \advanced_testcase {
     use testcase_helper_trait;
 

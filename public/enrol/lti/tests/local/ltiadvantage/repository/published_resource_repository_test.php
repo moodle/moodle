@@ -24,8 +24,8 @@ use enrol_lti\helper;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\published_resource_repository
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\repository\published_resource_repository::class)]
 final class published_resource_repository_test extends \advanced_testcase {
     /**
      * Get a list of published resources for testing.
@@ -95,8 +95,6 @@ final class published_resource_repository_test extends \advanced_testcase {
 
     /**
      * Test finding published resources for a given user.
-     *
-     * @covers ::find_all_for_user
      */
     public function test_find_all_for_user(): void {
         $this->resetAfterTest();
@@ -128,8 +126,6 @@ final class published_resource_repository_test extends \advanced_testcase {
 
     /**
      * Test finding a subset of published resources, by id, for a user.
-     *
-     * @covers ::find_all_by_ids_for_user
      */
     public function test_find_all_by_ids_for_user(): void {
         $this->resetAfterTest();
@@ -161,8 +157,6 @@ final class published_resource_repository_test extends \advanced_testcase {
 
     /**
      * Test finding published resources for different roles having different capabilities at the course level.
-     *
-     * @covers ::find_all_for_user
      */
     public function test_find_all_for_user_no_permissions(): void {
         $this->resetAfterTest();

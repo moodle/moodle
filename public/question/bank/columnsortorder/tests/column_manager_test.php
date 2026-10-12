@@ -36,8 +36,10 @@ require_once($CFG->dirroot . '/question/classes/external.php');
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qbank_columnsortorder\column_manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_columnsortorder\column_manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_columns')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_columnsortorder\event\plugin_observer::class)]
 final class column_manager_test extends advanced_testcase {
 
     /**
@@ -115,13 +117,13 @@ final class column_manager_test extends advanced_testcase {
     /**
      * Test setting config settings
      *
-     * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
      * @param array|string $datamethod The property of the test class to pass to the function.
      * @param bool $csv True of the data is stored as a comma-separated list.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('settings_provider')]
     public function test_settings(
         string $setting,
         string $function,
@@ -142,13 +144,13 @@ final class column_manager_test extends advanced_testcase {
     /**
      * Test passing null clears the corresponding config setting.
      *
-     * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
      * @param array|string $datamethod The property of the test class to pass to the function.
      * @param bool $csv True of the data is stored as a comma-separated list.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('settings_provider')]
     public function test_reset_settings(
         string $setting,
         string $function,
@@ -168,13 +170,13 @@ final class column_manager_test extends advanced_testcase {
     /**
      * Test setting user preferences
      *
-     * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
      * @param array|string $datamethod The property of the test class to pass to the function.
      * @param bool $csv True of the data is stored as a comma-separated list.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('settings_provider')]
     public function test_settings_user(
         string $setting,
         string $function,
@@ -194,13 +196,13 @@ final class column_manager_test extends advanced_testcase {
     /**
      * Test passing null clears the corresponding user preference.
      *
-     * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
      * @param array|string $datamethod The property of the test class to pass to the function.
      * @param bool $csv True of the data is stored as a comma-separated list.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('settings_provider')]
     public function test_reset_user_settings(
         string $setting,
         string $function,
@@ -219,8 +221,6 @@ final class column_manager_test extends advanced_testcase {
 
     /**
      * Test function get_columns in helper class, that proper data is returned.
-     *
-     * @covers ::get_columns
      */
     public function test_getcolumns_function(): void {
         $this->resetAfterTest(true);
@@ -301,8 +301,6 @@ final class column_manager_test extends advanced_testcase {
 
     /**
      * Test enabling and disabling columns through event observers
-     *
-     * @covers \qbank_columnsortorder\event\plugin_observer
      */
     public function test_plugin_enabled_disabled_observers(): void {
         $this->resetAfterTest(true);

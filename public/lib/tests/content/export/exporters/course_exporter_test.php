@@ -31,8 +31,8 @@ use core\content\export\zipwriter;
  * @category    test
  * @copyright   2020 Simey Lameze <simey@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @covers      \core\content\export\exporters\course_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\content\export\exporters\course_exporter::class)]
 final class course_exporter_test extends advanced_testcase {
 
     /**

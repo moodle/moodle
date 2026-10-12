@@ -28,14 +28,12 @@ use Packback\Lti1p3\LtiRegistration;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\lib\issuer_database
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\lib\issuer_database::class)]
 final class issuer_database_test extends \advanced_testcase {
 
     /**
      * Test the Moodle implementation of the library database method test_find_registration_by_issuer().
-     *
-     * @covers ::findRegistrationByIssuer
      */
     public function test_find_registration_by_issuer(): void {
         $this->resetAfterTest();
@@ -69,8 +67,6 @@ final class issuer_database_test extends \advanced_testcase {
 
     /**
      * Test the Moodle implementation of the library database method test_find_deployment().
-     *
-     * @covers ::findDeployment
      */
     public function test_find_deployment(): void {
         $this->resetAfterTest();

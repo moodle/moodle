@@ -27,12 +27,12 @@ final class filtered_userlist_test extends \advanced_testcase {
     /**
      * Test the apply_expired_contexts_filters function with arange of options.
      *
-     * @dataProvider apply_expired_contexts_filters_provider
      * @param   array   $initial The set of userids in the initial filterlist.
      * @param   array   $expired The set of userids considered as expired.
      * @param   array   $unexpired The set of userids considered as unexpired.
      * @param   array   $expected The expected values.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('apply_expired_contexts_filters_provider')]
     public function test_apply_expired_contexts_filters(array $initial, array $expired, array $unexpired, array $expected): void {
         $userlist = $this->getMockBuilder(\tool_dataprivacy\filtered_userlist::class)
             ->disableOriginalConstructor()

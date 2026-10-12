@@ -104,11 +104,11 @@ final class item_group_test extends advanced_testcase {
     /**
      * Test for invalid structures.
      *
-     * @dataProvider invalid_data_provider
      * @param string $objecttype object type attribute
      * @param bool $validhome if valid homepage is user
      * @param bool $validid if valid group id is used
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_data_provider')]
     public function test_invalid_data(string $objecttype, bool $validhome, bool $validid): void {
         global $CFG;
 

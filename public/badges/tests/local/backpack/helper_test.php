@@ -32,17 +32,20 @@ use core_badges\local\backpack\helper;
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_badges\local\backpack\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\local\backpack\helper::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('convert_apiversion')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('assertion_exists')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('badge_available')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_badgeid_from_hash')]
 final class helper_test extends \advanced_testcase {
     /**
      * Test convert_apiversion().
      *
      * @param mixed $version The Open Badges version to test.
      * @param string $expected The expected result of the conversion.
-     * @dataProvider convert_apiversion_provider
-     * @covers ::convert_apiversion
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('convert_apiversion_provider')]
     public function test_convert_apiversion(
         $version,
         string $expected,
@@ -96,8 +99,6 @@ final class helper_test extends \advanced_testcase {
 
     /**
      * Test assertion_exists().
-     *
-     * @covers ::assertion_exists
      */
     public function test_assertion_exists(): void {
         $this->resetAfterTest();
@@ -122,9 +123,8 @@ final class helper_test extends \advanced_testcase {
      *
      * @param int $status The status of the badge.
      * @param bool $expected The expected result of badge availability.
-     * @dataProvider badge_available_provider
-     * @covers ::badge_available
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('badge_available_provider')]
     public function test_badge_available(
         int $status,
         bool $expected,
@@ -176,8 +176,6 @@ final class helper_test extends \advanced_testcase {
 
     /**
      * Test get_badgeid_from_hash().
-     *
-     * @covers ::get_badgeid_from_hash
      */
     public function test_get_badgeid_from_hash(): void {
         $this->resetAfterTest();

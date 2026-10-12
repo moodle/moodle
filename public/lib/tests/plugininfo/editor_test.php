@@ -24,10 +24,10 @@ use advanced_testcase;
  * Unit tests for the editor plugininfo class
  *
  * @package     core
- * @covers      \core\plugininfo\editor
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\plugininfo\editor::class)]
 final class editor_test extends advanced_testcase {
 
     /**
@@ -76,11 +76,11 @@ final class editor_test extends advanced_testcase {
     /**
      * Ensure that get_sorted_plugins() returns the correct list of plugins.
      *
-     * @dataProvider get_sorted_plugins_provider
      * @param string $texteditors The $CFG->texteditors value to use as a base
      * @param bool $enabledonly
      * @param array $expected The expected order
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sorted_plugins_provider')]
     public function test_get_sorted_plugins(
         string $texteditors,
         bool $enabledonly,
@@ -163,13 +163,13 @@ final class editor_test extends advanced_testcase {
     /**
      * Ensure that change_plugin_order() changes the order of the plugins.
      *
-     * @dataProvider change_plugin_order_provider
      * @param string $texteditors
      * @param string $pluginname
      * @param int $direction
      * @param array $expected
      * @param string $newtexteditors
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('change_plugin_order_provider')]
     public function test_change_plugin_order(
         string $texteditors,
         string $pluginname,

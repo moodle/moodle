@@ -25,10 +25,10 @@ use stdClass;
  * Unit tests for the format helper
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\helpers\format
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\helpers\format::class)]
 final class format_test extends advanced_testcase {
 
     /**
@@ -61,9 +61,8 @@ final class format_test extends advanced_testcase {
      * @param float|null $value
      * @param int|null $precision
      * @param string $expected
-     *
-     * @dataProvider format_time_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('format_time_provider')]
     public function test_format_time(?float $value, ?int $precision, string $expected): void {
         $this->assertEquals($expected, format::format_time($value, (object) [], $precision));
     }
@@ -85,9 +84,8 @@ final class format_test extends advanced_testcase {
      *
      * @param bool $value
      * @param string $expected
-     *
-     * @dataProvider boolean_as_text_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('boolean_as_text_provider')]
     public function test_boolean_as_text(bool $value, string $expected): void {
         $this->assertEquals($expected, format::boolean_as_text($value));
     }

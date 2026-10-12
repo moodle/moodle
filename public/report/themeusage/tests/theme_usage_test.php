@@ -26,6 +26,9 @@ use core\output\theme_usage;
  * @copyright  2023 David Woloszyn <david.woloszyn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('is_theme_used_in_any_context')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('theme_purge_used_in_context_caches')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('theme_delete_used_in_context_cache')]
 final class theme_usage_test extends \advanced_testcase {
 
     /** @var testing_data_generator Data generator. */
@@ -43,9 +46,6 @@ final class theme_usage_test extends \advanced_testcase {
 
     /**
      * Test is_theme_used_in_any_context method.
-     *
-     * @covers ::is_theme_used_in_any_context
-     * @covers ::theme_purge_used_in_context_caches
      */
     public function test_is_theme_used_in_any_context(): void {
         // Enable theme overrides.
@@ -77,8 +77,6 @@ final class theme_usage_test extends \advanced_testcase {
 
     /**
      * Test the deleting of cache using theme_delete_used_in_context_cache.
-     *
-     * @covers ::theme_delete_used_in_context_cache
      */
     public function test_theme_delete_used_in_context_cache(): void {
         // Enable theme override.

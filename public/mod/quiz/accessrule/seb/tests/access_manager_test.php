@@ -27,8 +27,8 @@ require_once(__DIR__ . '/test_helper_trait.php');
  * @author    Andrew Madden <andrewmadden@catalyst-au.net>
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \quizaccess_seb\seb_access_manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\quizaccess_seb\seb_access_manager::class)]
 final class access_manager_test extends \advanced_testcase {
     use \quizaccess_seb_test_helper_trait;
 
@@ -357,9 +357,8 @@ final class access_manager_test extends \advanced_testcase {
      *
      * @param int $type Type of SEB usage.
      * @param bool $expected Expected result.
-     *
-     * @dataProvider should_validate_basic_header_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('should_validate_basic_header_data_provider')]
     public function test_should_validate_basic_header($type, $expected): void {
         $accessmanager = $this->getMockBuilder(seb_access_manager::class)
             ->disableOriginalConstructor()
@@ -391,9 +390,8 @@ final class access_manager_test extends \advanced_testcase {
      *
      * @param int $type Type of SEB usage.
      * @param bool $expected Expected result.
-     *
-     * @dataProvider should_validate_config_key_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('should_validate_config_key_data_provider')]
     public function test_should_validate_config_key($type, $expected): void {
         $accessmanager = $this->getMockBuilder(seb_access_manager::class)
             ->disableOriginalConstructor()
@@ -424,9 +422,8 @@ final class access_manager_test extends \advanced_testcase {
      *
      * @param int $type Type of SEB usage.
      * @param bool $expected Expected result.
-     *
-     * @dataProvider should_validate_browser_exam_key_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('should_validate_browser_exam_key_data_provider')]
     public function test_should_validate_browser_exam_key($type, $expected): void {
         $accessmanager = $this->getMockBuilder(seb_access_manager::class)
             ->disableOriginalConstructor()

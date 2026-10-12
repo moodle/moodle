@@ -23,8 +23,8 @@ namespace core_question\local\bank;
  * @copyright  2024 onwards Catalyst IT {@link http://www.catalyst-eu.net/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Conn Warwicker <conn.warwicker@catalyst-eu.net>
- * @covers     \core_question\local\bank\version_options
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\local\bank\version_options::class)]
 final class version_options_test extends \advanced_testcase {
 
 

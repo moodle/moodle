@@ -39,9 +39,9 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @category   test
  * @copyright  Julien Rädler
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \restore_questions_parser_processor
- * @covers \restore_create_categories_and_questions
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_questions_parser_processor::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_create_categories_and_questions::class)]
 final class repeated_restore_test extends advanced_testcase {
     use quiz_question_helper_test_trait;
 
@@ -626,11 +626,11 @@ final class repeated_restore_test extends advanced_testcase {
     /**
      * Restore a quiz with questions of same stamp into the same course, but different answers.
      *
-     * @dataProvider get_qtype_generators
      * @param string $qtype The name of the qtype plugin to test
      * @param ?string $testquestion The test question to generate for the plugin. If null, the plugin will be skipped
      *      with a message.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_qtype_generators')]
     public function test_restore_quiz_with_same_stamp_questions(string $qtype, ?string $testquestion): void {
         global $DB, $USER;
         if (is_null($testquestion)) {
@@ -710,11 +710,11 @@ final class repeated_restore_test extends advanced_testcase {
      * This is a contrived case, but this test serves as a control for the other tests in this class, proving that the hashing
      * process will match an identical question.
      *
-     * @dataProvider get_qtype_generators
      * @param string $qtype The name of the qtype plugin to test
      * @param ?string $testquestion The test question to generate for the plugin. If null, the plugin will be skipped
      *       with a message.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_qtype_generators')]
     public function test_restore_quiz_with_duplicate_questions(string $qtype, ?string $testquestion): void {
         global $DB, $USER;
         if (is_null($testquestion)) {
@@ -779,11 +779,11 @@ final class repeated_restore_test extends advanced_testcase {
     /**
      * Restore a quiz with questions that have the same stamp but different text.
      *
-     * @dataProvider get_qtype_generators
      * @param string $qtype The name of the qtype plugin to test
      * @param ?string $testquestion The test question to generate for the plugin. If null, the plugin will be skipped
      *       with a message.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_qtype_generators')]
     public function test_restore_quiz_with_edited_questions(string $qtype, ?string $testquestion): void {
         global $DB, $USER;
         if (is_null($testquestion)) {
@@ -848,11 +848,11 @@ final class repeated_restore_test extends advanced_testcase {
     /**
      * Restore a course to another course having questions with the same stamp in a shared question bank context category.
      *
-     * @dataProvider get_qtype_generators
      * @param string $qtype The name of the qtype plugin to test
      * @param ?string $testquestion The test question to generate for the plugin. If null, the plugin will be skipped
      *      with a message.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_qtype_generators')]
     public function test_restore_course_with_same_stamp_questions(string $qtype, ?string $testquestion): void {
         global $DB, $USER;
         if (is_null($testquestion)) {
@@ -951,11 +951,11 @@ final class repeated_restore_test extends advanced_testcase {
     /**
      * Restore a quiz with questions of same stamp into the same course, but different hints.
      *
-     * @dataProvider get_qtype_generators
      * @param string $qtype The name of the qtype plugin to test
      * @param ?string $testquestion The test question to generate for the plugin. If null, the plugin will be skipped
      *     with a message.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_qtype_generators')]
     public function test_restore_quiz_with_same_stamp_questions_edited_hints(string $qtype, ?string $testquestion): void {
         global $DB, $USER;
         if (is_null($testquestion)) {
@@ -1074,10 +1074,10 @@ final class repeated_restore_test extends advanced_testcase {
     /**
      * Restore a quiz with questions of same stamp into the same course, but different qtype-specific options.
      *
-     * @dataProvider get_edited_option_fields
      * @param string $field The answer field to edit
      * @param string $value The value to set
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_edited_option_fields')]
     public function test_restore_quiz_with_same_stamp_questions_edited_options(string $field, string $value): void {
         global $DB, $USER;
         $this->resetAfterTest();

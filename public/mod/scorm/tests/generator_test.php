@@ -72,8 +72,8 @@ final class generator_test extends \advanced_testcase {
      *
      * @param array $attemptdata Data for the attempt to create.
      * @param string|null $expectedexception Expected exception class name, if any.
-     * @dataProvider get_create_attempt_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_create_attempt_data')]
     public function test_create_attempt(
         array $attemptdata,
         ?string $expectedexception = null,

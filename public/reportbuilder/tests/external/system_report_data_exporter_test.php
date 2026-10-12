@@ -29,10 +29,10 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests for system report data exporter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\external\system_report_data_exporter
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\external\system_report_data_exporter::class)]
 final class system_report_data_exporter_test extends advanced_testcase {
 
     /**

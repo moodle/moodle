@@ -23,8 +23,8 @@ namespace core\output\progress_trace;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\progress_trace\progress_trace_buffer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\progress_trace\progress_trace_buffer::class)]
 final class progress_trace_buffer_test extends \advanced_testcase {
     /**
      * Tests for the trace.

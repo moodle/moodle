@@ -26,8 +26,8 @@ use xmldb_table;
  * @category   test
  * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\dml\table
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\dml\table::class)]
 final class dml_table_test extends \database_driver_testcase {
 
     /**
@@ -65,8 +65,6 @@ final class dml_table_test extends \database_driver_testcase {
     /**
      * Ensure that \core\dml\table::get_field_select() works as expected.
      *
-     * @dataProvider get_field_select_provider
-     * @covers ::get_field_select
      * @param   string      $tablename The name of the table
      * @param   array       $fieldlist The list of fields
      * @param   string      $primarykey The name of the primary key
@@ -74,6 +72,7 @@ final class dml_table_test extends \database_driver_testcase {
      * @param   string      $tablealias The table AS alias name
      * @param   string      $expected The expected SQL
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_field_select_provider')]
     public function test_get_field_select(
         string $tablename,
         array $fieldlist,
@@ -151,14 +150,13 @@ final class dml_table_test extends \database_driver_testcase {
     /**
      * Ensure that \core\dml\table::extract_from_result() works as expected.
      *
-     * @dataProvider        extract_from_result_provider
-     * @covers ::extract_from_result
      * @param   array       $fieldlist The list of fields
      * @param   string      $primarykey The name of the primary key
      * @param   string      $fieldprefix The prefix to use for each field
      * @param   \stdClass $result The result of the get_records_sql
      * @param   \stdClass $expected The expected output
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('extract_from_result_provider')]
     public function test_extract_fields_from_result(
         array $fieldlist,
         string $primarykey,
@@ -185,8 +183,6 @@ final class dml_table_test extends \database_driver_testcase {
     /**
      * Ensure that \core\dml\table::get_from_sql() works as expected.
      *
-     * @dataProvider get_field_select_provider
-     * @covers ::get_from_sql
      * @param   string      $tablename The name of the table
      * @param   array       $fieldlist The list of fields
      * @param   string      $primarykey The name of the primary key
@@ -194,6 +190,7 @@ final class dml_table_test extends \database_driver_testcase {
      * @param   string      $tablealias The table AS alias name
      * @param   string      $expected The expected SQL
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_field_select_provider')]
     public function test_get_from_sql(
         string $tablename,
         array $fieldlist,

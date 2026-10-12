@@ -24,8 +24,8 @@ use enrol_lti\local\ltiadvantage\entity\application_registration;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\repository\context_repository
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\repository\context_repository::class)]
 final class context_repository_test extends \advanced_testcase {
     /**
      * Helper to create test context objects for use with the repository tests.
@@ -82,8 +82,6 @@ final class context_repository_test extends \advanced_testcase {
 
     /**
      * Test saving a new context.
-     *
-     * @covers ::save
      */
     public function test_save_new(): void {
         $this->resetAfterTest();
@@ -98,8 +96,6 @@ final class context_repository_test extends \advanced_testcase {
 
     /**
      * Test saving an existing context.
-     *
-     * @covers ::save
      */
     public function test_save_existing(): void {
         $this->resetAfterTest();
@@ -122,8 +118,6 @@ final class context_repository_test extends \advanced_testcase {
 
     /**
      * Test trying to save two contexts with the same id for the same deployment.
-     *
-     * @covers ::save
      */
     public function test_save_unique_constraints_not_met(): void {
         $this->resetAfterTest();
@@ -140,8 +134,6 @@ final class context_repository_test extends \advanced_testcase {
 
     /**
      * Test existence of a context within the repository.
-     *
-     * @covers ::exists
      */
     public function test_exists(): void {
         $this->resetAfterTest();
@@ -155,8 +147,6 @@ final class context_repository_test extends \advanced_testcase {
 
     /**
      * Test finding a context in the repository.
-     *
-     * @covers ::find
      */
     public function test_find(): void {
         $this->resetAfterTest();
@@ -172,8 +162,6 @@ final class context_repository_test extends \advanced_testcase {
 
     /**
      * Test finding a context by contextid within the deployment.
-     *
-     * @covers ::find_by_contextid
      */
     public function test_find_by_contextid(): void {
         $this->resetAfterTest();
@@ -190,8 +178,6 @@ final class context_repository_test extends \advanced_testcase {
 
     /**
      * Test deleting a context from the repository.
-     *
-     * @covers ::delete
      */
     public function test_delete(): void {
         $this->resetAfterTest();
@@ -208,8 +194,6 @@ final class context_repository_test extends \advanced_testcase {
 
     /**
      * Test deleting a context from the repository, by deployment.
-     *
-     * @covers ::delete_by_deployment
      */
     public function test_delete_by_deployment(): void {
         $this->resetAfterTest();

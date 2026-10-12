@@ -28,8 +28,8 @@ require_once($CFG->dirroot . '/question/bank/managecategories/tests/manage_categ
  * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qbank_managecategories\question_categories
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_managecategories\question_categories::class)]
 final class question_categories_test extends manage_category_test_base {
     /**
      * Test creation of an ordered tree of categories in the constructor.

@@ -34,14 +34,12 @@ use \core_privacy\local\request\contextlist;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_privacy\local\request\contextlist
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_privacy\local\request\contextlist::class)]
 final class contextlist_test extends advanced_testcase {
 
     /**
      * Ensure that valid SQL results in the relevant contexts being added.
-     *
-     * @covers ::add_from_sql
      */
     public function test_add_from_sql(): void {
         global $DB;
@@ -58,8 +56,6 @@ final class contextlist_test extends advanced_testcase {
 
     /**
      * Ensure that valid system context id is added.
-     *
-     * @covers ::add_system_context
      */
     public function test_add_system_context(): void {
         $cl = new contextlist();
@@ -74,8 +70,6 @@ final class contextlist_test extends advanced_testcase {
 
     /**
      * Ensure that a valid user context id is added.
-     *
-     * @covers ::add_user_context
      */
     public function test_add_user_context(): void {
         $this->resetAfterTest();
@@ -95,8 +89,6 @@ final class contextlist_test extends advanced_testcase {
 
     /**
      * Ensure that valid user contexts are added.
-     *
-     * @covers ::add_user_contexts
      */
     public function test_add_user_contexts(): void {
         $this->resetAfterTest();
@@ -118,11 +110,10 @@ final class contextlist_test extends advanced_testcase {
     /**
      * Test {@link \core_privacy\local\request\contextlist::test_guess_id_field_from_sql()} implementation.
      *
-     * @dataProvider data_guess_id_field_from_sql
      * @param string $sql Input SQL we try to extract the context id field name from.
      * @param string $expected Expected detected value.
-     * @covers ::guess_id_field_from_sql
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_guess_id_field_from_sql')]
     public function test_guess_id_field_from_sql($sql, $expected): void {
 
         $rc = new \ReflectionClass(contextlist::class);

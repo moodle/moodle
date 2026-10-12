@@ -42,6 +42,8 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_controller::class, 'get_copy')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_controller::class, '__construct')]
 final class controller_test extends \advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
@@ -74,8 +76,6 @@ final class controller_test extends \advanced_testcase {
 
     /**
      * Test get_copy
-     *
-     * @covers \restore_controller::get_copy
      */
     public function test_restore_controller_get_copy(): void {
         $copydata = (object)["some" => "copydata"];
@@ -87,8 +87,6 @@ final class controller_test extends \advanced_testcase {
 
     /**
      * Test instantiating a restore controller for a course copy without providing copy data.
-     *
-     * @covers \restore_controller::__construct
      */
     public function test_restore_controller_copy_without_copydata(): void {
         $this->expectException(\restore_controller_exception::class);

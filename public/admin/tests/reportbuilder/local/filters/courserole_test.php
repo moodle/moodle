@@ -26,10 +26,10 @@ use core_reportbuilder\local\report\filter;
  * Unit tests for course role report filter
  *
  * @package     core_admin
- * @covers      \core_admin\reportbuilder\local\filters\courserole
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_admin\reportbuilder\local\filters\courserole::class)]
 final class courserole_test extends advanced_testcase {
 
     /**
@@ -58,9 +58,8 @@ final class courserole_test extends advanced_testcase {
      * @param string $categoryname
      * @param string $course
      * @param string[] $expectedusers
-     *
-     * @dataProvider get_sql_filter_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_provider')]
     public function test_get_sql_filter(
         string $rolename,
         string $categoryname,

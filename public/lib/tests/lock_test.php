@@ -25,10 +25,10 @@ use core\exception\coding_exception;
  * @category   test
  * @copyright  2013 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\lock\db_record_lock_factory
- * @covers \core\lock\file_lock_factory
- * @covers \core\lock\lock
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\lock\db_record_lock_factory::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\lock\file_lock_factory::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\lock\lock::class)]
 final class lock_test extends \advanced_testcase {
 
     /**

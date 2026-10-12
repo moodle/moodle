@@ -37,11 +37,10 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_calculated::class)]
 final class question_test extends \advanced_testcase {
     /**
      * Test is complete response
-     *
-     * @covers \qtype_calculated
      */
     public function test_is_complete_response(): void {
         $question = \test_question_maker::make_question('calculated');
@@ -54,8 +53,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test is gradable response
-     *
-     * @covers \qtype_calculated
      */
     public function test_is_gradable_response(): void {
         $question = \test_question_maker::make_question('calculated');
@@ -68,8 +65,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test grading
-     *
-     * @covers \qtype_calculated
      */
     public function test_grading(): void {
         $question = \test_question_maker::make_question('calculated');
@@ -84,8 +79,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test get correct response
-     *
-     * @covers \qtype_calculated
      */
     public function test_get_correct_response(): void {
         // Testing with 3.0 + 0.1416.
@@ -127,8 +120,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test get question summary
-     *
-     * @covers \qtype_calculated
      */
     public function test_get_question_summary(): void {
         $question = \test_question_maker::make_question('calculated');
@@ -141,8 +132,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test summarise response
-     *
-     * @covers \qtype_calculated
      */
     public function test_summarise_response(): void {
         $question = \test_question_maker::make_question('calculated');
@@ -154,8 +143,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test classify response
-     *
-     * @covers \qtype_calculated
      */
     public function test_classify_response(): void {
         $question = \test_question_maker::make_question('calculated');
@@ -178,8 +165,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test classify response no star
-     *
-     * @covers \qtype_calculated
      */
     public function test_classify_response_no_star(): void {
         $question = \test_question_maker::make_question('calculated');
@@ -203,8 +188,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test get variants selection seed q not synchronised
-     *
-     * @covers \qtype_calculated
      */
     public function test_get_variants_selection_seed_q_not_synchronised(): void {
         $question = \test_question_maker::make_question('calculated');
@@ -213,8 +196,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test get variants selection seed q synchronised datasets not
-     *
-     * @covers \qtype_calculated
      */
     public function test_get_variants_selection_seed_q_synchronised_datasets_not(): void {
         $question = \test_question_maker::make_question('calculated');
@@ -224,8 +205,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test get variants selection seed q synchronised
-     *
-     * @covers \qtype_calculated
      */
     public function test_get_variants_selection_seed_q_synchronised(): void {
         $question = \test_question_maker::make_question('calculated');
@@ -237,8 +216,6 @@ final class question_test extends \advanced_testcase {
 
     /**
      * Test get question definition for external rendering
-     *
-     * @covers \qtype_calculated
      */
     public function test_get_question_definition_for_external_rendering(): void {
         $this->resetAfterTest();
@@ -262,7 +239,6 @@ final class question_test extends \advanced_testcase {
      * @return void
      * @throws \coding_exception
      * @throws \dml_exception
-     * @covers \qtype_calculated
      */
     public function test_grading_of_negative_responses(): void {
         global $DB;

@@ -27,10 +27,10 @@ use tiny_premium\manager;
  * Unit tests for the tiny_premium\external get_api_key class.
  *
  * @package     tiny_premium
- * @covers      \tiny_premium\external\get_api_key
  * @copyright   2026 Matt Porritt <matt.porritt@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tiny_premium\external\get_api_key::class)]
 final class get_api_key_test extends advanced_testcase {
     /**
      * Basic setup for tests.
@@ -49,10 +49,10 @@ final class get_api_key_test extends advanced_testcase {
      * the manager::PACKAGE_SELF_HOSTED int constant, or self-hosted mode will
      * never be detected and the function will always report usecloud = true.
      *
-     * @dataProvider execute_provider
      * @param int $pluginsource The tiny_premium/plugin_source config value to set.
      * @param bool $expectedusecloud The expected usecloud value in the response.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_provider')]
     public function test_execute(int $pluginsource, bool $expectedusecloud): void {
         set_config('apikey', 'abc123', 'tiny_premium');
         set_config('plugin_source', $pluginsource, 'tiny_premium');

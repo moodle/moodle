@@ -61,10 +61,10 @@ final class gradeitems_test extends advanced_testcase {
     /**
      * Ensure that the correct items are identified by is_advancedgrading_itemname.
      *
-     * @dataProvider is_advancedgrading_itemname_provider
      * @param string $itemname
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_advancedgrading_itemname_provider')]
     public function test_is_advancedgrading_itemname(string $itemname, bool $expected): void {
         $this->assertEquals(
             $expected,

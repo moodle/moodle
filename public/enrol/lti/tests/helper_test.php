@@ -471,10 +471,10 @@ final class helper_test extends \advanced_testcase {
 
     /**
      * Test set_xpath.
-     * @dataProvider set_xpath_provider
      * @param array $parameters A hash of parameters represented by a heirarchy of xpath expressions
      * @param string $expected The name of the fixture file containing the expected result.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_xpath_provider')]
     public function test_set_xpath($parameters, $expected): void {
         $helper = new \ReflectionClass('enrol_lti\\helper');
         $function = $helper->getMethod('set_xpath');

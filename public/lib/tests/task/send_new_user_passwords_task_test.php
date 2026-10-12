@@ -23,11 +23,11 @@ namespace core\task;
  *
  * @package     core
  * @category    test
- * @covers      \core\task\send_new_user_passwords_task
  * @copyright   2025 Moodle Pty Ltd <support@moodle.com>
  * @author      2025 Tasio Bertomeu Gomez <tasio.bertomeu@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\task\send_new_user_passwords_task::class)]
 final class send_new_user_passwords_task_test extends \advanced_testcase {
     /**
      * Validate the content of the email sent to new users

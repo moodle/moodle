@@ -22,12 +22,12 @@ use core_badges\png_metadata_handler;
  * Unit tests for PNG metadata handler
  *
  * @package    core_badges
- * @covers     \core_badges\png_metadata_handler
  * @copyright  2025 Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     Dai Nguyen Trong <ngtrdai@hotmail.com>
  * @author     Sara Arjona <sara@moodle.com>
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\png_metadata_handler::class)]
 final class png_metadata_handler_test extends \advanced_testcase {
 
     /**
@@ -80,11 +80,11 @@ final class png_metadata_handler_test extends \advanced_testcase {
     /**
      * Test add_chunks method with valid chunks.
      *
-     * @dataProvider add_chunks_provider
      * @param string $type The chunk type
      * @param string $key The key to add
      * @param string|null $value The value to add
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_chunks_provider')]
     public function test_add_chunks(string $type, string $key, ?string $value = null): void {
         $this->resetAfterTest();
 

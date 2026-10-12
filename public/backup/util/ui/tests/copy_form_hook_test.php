@@ -28,11 +28,10 @@ use core_backup\output\copy_form;
  * @copyright 2024 Monash University (https://www.monash.edu)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_backup\output\copy_form::class, 'definition')]
 final class copy_form_hook_test extends advanced_testcase {
     /**
      * Test the after_copy_form_definition hook.
-     *
-     * @covers \core_backup\output\copy_form::definition
      */
     public function test_copy_form_hook(): void {
         // Load the callback classes.

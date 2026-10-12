@@ -34,8 +34,8 @@ use core_course\local\repository\content_item_readonly_repository;
  *
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_course\local\service\content_item_service
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_course\local\service\content_item_service::class)]
 final class services_content_item_service_test extends \advanced_testcase {
 
     /**

@@ -77,11 +77,11 @@ final class provider_test extends \core\tests\plugin_checks_testcase {
     /**
      * Test that the specified null_provider works as expected.
      *
-     * @group        plugin_checks
-     * @dataProvider null_provider_provider
      * @param   string  $component The name of the component.
      * @param   string  $classname The name of the class for privacy
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('null_provider_provider')]
+    #[\PHPUnit\Framework\Attributes\Group('plugin_checks')]
     public function test_null_provider($component, $classname): void {
         $reason = $classname::get_reason();
         $this->assertIsString($reason);
@@ -106,11 +106,11 @@ final class provider_test extends \core\tests\plugin_checks_testcase {
     /**
      * Test that the specified metadata_provider works as expected.
      *
-     * @group        plugin_checks
-     * @dataProvider metadata_provider_provider
      * @param   string  $component The name of the component.
      * @param   string  $classname The name of the class for privacy
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('metadata_provider_provider')]
+    #[\PHPUnit\Framework\Attributes\Group('plugin_checks')]
     public function test_metadata_provider($component, $classname): void {
         global $DB;
 
@@ -166,11 +166,11 @@ final class provider_test extends \core\tests\plugin_checks_testcase {
     /**
      * Test that all providers implement some form of compliant provider.
      *
-     * @group        plugin_checks
-     * @dataProvider get_component_list
      * @param string $component frankenstyle component name, e.g. 'mod_assign'
      * @param string $classname the fully qualified provider classname
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_component_list')]
+    #[\PHPUnit\Framework\Attributes\Group('plugin_checks')]
     public function test_all_providers_compliant($component, $classname): void {
         $manager = new manager();
         $this->assertTrue($manager->component_is_compliant($component));
@@ -179,10 +179,10 @@ final class provider_test extends \core\tests\plugin_checks_testcase {
     /**
      * Ensure that providers do not throw an error when processing a deleted user.
      *
-     * @group           plugin_checks
-     * @dataProvider    is_user_data_provider
      * @param   string  $component
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_user_data_provider')]
+    #[\PHPUnit\Framework\Attributes\Group('plugin_checks')]
     public function test_userdata_provider_implements_userlist($component): void {
         $classname = manager::get_provider_classname_for_component($component);
         $this->assertTrue(is_subclass_of($classname, \core_privacy\local\request\core_userlist_provider::class));
@@ -268,12 +268,12 @@ final class provider_test extends \core\tests\plugin_checks_testcase {
     /**
      * Test that all tables with user fields are covered by metadata providers
      *
-     * @group        plugin_checks
-     * @dataProvider get_component_list
-     * @coversNothing
      * @param string $component frankenstyle component name, e.g. 'mod_assign'
      * @param string $classname the fully qualified provider classname
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_component_list')]
+    #[\PHPUnit\Framework\Attributes\Group('plugin_checks')]
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_table_coverage(string $component, string $classname): void {
         global $DB;
         $dbman = $DB->get_manager(); // Load DDL classes.

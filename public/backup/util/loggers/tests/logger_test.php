@@ -55,6 +55,7 @@ require_once($CFG->dirroot . '/backup/util/loggers/file_logger.class.php');
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\file_logger::class)]
 final class logger_test extends \basic_testcase {
 
     /**
@@ -363,8 +364,6 @@ final class logger_test extends \basic_testcase {
 
     /**
      * test file_logger relative path serialization
-     *
-     * @covers \file_logger
      */
     public function test_file_logger_relative_path(): void {
         // Instantiate with relative path, verify file created in backuptempdir.

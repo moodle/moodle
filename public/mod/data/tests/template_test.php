@@ -27,8 +27,8 @@ use stdClass;
  * @category   test
  * @copyright  2022 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_data\template
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\template::class)]
 final class template_test extends \advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
@@ -41,8 +41,6 @@ final class template_test extends \advanced_testcase {
     /**
      * Test for static create methods.
      *
-     * @covers ::parse_entries
-     * @dataProvider parse_entries_provider
      * @param string $templatecontent the template string
      * @param string $expected expected output
      * @param string $rolename the user rolename
@@ -53,6 +51,7 @@ final class template_test extends \advanced_testcase {
      * @param array $options extra parser options
      * @param bool $otherauthor if the entry is from another user
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('parse_entries_provider')]
     public function test_parse_entries(
         string $templatecontent,
         string $expected,
@@ -842,12 +841,11 @@ final class template_test extends \advanced_testcase {
     /**
      * Test parse add entry template parsing.
      *
-     * @covers ::parse_add_entry
-     * @dataProvider parse_add_entry_provider
      * @param string $templatecontent the template string
      * @param string $expected expected output
      * @param bool $newentry if it is a new entry or editing and existing one
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('parse_add_entry_provider')]
     public function test_parse_add_entry(
         string $templatecontent,
         string $expected,

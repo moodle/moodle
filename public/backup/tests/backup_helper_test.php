@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright  2025 ISB Bayern
  * @author     Dr. Peter Mayer
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \backup_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_helper::class)]
 final class backup_helper_test extends \advanced_testcase {
     /**
      * Data provider for test_is_async_pending_for_course.
@@ -125,13 +125,13 @@ final class backup_helper_test extends \advanced_testcase {
     /**
      * Test is_async_pending_for_course with various scenarios.
      *
-     * @dataProvider is_async_pending_for_course_provider
      * @param string $type The type of backup/restore operation
      * @param string $operation The operation ('backup' or 'restore')
      * @param string $itemtype The item type ('course', 'section' or 'activity')
      * @param int $status The backup controller status
      * @param bool $expected Expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_async_pending_for_course_provider')]
     public function test_is_async_pending_for_course(
         string $type,
         string $operation,

@@ -45,6 +45,10 @@ require_once($CFG->dirroot . '/repository/lib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[CoversFunction('file_save_draft_area_files')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('file_get_all_files_in_draftarea')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('file_prepare_standard_editor')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('readfile_accel')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\curl::class, 'removeopt')]
 final class filelib_test extends \advanced_testcase {
     public function test_format_postdata_for_curlcall(): void {
 
@@ -1917,7 +1921,6 @@ EOF;
 
     /**
      * Test that zip files in the draftarea are returned.
-     * @covers ::file_get_all_files_in_draftarea
      */
     public function test_file_get_all_files_in_draftarea_zip_files(): void {
         $this->resetAfterTest();
@@ -2053,8 +2056,6 @@ EOF;
 
     /**
      * Test text cleaning when preparing text editor data.
-     *
-     * @covers ::file_prepare_standard_editor
      */
     public function test_file_prepare_standard_editor_clean_text(): void {
         $text = "lala <object>xx</object>";
@@ -2133,10 +2134,10 @@ EOF;
     /**
      * Tests for file_get_typegroup to check that both arrays, and string values are accepted.
      *
-     * @dataProvider file_get_typegroup_provider
      * @param string|array $group
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('file_get_typegroup_provider')]
     public function test_file_get_typegroup(
         string|array $group,
         string $expected,
@@ -2178,8 +2179,6 @@ EOF;
      * The CLI script simulates a non-empty output buffer, calls the readfile_accel(), and
      * prints any debugging output. The test then captures that output and asserts that the
      * correct debugging message was generated.
-     *
-     * @covers ::readfile_accel
      */
     public function test_readfile_accel_with_path_and_stored_file(): void {
         $this->resetAfterTest();
@@ -2218,8 +2217,6 @@ EOF;
 
     /**
      * Test curl removeopt method.
-     *
-     * @covers \curl::removeopt
      */
     public function test_curl_removeopt(): void {
         $curl = new testable_curl();

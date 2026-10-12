@@ -28,11 +28,11 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests for tags report filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\base
- * @covers      \core_reportbuilder\local\filters\tags
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\tags::class)]
 final class tags_test extends advanced_testcase {
 
     /**
@@ -58,9 +58,8 @@ final class tags_test extends advanced_testcase {
      * @param int $operator
      * @param string|null $tagname
      * @param array $expectedcoursenames
-     *
-     * @dataProvider get_sql_filter_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_provider')]
     public function test_get_sql_filter(int $operator, ?string $tagname, array $expectedcoursenames): void {
         global $DB;
 
@@ -130,9 +129,8 @@ final class tags_test extends advanced_testcase {
      * @param int $operator
      * @param string|null $tagname
      * @param array $expectedreportnames
-     *
-     * @dataProvider get_sql_filter_component_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_component_provider')]
     public function test_get_sql_filter_component(int $operator, ?string $tagname, array $expectedreportnames): void {
         global $DB;
 

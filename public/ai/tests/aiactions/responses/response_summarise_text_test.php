@@ -24,8 +24,8 @@ use core_ai\aiactions\responses\response_summarise_text;
  * @package    core_ai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\aiactions\responses\response_summarise_text
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_ai\aiactions\responses\response_summarise_text::class)]
 final class response_summarise_text_test extends \advanced_testcase {
     /**
      * Test get_basename.

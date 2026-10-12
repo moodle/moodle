@@ -32,10 +32,10 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  * Unit tests for the drag-and-drop words into sentences question definition class.
  *
  * @package   qtype_ddwtos
- * @covers    \qtype_ddwtos
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ddwtos::class)]
 final class question_type_test extends \question_testcase {
     /** @var qtype_ddwtos instance of the question type class to test. */
     protected $qtype;

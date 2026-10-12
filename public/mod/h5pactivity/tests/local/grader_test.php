@@ -77,11 +77,11 @@ final class grader_test extends \advanced_testcase {
     /**
      * Test for grade item update.
      *
-     * @dataProvider grade_item_update_data
      * @param int $newgrade new activity grade
      * @param bool $reset if has to reset grades
      * @param string $idnumber the new idnumber
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('grade_item_update_data')]
     public function test_grade_item_update(int $newgrade, bool $reset, string $idnumber): void {
 
         $this->resetAfterTest();
@@ -193,12 +193,12 @@ final class grader_test extends \advanced_testcase {
     /**
      * Test for grade update.
      *
-     * @dataProvider update_grades_data
      * @param int $newgrade the new activity grade
      * @param bool $all if has to be applied to all students or just to one
      * @param int $completion 1 all student have the activity completed, 0 one have incompleted
      * @param array $results expected results (user1 grade, user2 grade)
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('update_grades_data')]
     public function test_update_grades(int $newgrade, bool $all, int $completion, array $results): void {
 
         $this->resetAfterTest();

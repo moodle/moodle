@@ -30,8 +30,8 @@ require_once($CFG->dirroot . '/question/type/ordering/classes/privacy/provider.p
  * @package    qtype_ordering
  * @copyright  2024 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \qtype_ordering\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ordering\privacy\provider::class)]
 final class provider_test extends \core_privacy\tests\provider_testcase {
     public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('qtype_ordering');
@@ -50,12 +50,11 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test the export_user_preferences given different inputs
-     * @dataProvider user_preference_provider
-
      * @param string $name The name of the user preference to get/set
      * @param string $value The value stored in the database
      * @param string $expected The expected transformed value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_preference_provider')]
     public function test_export_user_preferences($name, $value, $expected): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();

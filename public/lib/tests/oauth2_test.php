@@ -29,8 +29,12 @@ use \core\oauth2\user_field_mapping;
  * @package    core
  * @copyright  2017 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
- * @covers \core\oauth2\api
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\oauth2\api::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\oauth2\user_field_mapping::class, 'get_internalfield_list')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\oauth2\user_field_mapping::class, 'get_internalfields')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_profile_field_list')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_profile_field_names')]
 final class oauth2_test extends \advanced_testcase {
 
     /**
@@ -142,10 +146,10 @@ final class oauth2_test extends \advanced_testcase {
     /**
      * Tests we can get a logged in oauth client for a system account.
      *
-     * @dataProvider system_oauth_client_provider
      * @param \stdClass $responsedata The response data to be mocked.
      * @param int $expiresin The expected expiration time.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('system_oauth_client_provider')]
     public function test_get_system_oauth_client($responsedata, $expiresin): void {
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -254,7 +258,6 @@ final class oauth2_test extends \advanced_testcase {
 
     /**
      * Test endpoints creation for issuers.
-     * @dataProvider create_endpoints_for_standard_issuer_provider
      *
      * @param string $type Issuer type to create.
      * @param string|null $discoveryurl Expected discovery URL or null if this endpoint doesn't exist.
@@ -262,6 +265,7 @@ final class oauth2_test extends \advanced_testcase {
      * @param string|null $baseurl The service URL (mandatory parameter for some issuers, such as NextCloud or IMS OBv2.1).
      * @param string|null $expectedexception Name of the expected expection or null if no exception will be thrown.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_endpoints_for_standard_issuer_provider')]
     public function test_create_endpoints_for_standard_issuer(string $type, ?string $discoveryurl = null,
         bool $hasmappingfields = true, ?string $baseurl = null, ?string $expectedexception = null): void {
 
@@ -499,11 +503,10 @@ final class oauth2_test extends \advanced_testcase {
     /**
      * Test getting the list of internal fields.
      *
-     * @dataProvider create_custom_profile_fields
-     * @covers \core\oauth2\user_field_mapping::get_internalfield_list
      * @param array $given Categories and profile fields.
      * @param array $expected Expected value.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_custom_profile_fields')]
     public function test_get_internalfield_list(array $given, array $expected): void {
         $this->resetAfterTest();
         self::generate_custom_profile_fields($given);
@@ -526,11 +529,10 @@ final class oauth2_test extends \advanced_testcase {
     /**
      * Test getting the list of internal fields with flat array.
      *
-     * @dataProvider create_custom_profile_fields
-     * @covers \core\oauth2\user_field_mapping::get_internalfields
      * @param array $given Categories and profile fields.
      * @param array $expected Expected value.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_custom_profile_fields')]
     public function test_get_internalfields(array $given, array $expected): void {
         $this->resetAfterTest();
         self::generate_custom_profile_fields($given);
@@ -546,8 +548,6 @@ final class oauth2_test extends \advanced_testcase {
 
     /**
      * Test getting the list of empty external/custom profile fields.
-     *
-     * @covers \core\oauth2\user_field_mapping::get_internalfields
      */
     public function test_get_empty_internalfield_list(): void {
 
@@ -565,11 +565,10 @@ final class oauth2_test extends \advanced_testcase {
     /**
      * Test getting Return the list of profile fields.
      *
-     * @dataProvider create_custom_profile_fields
-     * @covers ::get_profile_field_list
      * @param array $given Categories and profile fields.
      * @param array $expected Expected value.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_custom_profile_fields')]
     public function test_get_profile_field_list(array $given, array $expected): void {
         $this->resetAfterTest();
         self::generate_custom_profile_fields($given);
@@ -587,11 +586,10 @@ final class oauth2_test extends \advanced_testcase {
     /**
      * Test getting the list of valid custom profile user fields.
      *
-     * @dataProvider create_custom_profile_fields
-     * @covers ::get_profile_field_names
      * @param array $given Categories and profile fields.
      * @param array $expected Expected value.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_custom_profile_fields')]
     public function test_get_profile_field_names(array $given, array $expected): void {
         $this->resetAfterTest();
         self::generate_custom_profile_fields($given);

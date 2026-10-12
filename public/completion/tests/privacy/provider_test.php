@@ -26,10 +26,10 @@ require_once($CFG->dirroot . '/completion/tests/fixtures/completion_creation.php
  *
  * @package     core_completion
  * @category    test
- * @covers      \core_completion\privacy\provider
  * @copyright   2018 Adrian Greeve <adriangreeve.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_completion\privacy\provider::class)]
 final class provider_test extends \core_privacy\tests\provider_testcase {
 
     use \completion_creation;

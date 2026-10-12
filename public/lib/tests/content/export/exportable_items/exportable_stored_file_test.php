@@ -32,8 +32,8 @@ use stored_file;
  * @category    test
  * @copyright   2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \core\content\export\exportable_items\exportable_stored_file
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\content\export\exportable_items\exportable_stored_file::class)]
 final class exportable_stored_file_test extends advanced_testcase {
 
     /**

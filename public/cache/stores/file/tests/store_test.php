@@ -33,8 +33,8 @@ require_once($CFG->dirroot.'/cache/stores/file/lib.php');
  * @package    cachestore_file
  * @copyright  2013 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \cachestore_file
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\cachestore_file::class)]
 final class store_test extends \cachestore_tests {
     /**
      * Returns the file class name
@@ -69,10 +69,10 @@ final class store_test extends \cachestore_tests {
     /**
      * Test get and set function correctly with all combinations of serializer.
      *
-     * @dataProvider getset_serialization_test_provider
      * @param string $name
      * @param string $serializer
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getset_serialization_test_provider')]
     public function test_getset_serialization(string $name, string $serializer): void {
         $definition = definition::load_adhoc(store::MODE_APPLICATION, 'cachestore_file', 'phpunit_test');
         $store = new \cachestore_file('Test', ['serializer' => $serializer]);

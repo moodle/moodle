@@ -24,11 +24,11 @@ use advanced_testcase;
  * Unit tests for the \tiny_aiplacement\plugininfo class.
  *
  * @package     tiny_aiplacement
- * @covers      \tiny_aiplacement\plugininfo::is_enabled_for_external
- * @covers      \tiny_aiplacement\plugininfo::get_plugin_configuration_for_external
  * @copyright   2025 Moodle Pty Ltd
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tiny_aiplacement\plugininfo::class, 'is_enabled_for_external')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\tiny_aiplacement\plugininfo::class, 'get_plugin_configuration_for_external')]
 final class plugininfo_test extends advanced_testcase {
 
     /**
@@ -62,13 +62,13 @@ final class plugininfo_test extends advanced_testcase {
     /**
      * Test the is_enabled_for_external and get_plugin_configuration_for_external methods.
      *
-     * @dataProvider for_external_provider
      * @param ?string $role Role name to assign to the user. If null, no role is assigned.
      * @param bool $enabled True if the aiplacement_editor must be enabled.
      * @param bool $expectedenabled Expected result for is_enabled_for_external.
      * @param array $expectedconfiguration Expected result for get_plugin_configuration_for_external.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('for_external_provider')]
     public function test_for_external(?string $role, bool $enabled, bool $expectedenabled, array $expectedconfiguration): void {
         global $CFG;
 

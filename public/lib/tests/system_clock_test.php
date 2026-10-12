@@ -23,8 +23,8 @@ namespace core;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\system_clock
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\system_clock::class)]
 final class system_clock_test extends \advanced_testcase {
     /**
      * Test that the now method returns a DateTimeImmutable object.
@@ -52,9 +52,9 @@ final class system_clock_test extends \advanced_testcase {
     /**
      * Test that the now method returns a DateTimeImmutable object in the server timezone.
      *
-     * @dataProvider timezone_provider
      * @param string $timezone
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('timezone_provider')]
     public function test_now_timezone(string $timezone): void {
         global $CFG;
         $this->resetAfterTest();

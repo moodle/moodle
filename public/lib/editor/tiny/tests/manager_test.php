@@ -24,17 +24,17 @@ use advanced_testcase;
  * Unit tests for the editor_tiny manager class.
  *
  * @package     editor_tiny
- * @covers      \editor_tiny\manager
  * @copyright   2026 Matt Porritt <matt.porritt@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\editor_tiny\manager::class)]
 final class manager_test extends advanced_testcase {
     /**
      * Test that the accordion and advlist plugins are present in the enabled plugin configuration.
      *
-     * @dataProvider bundled_plugins_provider
      * @param string $plugin Plugin name expected to be enabled.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('bundled_plugins_provider')]
     public function test_bundled_plugins_are_enabled(string $plugin): void {
         $this->resetAfterTest();
 

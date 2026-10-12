@@ -25,10 +25,10 @@ use core_sms\task\send_sms_task;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_sms\manager
- * @covers \core_sms\message
- * @covers \core_sms\gateway
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_sms\manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_sms\message::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_sms\gateway::class)]
 final class manager_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . "/fixtures/dummy_gateway.php");
@@ -232,11 +232,11 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test that the manager can get gateways for a message.
      *
-     * @dataProvider gateway_priority_provider
      * @param string $recipientnumber
      * @param int $matchcount
      * @param ?string $gw
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('gateway_priority_provider')]
     public function test_get_gateways_for_message(
         string $recipientnumber,
         int $matchcount,

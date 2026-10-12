@@ -31,8 +31,8 @@ use quiz_statistics\tests\statistics_test_trait;
  * @package   quiz_statistics
  * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \quiz_statistics\task\recalculate
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\quiz_statistics\task\recalculate::class)]
 final class recalculate_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
     use statistics_test_trait;
@@ -97,12 +97,12 @@ final class recalculate_test extends \advanced_testcase {
     /**
      * Test that queue_future_run schedules the task at the correct time.
      *
-     * @dataProvider queue_future_run_provider
      * @param int|null $debounce Config value to set, or null to leave as default.
      * @param bool $now Passed directly to queue_future_run().
      * @param bool $expecttask Whether a task should be queued at all.
      * @param int|null $expecteddelay Expected seconds from now for the run time.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('queue_future_run_provider')]
     public function test_queue_future_run(
         ?int $debounce,
         bool $now,
@@ -213,12 +213,12 @@ final class recalculate_test extends \advanced_testcase {
     /**
      * Test that task_due_in returns the correct number of seconds until the task runs.
      *
-     * @dataProvider task_due_in_provider
      * @param int|null $debounce Config value to set, or null to leave as default.
      * @param bool $queuetask Whether to queue a task before calling task_due_in.
      * @param bool $expectnull Whether null is the expected return value.
      * @param int|null $expectedsecs Expected return value in seconds (when a task is queued).
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('task_due_in_provider')]
     public function test_task_due_in(
         ?int $debounce,
         bool $queuetask,

@@ -33,8 +33,8 @@ use Psr\Http\Message\ResponseInterface;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\router\response_handler
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\response_handler::class)]
 final class response_handler_test extends \advanced_testcase {
     public function test_standardise_response_from_response(): void {
         $response = new Response();

@@ -35,6 +35,9 @@ require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest.p
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_courseformat\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\backup_course_structure_step::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_course_structure_step::class)]
 final class restore_test extends \advanced_testcase {
 
     /**
@@ -595,9 +598,6 @@ final class restore_test extends \advanced_testcase {
      * Tests course restore with editor in course format.
      *
      * @author Matthew Hilton
-     * @covers \core_courseformat\base
-     * @covers \backup_course_structure_step
-     * @covers \restore_course_structure_step
      */
     public function test_restore_editor_courseformat(): void {
         $this->resetAfterTest();

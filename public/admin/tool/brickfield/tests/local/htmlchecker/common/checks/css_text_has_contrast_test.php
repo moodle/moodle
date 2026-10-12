@@ -30,8 +30,8 @@ require_once('all_checks.php');
 
 /**
  * Class test_css_text_has_contrast_test
- * @covers \tool_brickfield\local\htmlchecker\brickfield_accessibility
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_brickfield\local\htmlchecker\brickfield_accessibility::class)]
 final class css_text_has_contrast_test extends all_checks {
     /** @var string The check type. */
     protected $checktype = 'css_text_has_contrast';

@@ -47,8 +47,8 @@ require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php')
  * @category   test
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_contentbank\contentbank
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_contentbank\contentbank::class)]
 final class contentbank_test extends advanced_testcase {
 
     /**
@@ -75,12 +75,11 @@ final class contentbank_test extends advanced_testcase {
     /**
      * Tests for get_extension() function.
      *
-     * @dataProvider    get_extension_provider
      * @param   string  $filename    The filename given
      * @param   string   $expected   The extension of the file
      *
-     * @covers ::get_extension
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extension_provider')]
     public function test_get_extension(string $filename, string $expected): void {
         $this->resetAfterTest();
 
@@ -105,13 +104,12 @@ final class contentbank_test extends advanced_testcase {
     /**
      * Tests for get_extension_supporter() function with admin permissions.
      *
-     * @dataProvider    get_extension_supporters_provider
      * @param   array   $supporters   The content type plugin supporters for each extension
      * @param   string  $extension    The extension of the file given
      * @param   string  $expected   The supporter contenttype of the file
      *
-     * @covers ::load_context_supported_extensions
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extension_supporters_provider')]
     public function test_get_extension_supporter_for_admins(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
@@ -129,13 +127,12 @@ final class contentbank_test extends advanced_testcase {
     /**
      * Tests for get_extension_supporter() function with user default permissions.
      *
-     * @dataProvider    get_extension_supporters_provider
      * @param   array   $supporters   The content type plugin supporters for each extension
      * @param   string  $extension    The extension of the file given
      * @param   string  $expected   The supporter contenttype of the file
      *
-     * @covers ::load_context_supported_extensions
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extension_supporters_provider')]
     public function test_get_extension_supporter_for_users(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
@@ -154,13 +151,12 @@ final class contentbank_test extends advanced_testcase {
     /**
      * Tests for get_extension_supporter() function with teacher defaul permissions.
      *
-     * @dataProvider    get_extension_supporters_provider
      * @param   array   $supporters   The content type plugin supporters for each extension
      * @param   string  $extension    The extension of the file given
      * @param   string  $expected   The supporter contenttype of the file
      *
-     * @covers ::load_context_supported_extensions
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extension_supporters_provider')]
     public function test_get_extension_supporter_for_teachers(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
@@ -180,13 +176,12 @@ final class contentbank_test extends advanced_testcase {
     /**
      * Tests for get_extension_supporter() function.
      *
-     * @dataProvider    get_extension_supporters_provider
      * @param   array   $supporters   The content type plugin supporters for each extension
      * @param   string  $extension    The extension of the file given
      * @param   string  $expected   The supporter contenttype of the file
      *
-     * @covers ::get_extension_supporter
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_extension_supporters_provider')]
     public function test_get_extension_supporter(array $supporters, string $extension, string $expected): void {
         $this->resetAfterTest();
 
@@ -201,12 +196,12 @@ final class contentbank_test extends advanced_testcase {
     /**
      * Test the behaviour of search_contents().
      *
-     * @dataProvider search_contents_provider
      * @param  string $search String to search.
      * @param  string $where Context where to search.
      * @param  int $expectedresult Expected result.
      * @param  array $contexts List of contexts where to create content.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('search_contents_provider')]
     public function test_search_contents(?string $search, string $where, int $expectedresult, array $contexts = [],
             ?array $contenttypes = null): void {
         global $DB, $CFG;
@@ -358,8 +353,6 @@ final class contentbank_test extends advanced_testcase {
 
     /**
      * Test create_content_from_file function.
-     *
-     * @covers ::create_content_from_file
      */
     public function test_create_content_from_file(): void {
         global $USER, $CFG;
@@ -392,8 +385,6 @@ final class contentbank_test extends advanced_testcase {
 
     /**
      * Test the behaviour of delete_contents().
-     *
-     * @covers  ::delete_contents
      */
     public function test_delete_contents(): void {
         global $DB;
@@ -441,8 +432,6 @@ final class contentbank_test extends advanced_testcase {
 
     /**
      * Test the behaviour of delete_contents() for empty content bank.
-     *
-     * @covers  ::delete_contents
      */
     public function test_delete_contents_for_empty_contentbank(): void {
 
@@ -464,8 +453,6 @@ final class contentbank_test extends advanced_testcase {
 
     /**
      * Test the behaviour of move_contents().
-     *
-     * @covers  ::move_contents
      */
     public function test_move_contents(): void {
         global $DB;
@@ -497,8 +484,6 @@ final class contentbank_test extends advanced_testcase {
 
     /**
      * Test the behaviour of move_contents() for empty content bank.
-     *
-     * @covers  ::move_contents
      */
     public function test_move_contents_for_empty_contentbank(): void {
 
@@ -543,12 +528,11 @@ final class contentbank_test extends advanced_testcase {
     /**
      * Tests for get_contenttypes_with_capability_feature() function.
      *
-     * @dataProvider    get_contenttypes_with_capability_feature_provider
      * @param   array $contenttypesenabled Content types enabled.
      * @param   array $contenttypescanfeature Content types the user has the permission to use the feature.
      *
-     * @covers ::get_contenttypes_with_capability_feature
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_contenttypes_with_capability_feature_provider')]
     public function test_get_contenttypes_with_capability_feature(array $contenttypesenabled, array $contenttypescanfeature): void {
         $this->resetAfterTest();
 
@@ -610,8 +594,6 @@ final class contentbank_test extends advanced_testcase {
 
     /**
      * Test the behaviour of get_content_from_id()
-     *
-     * @covers  ::get_content_from_id
      */
     public function test_get_content_from_id(): void {
 
@@ -637,8 +619,6 @@ final class contentbank_test extends advanced_testcase {
 
     /**
      * Test the behaviour of is_context_allowed().
-     *
-     * @covers ::is_context_allowed
      */
     public function test_is_context_allowed(): void {
         $this->resetAfterTest();

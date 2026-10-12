@@ -33,8 +33,8 @@ require_once(__DIR__ . '/../lti_advantage_testcase.php');
  * @package enrol_lti
  * @copyright 2023 David Pesce <david.pesce@exputo.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\task\sync_tool_grades
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\task\sync_tool_grades::class)]
 final class sync_tool_grades_test extends \lti_advantage_testcase {
     /**
      * Get a task which has a mocked ags instance injected, meaning no real calls will be made to the platform.
@@ -163,10 +163,9 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
     /**
      * Test the sync grades task works correct when platform responses with given status code.
      *
-     * @covers ::execute
      * @param string $statuscode the response status code with which the job should work correctly
-     * @dataProvider grade_sync_positive_cases
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('grade_sync_positive_cases')]
     public function test_grade_sync_positive_case($statuscode): void {
         $this->resetAfterTest();
 
@@ -212,8 +211,6 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test the sync grades task during several runs and for a series of grade changes.
-     *
-     * @covers ::execute
      */
     public function test_grade_sync_chronological_syncs(): void {
         $this->resetAfterTest();
@@ -311,8 +308,6 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test a grade sync when there are more than one resource link for the resource.
-     *
-     * @covers ::execute
      */
     public function test_grade_sync_multiple_resource_links(): void {
         $this->resetAfterTest();
@@ -384,8 +379,6 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test the grade sync task when the launch data doesn't include the AGS support.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_no_service_endpoint(): void {
         $this->resetAfterTest();
@@ -415,8 +408,6 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test syncing grades when the enrolment instance is disabled.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_disabled_instance(): void {
         $this->resetAfterTest();
@@ -445,8 +436,6 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test the grade sync when the context has been deleted in between launch and when the grade sync task is run.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_deleted_context(): void {
         $this->resetAfterTest();
@@ -482,8 +471,6 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test grade sync when completion is required for the activity before sync takes place.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_completion_required(): void {
         $this->resetAfterTest();
@@ -676,8 +663,6 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test grade sync when the attempt to call the service returns an exception or a bad HTTP response code.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_failed_service_call(): void {
         $this->resetAfterTest();
@@ -738,8 +723,6 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test the sync when only the lineitem URL is provided and when lineitem creation/query isn't expected.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_coupled_lineitem(): void {
         $this->resetAfterTest();
@@ -812,8 +795,6 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test the sync for an activity context when only the lineitems URL is provided and when line item creation/query is expected.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_none_or_many_lineitems_activity_context(): void {
         $this->resetAfterTest();
@@ -889,8 +870,6 @@ final class sync_tool_grades_test extends \lti_advantage_testcase {
 
     /**
      * Test the sync for a course context when only the lineitems URL is provided and when line item creation/query is expected.
-     *
-     * @covers ::execute
      */
     public function test_sync_grades_none_or_many_lineitems_course_context(): void {
         $this->resetAfterTest();

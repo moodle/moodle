@@ -31,11 +31,11 @@ require_once(__DIR__ . '/testcase_helper_trait.php');
  * @package    aiprovider_awsbedrock
  * @copyright  2026 Raquel Ortega <raquel.ortega@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiprovider_awsbedrock\provider
- * @covers     \aiprovider_awsbedrock\process_explain_text
- * @covers     \aiprovider_awsbedrock\abstract_processor
- * @group      aiprovider_awsbedrock
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_awsbedrock\provider::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_awsbedrock\process_explain_text::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiprovider_awsbedrock\abstract_processor::class)]
+#[\PHPUnit\Framework\Attributes\Group('aiprovider_awsbedrock')]
 final class process_explain_text_test extends \advanced_testcase {
     use testcase_helper_trait;
 
@@ -181,10 +181,10 @@ final class process_explain_text_test extends \advanced_testcase {
     /**
      * Test handling of various API errors from AWS Bedrock.
      *
-     * @dataProvider aws_api_error_provider
      * @param AwsException $exception The AWS exception to simulate.
      * @param int $expectedstatus The expected HTTP status code in the error response.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('aws_api_error_provider')]
     public function test_handle_api_error(AwsException $exception, int $expectedstatus): void {
         // Create an instance of the class that processes API errors.
         $processor = new process_explain_text($this->provider, $this->action);

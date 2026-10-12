@@ -94,12 +94,12 @@ final class activity_custom_completion_test extends advanced_testcase {
     /**
      * Test for \core_completion\activity_custom_completion::get_overall_completion_state().
      *
-     * @dataProvider overall_completion_state_provider
      * @param string[] $rules The custom completion rules.
      * @param int[] $rulestates The completion states of these custom completion rules.
      * @param int $invokecount Expected invoke count of get_state().
      * @param int $state The expected overall completion state
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('overall_completion_state_provider')]
     public function test_get_overall_completion_state(array $rules, array $rulestates, int $invokecount, int $state): void {
         $stub = $this->setup_mock([
             'get_available_custom_rules',
@@ -151,11 +151,11 @@ final class activity_custom_completion_test extends advanced_testcase {
     /**
      * Test for validate_rule()
      *
-     * @dataProvider validate_rule_provider
      * @param bool $defined is_defined()'s mocked return value.
      * @param bool $available is_available()'s mocked return value.
      * @param string|null $expectedexception Expected expectation class name.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validate_rule_provider')]
     public function test_validate_rule(bool $defined, bool $available, ?string $expectedexception): void {
         $stub = $this->setup_mock([
             'is_defined',

@@ -27,8 +27,8 @@ use context_course;
  * @category   test
  * @copyright  2021 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \block_badges
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\block_badges::class)]
 final class badges_test extends advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . '/../../moodleblock.class.php');
@@ -38,8 +38,6 @@ final class badges_test extends advanced_testcase {
 
     /**
      * Test the behaviour of can_block_be_added() method.
-     *
-     * @covers ::can_block_be_added
      */
     public function test_can_block_be_added(): void {
         $this->resetAfterTest();

@@ -24,8 +24,8 @@ use core_external\external_api;
  * @package    core_grades
  * @category   external
  * @copyright  2023 Mihail Geshoski <mihail@moodle.com>
- * @covers     \core_grades\external\get_grade_tree
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_grades\external\get_grade_tree::class)]
 final class get_grade_tree_test extends \core_external\tests\externallib_testcase {
     /**
      * Test the return value of the external function.

@@ -25,6 +25,7 @@ namespace factor_token;
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('calculate_expiry_time')]
 final class factor_test extends \advanced_testcase {
 
     /**
@@ -43,7 +44,6 @@ final class factor_test extends \advanced_testcase {
     /**
      * Test calculating expiry time in general
      *
-     * @covers ::calculate_expiry_time
      * @return void
      */
     public function test_calculate_expiry_time_in_general(): void {
@@ -88,10 +88,9 @@ final class factor_test extends \advanced_testcase {
      * value, provided it never goes past raw value expiry time, and when it
      * needs to be 2am, it's 2am on the following morning.
      *
-     * @covers ::calculate_expiry_time
      * @param int $timestamp
-     * @dataProvider timestamp_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('timestamp_provider')]
     public function test_calculate_expiry_time_for_overnight_expiry_with_one_day_expiry($timestamp): void {
         // Setup configuration.
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
@@ -136,10 +135,9 @@ final class factor_test extends \advanced_testcase {
      * value, provided it never goes past raw value expiry time, and when it
      * needs to be 2am, it's 2am on the morning after tomorrow.
      *
-     * @covers ::calculate_expiry_time
      * @param int $timestamp
-     * @dataProvider timestamp_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('timestamp_provider')]
     public function test_calculate_expiry_time_for_overnight_expiry_with_two_day_expiry($timestamp): void {
         // Setup configuration.
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
@@ -186,10 +184,9 @@ final class factor_test extends \advanced_testcase {
     /**
      * This should check if the 3am expiry is pushed back to 2am as expected, but everything else appears as expected
      *
-     * @covers ::calculate_expiry_time
      * @param int $timestamp
-     * @dataProvider timestamp_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('timestamp_provider')]
     public function test_calculate_expiry_time_for_overnight_expiry_with_three_hour_expiry($timestamp): void {
         // Setup configuration.
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
@@ -230,10 +227,9 @@ final class factor_test extends \advanced_testcase {
     /**
      * Only relevant based on the hour padding used, which is currently set to 2 hours (2am).
      *
-     * @covers ::calculate_expiry_time
      * @param int $timestamp
-     * @dataProvider timestamp_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('timestamp_provider')]
     public function test_calculate_expiry_time_for_overnight_expiry_with_an_hour_expiry($timestamp): void {
         // Setup configuration.
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');

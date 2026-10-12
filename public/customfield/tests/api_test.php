@@ -19,12 +19,12 @@ namespace core_customfield;
 /**
  * Functional test for class \core_customfield\api
  *
- * @covers     \core_customfield\api
  * @package    core_customfield
  * @category   test
  * @copyright  2018 Toni Barbera <toni@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_customfield\api::class)]
 final class api_test extends \advanced_testcase {
 
     /**

@@ -26,6 +26,7 @@ use core_role_preset;
  * @copyright 2013 Petr Skoda {@link http://skodak.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_role_preset::class, 'parse_preset')]
 final class preset_test extends \advanced_testcase {
     public function test_xml(): void {
         global $DB;
@@ -79,7 +80,6 @@ final class preset_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers \core_role_preset::parse_preset
      */
     public function test_mixed_levels(): void {
         // The problem here is that we cannot guarantee plugin contexts

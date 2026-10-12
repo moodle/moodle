@@ -24,21 +24,21 @@ namespace core_admin\external;
  * Note: Not all plugins can be ordered, so this test is limited to those which support it.
  *
  * @package     core
- * @covers      \core_admin\external\set_plugin_state
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_admin\external\set_plugin_state::class)]
 final class set_plugin_order_test extends \core_external\tests\externallib_testcase {
     /**
      * Text execute method for editor plugins, which support ordering.
      *
-     * @dataProvider execute_editor_provider
      * @param string $initialstate The initial state of the plugintype
      * @param string $plugin The name of the plugin
      * @param int $direction
      * @param array $neworder
      * @param string $newstate
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_editor_provider')]
     public function test_execute_editors(
         string $initialstate,
         string $plugin,
@@ -147,9 +147,9 @@ final class set_plugin_order_test extends \core_external\tests\externallib_testc
     /**
      * Text execute method for plugins which do not support ordering.
      *
-     * @dataProvider execute_non_orderable_provider
      * @param string $plugin
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_non_orderable_provider')]
     public function test_execute_editors_non_orderable(string $plugin): void {
         $this->resetAfterTest();
         $this->setAdminUser();

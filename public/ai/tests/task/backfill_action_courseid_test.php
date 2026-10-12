@@ -22,8 +22,8 @@ namespace core_ai\task;
  * @package    core_ai
  * @copyright  2026 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\task\backfill_action_courseid
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_ai\task\backfill_action_courseid::class)]
 final class backfill_action_courseid_test extends \advanced_testcase {
     /**
      * Insert a bare ai_action_register row with the given contextid, defaulting courseid to 0

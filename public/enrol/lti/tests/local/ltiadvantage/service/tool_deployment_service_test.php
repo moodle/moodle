@@ -35,8 +35,8 @@ require_once(__DIR__ . '/../lti_advantage_testcase.php');
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\service\tool_deployment_service
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\service\tool_deployment_service::class)]
 final class tool_deployment_service_test extends \lti_advantage_testcase {
     /**
      * Return a pre-existing application_registration object for testing.
@@ -75,8 +75,6 @@ final class tool_deployment_service_test extends \lti_advantage_testcase {
 
     /**
      * Test the use case "As an admin, I can register an application as an LTI consumer (platform)".
-     *
-     * @covers ::add_tool_deployment
      */
     public function test_add_tool_deployment(): void {
         $this->resetAfterTest();
@@ -98,8 +96,6 @@ final class tool_deployment_service_test extends \lti_advantage_testcase {
 
     /**
      * Test trying to add a tool deployment when a registration identified by the specified id cannot be found.
-     *
-     * @covers ::add_tool_deployment
      */
     public function test_add_tool_deployment_registration_missing(): void {
         $this->resetAfterTest();
@@ -118,8 +114,6 @@ final class tool_deployment_service_test extends \lti_advantage_testcase {
 
     /**
      * Test that removal of a deployment removes all associated data.
-     *
-     * @covers ::delete_tool_deployment
      */
     public function test_delete_deployment(): void {
         $this->resetAfterTest();

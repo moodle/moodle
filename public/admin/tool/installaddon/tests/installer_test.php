@@ -34,8 +34,8 @@ require_once(__DIR__ . '/fixtures/testable_installer_without_site_info.php');
  * @category    test
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \tool_installaddon_installer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_installaddon_installer::class)]
 final class installer_test extends \advanced_testcase {
 
     public function test_get_addons_repository_url(): void {

@@ -31,8 +31,8 @@ require(__DIR__ . '/feedback_helper_trait.php');
  * @package    assignfeedback_file
  * @copyright  2016 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \assign_feedback_file
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\assign_feedback_file::class)]
 final class feedback_test extends \advanced_testcase {
     use feedback_helper_trait;
     use mod_assign_test_generator;
@@ -178,7 +178,6 @@ final class feedback_test extends \advanced_testcase {
 
     /**
      * Test feedback is in the mark.
-     * @covers ::save
      */
     public function test_mark_feedback(): void {
         $this->resetAfterTest();

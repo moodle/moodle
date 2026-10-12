@@ -21,10 +21,10 @@ namespace mod_resource;
  *
  * @package    mod_resource
  * @category phpunit
- * @covers \mod_resource_generator
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_resource_generator::class)]
 final class generator_test extends \advanced_testcase {
 
     public function test_generator(): void {

@@ -116,8 +116,8 @@ final class sqlsrv_native_moodle_database_test extends \advanced_testcase {
      *
      * @param string $input The input SQL query
      * @param string $expected The expected resultant query
-     * @dataProvider add_no_lock_to_temp_tables_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_no_lock_to_temp_tables_provider')]
     public function test_add_no_lock_to_temp_tables($input, $expected): void {
         $sqlsrv = new sqlsrv_native_moodle_database();
 
@@ -238,11 +238,11 @@ EOT
     /**
      * Test has_query_order_by
      *
-     * @dataProvider has_query_order_by_provider
      * @param string $sql the query
      * @param string $expectedmainquery the expected main query
      * @param bool $expectedresult the expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('has_query_order_by_provider')]
     public function test_has_query_order_by(string $sql, string $expectedmainquery, bool $expectedresult): void {
         $mainquery = preg_replace('/\(((?>[^()]+)|(?R))*\)/', '()', $sql);
         $this->assertSame($expectedmainquery, $mainquery);

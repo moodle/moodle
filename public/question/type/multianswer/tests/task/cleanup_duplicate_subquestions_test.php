@@ -26,8 +26,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qtype_multianswer\task\cleanup_duplicate_subquestions
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_multianswer\task\cleanup_duplicate_subquestions::class)]
 final class cleanup_duplicate_subquestions_test extends \advanced_testcase {
 
     /**

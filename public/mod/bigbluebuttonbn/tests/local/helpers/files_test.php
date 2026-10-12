@@ -40,9 +40,9 @@ use stored_file;
  * @copyright 2018 - present, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author    Laurent David (laurent@call-learning.fr)
- * @covers \mod_bigbluebuttonbn\local\helpers\files
- * @coversDefaultClass \mod_bigbluebuttonbn\local\helpers\files
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\local\helpers\files::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_bigbluebuttonbn\local\helpers\files::class)]
 final class files_test extends \advanced_testcase {
     use testcase_helper_trait;
 

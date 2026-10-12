@@ -27,11 +27,11 @@ require_once($CFG->dirroot . '/mod/assign/tests/externallib_advanced_testcase.ph
  *
  * @package    mod_assign
  * @category   test
- * @covers     \mod_assign\external\start_submission
  * @author     Andrew Madden <andrewmadden@catalyst-au.net>
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\external\start_submission::class)]
 final class start_submission_test extends \mod_assign\externallib_advanced_testcase {
     /** @var \stdClass $course New course created to hold the assignments */
     protected $course = null;

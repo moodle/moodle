@@ -40,6 +40,8 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('folder_get_recent_mod_activity')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('folder_cm_info_view')]
 final class lib_test extends \advanced_testcase {
 
     /**
@@ -303,13 +305,12 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test Get recent mod activity method.
-     * @covers ::folder_get_recent_mod_activity
-     * @dataProvider folder_get_recent_mod_activity_provider
      *
      * @param int $forcedownload The forcedownload option.
      * @param bool $hascapability if the user has the mod/folder:view capability
      * @param int $count The expected recent activities entries.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('folder_get_recent_mod_activity_provider')]
     public function test_folder_get_recent_mod_activity(int $forcedownload, bool $hascapability, int $count): void {
         global $USER, $DB;
 
@@ -406,7 +407,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test that folder_cm_info_view handles custom data correctly after override_customdata() changes it from object to array.
-     * @covers ::folder_cm_info_view()
      *
      * @return void
      */

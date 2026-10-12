@@ -26,6 +26,7 @@ namespace core;
  * @copyright  2016 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\files\curl_security_helper::class, 'get_resolve_info')]
 final class curl_security_helper_test extends \advanced_testcase {
     /**
      * Test for \core\files\curl_security_helper::url_is_blocked().
@@ -35,8 +36,8 @@ final class curl_security_helper_test extends \advanced_testcase {
      * @param string $blockedhosts the list of blocked hosts.
      * @param string $allowedports the list of allowed ports.
      * @param bool $expected the expected result.
-     * @dataProvider curl_security_url_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('curl_security_url_data_provider')]
     public function test_curl_security_helper_url_is_blocked($dns, $url, $blockedhosts, $allowedports, $expected): void {
         $this->resetAfterTest(true);
         $helper = $this->getMockBuilder('\core\files\curl_security_helper')
@@ -163,8 +164,8 @@ final class curl_security_helper_test extends \advanced_testcase {
      * @param string $blockedhosts the list of blocked hosts.
      * @param string $allowedports the list of allowed ports.
      * @param bool $expected the expected result.
-     * @dataProvider curl_security_settings_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('curl_security_settings_data_provider')]
     public function test_curl_security_helper_is_enabled($blockedhosts, $allowedports, $expected): void {
         $this->resetAfterTest(true);
         $helper = new \core\files\curl_security_helper();
@@ -195,8 +196,8 @@ final class curl_security_helper_test extends \advanced_testcase {
      * @param string $host the host to validate.
      * @param string $blockedhosts the list of blocked hosts.
      * @param bool $expected the expected result.
-     * @dataProvider curl_security_host_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('curl_security_host_data_provider')]
     public function test_curl_security_helper_host_is_blocked($host, $blockedhosts, $expected): void {
         $this->resetAfterTest(true);
         $helper = new \core\files\curl_security_helper();
@@ -256,8 +257,8 @@ final class curl_security_helper_test extends \advanced_testcase {
      * @param int|string $port the port to validate.
      * @param string $allowedports the list of allowed ports.
      * @param bool $expected the expected result.
-     * @dataProvider curl_security_port_data_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('curl_security_port_data_provider')]
     public function test_curl_security_helper_port_is_blocked($port, $allowedports, $expected): void {
         $this->resetAfterTest(true);
         $helper = new \core\files\curl_security_helper();
@@ -308,8 +309,6 @@ final class curl_security_helper_test extends \advanced_testcase {
 
     /**
      * Test for \core\files\curl_security_helper::get_resolve_info().
-     *
-     * @covers \core\files\curl_security_helper::get_resolve_info
      */
     public function test_curl_security_helper_get_resolve_info(): void {
         $helper = new \core\files\curl_security_helper();
@@ -324,8 +323,6 @@ final class curl_security_helper_test extends \advanced_testcase {
 
     /**
      * Test that get_resolve_info() returns an empty array (no DNS pinning) when cURL security is not configured.
-     *
-     * @covers \core\files\curl_security_helper::get_resolve_info
      */
     public function test_curl_security_helper_get_resolve_info_security_disabled(): void {
         $helper = new \core\files\curl_security_helper();

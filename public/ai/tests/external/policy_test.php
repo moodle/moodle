@@ -22,9 +22,9 @@ namespace core_ai\external;
  * @package    core_ai
  * @copyright  2024 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_ai\external\set_policy_status
- * @covers     \core_ai\external\get_policy_status
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_ai\external\set_policy_status::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_ai\external\get_policy_status::class)]
 final class policy_test extends \advanced_testcase {
     /**
      * Test get policy failure.

@@ -22,16 +22,14 @@ namespace enrol_lti\local\ltiadvantage\lib;
  * @package enrol_lti
  * @copyright 2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_lti\local\ltiadvantage\lib\launch_cache_session
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\enrol_lti\local\ltiadvantage\lib\launch_cache_session::class)]
 final class launch_cache_session_test extends \advanced_testcase {
 
     /**
      * Test that the session cache, and in particular distinct object instances, can cache and retrieve launch data.
      *
      * Using different objects simulates the kind of usage we expect: uses across different requests.
-     *
-     * @covers ::cacheLaunchData
      */
     public function test_cache_launch_data(): void {
         $lcs = new launch_cache_session();
@@ -46,8 +44,6 @@ final class launch_cache_session_test extends \advanced_testcase {
      * Test that the session cache, and in particular distinct object instances, can cache and check the nonce data.
      *
      * Using different objects simulates the kind of usage we expect: uses across different requests.
-     *
-     * @covers ::cacheNonce
      */
     public function test_cache_and_check_nonce(): void {
         $lcs = new launch_cache_session();
@@ -63,8 +59,6 @@ final class launch_cache_session_test extends \advanced_testcase {
      * Test that the session cache, and in particular distinct object instances, can purge cached launch data.
      *
      * Using different objects simulates the kind of usage we expect: uses across different requests.
-     *
-     * @covers ::purge
      */
     public function test_purge(): void {
         $lcs = new launch_cache_session();

@@ -30,8 +30,8 @@ use stdClass;
  * @category    test
  * @copyright   2016 Eric Merrill {@link http://www.merrilldigital.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_search\document
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_search\document::class)]
 final class document_test extends \advanced_testcase {
 
     /**
@@ -63,7 +63,6 @@ final class document_test extends \advanced_testcase {
     /**
      * Adding this test here as get_areas_user_accesses process is the same, results just depend on the context level.
      *
-     * @covers ::export_for_template
      * @return void
      */
     public function test_search_user_accesses(): void {
@@ -112,8 +111,6 @@ final class document_test extends \advanced_testcase {
 
     /**
      * Test we can set and get document icon.
-     *
-     * @covers ::set_doc_icon
      */
     public function test_get_and_set_doc_icon(): void {
         $document = $this->getMockBuilder('\core_search\document')
@@ -141,13 +138,12 @@ final class document_test extends \advanced_testcase {
     /**
      * Test the document author visibility depending on the user capabilities.
      *
-     * @covers ::export_for_template
-     * @dataProvider document_author_visibility_provider
      * @param string $rolename the role name
      * @param array $capexceptions the capabilities exceptions
      * @param bool $expected the expected author visibility
      * @param bool $owndocument if the resulting document belongs to the current user
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('document_author_visibility_provider')]
     public function test_document_author_visibility(
         string $rolename = 'editingteacher',
         array $capexceptions = [],

@@ -30,11 +30,11 @@ use stdClass;
  * Unit tests for group concatenation aggregation
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\aggregation\base
- * @covers      \core_reportbuilder\local\aggregation\groupconcat
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\aggregation\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\aggregation\groupconcat::class)]
 final class groupconcat_test extends core_reportbuilder_testcase {
 
     /**

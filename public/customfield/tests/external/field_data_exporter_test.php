@@ -25,10 +25,10 @@ use core_customfield_generator;
  * Unit tests for custom field data exporter
  *
  * @package     core_customfield
- * @covers      \core_customfield\external\field_data_exporter
  * @copyright   2025 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_customfield\external\field_data_exporter::class)]
 final class field_data_exporter_test extends advanced_testcase {
 
     /**

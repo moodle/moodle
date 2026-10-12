@@ -192,7 +192,6 @@ final class questionattempt_with_steps_test extends \advanced_testcase {
     /**
      * Test validate_manual_mark.
      *
-     * @dataProvider validate_manual_mark_cases
      *
      * @param float $minfraction minimum fraction for the question being attempted.
      * @param float $maxfraction maximum fraction for the question being attempted.
@@ -200,6 +199,7 @@ final class questionattempt_with_steps_test extends \advanced_testcase {
      * @param string|null $currentmark submitted mark.
      * @param string $expectederror expected error, if any.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validate_manual_mark_cases')]
     public function test_validate_manual_mark(float $minfraction, float $maxfraction,
             float $maxmark, ?string $currentmark, string $expectederror): void {
         $this->qa->set_min_fraction($minfraction);

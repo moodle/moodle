@@ -29,8 +29,8 @@ use core_cache\definition;
  * @package cachestore_redis
  * @copyright 2021 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \cachestore_redis
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\cachestore_redis::class)]
 final class ttl_test extends \advanced_testcase {
     /** @var \cachestore_redis|null Cache store  */
     protected $store = null;

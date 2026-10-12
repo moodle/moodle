@@ -63,8 +63,8 @@ final class access_test extends \advanced_testcase {
      * @param array $teacheraccess List of teachers' usernames and whether they
      * should be able to access the submitted feedback, for example,
      * ['teacher1' => true, 'teacher2' => false, ...].
-     * @dataProvider response_access_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('response_access_provider')]
     public function test_response_access(int $groupmode, int $anonymous, array $studentgroups, array $teacheraccesses): void {
         global $DB;
 

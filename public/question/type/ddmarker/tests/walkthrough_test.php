@@ -34,10 +34,10 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
  * @package   qtype_ddmarker
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qtype_ddmarker_question
- * @covers \qtype_ddmarker_renderer
- * @covers \question_hint_ddmarker
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ddmarker_question::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\qtype_ddmarker_renderer::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\question_hint_ddmarker::class)]
 final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     /**

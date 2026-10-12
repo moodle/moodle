@@ -64,8 +64,8 @@ final class stats_from_steps_walkthrough_test extends \mod_quiz\tests\attempt_wa
      *
      * @param array $csvdata data read from csv file "questionsXX.csv", "stepsXX.csv" and "resultsXX.csv".
      * // phpcs:ignore moodle.PHPUnit.TestCaseProvider.dataProviderSyntaxMethodNotFound
-     * @dataProvider get_data_for_walkthrough
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_data_for_walkthrough')]
     public function test_walkthrough_from_csv($quizsettings, $csvdata): void {
         $this->create_quiz_simulate_attempts_and_check_results($quizsettings, $csvdata);
 

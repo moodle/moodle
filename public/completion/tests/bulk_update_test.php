@@ -104,11 +104,11 @@ final class bulk_update_test extends \advanced_testcase {
     /**
      * Creates an instance of bulk edit completion form for one activity, validates and saves it
      *
-     * @dataProvider bulk_form_submit_single_provider
      * @param string $modname
      * @param array $submitdata data to use in mock form submit
      * @param array|null $validatedata data to validate the
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('bulk_form_submit_single_provider')]
     public function test_bulk_form_submit_single($modname, $submitdata, $validatedata = null): void {
         global $DB;
 
@@ -219,9 +219,9 @@ final class bulk_update_test extends \advanced_testcase {
     /**
      * Use bulk completion edit for updating multiple modules
      *
-     * @dataProvider bulk_form_submit_multiple_provider
      * @param array $providerdata
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('bulk_form_submit_multiple_provider')]
     public function test_bulk_form_submit_multiple($providerdata): void {
         global $DB;
 

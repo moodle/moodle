@@ -41,6 +41,7 @@ use mod_assign_test_generator;
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\assign::class, 'mod_assign_core_calendar_provide_event_action')]
 final class lib_test extends \advanced_testcase {
 
     // Use the generator helper.
@@ -490,7 +491,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test group submissions.
-     * @covers \assign::mod_assign_core_calendar_provide_event_action
      */
     public function test_assign_core_calendar_provide_event_action_duedate_for_group_assignment(): void {
         $this->resetAfterTest();

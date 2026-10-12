@@ -24,8 +24,8 @@ use tool_dataprivacy\api;
  * @package    tool_dataprivacy
  * @copyright  2021 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \tool_dataprivacy\api
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_dataprivacy\api::class)]
 final class submit_selected_courses_form_test extends \core_external\tests\externallib_testcase {
     /**
      * Test for submit_selected_courses_form().

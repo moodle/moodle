@@ -979,12 +979,12 @@ final class datalib_test extends \advanced_testcase {
     /**
      * Tests the get_safe_orderby function.
      *
-     * @dataProvider get_safe_orderby_provider
      * @param array $orderbymap The ORDER BY parameter mapping array.
      * @param string $orderbykey The string key being provided, to check against the map.
      * @param string $direction The optional direction to order by.
      * @param string $expected The expected string output of the method.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_safe_orderby_provider')]
     public function test_get_safe_orderby(array $orderbymap, string $orderbykey, string $direction, string $expected): void {
         $actual = get_safe_orderby($orderbymap, $orderbykey, $direction);
         $this->assertEquals($expected, $actual);
@@ -1091,12 +1091,12 @@ final class datalib_test extends \advanced_testcase {
     /**
      * Tests the get_safe_orderby_multiple function.
      *
-     * @dataProvider get_safe_orderby_multiple_provider
      * @param array $orderbymap The ORDER BY parameter mapping array.
      * @param array $orderbykeys The array of string keys being provided, to check against the map.
      * @param array $directions The optional directions to order by.
      * @param string $expected The expected string output of the method.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_safe_orderby_multiple_provider')]
     public function test_get_safe_orderby_multiple(array $orderbymap, array $orderbykeys, array $directions,
             string $expected): void {
         $actual = get_safe_orderby_multiple($orderbymap, $orderbykeys, $directions);

@@ -40,12 +40,12 @@ final class get_user_attempts_test extends \core_external\tests\externallib_test
     /**
      * Test the behaviour of get_user_attempts getting more than one user at once.
      *
-     * @dataProvider execute_multipleusers_data
      * @param string $loginuser the user which calls the webservice
      * @param string[] $participants the users to get the data
      * @param string[] $warnings the expected users with warnings
      * @param string[] $resultusers expected users in the resultusers
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_multipleusers_data')]
     public function test_execute_multipleusers(string $loginuser, array $participants,
             array $warnings, array $resultusers): void {
         $this->resetAfterTest();
@@ -206,9 +206,8 @@ final class get_user_attempts_test extends \core_external\tests\externallib_test
      *
      * @param string $sortorder
      * @param string[] $expectedorder
-     *
-     * @dataProvider execute_with_sortorder
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_with_sortorder')]
     public function test_execute_with_sortorder(string $sortorder, array $expectedorder): void {
         $this->resetAfterTest();
         $this->setAdminUser();

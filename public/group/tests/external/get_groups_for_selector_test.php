@@ -25,8 +25,8 @@ use core_group\external\get_groups_for_selector;
  * @copyright 2024 The Open University.
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 5.3
- * @covers \core_group\external\get_groups_for_selector
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_group\external\get_groups_for_selector::class)]
 final class get_groups_for_selector_test extends \core_external\tests\externallib_testcase {
     /**
      * Test test_get_groups_for_selector service.

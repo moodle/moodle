@@ -23,8 +23,8 @@ namespace core\external\output;
  * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\external\poll_stored_progress_test
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\external\poll_stored_progress_test::class)]
 final class poll_stored_progress_test extends \advanced_testcase {
     /**
      * Throw an exception if the wrong data type is passed for an ID.

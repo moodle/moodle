@@ -23,8 +23,8 @@ namespace calendartype_gregorian;
  * @category   test
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \calendartype_gregorian\structure
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\calendartype_gregorian\structure::class)]
 final class structure_test extends \advanced_testcase {
     public function tearDown(): void {
         parent::tearDown();
@@ -35,7 +35,6 @@ final class structure_test extends \advanced_testcase {
     /**
      * Test the timestamp_to_date_string method with different input values.
      *
-     * @dataProvider timestamp_to_date_string_provider
      * @param string $locale
      * @param int $timestamp
      * @param string $format
@@ -44,6 +43,7 @@ final class structure_test extends \advanced_testcase {
      * @param bool $fixhour
      * @param string $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('timestamp_to_date_string_provider')]
     public function test_timestamp_to_date_string(
         string $locale,
         int $timestamp,

@@ -26,11 +26,11 @@ use core_reportbuilder\local\report\filter;
  * Unit tests for number report filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\base
- * @covers      \core_reportbuilder\local\filters\number
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\number::class)]
 final class number_test extends advanced_testcase {
 
     /**
@@ -74,9 +74,8 @@ final class number_test extends advanced_testcase {
      * @param float|null $value1
      * @param float|null $value2
      * @param bool $expectmatch
-     *
-     * @dataProvider get_sql_filter_simple_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_simple_provider')]
     public function test_get_sql_filter_simple(int $operator, ?float $value1, ?float $value2, bool $expectmatch): void {
         global $DB;
 
@@ -129,9 +128,8 @@ final class number_test extends advanced_testcase {
      * Test getting filter SQL for operators that require values
      *
      * @param int $operator
-     *
-     * @dataProvider get_sql_filter_invalid_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_sql_filter_invalid_provider')]
     public function test_get_sql_filter_invalid(int $operator): void {
         $filter = new filter(
             number::class,

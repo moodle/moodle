@@ -22,8 +22,8 @@ namespace core_cache;
  * @package core_cache
  * @copyright 2021 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_cache\store
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_cache\store::class)]
 final class store_test extends \advanced_testcase {
     /**
      * Tests the default implementation of cache_size_details, which does some

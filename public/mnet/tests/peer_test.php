@@ -27,8 +27,8 @@ require_once($CFG->dirroot . '/mnet/peer.php');
  * @package    core_mnet
  * @copyright  2026 Yusuf Wibisono <yusuf.wibisono@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mnet_peer
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mnet_peer::class)]
 final class peer_test extends \advanced_testcase {
     /**
      * Set up method.

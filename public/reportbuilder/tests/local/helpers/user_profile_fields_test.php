@@ -29,10 +29,10 @@ use core_user\reportbuilder\datasource\users;
  * Unit tests for user profile fields helper
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\helpers\user_profile_fields
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\helpers\user_profile_fields::class)]
 final class user_profile_fields_test extends core_reportbuilder_testcase {
 
     /**
@@ -394,9 +394,8 @@ final class user_profile_fields_test extends core_reportbuilder_testcase {
      * @param string $filtername
      * @param array $filtervalues
      * @param string|null $expectmatch
-     *
-     * @dataProvider custom_report_filter_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('custom_report_filter_provider')]
     public function test_custom_report_filter(string $filtername, array $filtervalues, ?string $expectmatch = null): void {
         $this->resetAfterTest();
         $this->setAdminUser();

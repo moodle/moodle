@@ -34,8 +34,8 @@ use context_system;
  * @category  test
  * @copyright 2023 The Open University.
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\event\draft_file_added
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\draft_file_added::class)]
 final class draft_file_added_test extends \advanced_testcase {
     /**
      * Test draft file added event.

@@ -34,6 +34,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\qbehaviour_deferredcbm_type::class, 'summarise_usage')]
 final class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
 
     /** @var qbehaviour_deferredcbm_type */
@@ -136,7 +137,6 @@ final class behaviour_type_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * Test that CBM summary is not shown when there are no CBM questions in the attempt.
-     * @covers \qbehaviour_deferredcbm_type::summarise_usage
      */
     public function test_summarise_usage_no_cbm_questions(): void {
         // Create a usage comprising 2 essay questions.

@@ -25,6 +25,7 @@ use core_media_manager;
  * @copyright 2016 Marina Glancy
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\media_youtube_plugin::class, 'embed_external')]
 final class player_test extends \advanced_testcase {
 
     /**
@@ -188,8 +189,6 @@ final class player_test extends \advanced_testcase {
     /**
      * Test that YouTube media plugin renders embed code correctly
      * when the "nocookie" config options is set to true.
-     *
-     * @covers \media_youtube_plugin::embed_external
      */
     public function test_youtube_nocookie(): void {
         // Turn on the no cookie option.

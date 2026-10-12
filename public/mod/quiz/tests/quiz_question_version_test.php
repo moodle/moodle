@@ -32,8 +32,8 @@ require_once(__DIR__ . '/quiz_question_helper_test_trait.php');
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_quiz\question\bank\qbank_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_quiz\question\bank\qbank_helper::class)]
 final class quiz_question_version_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 

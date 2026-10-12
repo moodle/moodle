@@ -36,9 +36,9 @@ use contenttype_testable\contenttype as contenttype;
  * @category   test
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_contentbank\content
  *
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_contentbank\content::class)]
 final class content_test extends \advanced_testcase {
 
     /**
@@ -53,8 +53,6 @@ final class content_test extends \advanced_testcase {
 
     /**
      * Tests for behaviour of get_name().
-     *
-     * @covers ::get_name
      */
     public function test_get_name(): void {
         $this->resetAfterTest();
@@ -90,12 +88,11 @@ final class content_test extends \advanced_testcase {
     /**
      * Tests for 'set_name' behaviour.
      *
-     * @dataProvider    set_name_provider
      * @param   string  $newname    The name to set
      * @param   string   $expected   The name result
      *
-     * @covers ::set_name
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('set_name_provider')]
     public function test_set_name(string $newname, string $expected): void {
         global $DB;
 
@@ -122,8 +119,6 @@ final class content_test extends \advanced_testcase {
 
     /**
      * Tests for behaviour of get_content_type().
-     *
-     * @covers ::get_content_type
      */
     public function test_get_content_type(): void {
         $this->resetAfterTest();
@@ -140,8 +135,6 @@ final class content_test extends \advanced_testcase {
 
     /**
      * Tests for 'configdata' behaviour.
-     *
-     * @covers ::set_configdata
      */
     public function test_configdata_changes(): void {
         $this->resetAfterTest();
@@ -163,8 +156,6 @@ final class content_test extends \advanced_testcase {
 
     /**
      * Tests for 'set_contextid' behaviour.
-     *
-     * @covers ::set_contextid
      */
     public function test_set_contextid(): void {
         $this->resetAfterTest();
@@ -194,8 +185,6 @@ final class content_test extends \advanced_testcase {
 
     /**
      * Tests for set_visibility behaviour
-     *
-     * @covers ::set_visibility
      */
     public function test_set_visibility(): void {
         $this->resetAfterTest();
@@ -223,8 +212,6 @@ final class content_test extends \advanced_testcase {
 
     /**
      * Tests for 'import_file' behaviour when replacing a file.
-     *
-     * @covers ::import_file
      */
     public function test_import_file_replace(): void {
         global $USER;
@@ -264,8 +251,6 @@ final class content_test extends \advanced_testcase {
 
     /**
      * Tests for 'import_file' behaviour when uploading a new file.
-     *
-     * @covers ::import_file
      */
     public function test_import_file_upload(): void {
         global $USER;
@@ -307,8 +292,6 @@ final class content_test extends \advanced_testcase {
 
     /**
      * Tests for 'get_content_type_instance'
-     *
-     * @covers ::get_content_type_instance
      */
     public function test_get_content_type_instance(): void {
         global $USER;
@@ -330,8 +313,6 @@ final class content_test extends \advanced_testcase {
 
     /**
      * Tests for 'is_view_allowed'.
-     *
-     * @covers ::is_view_allowed
      */
     public function test_is_view_allowed(): void {
         $this->resetAfterTest();
@@ -368,8 +349,6 @@ final class content_test extends \advanced_testcase {
 
     /**
      * Tests for 'get_uses' behaviour.
-     *
-     * @covers ::get_uses
      */
     public function test_get_uses(): void {
         $this->resetAfterTest();

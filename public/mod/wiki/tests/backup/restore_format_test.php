@@ -24,6 +24,7 @@ namespace mod_wiki\backup;
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_wiki_activity_structure_step::class)]
 final class restore_format_test extends \advanced_testcase {
 
     /**
@@ -57,10 +58,8 @@ final class restore_format_test extends \advanced_testcase {
      *
      * @param string $format The format of the wiki.
      * @param string $expected The expected format of the wiki after duplication.
-     *
-     * @covers       \restore_wiki_activity_structure_step
-     * @dataProvider restore_format_test_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('restore_format_test_provider')]
     public function test_duplicating_wiki_removes_unwanted_formats(string $format, string $expected): void {
         global $DB;
 

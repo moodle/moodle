@@ -26,8 +26,8 @@ use core\check\security\passwordpolicy;
  * @category   check
  * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\check\check
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\check\check::class)]
 final class check_test extends \advanced_testcase {
 
     /**

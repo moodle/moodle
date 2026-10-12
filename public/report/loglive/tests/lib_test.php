@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_until')]
 final class lib_test extends \advanced_testcase {
 
     /**
@@ -56,8 +57,6 @@ final class lib_test extends \advanced_testcase {
 
     /**
      * Test the latest record timestamp of the report data set.
-     *
-     * @covers ::get_until()
      */
     public function test_report_get_until(): void {
         global $DB;

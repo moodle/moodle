@@ -27,10 +27,10 @@ use core_reportbuilder\local\filters\text;
  * Unit tests for a report filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\report\filter
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\report\filter::class)]
 final class filter_test extends advanced_testcase {
 
     /**

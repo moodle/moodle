@@ -25,11 +25,11 @@ use core_reportbuilder\local\report\filter;
  * Unit tests for course selector filter
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\filters\base
- * @covers      \core_reportbuilder\local\filters\course_selector
  * @copyright   2021 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\filters\course_selector::class)]
 final class course_selector_test extends advanced_testcase {
 
     /**

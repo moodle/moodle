@@ -27,13 +27,11 @@ use mod_data\manager;
  * @since      Moodle 4.1
  * @copyright  2022 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_data\external\delete_saved_preset
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\external\delete_saved_preset::class)]
 final class delete_saved_preset_test extends \core_external\tests\externallib_testcase {
     /**
      * Test the behaviour of delete_saved_preset().
-     *
-     * @covers ::execute
      */
     public function test_delete_saved_preset(): void {
         $this->resetAfterTest();

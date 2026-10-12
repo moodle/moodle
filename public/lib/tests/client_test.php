@@ -78,11 +78,11 @@ final class client_test extends advanced_testcase {
     /**
      * Test the map_userinfo_to_fields function
      *
-     * @dataProvider map_response_provider
      * @param array $mapping
      * @param array $expected
      * @throws ReflectionException
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('map_response_provider')]
     public function test_map_userinfo_to_fields(array $mapping, array $expected): void {
         $dataset = [
             "name" => (object) [

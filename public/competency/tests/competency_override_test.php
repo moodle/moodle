@@ -23,6 +23,7 @@ namespace core_competency;
  * @copyright  2022 Matthew Hilton <matthewhilton@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_competency\api::class, 'set_course_module_competency_ruleoutcome')]
 final class competency_override_test extends \advanced_testcase {
 
     /** @var \stdClass course record. */
@@ -135,8 +136,6 @@ final class competency_override_test extends \advanced_testcase {
 
     /**
      * Test ruleoutcome overridegrade is correctly applied when coursemodule completion is processed.
-     *
-     * @covers \core_competency\api::set_course_module_competency_ruleoutcome
      */
     public function test_ruleoutcome_overridegrade(): void {
         // Initially the competency (and hence all the child competencies) should not be complete for the user.
@@ -274,8 +273,6 @@ final class competency_override_test extends \advanced_testcase {
 
     /**
      * Test competency backup and restore correctly restores the ruleoutcome overridegrade value.
-     *
-     * @covers \core_competency\api::set_course_module_competency_ruleoutcome
      */
     public function test_override_backup_restore(): void {
         global $CFG;

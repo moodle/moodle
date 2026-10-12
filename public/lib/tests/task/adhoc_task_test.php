@@ -25,8 +25,14 @@ use core\url;
  * @category test
  * @copyright 2013 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\task\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\task\manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\task\adhoc_task::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\task\failed_task_callbacks::class, 'send_failed_task_max_delay_message')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\task\adhoc_task::class, 'is_adhoc_task_delayed')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\task\adhoc_task::class, 'set_soft_retry_delay')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\task\manager::class, 'queue_adhoc_task')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\task\manager::class, 'build_task_identity_hash')]
 final class adhoc_task_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         parent::setUpBeforeClass();
@@ -36,8 +42,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test getting name of task that implements it's own get_name method
-     *
-     * @covers \core\task\adhoc_task
      */
     public function test_get_name(): void {
         $task = new \core\task\adhoc_test_task();
@@ -46,8 +50,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test getting name of task that uses the default implementation of get_name
-     *
-     * @covers \core\task\adhoc_task
      */
     public function test_get_name_default(): void {
         $task = new \mod_fake\task\adhoc_component_task();
@@ -145,8 +147,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that failed tasks eventually hit the maximum delay.
-     *
-     * @covers \core\task\adhoc_task
      */
     public function test_get_next_adhoc_task_maximum_fail_delay(): void {
         $this->resetAfterTest(true);
@@ -801,7 +801,6 @@ final class adhoc_task_test extends \advanced_testcase {
     /**
      * Test that when no userid is specified, it returns empty from the DB
      * too.
-     * @covers \core\task\adhoc_task
      */
     public function test_adhoc_task_user_empty(): void {
         $this->resetAfterTest(true);
@@ -823,8 +822,6 @@ final class adhoc_task_test extends \advanced_testcase {
     /**
      * Test that when a userid is specified, that userid is subsequently
      * returned.
-     *
-     * @covers \core\task\adhoc_task
      */
     public function test_adhoc_task_user_set(): void {
         $this->resetAfterTest(true);
@@ -913,8 +910,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test get_concurrency_limit() method to return 0 by default.
-     *
-     * @covers \core\task\adhoc_task
      */
     public function test_get_concurrency_limit(): void {
         $this->resetAfterTest(true);
@@ -925,7 +920,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test get_concurrency_limit() method to return a default value set in config.
-     * @covers \core\task\adhoc_task
      */
     public function test_get_concurrency_limit_default(): void {
         $this->resetAfterTest(true);
@@ -937,7 +931,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test get_concurrency_limit() method to return a value for specific task class.
-     * @covers \core\task\adhoc_task
      */
     public function test_get_concurrency_limit_for_task(): void {
         global $CFG;
@@ -1045,8 +1038,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test send messages when adhoc task reaches the max fail delay time.
-     *
-     * @covers \core\task\failed_task_callbacks::send_failed_task_max_delay_message
      */
     public function test_adhoc_message_max_fail_delay(): void {
         $this->resetAfterTest();
@@ -1124,8 +1115,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that is_adhoc_task_delayed() returns false by default and true after set_soft_retry_delay().
-     *
-     * @covers \core\task\adhoc_task::is_adhoc_task_delayed
      */
     public function test_is_adhoc_task_delayed(): void {
         $task = new adhoc_test_task();
@@ -1137,8 +1126,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that set_soft_retry_delay() accepts null and positive integers.
-     *
-     * @covers \core\task\adhoc_task::set_soft_retry_delay
      */
     public function test_set_soft_retry_delay_accepts_valid_values(): void {
         $task = new adhoc_test_task();
@@ -1158,10 +1145,9 @@ final class adhoc_task_test extends \advanced_testcase {
     /**
      * Test that set_soft_retry_delay() rejects zero and negative values.
      *
-     * @covers \core\task\adhoc_task::set_soft_retry_delay
-     * @dataProvider invalid_soft_retry_delay_provider
      * @param int $value The invalid delay value to test.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_soft_retry_delay_provider')]
     public function test_set_soft_retry_delay_rejects_invalid_values(int $value): void {
         $task = new adhoc_test_task();
         $this->expectException(\coding_exception::class);
@@ -1182,8 +1168,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test logically identical tasks are not scheduled twice.
-     *
-     * @covers \core\task\manager::queue_adhoc_task
      */
     public function test_identical_tasks_are_deduplicated(): void {
         $this->resetAfterTest();
@@ -1203,8 +1187,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test task classes do not deduplicate.
-     *
-     * @covers \core\task\manager::queue_adhoc_task
      */
     public function test_different_task_classes_are_not_deduplicated(): void {
         global $DB;
@@ -1224,8 +1206,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that the generated key matches the expected SHA-1 payload
-     *
-     * @covers \core\task\manager::build_task_identity_hash
      */
     public function test_key_matches_expected_sha1_payload(): void {
         $this->resetAfterTest();
@@ -1250,8 +1230,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that the task key changes when custom data is modified.
-     *
-     * @covers \core\task\manager::build_task_identity_hash
      */
     public function test_key_changes_when_customdata_changes(): void {
         $this->resetAfterTest();
@@ -1269,8 +1247,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test build_task_identity_hash canonicalizes JSON key order.
-     *
-     * @covers \core\task\manager::build_task_identity_hash
      */
     public function test_build_task_identity_hash_json_key_order(): void {
         $this->resetAfterTest();
@@ -1291,8 +1267,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that the generated key matches the expected SHA-1 payload
-     *
-     * @covers \core\task\manager::build_task_identity_hash
      */
     public function test_same_task_different_userid_is_not_deduplicated(): void {
         $this->resetAfterTest();
@@ -1320,8 +1294,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that tasks queued without duplicate detection are not removed by a later deduplicated task.
-     *
-     * @covers \core\task\manager::queue_adhoc_task
      */
     public function test_tasks_without_duplicate_detection_are_not_removed(): void {
         global $DB;
@@ -1352,8 +1324,6 @@ final class adhoc_task_test extends \advanced_testcase {
      * below the upgrade step that adds task_adhoc.identityhash, that no identity hash is recorded
      * until that savepoint is reached, and that the current $CFG->version does record one
      * (MDL-89876).
-     *
-     * @covers \core\task\manager::queue_adhoc_task
      */
     public function test_queue_adhoc_task_before_identityhash_savepoint(): void {
         global $CFG, $DB;
@@ -1390,8 +1360,6 @@ final class adhoc_task_test extends \advanced_testcase {
      * succeeds when $CFG->version is below the upgrade step that adds task_adhoc.identityhash,
      * degrading to queueing without duplicate detection or an identity hash rather than failing on
      * the missing column, and that the current $CFG->version restores both (MDL-89876).
-     *
-     * @covers \core\task\manager::queue_adhoc_task
      */
     public function test_queue_adhoc_task_checkforexisting_before_identityhash_savepoint(): void {
         global $CFG, $DB;
@@ -1436,8 +1404,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that an existing task without identityhash is updated when $checkforexisting is true
-     *
-     * @covers \core\task\manager::queue_adhoc_task
      */
     public function test_existing_task_without_identityhash_is_updated(): void {
         $this->resetAfterTest();
@@ -1472,8 +1438,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that one existing task without an identity hash is updated and the other matching tasks are retained.
-     *
-     * @covers \core\task\manager::queue_adhoc_task
      */
     public function test_existing_duplicated_tasks_without_identityhash_are_retained(): void {
         $this->resetAfterTest();
@@ -1515,8 +1479,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that existing duplicated tasks without identity hashes are retained, including running tasks.
-     *
-     * @covers \core\task\manager::queue_adhoc_task
      */
     public function test_existing_duplicated_tasks_in_execution_is_not_deleted(): void {
         $this->resetAfterTest();
@@ -1598,8 +1560,6 @@ final class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test that exhausted adhoc tasks are reset when queued again with duplicate detection.
-     *
-     * @covers \core\task\manager::queue_adhoc_task
      */
     public function test_reset_task_with_exhausted_attempts_during_insert(): void {
         global $DB;

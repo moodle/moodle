@@ -44,6 +44,7 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @copyright  2014 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('regrade_question')]
 final class report_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
 
@@ -60,8 +61,8 @@ final class report_test extends \advanced_testcase {
      * Test how the report queries the database.
      *
      * @param string|null $isdownloading a download type, or null.
-     * @dataProvider report_sql_cases
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('report_sql_cases')]
     public function test_report_sql(?string $isdownloading): void {
         global $DB;
         $this->resetAfterTest();
@@ -318,10 +319,10 @@ final class report_test extends \advanced_testcase {
     /**
      * Test bands.
      *
-     * @dataProvider get_bands_count_and_width_provider
      * @param int $grade grade
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_bands_count_and_width_provider')]
     public function test_get_bands_count_and_width(int $grade, array $expected): void {
         $this->resetAfterTest();
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
@@ -382,8 +383,6 @@ final class report_test extends \advanced_testcase {
 
     /**
      * Test question regrade for selected versions.
-     *
-     * @covers ::regrade_question
      */
     public function test_regrade_question(): void {
         global $DB;

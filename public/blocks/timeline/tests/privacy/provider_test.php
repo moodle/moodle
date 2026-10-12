@@ -55,9 +55,8 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
      * @param string $type The name of the user preference to get/set
      * @param string $value The value you are storing
      * @param string $expected The expected value override
-     *
-     * @dataProvider user_preference_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_preference_provider')]
     public function test_export_user_preferences($type, $value, $expected): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();

@@ -20,10 +20,10 @@ namespace repository_nextcloud;
  * Class repository_nextcloud_ocs_testcase
  *
  * @package    repository_nextcloud
- * @group repository_nextcloud
  * @copyright  2017 Jan Dageförde (Learnweb, University of Münster)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\Group('repository_nextcloud')]
 final class ocs_test extends \advanced_testcase {
 
     /**

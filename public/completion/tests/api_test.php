@@ -23,8 +23,8 @@ namespace core_completion;
  * @category test
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_completion\api
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_completion\api::class)]
 final class api_test extends \advanced_testcase {
 
     /**

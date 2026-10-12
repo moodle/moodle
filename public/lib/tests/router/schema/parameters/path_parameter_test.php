@@ -31,10 +31,10 @@ use Slim\Routing\RouteContext;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\parameter
- * @covers     \core\router\schema\parameters\path_parameter
- * @covers     \core\router\schema\openapi_base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\parameter::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\parameters\path_parameter::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\openapi_base::class)]
 final class path_parameter_test extends route_testcase {
     public function test_in_path(): void {
         $param = new path_parameter(name: 'example');
@@ -45,10 +45,10 @@ final class path_parameter_test extends route_testcase {
     /**
      * Test the is_required method.
      *
-     * @dataProvider is_required_provider
      * @param string $path
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_required_provider')]
     public function test_is_required(string $path, bool $expected): void {
         $route = new route(
             path: $path,
@@ -82,10 +82,10 @@ final class path_parameter_test extends route_testcase {
     /**
      * Test fo the OPenAPI description in different configurations.
      *
-     * @dataProvider openapi_required_values_provider
      * @param string $path If the a value is a required part of the path
      * @param bool $required If the value is expected to be required
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('openapi_required_values_provider')]
     public function test_get_openapi_description_required_values(
         string $path,
         bool $required,

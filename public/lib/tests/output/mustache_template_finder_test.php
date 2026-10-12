@@ -26,8 +26,8 @@ namespace core\output;
  * @category  test
  * @copyright 2015 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\output\mustache_template_finder
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\mustache_template_finder::class)]
 final class mustache_template_finder_test extends \advanced_testcase {
 
     /**
@@ -129,13 +129,12 @@ final class mustache_template_finder_test extends \advanced_testcase {
     /**
      * Tests for get_template_directories_for_component.
      *
-     * @covers ::get_template_directories_for_component
-     * @dataProvider valid_template_directories_provider
      * @param string $component
      * @param string $theme
      * @param bool $themeoverrides
      * @param array $paths
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_template_directories_provider')]
     public function test_get_template_directories_for_component(
         string $component,
         string $theme,
@@ -156,8 +155,6 @@ final class mustache_template_finder_test extends \advanced_testcase {
 
     /**
      * Tests for get_template_directories_for_component using a child theme and its parents.
-     *
-     * @covers ::get_template_directories_for_component
      */
     public function test_get_template_directories_for_component_theme_hierarchy(): void {
         global $CFG;
@@ -187,8 +184,6 @@ final class mustache_template_finder_test extends \advanced_testcase {
 
     /**
      * Tests for get_template_directories_for_component when dealing with an invalid component.
-     *
-     * @covers ::get_template_directories_for_component
      */
     public function test_invalid_component_get_template_directories_for_component(): void {
         // Test something invalid.
@@ -268,12 +263,11 @@ final class mustache_template_finder_test extends \advanced_testcase {
     /**
      * Tests for get_template_filepath.
      *
-     * @covers ::get_template_filepath
-     * @dataProvider valid_template_filepath_provider
      * @param   string $template
      * @param   string $theme
      * @param   string $location
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_template_filepath_provider')]
     public function test_get_template_filepath(string $template, string $theme, string $location): void {
         global $CFG;
 
@@ -283,8 +277,6 @@ final class mustache_template_finder_test extends \advanced_testcase {
 
     /**
      * Tests for get_template_filepath when dealing with an invalid component.
-     *
-     * @covers ::get_template_filepath
      */
     public function test_invalid_component_get_template_filepath(): void {
         $this->expectException(\coding_exception::class);
@@ -295,8 +287,6 @@ final class mustache_template_finder_test extends \advanced_testcase {
 
     /**
      * Tests for get_template_filepath when dealing with a missing template file.
-     *
-     * @covers ::get_template_filepath
      */
     public function test_missing_template_get_template_filepath(): void {
         $this->expectException(\moodle_exception::class);
@@ -306,8 +296,6 @@ final class mustache_template_finder_test extends \advanced_testcase {
 
     /**
      * Tests for get_template_filepath when dealing with an invalid template name.
-     *
-     * @covers ::get_template_filepath
      */
     public function test_invalid_name_get_template_filepath(): void {
         $this->expectException(\coding_exception::class);

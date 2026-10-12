@@ -57,9 +57,9 @@ final class item_verb_test extends advanced_testcase {
     /**
      * Test item creation from string.
      *
-     * @dataProvider create_from_id_provider
      * @param string $id Object string ID (IRI or not)
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_from_id_provider')]
     public function test_create_from_id(string $id): void {
         $item = item_verb::create_from_id($id);
 
@@ -89,9 +89,9 @@ final class item_verb_test extends advanced_testcase {
     /**
      * Test for invalid structures.
      *
-     * @dataProvider invalid_data_provider
      * @param string  $id
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_data_provider')]
     public function test_invalid_data(string $id): void {
         $this->expectException(xapi_exception::class);
         $data = (object) [

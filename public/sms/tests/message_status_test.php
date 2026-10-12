@@ -25,9 +25,9 @@ use core\lang_string;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_sms\message_status
- * @covers \core_sms\status
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_sms\message_status::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_sms\status::class)]
 final class message_status_test extends \advanced_testcase {
     public function test_meta_status(): void {
         $sent = [

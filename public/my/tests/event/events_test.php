@@ -27,6 +27,8 @@ use context_user;
  * @copyright  2016 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('my_reset_page')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('my_reset_page_for_all_users')]
 final class events_test extends \advanced_testcase {
 
     /** @var user cobject */
@@ -78,8 +80,6 @@ final class events_test extends \advanced_testcase {
      *
      * We will reset the user dashboard to
      * trigger the event and ensure data is returned as expected.
-     *
-     * @covers ::my_reset_page
      */
     public function test_dashboard_reset(): void {
         global $CFG, $DB;
@@ -148,8 +148,6 @@ final class events_test extends \advanced_testcase {
      *
      * We will reset all user dashboards to
      * trigger the event and ensure data is returned as expected.
-     *
-     * @covers ::my_reset_page_for_all_users
      */
     public function test_dashboards_reset(): void {
         global $CFG, $USER, $DB;

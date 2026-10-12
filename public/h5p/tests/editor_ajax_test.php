@@ -35,9 +35,8 @@ use Moodle\H5PCore;
  * @package    core_h5p
  * @copyright  2020 Victor Deniz <victor@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @runTestsInSeparateProcesses
  */
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class editor_ajax_test extends \advanced_testcase {
 
     /** @var editor_ajax H5P editor ajax instance */
@@ -111,13 +110,13 @@ final class editor_ajax_test extends \advanced_testcase {
     /**
      * Test that the method getTranslations retrieves the translations of several libraries.
      *
-     * @dataProvider  get_translations_provider
      *
      * @param  array  $datalibs      Libraries to create
      * @param  string $lang          Language to get the translations
      * @param  bool   $emptyexpected True if empty translations are expected; false otherwise
      * @param  array  $altstringlibs When defined, libraries are no created and the content here is used to call the method
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_translations_provider')]
     public function test_get_translations(array $datalibs, string $lang, bool $emptyexpected, ?array $altstringlibs = []): void {
         $this->resetAfterTest();
 

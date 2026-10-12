@@ -22,8 +22,8 @@ namespace auth_lti;
  * @package    auth_lti
  * @copyright  2021 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \auth_plugin_lti
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\auth_plugin_lti::class)]
 final class auth_test extends \advanced_testcase {
 
     /** @var string issuer URL used for test cases. */
@@ -211,12 +211,11 @@ final class auth_test extends \advanced_testcase {
     /**
      * Test which verifies a user account can be created/found using the find_or_create_user_from_launch() method.
      *
-     * @dataProvider launchdata_provider
      * @param array|null $legacydata legacy user and tool data, if testing migration cases.
      * @param array $launchdata data describing the launch, including user data and migration claim data.
      * @param array $expected the test case expectations.
-     * @covers ::find_or_create_user_from_launch
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('launchdata_provider')]
     public function test_find_or_create_user_from_launch(?array $legacydata, array $launchdata, array $expected = []): void {
         $this->resetAfterTest();
         global $DB;
@@ -710,14 +709,13 @@ final class auth_test extends \advanced_testcase {
     /**
      * Test which verifies a user account can be created/found using the find_or_create_user_from_membership() method.
      *
-     * @dataProvider membership_data_provider
      * @param array|null $legacydata legacy user and tool data, if testing migration cases.
      * @param array $memberdata data describing the membership data, including user data and legacy user id info.
      * @param string $iss the issuer URL string
      * @param string|null $legacyconsumerkey optional legacy consumer_key value for testing user migration
      * @param array $expected the test case expectations.
-     * @covers ::find_or_create_user_from_membership
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('membership_data_provider')]
     public function test_find_or_create_user_from_membership(?array $legacydata, array $memberdata, string $iss,
             ?string $legacyconsumerkey, array $expected): void {
 
@@ -1051,8 +1049,6 @@ final class auth_test extends \advanced_testcase {
 
     /**
      * Test the behaviour of create_user_binding().
-     *
-     * @covers ::create_user_binding
      */
     public function test_create_user_binding(): void {
         $this->resetAfterTest();
@@ -1088,9 +1084,8 @@ final class auth_test extends \advanced_testcase {
      * @param array $firstlaunchdata the data from the first launch the user made.
      * @param array $launchdata the current launch data, which will dictate what data is updated.
      * @param array $expected array of test expectations
-     * @dataProvider update_user_account_provider
-     * @covers ::update_user_account
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('update_user_account_provider')]
     public function test_update_user_account(array $firstlaunchdata, array $launchdata, array $expected): void {
         $this->resetAfterTest();
         $auth = \core\di::get(\core\authentication::class)->get_plugin('lti');

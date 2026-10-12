@@ -30,8 +30,8 @@ use stdClass;
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \qbank_previewquestion\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_previewquestion\helper::class)]
 final class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
@@ -91,8 +91,6 @@ final class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
      * Test the preview action url from the helper class.
-     *
-     * @covers ::question_preview_action_url
      */
     public function test_question_preview_action_url(): void {
         $actionurl = helper::question_preview_action_url($this->questiondata->id, $this->quba->get_id(), $this->options,
@@ -111,8 +109,6 @@ final class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
      * Test the preview action url from the helper class when no restartversion is passed.
-     *
-     * @covers ::question_preview_action_url
      */
     public function test_question_preview_action_url_no_restartversion(): void {
         $actionurl = helper::question_preview_action_url($this->questiondata->id, $this->quba->get_id(), $this->options,
@@ -130,8 +126,6 @@ final class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
      * Test the preview form url from the helper class.
-     *
-     * @covers ::question_preview_form_url
      */
     public function test_question_preview_form_url(): void {
         $formurl = helper::question_preview_form_url(
@@ -148,8 +142,6 @@ final class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
      * Test the preview url from the helper class.
-     *
-     * @covers ::question_preview_url
      */
     public function test_question_preview_url(): void {
         $previewurl = helper::question_preview_url($this->questiondata->id, $this->options->behaviour, $this->options->maxmark,
@@ -176,8 +168,6 @@ final class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
      * Test the preview url from the helper class.
-     *
-     * @covers ::question_preview_url
      */
     public function test_question_preview_url_no_restartversion(): void {
         $previewurl = helper::question_preview_url($this->questiondata->id, $this->options->behaviour, $this->options->maxmark,
@@ -202,8 +192,6 @@ final class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
      * Test the preview comment callback if available.
-     *
-     * @covers ::get_preview_extra_elements
      */
     public function test_get_preview_extra_elements(): void {
         global $PAGE;
@@ -220,8 +208,6 @@ final class qbank_preview_helper_test extends \advanced_testcase {
 
     /**
      * Test method load_versions().
-     *
-     * @covers ::load_versions
      */
     public function test_load_versions(): void {
         $this->resetAfterTest();
@@ -253,7 +239,6 @@ final class qbank_preview_helper_test extends \advanced_testcase {
      *
      * This should return the value of the specified version number, or the latest version if ALWAYS_LATEST is passed.
      *
-     * @covers ::get_restart_id
      * @return void
      */
     public function test_get_restart_id(): void {

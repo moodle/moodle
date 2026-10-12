@@ -25,17 +25,16 @@ use core\context\system as context_system;
  * @category   test
  * @copyright  2013 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_emoticon\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_emoticon\text_filter::class)]
 final class text_filter_test extends \advanced_testcase {
     /**
      * Test that filter ignores nolink/pre element, and processes remaining text
      *
      * @param string $input
      * @param string $expectedprefix
-     *
-     * @dataProvider filter_emoticon_filtered_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_emoticon_filtered_provider')]
     public function test_filter_emoticon_filtered(string $input, string $expectedprefix): void {
         $this->resetAfterTest();
 
@@ -71,9 +70,8 @@ final class text_filter_test extends \advanced_testcase {
 
     /**
      * Tests the filter doesn't affect nolink classes.
-     *
-     * @dataProvider filter_emoticon_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('filter_emoticon_provider')]
     public function test_filter_emoticon($input, $format, $expected): void {
         $this->resetAfterTest();
 

@@ -163,13 +163,13 @@ TBC;
     /**
      * Test the load function.
      *
-     * @dataProvider load_test_cases
      * @param mustache_template_source_loader $loader The loader
      * @param string $component The moodle component
      * @param string $name The template name
      * @param bool $includecomments Whether to strip comments
      * @param string $expected The expected output
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('load_test_cases')]
     public function test_load($loader, $component, $name, $includecomments, $expected): void {
         $this->assertEquals($expected, $loader->load($component, $name, 'boost', $includecomments));
     }
@@ -330,13 +330,13 @@ TBC;
     /**
      * Test the load_with_dependencies function.
      *
-     * @dataProvider load_with_dependencies_test_cases
      * @param mustache_template_source_loader $loader The loader
      * @param string $component The moodle component
      * @param string $name The template name
      * @param bool $includecomments Whether to strip comments
      * @param string $expected The expected output
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('load_with_dependencies_test_cases')]
     public function test_load_with_dependencies($loader, $component, $name, $includecomments, $expected): void {
         $actual = $loader->load_with_dependencies($component, $name, 'boost', $includecomments);
         $this->assertEquals($expected, $actual);
@@ -488,11 +488,11 @@ TEMPLATE;
     /**
      * Test the scan_template_source_for_dependencies function.
      *
-     * @dataProvider scan_template_source_for_dependencies_test_cases
      * @param mustache_template_source_loader $loader The loader
      * @param string $source The template to test
      * @param string $expected The expected output
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('scan_template_source_for_dependencies_test_cases')]
     public function test_scan_template_source_for_dependencies($loader, $source, $expected): void {
         $actual = \core\test\phpunit\phpunit_util::call_internal_method(
             $loader,

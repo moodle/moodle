@@ -23,22 +23,22 @@ use core_courseformat\formatactions;
 /**
  * Tests for Subsection manager class.
  *
- * @covers     \mod_subsection\manager
  * @package    mod_subsection
  * @category   test
  * @copyright  2024 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_subsection\manager::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_delegated_section_info')]
 final class manager_test extends \advanced_testcase {
     /**
      * Test get_delegated_section_info.
      *
-     * @covers ::get_delegated_section_info
-     * @dataProvider provider_test_get_delegated_section_info
      * @param bool $hasavailability Whether the module has access restrictions.
      * @param bool $visible Whether the module is visible.
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_test_get_delegated_section_info')]
     public function test_get_delegated_section_info(
         bool $hasavailability,
         bool $visible

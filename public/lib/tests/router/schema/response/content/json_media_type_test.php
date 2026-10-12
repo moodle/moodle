@@ -27,9 +27,9 @@ use core\router\schema\specification;
  * @package    core
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\response\content\json_media_type
- * @covers     \core\router\schema\response\content\media_type
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\response\content\json_media_type::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\response\content\media_type::class)]
 final class json_media_type_test extends \advanced_testcase {
     public function test_basics(): void {
         $this->assertEquals(
@@ -47,10 +47,10 @@ final class json_media_type_test extends \advanced_testcase {
     /**
      * Tests for the is_required method.
      *
-     * @dataProvider is_required_provider
      * @param bool|null $required
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_required_provider')]
     public function test_is_required(?bool $required, bool $expected): void {
         // Note: This related to the _body_ being required.
         $object = new json_media_type(

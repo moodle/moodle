@@ -24,6 +24,7 @@ namespace core;
  * @copyright 2012 Petr Škoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\page_requirements_manager::class, 'js_fix_url')]
 final class outputrequirementslib_test extends \advanced_testcase {
     public function test_string_for_js(): void {
         $this->resetAfterTest();
@@ -139,9 +140,8 @@ final class outputrequirementslib_test extends \advanced_testcase {
      * @throws ReflectionException if the class does not exist.
      * @see \page_requirements_manager::js_fix_url()
      * @see \moodle_url
-     * @covers \page_requirements_manager::js_fix_url
-     * @dataProvider js_fix_url_moodle_url_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('js_fix_url_moodle_url_provider')]
     public function test_js_fix_url_moodle_url(\moodle_url $moodleurl, int $cfgslashargs, string $expected): void {
         global $CFG;
         $defaultslashargs = $CFG->slasharguments;
@@ -222,9 +222,8 @@ final class outputrequirementslib_test extends \advanced_testcase {
      * @param string $expected The expected output URL.
      * @throws ReflectionException if the class does not exist.
      * @see \page_requirements_manager::js_fix_url()
-     * @covers \page_requirements_manager::js_fix_url
-     * @dataProvider js_fix_url_plain_string_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('js_fix_url_plain_string_provider')]
     public function test_js_fix_url_plain_string(string $url, int $cfgslashargs, string $expected): void {
         global $CFG;
         $defaultslashargs = $CFG->slasharguments;
@@ -302,9 +301,8 @@ final class outputrequirementslib_test extends \advanced_testcase {
      * @param string $exmessage The expected output URL.
      * @throws ReflectionException if the class does not exist.
      * @see \page_requirements_manager::js_fix_url()
-     * @covers \page_requirements_manager::js_fix_url
-     * @dataProvider js_fix_url_coding_exception_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('js_fix_url_coding_exception_provider')]
     public function test_js_fix_url_coding_exception($url, string $exmessage): void {
         $rc = new \ReflectionClass(\page_requirements_manager::class);
         $rcm = $rc->getMethod('js_fix_url');

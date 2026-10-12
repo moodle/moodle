@@ -41,10 +41,11 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @category   test
  * @copyright  2018 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \restore_qtype_plugin
- * @covers     \restore_create_categories_and_questions
- * @covers     \restore_move_module_questions_categories
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_qtype_plugin::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_create_categories_and_questions::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\restore_move_module_questions_categories::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_controller::class, 'execute_plan')]
 final class backup_test extends \advanced_testcase {
 
     /**
@@ -725,7 +726,6 @@ final class backup_test extends \advanced_testcase {
      * then we need to restore the categories and questions to the qbank and quiz modules included in the backup on the new course.
      *
      * @return void
-     * @covers \restore_controller::execute_plan()
      */
     public function test_bank_and_quiz_activity_restore_to_new_course(): void {
         // Create a new course.
@@ -789,7 +789,6 @@ final class backup_test extends \advanced_testcase {
      * The quiz included in the backup uses a question in each category.
      *
      * @return void
-     * @covers \restore_controller::execute_plan()
      */
     public function test_pre_46_course_restore_to_new_course(): void {
         global $DB, $USER;

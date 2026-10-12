@@ -22,20 +22,20 @@ namespace core_admin\external;
  * Unit tests to configure the enabled/disabled state of a plugin.
  *
  * @package     core
- * @covers      \core_admin\external\set_plugin_state
  * @copyright   2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_admin\external\set_plugin_state::class)]
 final class set_plugin_state_test extends \core_external\tests\externallib_testcase {
     /**
      * Text execute method.
      *
-     * @dataProvider execute_standard_provider
      * @param string $plugin The name of the plugin
      * @param int|null $initialstate The initial state of the plugin
      * @param int $newstate The target state
      * @param int $notificationcount The number of notifications expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_standard_provider')]
     public function test_execute(
         string $plugin,
         ?int $initialstate,

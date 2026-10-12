@@ -23,8 +23,8 @@ namespace assignfeedback_file\event;
  * @category test
  * @copyright 2025 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \assignfeedback_file\event\feedback_downloaded
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\assignfeedback_file\event\feedback_downloaded::class)]
 final class feedback_downloaded_test extends \advanced_testcase {
     /**
      * Tests basic usage of the event, including creation, name, and description.

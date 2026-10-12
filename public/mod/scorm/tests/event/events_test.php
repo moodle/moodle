@@ -249,13 +249,13 @@ final class events_test extends \advanced_testcase {
     /**
      * Tests for score submitted event validations.
      *
-     * @dataProvider get_scoreraw_submitted_event_validations
      *
      * @param string $cmielement a valid CMI raw score element
      * @param string $cmivalue a valid CMI raw score value
      * @param string $failmessage the message used to fail the test in case of missing to violate a validation rule
      * @param string $excmessage the exception message when violating the validations rules
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_scoreraw_submitted_event_validations')]
     public function test_scoreraw_submitted_event_validations($cmielement, $cmivalue, $failmessage, $excmessage): void {
         $this->resetAfterTest();
         try {
@@ -343,13 +343,13 @@ final class events_test extends \advanced_testcase {
     /**
      * Tests for status submitted event validations.
      *
-     * @dataProvider get_status_submitted_event_validations
      *
      * @param string $cmielement a valid CMI status element
      * @param string $cmivalue a valid CMI status value
      * @param string $failmessage the message used to fail the test in case of missing to violate a validation rule
      * @param string $excmessage the exception message when violating the validations rules
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_status_submitted_event_validations')]
     public function test_status_submitted_event_validations($cmielement, $cmivalue, $failmessage, $excmessage): void {
         $this->resetAfterTest();
         try {

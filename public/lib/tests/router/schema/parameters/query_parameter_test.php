@@ -29,10 +29,10 @@ use GuzzleHttp\Psr7\ServerRequest;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\parameter
- * @covers     \core\router\schema\parameters\query_parameter
- * @covers     \core\router\schema\openapi_base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\parameter::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\parameters\query_parameter::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\openapi_base::class)]
 final class query_parameter_test extends route_testcase {
     public function test_in_path(): void {
         $param = new query_parameter(name: 'example');
@@ -43,10 +43,10 @@ final class query_parameter_test extends route_testcase {
     /**
      * Test the is_required method.
      *
-     * @dataProvider is_required_provider
      * @param bool|null $required
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_required_provider')]
     public function test_is_required(?bool $required, bool $expected): void {
         $param = new query_parameter(
             name: 'value',
@@ -87,10 +87,10 @@ final class query_parameter_test extends route_testcase {
     /**
      * Test for the allowReserved property.
      *
-     * @dataProvider allow_reserved_provider
      * @param bool|null $allowreserved
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('allow_reserved_provider')]
     public function test_allow_reserved(
         ?bool $allowreserved,
         bool $expected,
@@ -126,11 +126,11 @@ final class query_parameter_test extends route_testcase {
     /**
      * Tests of the param validation.
      *
-     * @dataProvider validation_provider
      * @param array $properties
      * @param array $params
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('validation_provider')]
     public function test_validation(
         array $properties,
         array $params,

@@ -25,8 +25,8 @@ use core_external\external_api;
  * @category   test
  * @copyright  2023 Juan Leyva (juan@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_search\external\view_results
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_search\external\view_results::class)]
 final class view_results_test extends \core_external\tests\externallib_testcase {
     public function setUp(): void {
         parent::setUp();
@@ -35,7 +35,6 @@ final class view_results_test extends \core_external\tests\externallib_testcase 
 
     /**
      * test external api
-     * @covers ::execute
      * @return void
      */
     public function test_external_view_results(): void {

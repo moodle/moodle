@@ -36,6 +36,7 @@ require_once($CFG->libdir . '/rsslib.php');
  * @copyright  2009 Dan Poltawski
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('rss_get_userid_from_token')]
 final class rsslib_test extends \advanced_testcase {
 
     // The number of seconds tests should wait for the server to respond (high to prevent false positives).
@@ -144,8 +145,6 @@ EOD;
 
     /**
      * Test that we can get the right user ID based on the provided private key (token).
-     *
-     * @covers ::rss_get_userid_from_token
      */
     public function test_rss_get_userid_from_token(): void {
         global $USER;

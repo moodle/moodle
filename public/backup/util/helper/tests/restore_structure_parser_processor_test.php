@@ -118,11 +118,11 @@ final class restore_structure_parser_processor_test extends advanced_testcase {
     /**
      * Test that restore_structure_parser_processor replaces $@FILEPHP@$ to correct file php links.
      *
-     * @dataProvider process_cdata_data_provider
      * @param string $content Testing content.
      * @param string $expected Expected result.
      * @param bool $slasharguments A value for $CFG->slasharguments setting.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('process_cdata_data_provider')]
     public function test_process_cdata($content, $expected, $slasharguments): void {
         global $CFG;
 

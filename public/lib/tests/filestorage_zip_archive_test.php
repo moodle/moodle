@@ -35,11 +35,11 @@ final class filestorage_zip_archive_test extends \advanced_testcase {
     /**
      * Test mangle_pathname() method.
      *
-     * @dataProvider pathname_provider
      *
      * @param string $string   Parameter sent to mangle_pathname method.
      * @param string $expected Expected return value.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('pathname_provider')]
     public function test_mangle_pathname($string, $expected): void {
         $ziparchive = new zip_archive();
 

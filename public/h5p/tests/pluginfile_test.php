@@ -34,9 +34,8 @@ require_once($CFG->dirroot . '/h5p/lib.php');
 
 /**
  * Tests covering core_h5p_pluginfile().
- *
- * @covers ::core_h5p_pluginfile
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('core_h5p_pluginfile')]
 final class pluginfile_test extends \advanced_testcase {
 
     protected function setUp(): void {

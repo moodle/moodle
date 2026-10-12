@@ -34,16 +34,14 @@ use \core_privacy\local\request\transform;
  *
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_privacy\local\request\transform
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_privacy\local\request\transform::class)]
 final class request_transform_test extends advanced_testcase {
     /**
      * Test that user translation currently does nothing.
      *
      * We have not determined if we will do this or not, but we provide the functionality and encourgae people to use
      * it so that it can be retrospectively fitted if required.
-     *
-     * @covers ::user
      */
     public function test_user(): void {
         // Note: This test currently sucks, but there's no point creating users just to test this.
@@ -54,8 +52,6 @@ final class request_transform_test extends advanced_testcase {
 
     /**
      * Test that the datetime is translated into a string.
-     *
-     * @covers ::datetime
      */
     public function test_datetime(): void {
         $time = 1;
@@ -76,8 +72,6 @@ final class request_transform_test extends advanced_testcase {
 
     /**
      * Test that the date is translated into a string.
-     *
-     * @covers ::date
      */
     public function test_date(): void {
         $time = 1;
@@ -96,11 +90,10 @@ final class request_transform_test extends advanced_testcase {
     /**
      * Ensure that the yesno function translates correctly.
      *
-     * @dataProvider yesno_provider
      * @param   mixed   $input The input to test
      * @param   string  $expected The expected value
-     * @covers ::yesno
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('yesno_provider')]
     public function test_yesno($input, $expected): void {
         $this->assertEquals($expected, transform::yesno($input));
     }

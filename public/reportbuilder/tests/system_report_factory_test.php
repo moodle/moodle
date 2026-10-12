@@ -27,10 +27,10 @@ use core_reportbuilder\exception\{source_invalid_exception, source_unavailable_e
  * Unit tests for the system report factory class
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\system_report_factory
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\system_report_factory::class)]
 final class system_report_factory_test extends advanced_testcase {
 
     /**

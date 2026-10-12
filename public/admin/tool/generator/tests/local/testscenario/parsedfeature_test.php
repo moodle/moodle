@@ -22,8 +22,8 @@ namespace tool_generator\local\testscenario;
  * @package tool_generator
  * @copyright 2023 Ferran Recio <ferran@moodel.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \tool_generator\local\testscenario\parsedfeature
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_generator\local\testscenario\parsedfeature::class)]
 final class parsedfeature_test extends \advanced_testcase {
     /**
      * Get a parsed feature from a content.
@@ -38,9 +38,6 @@ final class parsedfeature_test extends \advanced_testcase {
 
     /**
      * Test for parse_feature.
-     * @covers ::get_general_error
-     * @covers ::add_scenario
-     * @covers ::add_step
      */
     public function test_general_error(): void {
         $nosteps = get_string('testscenario_nosteps', 'tool_generator');
@@ -75,9 +72,6 @@ final class parsedfeature_test extends \advanced_testcase {
 
     /**
      * Test for parse_feature.
-     * @covers ::is_valid
-     * @covers ::add_scenario
-     * @covers ::add_step
      */
     public function test_is_valid(): void {
         $parsedfeature = new parsedfeature();
@@ -109,10 +103,6 @@ final class parsedfeature_test extends \advanced_testcase {
 
     /**
      * Test for ading steps into scenarios.
-     * @covers ::add_step
-     * @covers ::add_scenario
-     * @covers ::get_all_steps
-     * @covers ::get_scenarios
      */
     public function test_add_step(): void {
         $parsedfeature = new parsedfeature();
@@ -175,10 +165,6 @@ final class parsedfeature_test extends \advanced_testcase {
 
     /**
      * Test for ading errors into scenarios.
-     * @covers ::add_error
-     * @covers ::add_scenario
-     * @covers ::add_step
-     * @covers ::get_scenarios
      */
     public function test_add_error(): void {
         $parsedfeature = new parsedfeature();

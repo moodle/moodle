@@ -42,8 +42,12 @@ defined('MOODLE_INTERNAL') || die();
  * @category   test
  * @copyright  2008 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \moodle_database
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\moodle_database::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\mysqli_native_moodle_database::class, 'get_server_info')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\moodle_database::class, 'get_counted_recordset_sql')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\moodle_database::class, 'get_counted_records_sql')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\moodle_database::class, 'generate_fullcount_sql')]
 final class dml_test extends \database_driver_testcase {
 
     protected function setUp(): void {
@@ -4380,12 +4384,12 @@ EOD;
     }
 
     /**
-     * @dataProvider sql_concat_join_provider
      * @param string $concat The string to use when concatanating.
      * @param array $fields The fields to concatanate
      * @param array $params Any parameters to provide to the query
      * @param @string $expected The expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sql_concat_join_provider')]
     public function test_concat_join($concat, $fields, $params, $expected): void {
         $DB = $this->tdb;
         $sql = "SELECT " . $DB->sql_concat_join($concat, $fields) . " AS result" . $DB->sql_null_from_clause();
@@ -6132,9 +6136,8 @@ EOD;
      * @param bool $cfgversionfromdb A boolean representing !empty($CFG->dboptions['versionfromdb']).
      * @param string $expecteddbversion A string representing the expected DB version.
      * @see \mysqli_native_moodle_database::get_server_info()
-     * @covers \mysqli_native_moodle_database::get_server_info
-     * @dataProvider get_server_info_mysql_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_server_info_mysql_provider')]
     public function test_get_server_info_mysql(
         string $mysqliserverinfo, string $versionfromdb, bool $cfgversionfromdb, string $expecteddbversion): void {
         // Avoid to run MySQL-ish related tests when running tests on other DB families.
@@ -6248,7 +6251,6 @@ EOD;
     /**
      * Test {@see \mysqli_native_moodle_database::get_server_info()} with the actual DB Server.
      * @see \mysqli_native_moodle_database::get_server_info
-     * @covers \mysqli_native_moodle_database::get_server_info
      */
     public function test_get_server_info_dbfamily_mysql(): void {
         $DB = $this->tdb;
@@ -6295,9 +6297,6 @@ EOD;
     /**
      * Test the COUNT() window function with the actual DB Server.
      *
-     * @covers \moodle_database::get_counted_recordset_sql()
-     * @covers \moodle_database::get_counted_records_sql()
-     * @covers \moodle_database::generate_fullcount_sql()
      * @return void
      */
     public function test_count_window_function(): void {

@@ -26,8 +26,8 @@ require_once(__DIR__ . '/../fixtures/task_fixtures.php');
  * @category test
  * @copyright 2013 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\task\scheduled_task
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\task\scheduled_task::class)]
 final class scheduled_task_test extends \advanced_testcase {
 
     /**
@@ -63,9 +63,8 @@ final class scheduled_task_test extends \advanced_testcase {
      * @param int $min
      * @param int $max
      * @param int[] $expected
-     *
-     * @dataProvider eval_cron_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('eval_cron_provider')]
     public function test_eval_cron_field(string $field, int $min, int $max, array $expected): void {
         $testclass = new scheduled_test_task();
 
@@ -227,8 +226,8 @@ final class scheduled_task_test extends \advanced_testcase {
      * @param string $dayofweek Day of week restriction list for task
      * @param string $month Month restriction list for task
      * @param string|int $expected Expected run time (strtotime format or time int)
-     * @dataProvider get_next_scheduled_time_detail_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_next_scheduled_time_detail_provider')]
     public function test_get_next_scheduled_time_detail(string $now, string $minute, string $hour,
             string $day, string $dayofweek, string $month, string|int $expected): void {
         // Create test task with specified times.
@@ -945,8 +944,8 @@ final class scheduled_task_test extends \advanced_testcase {
      * @param array $overrides
      * @param array $tasks
      * @param array $expected
-     * @dataProvider provider_schedule_overrides
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provider_schedule_overrides')]
     public function test_scheduled_task_override_values(array $overrides, array $tasks, array $expected): void {
         global $CFG, $DB;
 
@@ -1120,9 +1119,8 @@ final class scheduled_task_test extends \advanced_testcase {
      *
      * @param string $component
      * @param bool $expected
-     *
-     * @dataProvider is_component_enabled_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_component_enabled_provider')]
     public function test_is_component_enabled(string $component, bool $expected): void {
         $this->resetAfterTest();
 

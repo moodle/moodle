@@ -33,15 +33,11 @@ use org\bovigo\vfs\vfsStream;
 
 /**
  * Test phpunit_dataset features.
- *
- * @coversDefaultClass \phpunit_dataset
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\phpunit_dataset::class)]
 final class phpunit_dataset_test extends advanced_testcase {
 
 
-    /**
-     * @covers ::from_files
-     */
     public function test_from_files(): void {
 
         $ds = new phpunit_dataset();
@@ -143,10 +139,7 @@ final class phpunit_dataset_test extends advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider from_file_provider
-     * @covers ::from_file
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('from_file_provider')]
     public function test_from_file(string $fullpath, string $tablename, ?string $exception,
         array $tables, array $columns, array $rows): void {
 
@@ -233,10 +226,7 @@ final class phpunit_dataset_test extends advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider from_string_provider
-     * @covers ::from_string
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('from_string_provider')]
     public function test_from_string(string $content, string $type, string $tablename, ?string $exception,
         array $tables, array $columns, array $rows): void {
 
@@ -376,10 +366,7 @@ final class phpunit_dataset_test extends advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider from_array_provider
-     * @covers ::from_array
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('from_array_provider')]
     public function test_from_array(array $structure, ?string $exception,
         array $tables, array $columns, array $rows, ?bool $repeated = false): void {
 
@@ -467,10 +454,7 @@ final class phpunit_dataset_test extends advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider load_csv_provider
-     * @covers ::load_csv
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('load_csv_provider')]
     public function test_load_csv(array $files, ?string $exception,
         array $tables, array $columns, array $rows): void {
 
@@ -635,10 +619,7 @@ final class phpunit_dataset_test extends advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider load_xml_provider
-     * @covers ::load_xml
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('load_xml_provider')]
     public function test_load_xml(array $files, ?string $exception,
         array $tables, array $columns, array $rows): void {
 
@@ -767,10 +748,7 @@ final class phpunit_dataset_test extends advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider to_database_provider
-     * @covers ::to_database
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('to_database_provider')]
     public function test_to_database(array $files, ?array $filter, ?string $exception, array $columns, array $rows): void {
         global $DB;
 
@@ -904,10 +882,7 @@ final class phpunit_dataset_test extends advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider get_rows_provider
-     * @covers ::get_rows
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_rows_provider')]
     public function test_get_rows(array $files, array $filter, ?string $exception, array $rows): void {
 
         $ds = new phpunit_dataset();

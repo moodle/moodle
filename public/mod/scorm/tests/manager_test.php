@@ -24,8 +24,8 @@ use context_module;
  * @package    mod_scorm
  * @copyright  2025 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_scorm\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_scorm\manager::class)]
 final class manager_test extends \advanced_testcase {
     /**
      * Test creating a manager instance from an instance record.
@@ -127,9 +127,8 @@ final class manager_test extends \advanced_testcase {
      * @param int $groupmode the group mode to use for the course.
      * @param string $activity the activity name to test.
      * @param array $expected the expected participant counts for each activity and user.
-     *
-     * @dataProvider get_count_users_who_attempted_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_count_users_who_attempted_data')]
     public function test_count_users_who_attempted(int $groupmode, string $activity, array $expected): void {
         $this->resetAfterTest();
         ['users' => $users, 'instances' => $instances] = $this->setup_users_and_activity(groupmode: $groupmode);
@@ -271,9 +270,8 @@ final class manager_test extends \advanced_testcase {
      *
      * @param int $groupmode the group mode to use for the course.
      * @param array $expected the expected participant counts for each user.
-     *
-     * @dataProvider get_count_participants_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_count_participants_data')]
     public function test_count_participants(int $groupmode, array $expected): void {
         $this->resetAfterTest();
         ['users' => $users, 'instances' => $instances] = $this->setup_users_and_activity($groupmode);
@@ -344,9 +342,8 @@ final class manager_test extends \advanced_testcase {
      *
      * @param array $scormparams the parameters to create the SCORM activity.
      * @param string $expectedmethod the expected grading method.
-     *
-     * @dataProvider get_grading_method_data
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_grading_method_data')]
     public function test_get_grading_method(array $scormparams, string $expectedmethod): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();

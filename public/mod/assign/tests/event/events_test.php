@@ -43,6 +43,15 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
  * @copyright 2014 Adrian Greeve <adrian@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\event\submission_removed::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\assign::class, 'save_user_extension')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\event\submission_status_updated::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\event\marker_added::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\event\marker_removed::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\event\marker_enabled_updated::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\event\workflow_state_updated::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\event\submission_marked::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_assign\event\agreed_grade_calculated::class)]
 final class events_test extends \advanced_testcase {
     // Use the generator helper.
     use mod_assign_test_generator;
@@ -196,8 +205,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test submission_removed event.
-     *
-     * @covers \mod_assign\event\submission_removed
      */
     public function test_submission_removed(): void {
         $this->resetAfterTest();
@@ -229,8 +236,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test submission_removed event when a team submission is removed.
-     *
-     * @covers \mod_assign\event\submission_removed
      */
     public function test_team_submission_removed(): void {
         $this->resetAfterTest();
@@ -270,8 +275,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test event creation for save_user_extension().
-     *
-     * @covers \assign::save_user_extension
      */
     public function test_extension_granted(): void {
         global $DB, $CFG;
@@ -411,8 +414,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test submission_status_updated event when a submission is updated.
-     *
-     * @covers \mod_assign\event\submission_status_updated
      */
     public function test_submission_status_updated_on_update(): void {
         $this->resetAfterTest();
@@ -444,8 +445,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test submission_status_updated event when a submission is removed.
-     *
-     * @covers \mod_assign\event\submission_status_updated
      */
     public function test_submission_status_updated_on_remove(): void {
         $this->resetAfterTest();
@@ -475,8 +474,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test submission_status_updated event when a team submission is removed.
-     *
-     * @covers \mod_assign\event\submission_status_updated
      */
     public function test_team_submission_status_updated_on_remove(): void {
         $this->resetAfterTest();
@@ -514,8 +511,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test marker_added event when a marker is allocated.
-     *
-     * @covers \mod_assign\event\marker_added
      */
     public function test_marker_added(): void {
         $this->resetAfterTest();
@@ -553,8 +548,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test marker_removed event when a marker is unallocated.
-     *
-     * @covers \mod_assign\event\marker_removed
      */
     public function test_marker_removed(): void {
         $this->resetAfterTest();
@@ -598,8 +591,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test marker_enabled_updated event when an optional marker is enabled or disabled.
-     *
-     * @covers \mod_assign\event\marker_enabled_updated
      */
     public function test_marker_enabled_updated(): void {
         $this->resetAfterTest();
@@ -659,8 +650,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test workflow_state_updated event when the workflow state is updated.
-     *
-     * @covers \mod_assign\event\workflow_state_updated
      */
     public function test_workflow_state_updated(): void {
         $this->resetAfterTest();
@@ -865,8 +854,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test submission_marked event when an allocated marker marks.
-     *
-     * @covers \mod_assign\event\submission_marked
      */
     public function test_submission_marked(): void {
         $this->resetAfterTest();
@@ -969,8 +956,6 @@ final class events_test extends \advanced_testcase {
 
     /**
      * Test agreed_grade_calculated event when an agreed grade is calculated.
-     *
-     * @covers \mod_assign\event\agreed_grade_calculated
      */
     public function test_agreed_grade_calculated(): void {
         $this->resetAfterTest();

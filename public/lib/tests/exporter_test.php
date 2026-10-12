@@ -38,6 +38,8 @@ use core_external\util;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\external\exporter::class, 'export')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\external\exporter::class, 'get_read_structure')]
 final class exporter_test extends \advanced_testcase {
 
     protected $validrelated = null;
@@ -208,7 +210,6 @@ final class exporter_test extends \advanced_testcase {
     /**
      * Tests for the handling of the default attribute of format properties in exporters.
      *
-     * @covers \core\external\exporter::export
      * @return void
      */
     public function test_export_format_no_default(): void {
@@ -251,7 +252,6 @@ final class exporter_test extends \advanced_testcase {
     /**
      * Test the processing of format properties.
      *
-     * @covers \core\external\exporter::get_read_structure
      * @return void
      */
     public function test_format_properties_with_optional(): void {
@@ -310,7 +310,6 @@ final class exporter_test extends \advanced_testcase {
     /**
      * Test the processing of format properties when an invalid default format is passed.
      *
-     * @covers \core\external\exporter::get_read_structure
      * @return void
      */
     public function test_optional_format_property_with_invalid_default(): void {

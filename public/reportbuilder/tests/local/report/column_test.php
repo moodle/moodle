@@ -29,10 +29,10 @@ use stdClass;
  * Unit tests for a report column
  *
  * @package     core_reportbuilder
- * @covers      \core_reportbuilder\local\report\column
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_reportbuilder\local\report\column::class)]
 final class column_test extends advanced_testcase {
 
     /**
@@ -133,9 +133,8 @@ final class column_test extends advanced_testcase {
      * @param int $columntype
      * @param string|null $aggregation
      * @param int $expectedtype
-     *
-     * @dataProvider get_effective_type_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_effective_type_provider')]
     public function test_get_effective_type(int $columntype, ?string $aggregation, int $expectedtype): void {
         $column = $this->create_column('test')
             ->set_type($columntype)
@@ -163,9 +162,8 @@ final class column_test extends advanced_testcase {
      * @param string $sql
      * @param string $alias
      * @param array $expectedselect
-     *
-     * @dataProvider add_field_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_field_provider')]
     public function test_add_field(string $sql, string $alias, array $expectedselect): void {
         $column = $this->create_column('test')
             ->set_index(1)
@@ -254,9 +252,8 @@ final class column_test extends advanced_testcase {
      *
      * @param string|string[] $sql
      * @param array $expectedselect
-     *
-     * @dataProvider add_fields_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('add_fields_provider')]
     public function test_add_fields(string|array $sql, array $expectedselect): void {
         $column = $this->create_column('test')
             ->set_index(1)
@@ -353,9 +350,8 @@ final class column_test extends advanced_testcase {
      * @param int $columntype
      * @param mixed $value
      * @param mixed|null $expected Expected value, or null to indicate it should be identical to value
-     *
-     * @dataProvider column_type_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('column_type_provider')]
     public function test_get_default_value(int $columntype, $value, $expected = null): void {
         $defaultvalue = column::get_default_value([
             'value' => $value,
@@ -371,9 +367,8 @@ final class column_test extends advanced_testcase {
      * @param int $columntype
      * @param mixed $value
      * @param mixed|null $expected Expected value, or null to indicate it should be identical to value
-     *
-     * @dataProvider column_type_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('column_type_provider')]
     public function test_format_value(int $columntype, $value, $expected = null): void {
         $column = $this->create_column('test')
             ->set_index(1)

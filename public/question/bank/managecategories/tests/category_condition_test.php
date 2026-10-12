@@ -28,8 +28,8 @@ use core_question\test\mock_restore_test_trait;
  * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qbank_managecategories\category_condition
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qbank_managecategories\category_condition::class)]
 final class category_condition_test extends \advanced_testcase {
     use mock_restore_test_trait;
 

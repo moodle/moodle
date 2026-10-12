@@ -25,8 +25,8 @@ use ValueError;
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_sms\message
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_sms\message::class)]
 final class message_test extends \advanced_testcase {
     public function test_create(): void {
         $message = new message(
@@ -108,10 +108,10 @@ final class message_test extends \advanced_testcase {
     /**
      * Test that get_region returns regions with valid numbers.
      *
-     * @dataProvider get_region_provider
      * @param string $recipientnumber
      * @param string $expectedregion
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_region_provider')]
     public function test_get_region_valid(
         string $recipientnumber,
         string $expectedregion,

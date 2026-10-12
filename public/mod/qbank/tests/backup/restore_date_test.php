@@ -29,13 +29,13 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  * @author     Simon Adams <simon.adams@catalyst-eu.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_dbops::class, 'create_new_course')]
 final class restore_date_test extends \restore_date_testcase {
 
     /**
      * When restoring a course, you can change the start date, which shifts other dates.
      * This test checks that certain dates are correctly modified.
      *
-     * @covers \restore_dbops::create_new_course()
      * @return void
      */
     public function test_restore_dates(): void {

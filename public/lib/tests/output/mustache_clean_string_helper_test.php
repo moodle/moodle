@@ -25,14 +25,12 @@ namespace core\output;
  * @category  test
  * @copyright 2021 Shamim Rezaie <shamim@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\output\mustache_clean_string_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\output\mustache_clean_string_helper::class)]
 final class mustache_clean_string_helper_test extends \basic_testcase {
 
     /**
      * Test the get_lang_menu
-     *
-     * @covers ::cleanstr
      */
     function test_cleanstr(): void {
         $engine = new \Mustache\Engine();

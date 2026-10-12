@@ -24,10 +24,10 @@ use advanced_testcase;
  * Unit tests for the dataformat plugininfo class
  *
  * @package     core
- * @covers      \core\plugininfo\dataformat
  * @copyright   2022 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\plugininfo\dataformat::class)]
 final class dataformat_test extends advanced_testcase {
 
     /**

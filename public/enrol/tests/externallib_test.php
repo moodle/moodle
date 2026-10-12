@@ -39,6 +39,7 @@ require_once($CFG->dirroot . '/enrol/externallib.php');
  * @since Moodle 2.4
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(core_enrol_external::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('search_users')]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * dataProvider for test_get_enrolled_users_visibility().
@@ -253,9 +254,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
     /**
      * Verify get_enrolled_users() returned users are the expected in every situation.
-     *
-     * @dataProvider get_enrolled_users_visibility_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_enrolled_users_visibility_provider')]
     public function test_get_enrolled_users_visibility($settings, $results): void {
 
         global $USER;
@@ -1364,8 +1364,8 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
      * @param array $customdata The data we are providing to the webservice.
      * @param bool $expectedresult The result we are expecting to receive from the webservice.
      * @param bool $validationerror The validationerror we are expecting to receive from the webservice.
-     * @dataProvider submit_user_enrolment_form_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('submit_user_enrolment_form_provider')]
     public function test_submit_user_enrolment_form($customdata, $expectedresult, $validationerror): void {
         global $CFG, $DB;
 
@@ -1598,7 +1598,6 @@ final class externallib_test extends \core_external\tests\externallib_testcase {
 
     /**
      * Test for core_enrol_external::search_users() when group mode is active.
-     * @covers ::search_users
      */
     public function test_search_users_groupmode(): void {
         global $DB;

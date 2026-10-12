@@ -35,10 +35,10 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * Unit tests for the Moodle XML format.
  *
  * @package    qformat_xml
- * @covers     \qformat_xml
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\qformat_xml::class)]
 final class xmlformat_test extends \question_testcase {
     public function make_test_question() {
         global $USER;

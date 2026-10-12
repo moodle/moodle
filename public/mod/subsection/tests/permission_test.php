@@ -25,10 +25,10 @@ use context_course;
  * Unit tests for the subsection permission class
  *
  * @package     mod_subsection
- * @covers      \mod_subsection\permission
  * @copyright   2024 Mikel Martín <mikel@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_subsection\permission::class)]
 final class permission_test extends advanced_testcase {
 
     /**
@@ -39,9 +39,8 @@ final class permission_test extends advanced_testcase {
      * @param bool $isdelegated
      * @param string $format
      * @param bool $expected
-     *
-     * @dataProvider can_add_subsection_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('can_add_subsection_provider')]
     public function test_can_add_subsection(
         bool $ismoddisabled,
         bool $missingcapability,

@@ -75,11 +75,11 @@ final class edit_form_test extends \advanced_testcase {
     /**
      * Test the form for correct validation of attachments options.
      *
-     * @dataProvider user_preference_provider
      * @param int $allowed
      * @param int $required
      * @param array $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('user_preference_provider')]
     public function test_attachments_validation(int $allowed, int $required, array $expected): void {
         list($form, $category) = $this->get_form('qtype_essay_edit_form');
         $submitteddata = [

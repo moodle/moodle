@@ -29,10 +29,11 @@ require_once($CFG->libdir . '/badgeslib.php');
  * Unit tests for existing_award_selector class.
  *
  * @package     core_badges
- * @covers      \core_badges\existing_award_selector
  * @copyright   2025 Dai Nguyen Trong <ngtrdai@hotmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\existing_award_selector::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_badges\existing_award_selector::class, 'find_users')]
 final class existing_award_selector_test extends badges_testcase {
     /**
      * Create a simple test environment.
@@ -103,8 +104,6 @@ final class existing_award_selector_test extends badges_testcase {
 
     /**
      * Test find_users method with no recipients.
-     *
-     * @covers \core_badges\existing_award_selector::find_users
      */
     public function test_find_users_no_recipients(): void {
         $this->resetAfterTest();
@@ -129,8 +128,6 @@ final class existing_award_selector_test extends badges_testcase {
 
     /**
      * Test find_users method with recipients.
-     *
-     * @covers \core_badges\existing_award_selector::find_users
      */
     public function test_find_users_with_recipients(): void {
         $this->resetAfterTest();
@@ -173,8 +170,6 @@ final class existing_award_selector_test extends badges_testcase {
 
     /**
      * Test find_users method with search filter.
-     *
-     * @covers \core_badges\existing_award_selector::find_users
      */
     public function test_find_users_with_search(): void {
         $this->resetAfterTest();
@@ -228,8 +223,6 @@ final class existing_award_selector_test extends badges_testcase {
 
     /**
      * Test find_users method with different issuer role.
-     *
-     * @covers \core_badges\existing_award_selector::find_users
      */
     public function test_find_users_with_different_issuer_role(): void {
         $this->resetAfterTest();

@@ -24,10 +24,10 @@ use advanced_testcase;
  *
  * @package    core_xapi
  * @since      Moodle 4.2
- * @covers     \core_xapi\api
  * @copyright  2023 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_xapi\api::class)]
 final class api_test extends advanced_testcase {
 
     /**

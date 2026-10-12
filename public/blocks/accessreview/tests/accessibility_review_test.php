@@ -28,8 +28,8 @@ use context_course;
  * @copyright  2020 onward: Learning Technology Services, www.lts.ie
  * @author     Jay Churchward (jay.churchward@poetopensource.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \block_accessreview
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\block_accessreview::class)]
 final class accessibility_review_test extends advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . '/../../moodleblock.class.php');
@@ -98,8 +98,6 @@ final class accessibility_review_test extends advanced_testcase {
 
     /**
      * Test the behaviour of can_block_be_added() method.
-     *
-     * @covers ::can_block_be_added
      */
     public function test_can_block_be_added(): void {
         $this->resetAfterTest();

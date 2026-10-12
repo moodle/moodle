@@ -28,8 +28,8 @@ use GuzzleHttp\Psr7\ServerRequest;
  * @category   test
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\router\middleware\moodle_route_attribute_middleware
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\middleware\moodle_route_attribute_middleware::class)]
 final class moodle_route_attribute_middleware_test extends route_testcase {
     /**
      * Test the Moodle route will be set on a request which has a Moodle route attached.

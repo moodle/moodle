@@ -27,11 +27,11 @@ use zip_archive;
  *
  * @package    mod_data
  * @category   test
- * @covers     \mod_data\local\importer\entries_importer
- * @covers     \mod_data\local\importer\csv_entries_importer
  * @copyright  2019 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\local\importer\entries_importer::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_data\local\importer\csv_entries_importer::class)]
 final class entries_import_test extends \advanced_testcase {
 
     /**
@@ -289,9 +289,8 @@ final class entries_import_test extends \advanced_testcase {
      *
      * @param string $user
      * @param int[] $expected
-     *
-     * @dataProvider import_without_approved_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('import_without_approved_provider')]
     public function test_import_without_approved(string $user, array $expected): void {
         $testdata = $this->get_test_data();
         ['data' => $data, 'cm' => $cm] = $testdata;
@@ -322,9 +321,8 @@ final class entries_import_test extends \advanced_testcase {
      *
      * @param string $user
      * @param int[] $expected
-     *
-     * @dataProvider import_with_approved_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('import_with_approved_provider')]
     public function test_import_with_approved(string $user, array $expected): void {
         $testdata = $this->get_test_data();
         ['data' => $data, 'cm' => $cm] = $testdata;
@@ -438,10 +436,10 @@ final class entries_import_test extends \advanced_testcase {
     /**
      * Tests if the amount of imported records is counted properly.
      *
-     * @dataProvider get_added_record_messages_provider
      * @param string $datafilecontent the content of the datafile to test as string
      * @param int $expectedcount the expected count of messages depending on the datafile content
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_added_record_messages_provider')]
     public function test_get_added_record_messages(string $datafilecontent, int $expectedcount): void {
         [
             'data' => $data,

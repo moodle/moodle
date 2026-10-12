@@ -23,8 +23,8 @@ namespace core_cache;
  * @category test
  * @copyright 2022 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_cache\allow_temporary_caches
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_cache\allow_temporary_caches::class)]
 final class allow_temporary_caches_test extends \advanced_testcase {
     /**
      * Tests whether temporary caches are allowed.

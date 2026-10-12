@@ -32,8 +32,8 @@ namespace core\event;
  * @category   test
  * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\event\contentbank_content_viewed
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\event\contentbank_content_viewed::class)]
 final class contentbank_content_viewed_test extends \advanced_testcase {
 
     /**
@@ -49,8 +49,6 @@ final class contentbank_content_viewed_test extends \advanced_testcase {
 
     /**
      * Test the content viewed event.
-     *
-     * @covers ::create_from_record
      */
     public function test_content_viewed(): void {
 

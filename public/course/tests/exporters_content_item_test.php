@@ -34,8 +34,8 @@ use core_course\local\repository\content_item_readonly_repository;
  *
  * @copyright  2020 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_course\local\exporters\course_content_item_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_course\local\exporters\course_content_item_exporter::class)]
 final class exporters_content_item_test extends \advanced_testcase {
 
     /**
@@ -133,8 +133,6 @@ final class exporters_content_item_test extends \advanced_testcase {
 
     /**
      * Test that a disabled content item exports the disabled flag and reason.
-     *
-     * @covers ::export
      */
     public function test_export_disabled_content_item(): void {
         $this->resetAfterTest();
@@ -168,8 +166,6 @@ final class exporters_content_item_test extends \advanced_testcase {
 
     /**
      * Test that a non-disabled content item exports disabled=false and disabledreason=null.
-     *
-     * @covers ::export
      */
     public function test_export_non_disabled_content_item_has_disabled_fields(): void {
         $this->resetAfterTest();

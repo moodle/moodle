@@ -48,11 +48,11 @@ final class iri_test extends advanced_testcase {
     /**
      * Test IRI generation.
      *
-     * @dataProvider iri_samples_provider
      * @param string $value Value to generate IRI
      * @param string $expected Expected result
      * @param string $type = null If some special type is provided
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('iri_samples_provider')]
     public function test_generate(string $value, string $expected, ?string $type = null): void {
         $iri = iri::generate($value, $type);
         $this->assertEquals($iri, $expected);
@@ -61,11 +61,11 @@ final class iri_test extends advanced_testcase {
     /**
      * Test IRI extraction.
      *
-     * @dataProvider iri_samples_provider
      * @param string $expected Expected result
      * @param string $value Value to generate IRI
      * @param string $type = null If some special type is provided
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('iri_samples_provider')]
     public function test_extract(string $expected, string $value, ?string $type = null): void {
         $extract = iri::extract($value, $type);
         $this->assertEquals($extract, $expected);
@@ -106,10 +106,10 @@ final class iri_test extends advanced_testcase {
     /**
      * Test IRI generation.
      *
-     * @dataProvider iri_check_provider
      * @param string $value Value to generate IRI
      * @param bool $expected Expected result
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('iri_check_provider')]
     public function test_check(string $value, bool $expected): void {
         $check = iri::check($value);
         $this->assertEquals($check, $expected);

@@ -22,14 +22,13 @@ namespace core\session\utility;
  * @package    core
  * @copyright  2024 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\session\utility\cookie_helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\session\utility\cookie_helper::class)]
 final class cookie_helper_test extends \advanced_testcase {
 
     /**
      * Testing cookie_response_headers_add_attributes().
      *
-     * @dataProvider cookie_response_headers_provider
      *
      * @param array $headers the headers to search
      * @param array $cookienames the cookienames to match
@@ -38,6 +37,7 @@ final class cookie_helper_test extends \advanced_testcase {
      * @param array $expectedheaders the expected, updated headers
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('cookie_response_headers_provider')]
     public function test_cookie_response_headers_add_attributes(array $headers, array $cookienames, array $attributes,
             bool $casesensitive, array $expectedheaders): void {
 

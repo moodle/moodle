@@ -28,10 +28,10 @@ use mod_forum_generator;
  * Unit tests for forums datasource
  *
  * @package     mod_forum
- * @covers      \mod_forum\reportbuilder\datasource\forums
  * @copyright   2025 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_forum\reportbuilder\datasource\forums::class)]
 final class forums_test extends core_reportbuilder_testcase {
     /** @var clock $clock */
     private readonly clock $clock;
@@ -364,9 +364,8 @@ final class forums_test extends core_reportbuilder_testcase {
      * @param string $filtername
      * @param array $filtervalues
      * @param bool $expectmatch
-     *
-     * @dataProvider datasource_filters_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('datasource_filters_provider')]
     public function test_datasource_filters(string $filtername, array $filtervalues, bool $expectmatch): void {
         $this->resetAfterTest();
         $this->setAdminUser();

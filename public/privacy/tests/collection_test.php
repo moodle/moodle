@@ -30,14 +30,12 @@ use core_privacy\local\metadata\types;
  * @category    test
  * @copyright   2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_privacy\local\metadata\collection
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_privacy\local\metadata\collection::class)]
 final class collection_test extends \advanced_testcase {
 
     /**
      * Test that adding an unknown type causes the type to be added to the collection.
-     *
-     * @covers ::add_type
      */
     public function test_add_type_generic_type(): void {
         $collection = new collection('core_privacy');
@@ -53,8 +51,6 @@ final class collection_test extends \advanced_testcase {
 
     /**
      * Test that adding a known type works as anticipated.
-     *
-     * @covers ::add_type
      */
     public function test_add_type_known_type(): void {
         $collection = new collection('core_privacy');
@@ -69,8 +65,6 @@ final class collection_test extends \advanced_testcase {
 
     /**
      * Test that adding multiple types returns them all.
-     *
-     * @covers ::add_type
      */
     public function test_add_type_multiple(): void {
         $collection = new collection('core_privacy');
@@ -87,8 +81,6 @@ final class collection_test extends \advanced_testcase {
 
     /**
      * Test that the add_database_table function adds a database table.
-     *
-     * @covers ::add_database_table
      */
     public function test_add_database_table(): void {
         $collection = new collection('core_privacy');
@@ -110,8 +102,6 @@ final class collection_test extends \advanced_testcase {
 
     /**
      * Test that the add_user_preference function adds a single user preference.
-     *
-     * @covers ::add_user_preference
      */
     public function test_add_user_preference(): void {
         $collection = new collection('core_privacy');
@@ -131,8 +121,6 @@ final class collection_test extends \advanced_testcase {
 
     /**
      * Test that the link_external_location function links an external location.
-     *
-     * @covers ::link_external_location
      */
     public function test_link_external_location(): void {
         $collection = new collection('core_privacy');
@@ -154,8 +142,6 @@ final class collection_test extends \advanced_testcase {
 
     /**
      * Test that the link_subsystem function links the subsystem.
-     *
-     * @covers ::link_subsystem
      */
     public function test_link_subsystem(): void {
         $collection = new collection('core_privacy');
@@ -175,8 +161,6 @@ final class collection_test extends \advanced_testcase {
 
     /**
      * Test that the link_plugintype function links the plugin.
-     *
-     * @covers ::link_plugintype
      */
     public function test_link_plugintype(): void {
         $collection = new collection('core_privacy');
@@ -211,10 +195,9 @@ final class collection_test extends \advanced_testcase {
      *
      * The component will be used for string translations.
      *
-     * @dataProvider component_list_provider
      * @param   string  $component The component to test
-     * @covers ::get_component
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('component_list_provider')]
     public function test_get_component($component): void {
         $collection = new collection($component);
 

@@ -26,15 +26,14 @@ use core_badges\tests\external_helper;
  * @copyright  2023 Rodrigo Mady <rodrigo.mady@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 4.3
- * @coversDefaultClass \core_badges\external\get_user_badge_by_hash
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\external\get_user_badge_by_hash::class)]
 final class get_user_badge_by_hash_test extends \core_external\tests\externallib_testcase {
     use external_helper;
 
     /**
      * Test get user badge by hash.
      * These are a basic tests since the badges_get_my_user_badges used by the external function already has unit tests.
-     * @covers ::execute
      */
     public function test_get_user_badge_by_hash(): void {
         $data = $this->prepare_test_data();

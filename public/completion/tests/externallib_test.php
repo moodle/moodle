@@ -27,8 +27,8 @@ use core_external\external_api;
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 2.9
- * @coversDefaultClass \core_completion_external
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_completion_external::class)]
 final class externallib_test extends \core_external\tests\externallib_testcase {
     /**
      * Test update_activity_completion_status_manually

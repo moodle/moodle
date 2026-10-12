@@ -69,9 +69,7 @@ final class calendar_event_exporter_test extends \advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider get_timestamp_min_limit_test_cases
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_timestamp_min_limit_test_cases')]
     public function test_get_timestamp_min_limit($starttime, $min, $expected): void {
         $class = calendar_event_exporter::class;
         $mock = $this->getMockBuilder($class)
@@ -125,9 +123,7 @@ final class calendar_event_exporter_test extends \advanced_testcase {
         ];
     }
 
-    /**
-     * @dataProvider get_timestamp_max_limit_test_cases
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_timestamp_max_limit_test_cases')]
     public function test_get_timestamp_max_limit($starttime, $max, $expected): void {
         $class = calendar_event_exporter::class;
         $mock = $this->getMockBuilder($class)

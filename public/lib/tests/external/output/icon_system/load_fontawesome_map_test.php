@@ -22,18 +22,15 @@ namespace core\external\output\icon_system;
  * @package core
  * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core\external\output\icon_system\load_fontawesome_map
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\external\output\icon_system\load_fontawesome_map::class)]
 final class load_fontawesome_map_test extends \core_external\tests\externallib_testcase {
     /**
      * Ensure that a valid theme which uses fontawesome returns a map.
      *
-     * @covers ::execute_parameters
-     * @covers ::execute
-     * @covers ::execute_returns
-     * @dataProvider valid_fontawesome_theme_provider
      * @param   string $themename
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('valid_fontawesome_theme_provider')]
     public function test_execute(string $themename): void {
         $result = load_fontawesome_map::execute($themename);
         $this->assertIsArray($result);

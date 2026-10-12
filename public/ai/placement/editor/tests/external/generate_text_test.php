@@ -22,8 +22,8 @@ namespace aiplacement_editor\external;
  * @package    aiplacement_editor
  * @copyright  2025 Matt Porritt <matt.porritt@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \aiplacement_editor\external\generate_text
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\aiplacement_editor\external\generate_text::class)]
 final class generate_text_test extends \advanced_testcase {
     /**
      * Test generate_text webservice.

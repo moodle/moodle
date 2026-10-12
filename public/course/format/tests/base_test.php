@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * Course related unit tests
  *
@@ -22,6 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(core_courseformat\base::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_return_options')]
 final class base_test extends advanced_testcase {
 
     /**
@@ -199,8 +199,6 @@ final class base_test extends advanced_testcase {
 
     /**
      * Test for get_return_options().
-     *
-     * @covers ::get_return_options
      */
     public function test_get_return_options(): void {
         $this->resetAfterTest();

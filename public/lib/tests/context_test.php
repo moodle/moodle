@@ -24,13 +24,13 @@ namespace core;
  * @package   core
  * @copyright Petr Skoda
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass  \core\context
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\context::class)]
 final class context_test extends \advanced_testcase {
     /**
      * Tests legacy class name.
-     * @coversNothing
      */
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_legacy_classname(): void {
         $this->assertSame('core\context', context::class);
 
@@ -41,7 +41,6 @@ final class context_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::instance_by_id
      */
     public function test_factory_methods(): void {
         $context = context::instance_by_id(SYSCONTEXTID);
@@ -50,8 +49,6 @@ final class context_test extends \advanced_testcase {
 
     /**
      * Tests covered methods.
-     * @covers ::__set
-     * @covers ::__unset
      */
     public function test_propery_change_protection(): void {
         $context = context\system::instance();
@@ -77,7 +74,6 @@ final class context_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::__get
      */
     public function test_incorrect_property(): void {
         $context = context\system::instance();
@@ -88,7 +84,6 @@ final class context_test extends \advanced_testcase {
 
     /**
      * Tests covered method.
-     * @covers ::getIterator
      */
     public function test_iterator(): void {
         $context = context\system::instance();

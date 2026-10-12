@@ -23,8 +23,10 @@ namespace core_badges\local\backpack\ob\v2p0;
  * @category   test
  * @copyright  2025 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_badges\local\backpack\ob\v2p0\badge_exporter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_badges\local\backpack\ob\v2p0\badge_exporter::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('export')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('get_json')]
 class recipient_exporter_test extends \advanced_testcase {
     #[\Override]
     public static function setUpBeforeClass(): void {
@@ -58,9 +60,8 @@ class recipient_exporter_test extends \advanced_testcase {
      * Test export method.
      *
      * @param bool $usesalt Whether to use salt for hashing the recipient's email.
-     * @dataProvider export_provider
-     * @covers ::export
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('export_provider')]
     public function test_export(bool $usesalt): void {
         global $CFG;
 
@@ -97,8 +98,6 @@ class recipient_exporter_test extends \advanced_testcase {
 
     /**
      * Test get_json method.
-     *
-     * @covers ::get_json
      */
     public function test_get_json(): void {
         $this->resetAfterTest();

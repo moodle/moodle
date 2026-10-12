@@ -34,8 +34,8 @@ require_once(__DIR__ . '/fixtures/testable_string_manager_for_current_language_t
  *
  * @copyright 2026 Brendan Heywood <brendan@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \core\lang::match_lang_from_browser_header
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\lang::class, 'match_lang_from_browser_header')]
 final class lang_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();
@@ -145,11 +145,11 @@ final class lang_test extends \advanced_testcase {
     /**
      * Test \core\lang::match_lang_from_browser_header() across all scenarios.
      *
-     * @dataProvider match_lang_from_browser_provider
      * @param string|null $header    value of the Accept-Language header, or null to simulate absence
      * @param array       $installed map of lang code => human name to pretend are installed
      * @param string|null $expected  expected return value
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('match_lang_from_browser_provider')]
     public function test_match_lang_from_browser_header(?string $header, array $installed, ?string $expected): void {
         testable_string_manager_for_current_language_tests::set_fake_list_of_installed_languages($installed);
         $this->assertSame($expected, lang::match_lang_from_browser_header($header));

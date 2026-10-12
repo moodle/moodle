@@ -25,8 +25,8 @@ use core\context\module;
  * @copyright 2025 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_question\external\search_shared_banks
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_question\external\search_shared_banks::class)]
 final class search_shared_banks_test extends \advanced_testcase {
 
     /**

@@ -35,8 +35,8 @@ require_once($CFG->dirroot . '/mod/feedback/lib.php');
  * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.3
- * @covers     \mod_feedback_external
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_feedback_external::class)]
 final class external_test extends \core_external\tests\externallib_testcase {
     // TODO These should be removed.
     // Testcase classes should not have any properties or store state.
@@ -381,11 +381,11 @@ final class external_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_items, to confirm validation is done too.
      *
-     * @dataProvider items_provider
      * @param string $role Whether the current user should be a student or a teacher.
      * @param array $info Settings to create the feedback.
      * @param string|null $warning The warning message to display or null if warnings result is empty.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('items_provider')]
     public function test_get_items_validation(string $role, array $info, ?string $warning): void {
         global $DB;
 
@@ -575,11 +575,11 @@ final class external_test extends \core_external\tests\externallib_testcase {
     /**
      * Test get_page_items, to confirm validation is done too.
      *
-     * @dataProvider items_provider
      * @param string $role Whether the current user should be a student or a teacher.
      * @param array $info Settings to create the feedback.
      * @param string|null $warning The warning message to display or null if warnings result is empty.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('items_provider')]
     public function test_get_page_items_validation(string $role, array $info, ?string $warning): void {
         global $DB;
 

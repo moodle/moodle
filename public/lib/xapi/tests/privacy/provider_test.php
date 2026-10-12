@@ -29,8 +29,8 @@ use core_xapi\test_helper;
  * @category   test
  * @copyright  2023 Sara Arjona (sara@moodle.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_xapi\privacy\provider
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_xapi\privacy\provider::class)]
 final class provider_test extends provider_testcase {
 
     /**

@@ -34,9 +34,9 @@ require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
  * @category   test
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \communication_matrix\communication_feature
- * @coversDefaultClass \communication_matrix\communication_feature
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\communication_matrix\communication_feature::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\communication_matrix\communication_feature::class)]
 final class communication_feature_test extends \advanced_testcase {
     use matrix_test_helper_trait;
     use communication_test_helper_trait;
@@ -50,8 +50,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test create or update chat room.
-     *
-     * @covers ::create_chat_room
      */
     public function test_create_chat_room(): void {
         // Set up the test data first.
@@ -120,8 +118,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test update of a chat room.
-     *
-     * @covers ::update_chat_room
      */
     public function test_update_chat_room(): void {
         $communication = $this->create_room(
@@ -201,8 +197,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test delete chat room.
-     *
-     * @covers ::delete_chat_room
      */
     public function test_delete_chat_room(): void {
         $communication = $this->create_room();
@@ -227,10 +221,8 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test update room avatar.
-     *
-     * @covers ::update_room_avatar
-     * @dataProvider avatar_provider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('avatar_provider')]
     public function test_update_room_avatar(
         ?string $before,
         ?string $after,
@@ -317,8 +309,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test get chat room url.
-     *
-     * @covers ::get_chat_room_url
      */
     public function test_get_chat_room_url(): void {
         $communication = $this->create_room();
@@ -339,9 +329,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test create members.
-     *
-     * @covers ::create_members
-     * @covers ::add_registered_matrix_user_to_room
      */
     public function test_create_members(): void {
         $user = $this->getDataGenerator()->create_user();
@@ -360,12 +347,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test add/remove members from room.
-     *
-     * @covers ::remove_members_from_room
-     * @covers ::add_members_to_room
-     * @covers ::add_registered_matrix_user_to_room
-     * @covers ::check_room_membership
-     * @covers ::set_matrix_power_levels
      */
     public function test_add_and_remove_members_from_room(): void {
         $user = $this->getDataGenerator()->create_user();
@@ -404,11 +385,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test update of room membership.
-     *
-     * @covers ::update_room_membership
-     * @covers ::set_matrix_power_levels
-     * @covers ::is_power_levels_update_required
-     * @covers ::get_user_allowed_power_level
      */
     public function test_update_room_membership(): void {
         $this->resetAfterTest();
@@ -461,8 +437,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test the user power level allocation according to context.
-     *
-     * @covers ::get_user_allowed_power_level
      */
     public function test_get_user_allowed_power_level(): void {
         $this->resetAfterTest();
@@ -550,8 +524,6 @@ final class communication_feature_test extends \advanced_testcase {
 
     /**
      * Test if the selected provider is configured.
-     *
-     * @covers ::is_configured
      */
     public function test_is_configured(): void {
         $course = $this->get_course();

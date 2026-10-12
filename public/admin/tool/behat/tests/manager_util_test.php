@@ -445,8 +445,8 @@ final class manager_util_test extends \advanced_testcase {
 
     /**
      * Test if clean features key and path is returned.
-     * @dataProvider clean_features_path_list
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('clean_features_path_list')]
     public function test_get_clean_feature_key_and_path($featurepath, $key, $cleanfeaturepath) {
         global $CFG;
 

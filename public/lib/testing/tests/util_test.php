@@ -28,9 +28,8 @@ final class util_test extends \advanced_testcase {
     /**
      * Note: This test is required for the other two parts because the first time
      * a table is written to it may not have had the initial value reset.
-     *
-     * @coversNothing
      */
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_increment_reset_part_one(): void {
         global $DB;
 
@@ -48,10 +47,8 @@ final class util_test extends \advanced_testcase {
         ]);
     }
 
-    /**
-     * @coversNothing
-     * @depends test_increment_reset_part_one
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_increment_reset_part_one')]
+    #[\PHPUnit\Framework\Attributes\CoversNothing]
     public function test_increment_reset_part_two(): int {
         global $DB;
 
@@ -63,9 +60,7 @@ final class util_test extends \advanced_testcase {
         ]);
     }
 
-    /**
-     * @depends test_increment_reset_part_two
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('test_increment_reset_part_two')]
     public function test_increment_reset_part_three(int $previousid): void {
         global $DB;
 

@@ -29,9 +29,9 @@ use core\tests\router\route_testcase;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\parameter
- * @covers     \core\router\schema\openapi_base
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\parameter::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\openapi_base::class)]
 final class parameter_test extends route_testcase {
     public function test_basics(): void {
         $param = new parameter(
@@ -48,9 +48,9 @@ final class parameter_test extends route_testcase {
     /**
      * Test for required default.
      *
-     * @dataProvider required_default_provider
      * @param array $params
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('required_default_provider')]
     public function test_required_default(array $params): void {
         $this->expectException(\coding_exception::class);
         new parameter(...$params);
@@ -98,10 +98,10 @@ final class parameter_test extends route_testcase {
     /**
      * Test for is_required.
      *
-     * @dataProvider is_required_provider
      * @param null|bool $required
      * @param bool $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('is_required_provider')]
     public function test_is_required(?bool $required, bool $expected): void {
         $param = new parameter(
             name: 'example',

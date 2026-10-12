@@ -23,8 +23,8 @@ namespace filter_glossary;
  * @category test
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \filter_glossary\text_filter
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\filter_glossary\text_filter::class)]
 final class text_filter_test extends \advanced_testcase {
     public function test_link_to_entry_with_alias(): void {
         global $CFG;

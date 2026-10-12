@@ -23,8 +23,15 @@ namespace mod_lesson;
  * @category   test
  * @copyright  2013 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \mod_lesson_generator
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\mod_lesson_generator::class)]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_cluster')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_endofcluster')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_endofbranch')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_page')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_answer')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('finish_generate_answer')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('create_attempt')]
 final class generator_test extends \advanced_testcase {
 
     public function test_create_instance(): void {
@@ -218,13 +225,10 @@ final class generator_test extends \advanced_testcase {
     /**
      * This tests the generators for cluster, endofcluster and endofbranch pages.
      *
-     * @covers ::create_cluster
-     * @covers ::create_endofcluster
-     * @covers ::create_endofbranch
-     * @dataProvider create_cluster_pages_provider
      *
      * @param string $type Type of page to test: LESSON_PAGE_CLUSTER, LESSON_PAGE_ENDOFCLUSTER or LESSON_PAGE_ENDOFBRANCH.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('create_cluster_pages_provider')]
     public function test_create_cluster_pages(string $type): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/lesson/locallib.php');
@@ -302,10 +306,6 @@ final class generator_test extends \advanced_testcase {
 
     /**
      * Test create some pages and their answers.
-     *
-     * @covers ::create_page
-     * @covers ::create_answer
-     * @covers ::finish_generate_answer
      */
     public function test_create_page_and_answers(): void {
         global $DB;
@@ -435,8 +435,6 @@ final class generator_test extends \advanced_testcase {
 
     /**
      * Test creating pages defining the previous pages.
-     *
-     * @covers ::create_page
      */
     public function test_create_page_with_previouspage(): void {
         global $DB;
@@ -496,8 +494,6 @@ final class generator_test extends \advanced_testcase {
 
     /**
      * Test creating a page with a previous page that doesn't exist.
-     *
-     * @covers ::create_page
      */
     public function test_create_page_invalid_previouspage(): void {
         $this->resetAfterTest();
@@ -520,8 +516,6 @@ final class generator_test extends \advanced_testcase {
 
     /**
      * Test that circular dependencies are not allowed in previous pages.
-     *
-     * @covers ::create_page
      */
     public function test_create_page_previouspage_circular_dependency(): void {
         $this->resetAfterTest();
@@ -551,8 +545,6 @@ final class generator_test extends \advanced_testcase {
 
     /**
      * Test creating an answer in a page that doesn't exist.
-     *
-     * @covers ::create_answer
      */
     public function test_create_answer_invalid_page(): void {
         $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
@@ -565,8 +557,6 @@ final class generator_test extends \advanced_testcase {
 
     /**
      * Test that all the possible values of jumpto work as expected when creating an answer.
-     *
-     * @covers ::create_answer
      */
     public function test_create_answer_jumpto(): void {
         global $DB;
@@ -677,8 +667,6 @@ final class generator_test extends \advanced_testcase {
 
     /**
      * Test invalid jumpto when creating answers.
-     *
-     * @covers ::create_answer
      */
     public function test_create_answer_invalid_jumpto(): void {
         $this->resetAfterTest();
@@ -708,8 +696,6 @@ final class generator_test extends \advanced_testcase {
 
     /**
      * Test that circular dependencies are not allowed when creating answers.
-     *
-     * @covers ::create_answer
      */
     public function test_create_answer_jumpto_circular_dependency(): void {
         $this->resetAfterTest();
@@ -751,8 +737,6 @@ final class generator_test extends \advanced_testcase {
 
     /**
      * Test create an attempt and the related grade.
-     *
-     * @covers ::create_attempt
      */
     public function test_create_attempt(): void {
         $db = \core\di::get(\moodle_database::class);

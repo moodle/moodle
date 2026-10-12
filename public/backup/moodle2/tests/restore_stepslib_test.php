@@ -28,6 +28,9 @@ use restore_controller;
  * @copyright 2023 Ferran Recio <ferran@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_section_structure_step::class, 'process_section')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_root_task::class, 'define_settings')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\restore_load_included_files::class, 'process_file')]
 final class restore_stepslib_test extends \advanced_testcase {
     /**
      * Setup to include all libraries.
@@ -107,8 +110,6 @@ final class restore_stepslib_test extends \advanced_testcase {
 
     /**
      * Test for delegate section behaviour.
-     *
-     * @covers \restore_section_structure_step::process_section
      */
     public function test_restore_section_structure_step(): void {
         global $DB;
@@ -150,8 +151,6 @@ final class restore_stepslib_test extends \advanced_testcase {
 
     /**
      * Tests the hooks for restore task  settings definition.
-     *
-     * @covers \restore_root_task::define_settings
      */
     public function test_restore_hook(): void {
         // Load the callback classes.
@@ -225,9 +224,8 @@ final class restore_stepslib_test extends \advanced_testcase {
      *
      * @param string $hash The contenthash value to validate.
      * @param bool $isvalid Whether the hash is expected to pass validation.
-     * @dataProvider contenthash_provider
-     * @covers \restore_load_included_files::process_file
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('contenthash_provider')]
     public function test_process_file_contenthash_validation(string $hash, bool $isvalid): void {
         $step = $this->getMockBuilder(\restore_load_included_files::class)
             ->setConstructorArgs(['test', null])

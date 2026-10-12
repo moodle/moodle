@@ -29,8 +29,8 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
  * @category test
  * @copyright 2018 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core_message\helper
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core_message\helper::class)]
 final class helper_test extends \advanced_testcase {
 
     public function setUp(): void {
@@ -212,11 +212,11 @@ final class helper_test extends \advanced_testcase {
     /**
      * Test prevent_unclosed_html_tags returns the correct html.
      *
-     * @dataProvider prevent_unclosed_html_tags_data
      * @param string $text text to preview unclosed html tags.
      * @param string $goodhtml html good structured.
      * @param bool $removebody true if we want to remove tag body.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('prevent_unclosed_html_tags_data')]
     public function test_prevent_unclosed_html_tags(string $message, string $goodhtml, bool $removebody): void {
         $this->setAdminUser();
 

@@ -30,11 +30,11 @@ final class participants_action_bar_test extends \advanced_testcase {
     /**
      * Test the get_content_for_select function
      *
-     * @dataProvider get_content_for_select_provider
      * @param string $type Whether we are checking content in the course/module
      * @param int    $expectedcount Expected number of 1st level tertiary items
      * @param array  $expecteditems Expected keys of the 1st level tertiary items.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_content_for_select_provider')]
     public function test_get_content_for_select($type, $expectedcount, $expecteditems): void {
         global $PAGE;
         $this->resetAfterTest();

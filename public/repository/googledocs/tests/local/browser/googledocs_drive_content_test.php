@@ -36,7 +36,6 @@ final class googledocs_drive_content_test extends \googledocs_content_testcase {
     /**
      * Test get_content_nodes().
      *
-     * @dataProvider get_content_nodes_provider
      * @param string $query The query string
      * @param string $path The path
      * @param bool $sortcontent Whether the contents should be sorted in alphabetical order
@@ -45,6 +44,7 @@ final class googledocs_drive_content_test extends \googledocs_content_testcase {
      * @param array $drivecontents The array containing the fetched google drive contents
      * @param array $expected The expected array which contains the generated repository content nodes
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_content_nodes_provider')]
     public function test_get_content_nodes(string $query, string $path, bool $sortcontent, array $filterextensions,
             array $shareddrives, array $drivecontents, array $expected): void {
 
@@ -226,10 +226,10 @@ final class googledocs_drive_content_test extends \googledocs_content_testcase {
     /**
      * Test get_navigation().
      *
-     * @dataProvider get_navigation_provider
      * @param string $nodepath The node path string
      * @param array $expected The expected array containing the repository navigation nodes
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_navigation_provider')]
     public function test_get_navigation(string $nodepath, array $expected): void {
         // Mock the service object.
         $servicemock = $this->createMock(\repository_googledocs\rest::class);

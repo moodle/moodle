@@ -26,8 +26,8 @@ use core\tests\fake_plugins_test_trait;
  * @author    Petr Skoda
  * @copyright 2022 Open LMS
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\hook\manager
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\hook\manager::class)]
 final class manager_test extends \advanced_testcase {
 
     use fake_plugins_test_trait;
@@ -323,9 +323,8 @@ final class manager_test extends \advanced_testcase {
      * Call a plugin callback that has been replaced by a hook, but has no hook callback.
      *
      * The original callback should be called, but a debugging message should be output.
-     *
-     * @runInSeparateProcess
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_migrated_callback(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, and the hook that replaces the callback.
@@ -371,9 +370,8 @@ final class manager_test extends \advanced_testcase {
      * Call a plugin callback that has been replaced by a hook, and has a hook callback.
      *
      * The original callback should not be called, and no debugging should be output.
-     *
-     * @runInSeparateProcess
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_migrated_callback_with_replacement(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, and the hook that replaces the callback, and a hook callback for the hook.
@@ -403,9 +401,8 @@ final class manager_test extends \advanced_testcase {
      * Call a plugin class callback that has been replaced by a hook, but has no hook callback.
      *
      * The original class callback should be called, but a debugging message should be output.
-     *
-     * @runInSeparateProcess
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_migrated_class_callback(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, the class containing callbacks, and the hook that replaces the class callback.
@@ -452,9 +449,8 @@ final class manager_test extends \advanced_testcase {
      * Call a plugin class callback that has been replaced by a hook, and has a hook callback.
      *
      * The original callback should not be called, and no debugging should be output.
-     *
-     * @runInSeparateProcess
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_migrated_class_callback_with_replacement(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, the class containing callbacks, the hook that replaces the class callback,
@@ -488,9 +484,9 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test verifying that callbacks for deprecated plugins are not returned and hook dispatching won't call into these plugins.
      *
-     * @runInSeparateProcess
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_get_callbacks_for_hook_deprecated_plugintype(): void {
         $this->resetAfterTest();
 
@@ -568,12 +564,12 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test get_cache behaviour across scenarios.
      *
-     * @dataProvider get_cache_provider
      * @param array|null $localdata content to pre-write to the local cache file, or null for no file
      * @param array|null $shareddata content to pre-write to the shared cache file, or null for no file
      * @param array|null $expectedresult expected return value of get_cache()
      * @param bool $expectlocalexists whether the local cache file should exist after the call
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_cache_provider')]
     public function test_get_cache(
         ?array $localdata,
         ?array $shareddata,

@@ -33,10 +33,9 @@ use core\tests\session\mock_handler;
  * @package   core
  * @copyright Meirza <meirza.arson@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @runTestsInSeparateProcesses
- * @covers core\session\memcached
  */
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
+#[\PHPUnit\Framework\Attributes\CoversClass(memcached::class)]
 final class memcached_test extends \advanced_testcase {
     /** @var memcached|null $memcachedession An instance of the memcached session or null if not initialized. */
     private ?memcached $memcachedession = null;

@@ -28,8 +28,8 @@ use xmldb_table;
  * @package    core
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\persistent
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\persistent::class)]
 final class persistent_test extends advanced_testcase {
 
     public function setUp(): void {

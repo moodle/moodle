@@ -28,10 +28,10 @@ use stdClass;
  * @package    core
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core\router\schema\parameter
- * @covers     \core\router\schema\parameters\path_parameter
- * @covers     \core\router\parameters\path_course
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\parameter::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\schema\parameters\path_parameter::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\router\parameters\path_course::class)]
 final class path_course_test extends route_testcase {
     public function test_course_id(): void {
         $this->resetAfterTest();
@@ -111,9 +111,9 @@ final class path_course_test extends route_testcase {
     /**
      * Tests for when a course was not found.
      *
-     * @dataProvider invalid_course_provider
      * @param string $searchkey
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalid_course_provider')]
     public function test_course_not_found(string $searchkey): void {
         $param = new path_course();
         $request = new ServerRequest('GET', '/course/view');
