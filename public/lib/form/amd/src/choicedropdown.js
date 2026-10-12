@@ -156,5 +156,6 @@ export const init = (elementId) => {
     }
     if (field.dropdown !== null) {
         field.addEventListeners();
+        field.updateDropdown();
     }
 };
