@@ -80,6 +80,7 @@ $string['completion-fail'] = 'Completed (did not achieve pass grade)';
 $string['completion-n'] = 'Not completed';
 $string['completion-n-override'] = 'Not completed (set by {$a})';
 $string['completion-pass'] = 'Completed (achieved pass grade)';
+$string['completion-pass-override'] = 'Completed (achieved pass grade, set by {$a})';
 $string['completion-y'] = 'Completed';
 $string['completion-y-override'] = 'Completed (set by {$a})';
 $string['completion_automatic'] = 'Add requirements';
