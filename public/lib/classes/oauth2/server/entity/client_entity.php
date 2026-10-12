@@ -45,6 +45,12 @@ class client_entity implements client_entity_interface {
     /** @var int Client secret is revoked */
     public const int SECRET_REVOKED_YES = 1;
 
+    /** @var int Client secret has not yet naturally expired, or its expiry is awaiting processing */
+    public const int SECRET_EXPIRY_NOT_PROCESSED = 0;
+
+    /** @var int Client secret has naturally expired and the expiry was processed (notifications queued) */
+    public const int SECRET_EXPIRY_PROCESSED = 1;
+
     /** @var int Public client type */
     public const int TYPE_PUBLIC = 0;
 

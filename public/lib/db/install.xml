@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20260929" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20261019" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -5110,11 +5110,15 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation timestamp"/>
         <FIELD NAME="lastaccessed" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Timestamp when the client secret was last successfully used to authenticate a client"/>
         <FIELD NAME="lastexpirynotification" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Timestamp when the last secret expiry notification was dispatched for this secret"/>
+        <FIELD NAME="expiryprocessed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the natural expiry of the secret has been processed (0 = not processed, which includes secrets that have not yet expired; 1 = processed)"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="clientidentifier_fk" TYPE="foreign" FIELDS="clientidentifier" REFTABLE="oauth2_server_clients" REFFIELDS="clientidentifier"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="expiryprocessed_expirytime_ix" UNIQUE="false" FIELDS="expiryprocessed, expirytime"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="oauth2_server_client_redirect_uris" COMMENT="Redirect URIs for OAuth2 Clients">
       <FIELDS>
