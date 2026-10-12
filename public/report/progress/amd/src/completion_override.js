@@ -38,6 +38,27 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_save_cancel', 'core/modal
         var triggerElement;
 
         /**
+         * Helper function to get the completion string suffix based on the completion state.
+         * Shared by the icon key and the tooltip lang string key, which both use the same suffix.
+         * No 'fail-override' case: an override can never produce COMPLETION_COMPLETE_FAIL, so this
+         * only ever needs to handle the states override_activity_completion_status() can return.
+         * @method getStateSuffix
+         * @param {number} state The current completion state.
+         * @return {string} the 'y'/'n'/'pass' suffix, with the override variant appended.
+         * @private
+         */
+        var getStateSuffix = function(state) {
+            switch (state) {
+                case 2: // COMPLETION_COMPLETE_PASS.
+                    return 'pass-override';
+                case 1: // COMPLETION_COMPLETE.
+                    return 'y-override';
+                default: // COMPLETION_INCOMPLETE.
+                    return 'n-override';
+            }
+        };
+
+        /**
          * Helper function to get the pix icon key based on the completion state.
          * @method getIconDescriptorFromState
          * @param {number} state The current completion state.
@@ -46,7 +67,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_save_cancel', 'core/modal
          * @private
          */
         var getIconKeyFromState = function(state, tracking) {
-            return state > 0 ? 'i/completion-' + tracking + '-y-override' : 'i/completion-' + tracking + '-n-override';
+            return 'i/completion-' + tracking + '-' + getStateSuffix(state);
         };
 
         /**
@@ -68,10 +89,10 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_save_cancel', 'core/modal
                     args: override
                 }])[0];
             }).then(function(results) {
-                var completionState = (results.state > 0) ? 1 : 0;
+                var state = results.state;
 
                 // Now, build the new title string, get the new icon, and update the DOM.
-                var tooltipKey = completionState ? 'completion-y-override' : 'completion-n-override';
+                var tooltipKey = 'completion-' + getStateSuffix(state);
                 Str.get_string(tooltipKey, 'completion', userFullName).then(function(stateString) {
                     var params = {
                         state: stateString,
@@ -82,9 +103,9 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_save_cancel', 'core/modal
                     return Str.get_string('progress-title', 'completion', params);
                 }).then(function(titleString) {
                     var completionTracking = triggerElement.attr('data-completiontracking');
-                    return Templates.renderPix(getIconKeyFromState(completionState, completionTracking), 'core', titleString);
+                    return Templates.renderPix(getIconKeyFromState(state, completionTracking), 'core', titleString);
                 }).then(function(html) {
-                    var oppositeState = completionState > 0 ? 0 : 1;
+                    var oppositeState = state > 0 ? 0 : 1;
                     triggerElement.find('.loading-icon').remove();
                     triggerElement.data('changecompl', override.userid + '-' + override.cmid + '-' + oppositeState);
                     triggerElement.attr('data-changecompl', override.userid + '-' + override.cmid + '-' + oppositeState);

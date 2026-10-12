@@ -1,0 +1,9 @@
+issueNumber: MDL-87084
+notes:
+  core_completion:
+    - message: >-
+        update_state() now accepts COMPLETION_COMPLETE_PASS when overriding, and
+        a later automatic call (e.g. a grade change) recomputes the
+        complete/complete-pass substate for an overridden activity instead of
+        leaving it frozen.
+      type: fixed
