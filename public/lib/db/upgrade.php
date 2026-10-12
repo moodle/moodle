@@ -2418,5 +2418,39 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026101600.00);
     }
 
+    if ($oldversion < 2026102600.00) {
+        // Define field expiryprocessed to be added to oauth2_server_client_secrets.
+        $table = new xmldb_table('oauth2_server_client_secrets');
+        $field = new xmldb_field('expiryprocessed', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'lastaccessed');
+
+        // Conditionally launch add field expiryprocessed.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+
+            // Mark old, naturally expired secrets as processed so the scheduled task ignores them moving forward.
+            $DB->set_field_select(
+                'oauth2_server_client_secrets',
+                'expiryprocessed',
+                1,
+                'revoked = :revoked AND expirytime <= :now',
+                [
+                    'revoked' => 0,
+                    'now' => \core\di::get(\core\clock::class)->time(),
+                ],
+            );
+        }
+
+        // Define index expiryprocessed_expirytime_ix (not unique) to be added to oauth2_server_client_secrets.
+        $index = new xmldb_index('expiryprocessed_expirytime_ix', XMLDB_INDEX_NOTUNIQUE, ['expiryprocessed', 'expirytime']);
+
+        // Conditionally launch add index expiryprocessed_expirytime_ix.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026102600.00);
+    }
+
     return true;
 }
