@@ -617,15 +617,17 @@ function get_scorm_objectives($scormid) {
     $params = ['scormid' => $scormid, 'search' => 'cmi.objectives%.id'];
 
     $value = $DB->sql_compare_text('v.value');
-    $sql = "SELECT DISTINCT $value as value, ss.id
+    // Group objectives by SCO id. A recordset is used as the same identifier may appear in multiple SCOs.
+    $sql = "SELECT DISTINCT $value as value, ss.id AS scoid
               FROM {scorm_scoes_value} v
               JOIN {scorm_scoes} ss ON ss.id = v.scoid AND ss.scorm = :scormid
               JOIN {scorm_element} e ON v.elementid = e.id
              WHERE ".$DB->sql_like("element", ":search", false);
-    $rs = $DB->get_records_sql($sql, $params);
+    $rs = $DB->get_recordset_sql($sql, $params);
     foreach ($rs as $record) {
         $objectives[$record->scoid][] = $record->value;
     }
+    $rs->close();
     // Now naturally sort the sco arrays.
     foreach ($objectives as $scoid => $sco) {
         natsort($objectives[$scoid]);
