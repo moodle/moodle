@@ -7,9 +7,20 @@
     padding-top: 0;
     padding-bottom: 0;
     box-shadow: none;
-    border-bottom: var(--#{$prefix}gray-300) 1px solid;
+    border-bottom: var(--mds-border-default) 1px solid;
     align-items: stretch;
     height: $navbar-height + 1px;
+
+    // Only the contents are capped and centred; the navbar background and border still span the full window.
+    .navbar-content {
+        max-width: $navbar-content-maxwidth;
+        margin-inline: auto;
+        padding-inline: var(--mds-spacing-lg);
+
+        @include media-breakpoint-down(md) {
+            padding-inline: var(--mds-spacing-md);
+        }
+    }
 
     .navbar-brand {
         .logo {

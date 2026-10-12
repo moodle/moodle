@@ -1,4 +1,4 @@
-/* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
+/* Anchor link offset fix. This makes hash links scroll down by the navbar height to account for the fixed header. */
 $fixed-header-y: $navbar-height;
 
 $drawer-width: 285px !default;

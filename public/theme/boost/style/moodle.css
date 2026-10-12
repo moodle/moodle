@@ -37115,10 +37115,10 @@ body.editing#page-course-learningoutcomes .activity-item:hover:not(:has(.activit
     grid-template-columns: 1fr;
   }
 }
-/* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
+/* Anchor link offset fix. This makes hash links scroll down by the navbar height to account for the fixed header. */
 :target,
 :focus {
-  scroll-margin-top: 70px;
+  scroll-margin-top: 74px;
 }
 
 .pagelayout-embedded :target {
@@ -37138,8 +37138,8 @@ body.editing#page-course-learningoutcomes .activity-item:hover:not(:has(.activit
 [data-region=drawer] {
   position: fixed;
   width: 285px;
-  top: 60px;
-  height: calc(100% - 60px);
+  top: 64px;
+  height: calc(100% - 64px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   z-index: 999;
@@ -37236,9 +37236,9 @@ body.drawer-ease {
 [data-region=right-hand-drawer].drawer {
   z-index: 1021;
   position: fixed;
-  top: 60px;
+  top: 64px;
   right: 0;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 64px);
   width: 320px;
   padding: 0;
   visibility: visible;
@@ -37274,8 +37274,8 @@ body.drawer-ease {
 @media (max-width: 991.98px) {
   .drawer {
     z-index: 1021;
-    top: 60px;
-    height: calc(100vh - 60px);
+    top: 64px;
+    height: calc(100vh - 64px);
   }
 }
 .drawer.not-initialized {
@@ -37360,10 +37360,10 @@ body.drawer-ease {
   body.limitedwidth .drawer.drawer-left,
   body.limitedwidth .drawer.drawer-right {
     z-index: 2;
-    top: calc(60px + 3rem - 0.5rem);
+    top: calc(64px + 3rem - 0.5rem);
     border-radius: 0.5rem;
     height: auto;
-    max-height: calc(100vh - calc(calc(60px + 3rem - 0.5rem) + 1rem) - var(--sticky-footer-total-height, 0px));
+    max-height: calc(100vh - calc(calc(64px + 3rem - 0.5rem) + 1rem) - var(--sticky-footer-total-height, 0px));
     padding-bottom: 1rem;
   }
   .pagelayout-standard .drawer.drawer-left .drawerheader,
@@ -37517,7 +37517,7 @@ body.drawer-ease {
 
 .drawerheader .drawerheadertop {
   padding: 0;
-  height: 60px;
+  height: 64px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -37553,8 +37553,8 @@ body.drawer-ease {
 @media (max-width: 991.98px) and (max-width: 991.98px) {
   .drawer-md {
     z-index: 1021;
-    top: 60px;
-    height: calc(100vh - 60px);
+    top: 64px;
+    height: calc(100vh - 64px);
   }
 }
 @media (max-width: 991.98px) {
@@ -37664,8 +37664,8 @@ body.drawer-ease {
 @media (max-width: 767.98px) and (max-width: 991.98px) {
   .drawer-sm {
     z-index: 1021;
-    top: 60px;
-    height: calc(100vh - 60px);
+    top: 64px;
+    height: calc(100vh - 64px);
   }
 }
 @media (max-width: 767.98px) {
@@ -40452,7 +40452,7 @@ body.path-question-type .mform fieldset.hidden {
   display: flex;
   background-color: var(--bs-white);
   z-index: 1070;
-  height: 60px;
+  height: 64px;
 }
 .simplesearchform .collapse.show .searchform-navbar,
 .simplesearchform .collapsing .searchform-navbar {
@@ -42374,7 +42374,7 @@ img.userpicture {
   display: none;
   position: sticky;
   justify-content: end;
-  top: 65px;
+  top: 69px;
   z-index: 1020;
 }
 #quiz-timer-wrapper #quiz-timer {
@@ -42617,7 +42617,7 @@ img.userpicture {
 
 .path-mod-assign .gradingtable thead tr {
   position: sticky;
-  top: 60px;
+  top: 64px;
   z-index: 1;
 }
 
@@ -43975,7 +43975,7 @@ p.arrow_button {
 }
 .path-grade-report-grader .gradeparent tr.heading {
   position: sticky;
-  top: 60px;
+  top: 64px;
   z-index: 4;
 }
 .path-grade-report-grader .gradeparent tr.userrow th {
@@ -44226,7 +44226,7 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 }
 
 .navbar.fixed-top .dropdown .dropdown-menu {
-  max-height: calc(100vh - 60px);
+  max-height: calc(100vh - 64px);
   overflow-y: auto;
 }
 
@@ -44399,7 +44399,7 @@ body.behat-site.path-grade-report-grader .gradeparent tr.heading {
 }
 
 body > .debuggingmessage {
-  margin-top: 60px;
+  margin-top: 64px;
 }
 
 body > .debuggingmessage ~ .debuggingmessage {
@@ -44691,11 +44691,11 @@ body {
   font-size: 11px;
   line-height: 11px;
   position: absolute;
-  top: 15px;
+  top: 16px;
   right: 0;
 }
 .navbar .popover-region-container {
-  top: 60px;
+  top: 64px;
 }
 
 .content-item-container {
@@ -45133,7 +45133,7 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
 }
 
 #page.drawers {
-  margin-top: 60px;
+  margin-top: 64px;
   scrollbar-width: thin;
   scrollbar-color: var(--bs-gray-600) #f8f9fa;
 }
@@ -45192,7 +45192,7 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
 }
 .drawer-toggles .drawer-toggler {
   position: fixed;
-  top: calc(60px + 1rem);
+  top: calc(64px + 1rem);
   z-index: 2;
 }
 .drawer-toggles .drawer-toggler .btn {
@@ -45231,7 +45231,7 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
   }
   .drawer-toggles .drawer-right-toggle,
   .drawer-toggles .drawer-left-toggle {
-    top: calc(99vh - (60px * 2.5));
+    top: calc(99vh - (64px * 2.5));
   }
   #page.drawers.scroll-down .drawer-right-toggle {
     transform: translateX(150%);
@@ -45271,12 +45271,12 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
 @media (min-width: 992px) {
   .drawer-left,
   .drawer-right {
-    top: 60px;
-    height: calc(100vh - 60px);
+    top: 64px;
+    height: calc(100vh - 64px);
   }
   .hasstickyfooter .drawer-left,
   .hasstickyfooter .drawer-right {
-    top: 60px;
+    top: 64px;
   }
   #page.drawers {
     position: relative;
@@ -45327,11 +45327,11 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
 @media (min-width: 992px) {
   .pagelayout-standard #page.drawers .main-inner,
   body.limitedwidth #page.drawers .main-inner {
-    margin-top: calc(calc(60px + 3rem - 0.5rem) - 60px);
+    margin-top: calc(calc(64px + 3rem - 0.5rem) - 64px);
   }
   .pagelayout-standard .drawer-toggles .drawer-toggler,
   body.limitedwidth .drawer-toggles .drawer-toggler {
-    top: calc(60px + 3rem);
+    top: calc(64px + 3rem);
   }
   .pagelayout-standard .drawer-toggles .drawer-left-toggle,
   body.limitedwidth .drawer-toggles .drawer-left-toggle {
@@ -45888,12 +45888,22 @@ div.editor_atto_toolbar button .icon {
   padding-top: 0;
   padding-bottom: 0;
   box-shadow: none;
-  border-bottom: var(--bs-gray-300) 1px solid;
+  border-bottom: var(--mds-border-default) 1px solid;
   align-items: stretch;
-  height: 61px;
+  height: 65px;
+}
+.navbar.fixed-top .navbar-content {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--mds-spacing-lg);
+}
+@media (max-width: 767.98px) {
+  .navbar.fixed-top .navbar-content {
+    padding-inline: var(--mds-spacing-md);
+  }
 }
 .navbar.fixed-top .navbar-brand .logo {
-  max-height: calc(60px - (0.25rem * 2));
+  max-height: calc(64px - (0.25rem * 2));
 }
 .navbar.fixed-top .nav-link {
   height: 100%;
@@ -46027,7 +46037,7 @@ div.editor_atto_toolbar button .icon {
 }
 
 #page {
-  margin-top: 60px;
+  margin-top: 64px;
 }
 
 .pagelayout-embedded #page {
@@ -46045,7 +46055,7 @@ div.editor_atto_toolbar button .icon {
 }
 
 :root {
-  --navbar-height: 60px;
+  --navbar-height: 64px;
 }
 
 .navbar.fixed-top #usernavigation .search-input-inline {
@@ -46107,7 +46117,7 @@ div.editor_atto_toolbar button .icon {
     top: 0;
     left: 0;
     width: 100%;
-    height: 60px;
+    height: 64px;
     padding: 0 0.5rem;
     background-color: var(--bs-white);
     z-index: 1070;
@@ -46241,15 +46251,15 @@ div.editor_atto_toolbar button .icon {
     position: fixed;
   }
   .path-admin-reportbuilder.pagelayout-popup .reportbuilder-sidebar-menu .reportbuilder-sidebar-menu-cards {
-    max-height: calc(100vh - calc(60px + calc(44px + 3rem)) - calc(38px + 1rem));
+    max-height: calc(100vh - calc(64px + calc(44px + 3rem)) - calc(38px + 1rem));
   }
   .path-admin-reportbuilder.pagelayout-popup .reportbuilder-sidebar-settings {
     position: fixed;
     right: 1.5rem;
-    max-height: calc(100vh - calc(60px + calc(44px + 3rem)));
+    max-height: calc(100vh - calc(64px + calc(44px + 3rem)));
   }
   .path-admin-reportbuilder.pagelayout-popup .reportbuilder-report[data-editing] .reportbuilder-report-container {
-    max-height: calc(100vh - calc(60px + calc(44px + 3rem)));
+    max-height: calc(100vh - calc(64px + calc(44px + 3rem)));
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--bs-gray-600) #f8f9fa;
@@ -46962,10 +46972,10 @@ div.editor_atto_toolbar button .icon {
 }
 
 .primary-navigation .navigation {
-  height: 60px;
+  height: 64px;
 }
 .primary-navigation .navigation .nav-link {
-  height: 60px;
+  height: 64px;
   color: var(--bs-gray-900);
   border-top: 3px solid transparent;
 }
@@ -46974,7 +46984,7 @@ div.editor_atto_toolbar button .icon {
   gap: var(--mds-spacing-xxs);
 }
 .primary-navigation .navigation.primarynav-navbar .nav-item {
-  height: 60px;
+  height: 64px;
 }
 .primary-navigation .navigation.primarynav-navbar .mds-nav-pill.dropdown-toggle:focus {
   box-shadow: none;
@@ -47070,9 +47080,9 @@ div.editor_atto_toolbar button .icon {
 }
 .drawer-primary .drawerheader .logo {
   max-width: 100%;
-  max-height: 60px;
+  max-height: 64px;
   width: auto;
-  height: 60px;
+  height: 64px;
   object-fit: contain;
 }
 
