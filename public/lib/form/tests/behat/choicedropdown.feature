@@ -40,3 +40,10 @@ Feature: Choice dropdown form behat test
     And I set the field "Control choice dropdown" to "Hide or disable subelements"
     And I should not see "Hide if element"
     And the "Disabled if element" "field" should be disabled
+
+  @javascript
+  Scenario: Choice dropdown buttons reflect their initial disabled state
+    Given I expand all fieldsets
+    Then the "#fitem_id_disabled button" "css_element" should be disabled
+    And the "#fitem_id_initialdisabled button" "css_element" should be disabled
+    And the "#fitem_id_initialenabled button" "css_element" should be enabled
