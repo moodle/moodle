@@ -100,4 +100,56 @@ class mod_scorm_generator extends testing_module_generator {
 
         return parent::create_instance($record, (array)$options);
     }
+
+    /**
+     * Create an attempt for the current user in the given SCORM activity.
+     *
+     * @param stdClass|array $record
+     * @return int the attempt ID
+     */
+    public function create_attempt(stdClass|array $record): int {
+        global $USER;
+        if (is_array($record)) {
+            $record = (object) $record;
+        }
+        $scormid = $record->scormid ?? null;
+        if (empty($scormid)) {
+            throw new coding_exception('The "scormid" field is required to create an attempt.');
+        } else {
+            // Check if the SCORM activity exists.
+            get_coursemodule_from_instance('scorm', $scormid, 0, false, MUST_EXIST);
+        }
+
+        if (!empty($record->userid)) {
+            \core_user::get_user($record->userid, '*', MUST_EXIST);
+        }
+        $userid = $record->userid ?? $USER->id;
+        $scoes = scorm_get_scoes($scormid);
+        if (empty($scoes)) {
+            throw new coding_exception('No SCOs found for the specified SCORM activity.');
+        }
+        if (!empty($record->scoeident)) {
+            foreach ($scoes as $sco) {
+                if ($sco->identifier === $record->scoeidentifier) {
+                    break;
+                }
+            }
+        } else {
+            $sco = array_shift($scoes);
+        }
+        $attemptcount = $record->attempt ?? null;
+        if (empty($record->attempt)) {
+            // If attempt is not specified, get the last attempt count for the user and increment it.
+            $attempts = scorm_get_all_attempts($scormid, $userid);
+            $attemptcount = count($attempts) + 1;
+        }
+        return scorm_insert_track(
+            $userid,
+            $scormid,
+            $sco->id,
+            $attemptcount,
+            $record->element ?? 'cmi.core.lesson_status',
+            $record->value ?? 'completed'
+        );
+    }
 }
