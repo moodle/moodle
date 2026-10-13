@@ -27,7 +27,7 @@ namespace assignfeedback_file\event;
 class feedback_downloaded extends \core\event\base {
     #[\Override]
     public function get_description() {
-        return "The user with id '$this->userid' downloaded feeedback file '{$this->other['filename']}' (" .
+        return "The user with id '$this->userid' downloaded feedback file '{$this->other['filename']}' (" .
             "'{$this->other['fileid']}') for the assignment with course module id '$this->contextinstanceid'.";
     }
 
