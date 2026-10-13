@@ -1918,6 +1918,9 @@ class page_wiki_restoreversion extends page_wiki {
 
     function set_versionid($versionid) {
         $this->version = wiki_get_version($versionid);
+        if (!$this->version || $this->version->pageid != $this->page->id) {
+            throw new \moodle_exception('versionerror', 'wiki');
+        }
     }
 
     protected function create_navbar() {
@@ -2163,6 +2166,9 @@ class page_wiki_viewversion extends page_wiki {
 
     function set_versionid($versionid) {
         $this->version = wiki_get_version($versionid);
+        if (!$this->version || $this->version->pageid != $this->page->id) {
+            throw new \moodle_exception('versionerror', 'wiki');
+        }
     }
 
     protected function create_navbar() {
@@ -2253,6 +2259,9 @@ class page_wiki_confirmrestore extends page_wiki_save {
 
     function set_versionid($versionid) {
         $this->version = wiki_get_version($versionid);
+        if (!$this->version || $this->version->pageid != $this->page->id) {
+            throw new \moodle_exception('versionerror', 'wiki');
+        }
     }
 }
 
