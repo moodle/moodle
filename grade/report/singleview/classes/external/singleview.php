@@ -62,7 +62,7 @@ class singleview extends core_course_external {
      * @throws restricted_context_exception
      */
     protected static function get_grade_items_for_search_widget(int $courseid): array {
-        global $PAGE, $USER, $CFG;
+        global $CFG;
 
         $params = self::validate_parameters(
             self::get_grade_items_for_search_widget_parameters(),
@@ -74,11 +74,12 @@ class singleview extends core_course_external {
         $warnings = [];
         $coursecontext = context_course::instance($params['courseid']);
         parent::validate_context($coursecontext);
+        require_capability('gradereport/singleview:view', $coursecontext);
 
         $gtree = new grade_tree($params['courseid'], false, true, null, !$CFG->enableoutcomes);
         $gradeableitems = $gtree->get_items();
 
-        $gradeitems = array_map(function ($gradeitem) use ($PAGE, $USER, $params) {
+        $gradeitems = array_map(function ($gradeitem) {
             $item = new \stdClass();
             $item->id = $gradeitem->id;
             $item->name = $gradeitem->get_name(true);
