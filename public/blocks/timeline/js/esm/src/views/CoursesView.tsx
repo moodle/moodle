@@ -334,7 +334,6 @@ export default function CoursesView({
                                 data-region="course-events-container"
                                 id={`course-events-container-${course.id}`}
                                 data-course-id={course.id}
-                                className="px-2"
                             >
                                 <h4 className="h5 fw-bold">{course.fullname}</h4>
                                 <div className="pb-2" data-region="event-list-wrapper">

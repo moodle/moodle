@@ -95,7 +95,7 @@ export default function Timeline({midnight, filter, order, limit, nocoursesurl, 
 
     return (
         <div data-region="timeline" className="block-timeline">
-            <div className="p-0 px-2">
+            <div className="p-0">
                 <div className="d-flex flex-wrap gap-1 g-0">
                     <div>
                         <DayFilter activeFilter={activeFilter} onChange={handleFilterChange} />

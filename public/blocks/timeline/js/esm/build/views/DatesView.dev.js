@@ -150,7 +150,7 @@ function DatesView({
   }
   return /* @__PURE__ */ jsxDEV("div", { "data-region": "timeline-view-dates", children: [
     /* @__PURE__ */ jsxDEV("div", { className: "pb-2", "data-region": "event-list-wrapper", children: days.map((day) => /* @__PURE__ */ jsxDEV("div", { children: [
-      /* @__PURE__ */ jsxDEV("div", { className: "mt-3", "data-region": "event-list-content-date", "data-timestamp": day.dayTimestamp, children: /* @__PURE__ */ jsxDEV("h4", { className: "h6 d-inline fw-bold px-2", children: day.events[0].formattedday }, void 0, false, {
+      /* @__PURE__ */ jsxDEV("div", { className: "mt-3", "data-region": "event-list-content-date", "data-timestamp": day.dayTimestamp, children: /* @__PURE__ */ jsxDEV("h4", { className: "h6 d-inline fw-bold", children: day.events[0].formattedday }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
         lineNumber: 197,
         columnNumber: 29

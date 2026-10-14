@@ -34445,7 +34445,7 @@ img.icon {
 @media (min-width: 576px) {
   .card-carousel .card {
     flex: 0 1 auto;
-    width: 240px;
+    width: 245px;
     max-width: 100%;
   }
 }
@@ -34459,7 +34459,6 @@ img.icon {
 
 .block_recentlyaccessedcourses .paging-bar-container {
   margin-top: -2.4rem;
-  padding-right: 0.5rem;
   justify-content: flex-end;
 }
 @media (max-width: 575.98px) {
@@ -34521,6 +34520,9 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4
 
 .block_timeline .paged-content-page-container {
   background-color: var(--bs-body-bg);
+}
+.block_timeline .list-group-item {
+  background-color: var(--bs-card-bg);
 }
 
 .block_timeline .event-action {

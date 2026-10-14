@@ -194,7 +194,7 @@ export default function DatesView({
                 {days.map(day => (
                     <div key={day.dayTimestamp}>
                         <div className="mt-3" data-region="event-list-content-date" data-timestamp={day.dayTimestamp}>
-                            <h4 className="h6 d-inline fw-bold px-2">
+                            <h4 className="h6 d-inline fw-bold">
                                 {day.events[0].formattedday}
                             </h4>
                         </div>
