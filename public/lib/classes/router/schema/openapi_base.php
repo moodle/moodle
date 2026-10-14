@@ -30,6 +30,9 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class openapi_base {
+    /** @var null|string Suffix which distinguishes a customised instance from the default component of the same class */
+    private ?string $referencesuffix = null;
+
     /**
      * Base constructor which does nothing.
      *
@@ -56,7 +59,105 @@ abstract class openapi_base {
         return static::get_reference_for_class(
             classname: get_class($this),
             qualify: $qualify,
-        );
+        ) . $this->get_reference_suffix();
+    }
+
+    /**
+     * Get the suffix which distinguishes a customised instance from the default component of the same class.
+     *
+     * The suffix is derived from the state of the instance, so names do not depend on the order in which instances
+     * are encountered, nor on the specification or path they are used in. It is calculated once per instance.
+     *
+     * @return string
+     */
+    private function get_reference_suffix(): string {
+        if ($this->referencesuffix !== null) {
+            return $this->referencesuffix;
+        }
+
+        static $defaulthashes = [];
+        $classname = get_class($this);
+        if (!array_key_exists($classname, $defaulthashes)) {
+            try {
+                $defaulthashes[$classname] = static::get_state_hash(new $classname());
+            } catch (\Throwable) {
+                // Classes which cannot be constructed without arguments have no default, so every instance is a variant.
+                $defaulthashes[$classname] = null;
+            }
+        }
+
+        $hash = static::get_state_hash($this);
+        $this->referencesuffix = ($hash === $defaulthashes[$classname])
+            ? ''
+            : '--' . $hash;
+
+        return $this->referencesuffix;
+    }
+
+    /**
+     * Get a short hash of the state of an object.
+     *
+     * The reference suffix of the object, and of any nested object, is excluded so the result does not depend on whether
+     * a reference has already been requested for them.
+     *
+     * @param object $object
+     * @return string
+     */
+    private static function get_state_hash(object $object): string {
+        $data = json_encode(static::get_state($object));
+
+        return substr(sha1($data), 0, 8);
+    }
+
+    /**
+     * Get the state of an object, including inherited and private properties, in a form suitable for hashing.
+     *
+     * An array cast exposes every property, with private and protected names mangled by their declaring class.
+     *
+     * @param object $object
+     * @return array
+     */
+    private static function get_state(object $object): array {
+        $state = (array) $object;
+        // Excluded so that a nested object hashes the same whether or not its own reference has been calculated.
+        unset($state["\0" . self::class . "\0referencesuffix"]);
+        ksort($state);
+
+        return array_map(static::normalise_value(...), $state);
+    }
+
+    /**
+     * Describe a closure by its location so that different closures do not hash identically.
+     *
+     * @param \Closure $closure
+     * @return string
+     */
+    private static function describe_closure(\Closure $closure): string {
+        $reflection = new \ReflectionFunction($closure);
+
+        return implode(':', [
+            'closure',
+            $reflection->getFileName(),
+            $reflection->getStartLine(),
+            $reflection->getEndLine(),
+        ]);
+    }
+
+    /**
+     * Normalise a value so that it can be encoded deterministically.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    private static function normalise_value(mixed $value): mixed {
+        return match (true) {
+            $value === null, is_scalar($value) => $value,
+            is_array($value) => array_map(static::normalise_value(...), $value),
+            $value instanceof \UnitEnum => get_class($value) . '::' . $value->name,
+            $value instanceof \Closure => static::describe_closure($value),
+            is_object($value) => get_class($value) . ':' . json_encode(static::get_state($value)),
+            default => gettype($value),
+        };
     }
 
     /**
