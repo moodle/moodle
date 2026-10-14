@@ -2380,7 +2380,7 @@ function xmldb_main_upgrade($oldversion) {
 
     // Automatically generated Moodle v5.3.0 release upgrade line.
     // Put any upgrade step following this.
-    if ($oldversion < 2025101400.00) {
+    if ($oldversion < 2026101400.00) {
         // Define fields timeexpirywarned and timeexpirednotified to be added to rest_api_tokens.
         $table = new xmldb_table('rest_api_tokens');
         $fields = [
@@ -2401,7 +2401,7 @@ function xmldb_main_upgrade($oldversion) {
         $DB->set_field_select('rest_api_tokens', 'timeexpirednotified', $now, 'expirytime <= :now', ['now' => $now]);
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2025101400.00);
+        upgrade_main_savepoint(true, 2026101400.00);
     }
 
     return true;
