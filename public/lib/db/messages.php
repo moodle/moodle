@@ -43,6 +43,15 @@ $messageproviders = array (
         ],
     ),
 
+    // Warnings that one of the user's personal access tokens is about to expire, or has.
+    'personalaccesstokenexpiry' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+        'capability' => 'moodle/api:createtoken',
+    ],
+
     // Notices that an admin might be interested in.
     'notices' => array (
         'defaults' => [

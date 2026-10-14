@@ -1603,6 +1603,7 @@ $string['tasklogcleanup'] = 'Cleanup of task logs';
 $string['tasklogs'] = 'Task logs';
 $string['taskmessagingcleanup'] = 'Background processing for messaging';
 $string['taskpasswordresetcleanup'] = 'Cleanup password reset attempts';
+$string['taskpersonalaccesstokenexpiry'] = 'Notify owners of expiring personal access tokens';
 $string['taskplagiarismcron'] = 'Background processing for legacy cron in plagiarism plugins';
 $string['taskportfoliocron'] = 'Background processing for portfolio plugins';
 $string['taskprocessing'] = 'Task processing';
