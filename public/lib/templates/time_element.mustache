@@ -29,6 +29,7 @@
     Context variables required for this template:
     * timestamp Number - The timestamp for the element.
     * userdateformat String - The user-facing date format
+    * datetime String - Optional value for the datetime attribute. If empty, it is formatted from timestamp.
     * datetimeformat String - A valid format for the datetime attribute. Defaults to the ISO-8601 format of '%Y-%m-%dT%H:%M%z'.
     Example context (json):
     {
@@ -37,56 +38,15 @@
         "datetimeformat": "%Y-%m-%dT%H:%M%z"
     }
 }}
-<time id="time-{{$elementid}}{{uniqid}}{{/elementid}}" class="{{$elementclass}}{{timeclass}}{{/elementclass}}" datetime="{{$datetimeval}}{{datetime}}{{/datetimeval}}"
+<time id="time-{{$elementid}}{{uniqid}}{{/elementid}}" class="{{$elementclass}}{{timeclass}}{{/elementclass}}"
+      datetime="{{#htmldatetime}}
+          {{$datetimeval}}{{datetime}}{{/datetimeval}},
+          {{$timestampval}}{{timestamp}}{{/timestampval}},
+          {{$datetimeformatval}}{{#datetimeformat}}{{.}}{{/datetimeformat}}{{^datetimeformat}}%Y-%m-%dT%H:%M%z{{/datetimeformat}}{{/datetimeformatval}}
+      {{/htmldatetime}}"
       data-timestamp="{{$timestampval}}{{timestamp}}{{/timestampval}}"
       data-datetimeformat="{{$datetimeformatval}}{{#datetimeformat}}{{.}}{{/datetimeformat}}{{^datetimeformat}}%Y-%m-%dT%H:%M%z{{/datetimeformat}}{{/datetimeformatval}}">
     {{$datedisplay}}
         {{#userdate}} {{$timestampval}}{{timestamp}}{{/timestampval}}, {{$userdateformatval}}{{userdateformat}}{{/userdateformatval}} {{/userdate}}
     {{/datedisplay}}
 </time>
-{{#js}}
-    /** Fetches the formatted date/time for the time element's datetime attribute. */
-    require(['core/user_date'], function(UserDate) {
-        var root = document.getElementById('time-{{$elementid}}{{uniqid}}{{/elementid}}');
-        // Fetch value for the datetime attribute using core/user_date, if it's not available.
-        if (!root.getAttribute('datetime')) {
-            var dateTimeFormat = root.getAttribute('data-datetimeformat');
-            var timestamp = root.getAttribute('data-timestamp');
-
-            if (!dateTimeFormat.match(/%(?![YmdHMSzZ])./g)) {
-                var zeroPad = function(nNum, nPad) {
-                    return ((Math.pow(10, nPad) + nNum) + '').slice(1);
-                };
-
-                var date = new Date(timestamp * 1000);
-
-                var datetime = dateTimeFormat.replace(/%./g, function(sMatch) {
-                    return (({
-                        '%Y': date.getFullYear(),
-                        '%m': zeroPad(date.getMonth() + 1, 2),
-                        '%d': zeroPad(date.getDate(), 2),
-                        '%H': zeroPad(date.getHours(), 2),
-                        '%M': zeroPad(date.getMinutes(), 2),
-                        '%S': zeroPad(date.getSeconds(), 2),
-                        '%z': date.toTimeString().replace(/.+GMT([+-]\d+).+/, '$1'),
-                        '%Z': date.toTimeString().replace(/.+\((.+?)\)$/, '$1')
-                    }[sMatch] || '') + '') || sMatch;
-                });
-                root.setAttribute('datetime', datetime);
-            }  else {
-                // Otherwise, use core/user_date.
-                var timestamps = [{
-                    timestamp: timestamp,
-                    format: dateTimeFormat,
-                    type: 'gregorian',
-                    fixday: 0,
-                    fixhour: 0
-                }];
-                UserDate.get(timestamps).done(function(dates) {
-                    var datetime = dates.pop();
-                    root.setAttribute('datetime', datetime);
-                });
-            }
-        }
-    });
-{{/js}}

@@ -102,6 +102,7 @@ class renderer_base {
             $shortentexthelper = new mustache_shorten_text_helper();
             $userdatehelper = new mustache_user_date_helper();
             $reacthelper = new mustache_react_helper();
+            $htmldatetimehelper = new mustache_html_datetime_helper();
 
             // We only expose the variables that are exposed to JS templates.
             $safeconfig = $this->page->requires->get_config_for_javascript($this->page, $this);
@@ -114,6 +115,7 @@ class renderer_base {
                 'pix' => [$pixhelper, 'pix'],
                 'shortentext' => [$shortentexthelper, 'shorten'],
                 'userdate' => [$userdatehelper, 'transform'],
+                'htmldatetime' => [$htmldatetimehelper, 'transform'],
                 'react' => [$reacthelper, 'react'],
             ];
 
