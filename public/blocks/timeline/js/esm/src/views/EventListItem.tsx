@@ -37,10 +37,9 @@ interface EventListItemProps {
  * Renders a single timeline event item, matching event-list-item.mustache.
  *
  * In courseview mode (used inside CoursesView) the course name is omitted from
- * the subtitle and the item uses px-0 instead of px-2.
+ * the subtitle.
  */
 export default function EventListItem({event, courseview = false}: EventListItemProps) {
-    const pxClass = courseview ? 'px-0' : 'px-2';
     const [overdueLabel, setOverdueLabel] = useState('');
     const [ariaLabel, setAriaLabel] = useState('');
 
@@ -68,12 +67,12 @@ export default function EventListItem({event, courseview = false}: EventListItem
 
     return (
         <div
-            className={`list-group-item timeline-event-list-item flex-column pt-2 pb-0 border-0 ${pxClass}`}
+            className="list-group-item timeline-event-list-item flex-column pt-2 pb-0 border-0 px-0"
             data-region="event-list-item"
         >
             <div className="d-flex flex-wrap pb-1">
                 <div className="d-flex me-auto pb-1 mw-100 timeline-name">
-                    <small className="text-end text-nowrap align-self-center ms-1">{time}</small>
+                    <small className="text-end text-nowrap align-self-center">{time}</small>
 
                     {event.icon && (
                         <div className={iconContainerClass}>

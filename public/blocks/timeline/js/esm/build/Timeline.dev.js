@@ -46,7 +46,7 @@ function Timeline({ midnight, filter, order, limit, nocoursesurl, noeventsurl, h
   const offsets = FILTER_OFFSETS[activeFilter];
   const showCoursesView = activeOrder === "sortbycourses";
   return /* @__PURE__ */ jsxDEV("div", { "data-region": "timeline", className: "block-timeline", children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "p-0 px-2", children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "p-0", children: [
       /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-wrap gap-1 g-0", children: [
         /* @__PURE__ */ jsxDEV("div", { children: /* @__PURE__ */ jsxDEV(DayFilter, { activeFilter, onChange: handleFilterChange }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/Timeline.tsx",
