@@ -35,9 +35,9 @@
     }
 }}
 
-<div class="card-grid mx-0 row row-cols-1 row-cols-sm-2 row-cols-lg-3 {{$classes}}{{/classes}}" data-region="card-deck" role="list">
+<div class="card-grid row gx-2 row-cols-1 row-cols-sm-2 row-cols-lg-3 {{$classes}}{{/classes}}" data-region="card-deck" role="list">
 {{#courses}}
-    <div class="col d-flex px-0 mb-2">
+    <div class="col d-flex mb-2">
         {{> core_course/coursecard }}
     </div>
 {{/courses}}

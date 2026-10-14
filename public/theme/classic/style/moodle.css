@@ -28261,15 +28261,6 @@ body.dragging .dragging {
   padding-left: calc(1rem * 3);
 }
 
-.page-mycourses .drawers .block_myoverview {
-  border: 0;
-}
-.page-mycourses .drawers .block_myoverview > .card-body {
-  padding-top: 0 !important; /* stylelint-disable-line declaration-no-important */
-  padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
-  padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
-}
-
 #page-my-index .my-action-buttons {
   display: flex;
   justify-content: center;
@@ -29635,7 +29626,7 @@ img.icon {
 @media (min-width: 576px) {
   .card-carousel .card {
     flex: 0 1 auto;
-    width: 240px;
+    width: 245px;
     max-width: 100%;
   }
 }
@@ -29649,7 +29640,6 @@ img.icon {
 
 .block_recentlyaccessedcourses .paging-bar-container {
   margin-top: -2.4rem;
-  padding-right: 0.5rem;
   justify-content: flex-end;
 }
 @media (max-width: 575.98px) {

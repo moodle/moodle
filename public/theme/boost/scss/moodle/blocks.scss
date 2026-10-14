@@ -175,7 +175,7 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
         flex: 1;
         @include media-breakpoint-up(sm) {
             flex: 0 1 auto;
-            width: 240px;
+            width: 245px;
             max-width: 100%;
         }
     }
@@ -196,7 +196,6 @@ $blocks-plus-gutter: calc(#{$blocks-column-width} + (#{$grid-gutter-width} * 0.5
 .block_recentlyaccessedcourses {
     .paging-bar-container {
         margin-top: -2.4rem;
-        padding-right: 0.5rem;
         justify-content: flex-end;
     }
     @include media-breakpoint-down(sm) {
