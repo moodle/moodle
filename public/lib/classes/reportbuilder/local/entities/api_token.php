@@ -24,6 +24,7 @@ use core\clock;
 use core\di;
 use core\url;
 use core\output\help_icon;
+use core\output\html_writer;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\{date, select, text};
 use core_reportbuilder\local\helpers\database;
@@ -169,11 +170,20 @@ class api_token extends base {
                     return $formatted;
                 }
 
-                // The icon carries its own text, so the warning is not colour or shape alone.
-                return $formatted . ' ' . $OUTPUT->pix_icon(
-                    'i/warning',
-                    get_string('pat_expiringsoon', '', token_manager::EXPIRY_IMMINENT_DAYS),
-                );
+                $warning = get_string('pat_expiringsoon', '', token_manager::EXPIRY_IMMINENT_DAYS);
+
+                // Opened by click or focus, as the OAuth2 client list's warnings are, rather than on
+                // hover. The label carries the text too, so the warning is not colour or shape alone.
+                return $formatted . html_writer::tag('a', $OUTPUT->pix_icon('i/warning', ''), [
+                    'class' => 'text-decoration-none ms-2',
+                    'role' => 'button',
+                    'aria-label' => $warning,
+                    'tabindex' => '0',
+                    'data-bs-toggle' => 'popover',
+                    'data-bs-trigger' => 'focus',
+                    'data-bs-placement' => 'right',
+                    'data-bs-content' => $warning,
+                ]);
             });
 
         $columns[] = (new column(
