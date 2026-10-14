@@ -40,7 +40,10 @@ define(['jquery', 'core/ajax', 'core/sessionstorage', 'core/config'],
                Config.language + '/' +
                Config.usertimezone + '/' +
                request.timestamp + '/' +
-               request.format;
+               request.format + '/' +
+               (request.type || '') + '/' +
+               (request.hasOwnProperty('fixday') ? Number(request.fixday) : 1) + '/' +
+               (request.hasOwnProperty('fixhour') ? Number(request.fixhour) : 1);
     };
 
     /**
