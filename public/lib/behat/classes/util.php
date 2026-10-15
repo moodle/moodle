@@ -168,6 +168,16 @@ class behat_util extends \core\test\testing_util {
                 file_put_contents("{$dirname}/{$direction}.css", $css);
             }
         }
+
+        // Build the editor content CSS.
+        $editorthemes = theme_build_editor_css_for_themes($themeconfigs, ['ltr'], true, $mtraceprogress);
+        foreach ($editorthemes as $themename => $themedata) {
+            $dirname = "{$storageroot}/{$themename}";
+            check_dir_exists($dirname);
+            foreach ($themedata as $direction => $css) {
+                file_put_contents("{$dirname}/editor-{$direction}.css", $css);
+            }
+        }
     }
 
     /**
@@ -470,6 +480,14 @@ class behat_util extends \core\test\testing_util {
                 $cssfile = "{$dirname}/{$direction}.css";
                 if (file_exists($cssfile)) {
                     $themeconfig->set_css_content_cache(file_get_contents($cssfile));
+                }
+
+                $editorcssfile = "{$dirname}/editor-{$direction}.css";
+                if (file_exists($editorcssfile)) {
+                    // Match the cache key of the editor CSS served by theme/styles.php.
+                    $themeconfig->force_svg_use(true);
+                    $themeconfig->set_rtl_mode($direction === 'rtl');
+                    $themeconfig->set_editor_css_content_cache(file_get_contents($editorcssfile));
                 }
             }
         }
