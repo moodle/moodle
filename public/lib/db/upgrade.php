@@ -2404,5 +2404,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2026101400.00);
     }
 
+    if ($oldversion < 2026101600.00) {
+        // Define field lastexpirynotification to be added to oauth2_server_client_secrets.
+        $table = new xmldb_table('oauth2_server_client_secrets');
+        $field = new xmldb_field('lastexpirynotification', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'lastaccessed');
+
+        // Conditionally launch add field lastexpirynotification.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026101600.00);
+    }
+
     return true;
 }

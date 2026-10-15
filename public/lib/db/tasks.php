@@ -514,4 +514,13 @@ $tasks = array(
         'month' => '*',
         'disabled' => false,
     ],
+    [
+        'classname' => 'core\task\send_oauth2_secret_expiry_notifications_task',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '01',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
 );
