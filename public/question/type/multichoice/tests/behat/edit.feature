@@ -39,3 +39,8 @@ Feature: Test editing a Multiple choice question
       | Question name | Edited Single choice name |
     And I press "id_submitbutton"
     Then I should see "Edited Single choice name"
+
+  @javascript @accessibility
+  Scenario: Edit a Multiple choice question and check accessibility
+    When I am on the "Multiple choice for editing" "core_question > edit" page logged in as teacher
+    Then the "#region-main" "css_element" should meet accessibility standards
