@@ -339,6 +339,8 @@ class client_manager {
      *                          number of active secrets.
      */
     public function create_secret(int $clientid, ?int $expirytime = null): string {
+        global $USER;
+
         $client = $this->get_client_record($clientid);
 
         // A public client cannot keep a secret confidential, so it is never issued one.
@@ -351,17 +353,60 @@ class client_manager {
         }
 
         $now = $this->clock->time();
+        $expirytime ??= $now + self::SECRET_LIFETIME;
         $secret = bin2hex(random_bytes(32));
 
         $this->db->insert_record('oauth2_server_client_secrets', (object) [
             'clientidentifier' => $client->clientidentifier,
             'secret' => password_hash($secret, PASSWORD_DEFAULT),
-            'expirytime' => $expirytime ?? $now + self::SECRET_LIFETIME,
+            'expirytime' => $expirytime,
             'revoked' => client_entity::SECRET_REVOKED_NO,
             'timecreated' => $now,
         ]);
 
+        // Sent from ad hoc tasks rather than now: anything message output prints would corrupt
+        // the JSON response of the route that creates secrets.
+        $this->queue_secret_created_notices([
+            'creatorid' => $USER->id,
+            'name' => $client->name,
+            'expirytime' => $expirytime,
+            'url' => \core\router\util::get_path_for_callable(
+                [\core_admin\route\controller\oauth2\server\client_management::class, 'manage_client_secrets'],
+                ['client' => $clientid],
+            )->out(false),
+        ]);
+
         return $secret;
+    }
+
+    /**
+     * Queue a notice of a new secret to each person who can manage OAuth 2 clients.
+     *
+     * @param array $notice The task custom data describing the secret.
+     * @return void
+     */
+    protected function queue_secret_created_notices(array $notice): void {
+        // Site admins pass every capability check without holding a role, so they are not in the
+        // capability query and have to be added to it.
+        $recipients = get_admins() + get_users_by_capability(
+            \core\context\system::instance(),
+            'moodle/site:manageoauth2clients',
+            'u.id',
+        );
+
+        foreach (array_keys($recipients) as $userid) {
+            $task = new \core\task\oauth2_secret_created_task();
+            $task->set_custom_data($notice);
+            $task->set_userid($userid);
+
+            try {
+                \core\task\manager::queue_adhoc_task($task);
+            } catch (moodle_exception $e) {
+                // Queueing refuses a user cron could not run the task as, such as a suspended one.
+                // Only that recipient is skipped, not everyone after them.
+                continue;
+            }
+        }
     }
 
     /**

@@ -114,6 +114,23 @@ if ($action === 'create') {
             'name' => $data->name,
         ];
 
+        // Tokens are only ever created here, by their owner, so the notice goes out now. It is
+        // what tells the owner about a token they didn't create on a compromised account. The
+        // token is stored for display first, so showing it never depends on the notice.
+        \core\credential_notice::send(
+            $USER,
+            'personalaccesstokencreated',
+            get_string('pat_creatednoticesubject', 'moodle', $data->name),
+            get_string('pat_creatednoticebody', 'moodle', (object) [
+                'name' => s($data->name),
+                'sitename' => format_string($SITE->fullname),
+                'expiry' => token_manager::format_datetime($expirytime),
+                'url' => $pageurl->out(),
+            ]),
+            $pageurl,
+            get_string('personalaccesstokens'),
+        );
+
         redirect($pageurl);
     }
 
