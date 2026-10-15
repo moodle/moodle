@@ -84,3 +84,8 @@ Feature: Test editing a Numerical question
       | id_unitrole      | Units are optional. If a unit is entered, it is used to convert the response to Unit 1 before grading. |
       | id_unitsleft     | on the right, for example 1.00cm or 1.00km                                                             |
       | id_unit_0        | m                                                                                                      |
+
+  @javascript @accessibility
+  Scenario: Edit a Numerical question and check accessibility
+    When I am on the "Numerical for editing" "core_question > edit" page logged in as teacher
+    Then the "#region-main" "css_element" should meet accessibility standards
