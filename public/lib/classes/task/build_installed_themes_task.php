@@ -46,7 +46,10 @@ class build_installed_themes_task extends adhoc_task {
         foreach ($themenames as $themename) {
             // Build and cache each theme separately so the generated CSS is
             // released before building the next theme.
-            theme_build_css_for_themes([\theme_config::load($themename)]);
+            $themeconfig = \theme_config::load($themename);
+            theme_build_css_for_themes([$themeconfig]);
+            // The editor content CSS is built after the main CSS as it does not change the theme revisions.
+            theme_build_editor_css_for_themes([$themeconfig]);
         }
     }
 }
