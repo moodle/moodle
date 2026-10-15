@@ -44,3 +44,8 @@ Feature: Test editing a Matching question
     And I should see "dog"
     And I should see "newt"
     And I should see "fly"
+
+  @javascript @accessibility
+  Scenario: Edit a Matching question and check accessibility
+    When I am on the "Matching for editing" "core_question > edit" page logged in as teacher
+    Then the "#region-main" "css_element" should meet accessibility standards
