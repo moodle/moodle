@@ -27,7 +27,7 @@ namespace core\task;
 #[\PHPUnit\Framework\Attributes\CoversClass(build_installed_themes_task::class)]
 final class build_installed_themes_task_test extends \advanced_testcase {
     /**
-     * Test that executing the task builds and caches CSS for every installed theme.
+     * Test that executing the task builds and caches CSS, including the editor content CSS, for every installed theme.
      */
     public function test_execute(): void {
         global $CFG;
@@ -55,6 +55,10 @@ final class build_installed_themes_task_test extends \advanced_testcase {
                 $this->assertNotFalse($cachedcss, "CSS for {$themename} ({$direction}) was not cached.");
                 $this->assertFileExists($filename);
                 $this->assertSame($cachedcss, file_get_contents($filename));
+
+                $cachededitorcss = $theme->get_editor_css_cached_content();
+                $this->assertNotFalse($cachededitorcss, "Editor CSS for {$themename} ({$direction}) was not cached.");
+                $this->assertSame($theme->get_css_content_editor(), $cachededitorcss);
             }
         }
     }
