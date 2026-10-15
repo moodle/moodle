@@ -157,12 +157,32 @@ class core_completion_external extends external_api {
         $context = context_module::instance($cmid);
         self::validate_context($context);
 
+        // Callers may only request complete or incomplete; the stored substate is derived below.
+        if (!in_array($newstate, [COMPLETION_INCOMPLETE, COMPLETION_COMPLETE])) {
+            throw new moodle_exception(
+                'err_system',
+                'completion',
+                '',
+                null,
+                "Unexpected manual completion state for cm {$cmid}: $newstate"
+            );
+        }
+
         list($course, $cm) = get_course_and_cm_from_cmid($cmid);
 
         // Set up completion object and check it is enabled.
         $completion = new completion_info($course);
         if (!$completion->is_enabled()) {
             throw new moodle_exception('completionnotenabled', 'completion');
+        }
+
+        // Upgrade to the pass substate if the student already has a passing grade; a failing
+        // grade must not downgrade the override, so it is left as plain complete.
+        if ($newstate == COMPLETION_COMPLETE && $cm->completiongradeitemnumber !== null) {
+            $gradestate = $completion->get_grade_completion($cm, $userid);
+            if ($gradestate == COMPLETION_COMPLETE_PASS) {
+                $newstate = $gradestate;
+            }
         }
 
         // Update completion state and get the new state back.

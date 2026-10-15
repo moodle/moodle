@@ -565,7 +565,10 @@ class completion_info {
      *   COMPLETION_UNKNOWN significantly improves performance because it will abandon
      *   processing early if the user's completion state already matches the expected
      *   result. For manual events, COMPLETION_COMPLETE or COMPLETION_INCOMPLETE
-     *   must be used; these directly set the specified state.
+     *   must be used; these directly set the specified state. When overriding,
+     *   COMPLETION_COMPLETE_PASS may also be used to directly set that state. Once overridden to
+     *   COMPLETE or COMPLETE_PASS, later non-override calls (e.g. a grade changing) may still move
+     *   the state between those two, but will never move it back to INCOMPLETE or COMPLETE_FAIL.
      * @param int $userid User ID to be updated. Default 0 = current user
      * @param bool $override Whether manually overriding the existing completion state.
      * @param bool $isbulkupdate If bulk grade update is happening.
@@ -626,20 +629,47 @@ class completion_info {
             return;
         }
 
-        // For auto tracking, if the status is overridden to 'COMPLETION_COMPLETE', then disallow further changes,
-        // unless processing another override.
-        // Basically, we want those activities which have been overridden to COMPLETE to hold state, and those which have been
-        // overridden to INCOMPLETE to still be processed by normal completion triggers.
-        if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC && !is_null($current->overrideby)
-            && $current->completionstate == COMPLETION_COMPLETE && !$override) {
-            return;
-        }
+        // For auto tracking, once the status has been overridden to at least COMPLETE, hold it
+        // there: automatic triggers (e.g. a grade changing) must never undo the override itself -
+        // never drop back to INCOMPLETE, and never store a FAIL substate (matching
+        // override_activity_completion_status()'s own "upgrade only, never downgrade" rule).
+        // They may still refine the PASS/FAIL substate on top of the override, checked against the
+        // grade condition alone so this agrees with what the override itself would compute,
+        // regardless of unrelated conditions (e.g. view).
+        // Overridden to INCOMPLETE is unaffected and continues to be re-evaluated normally below -
+        // per the original override design (MDL-37361), only a COMPLETE-or-better override holds.
+        $existingoverrideby = $current->overrideby;
+        $keepoverrideby = false;
+        if (
+            $cm->completion == COMPLETION_TRACKING_AUTOMATIC &&
+            !is_null($existingoverrideby) &&
+            in_array($current->completionstate, [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS]) &&
+            !$override
+        ) {
+            $newstate = COMPLETION_COMPLETE;
+            if (!is_null($cm->completiongradeitemnumber)) {
+                if ($cm instanceof stdClass) {
+                    // Modname hopefully is provided in $cm but just in case it isn't, let's grab it.
+                    if (!isset($cm->modname)) {
+                        $cm->modname = $DB->get_field('modules', 'name', ['id' => $cm->module]);
+                    }
+                    // Some functions call this method and pass $cm as an object with ID only.
+                    if (!isset($cm->course)) {
+                        $cm->course = $this->course_id;
+                    }
+                }
+                $gradecminfo = cm_info::create($cm, $userid);
+                if ($this->get_grade_completion($gradecminfo, $userid) == COMPLETION_COMPLETE_PASS) {
+                    $newstate = COMPLETION_COMPLETE_PASS;
+                }
+            }
+            $keepoverrideby = true;
 
-        // For manual tracking, or if overriding the completion state, we set the state directly.
-        if ($cm->completion == COMPLETION_TRACKING_MANUAL || $override) {
+        } else if ($cm->completion == COMPLETION_TRACKING_MANUAL || $override) {
             switch($possibleresult) {
                 case COMPLETION_COMPLETE:
                 case COMPLETION_INCOMPLETE:
+                case COMPLETION_COMPLETE_PASS:
                     $newstate = $possibleresult;
                     break;
                 default:
@@ -654,7 +684,7 @@ class completion_info {
         if ($newstate != $current->completionstate) {
             $current->completionstate = $newstate;
             $current->timemodified    = time();
-            $current->overrideby      = $override ? $USER->id : null;
+            $current->overrideby      = $override ? $USER->id : ($keepoverrideby ? $existingoverrideby : null);
             $this->internal_set_data($cm, $current, $isbulkupdate);
 
             // Dispatch the hook for course content update.
