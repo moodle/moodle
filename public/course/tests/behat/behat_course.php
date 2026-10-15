@@ -639,7 +639,12 @@ class behat_course extends behat_base {
                 $dimmedexception = new ExpectationException('There are activities that are not hidden', $this->getSession());
                 foreach ($activities as $activity) {
                     // Hidden from students.
-                    $this->find('named_partial', array('badge', get_string('hiddenfromstudents')), $dimmedexception, $activity);
+                    $this->find(
+                        'xpath',
+                        $this->get_activity_visibility_xpath(get_string('hiddenfromstudents')),
+                        $dimmedexception,
+                        $activity,
+                    );
                 }
             }
         } else {
@@ -747,7 +752,8 @@ class behat_course extends behat_base {
 
             // The activity should not be hidden from students.
             try {
-                $this->find('named_partial', array('badge', get_string('hiddenfromstudents')), null, $activitynode);
+                $xpath = $this->get_activity_visibility_xpath(get_string('hiddenfromstudents'));
+                $this->find('xpath', $xpath, null, $activitynode);
                 throw new ExpectationException('"' . $activityname . '" is hidden', $this->getSession());
             } catch (ElementNotFoundException $e) {
                 // All ok.
@@ -778,17 +784,19 @@ class behat_course extends behat_base {
             // The activity must exists and be visible.
             $activitynode = $this->get_activity_node($activityname);
 
-            // Should not have the "Hidden from students" badge.
+            // Should not have the hidden visibility state.
             try {
-                $this->find('named_partial', array('badge', get_string('hiddenfromstudents')), null, $activitynode);
+                $xpath = $this->get_activity_visibility_xpath(get_string('hiddenfromstudents'));
+                $this->find('xpath', $xpath, null, $activitynode);
                 throw new ExpectationException('"' . $activityname . '" is hidden', $this->getSession());
             } catch (ElementNotFoundException $e) {
                 // All ok.
             }
 
-            // Should have the "Available but not shown on course page" badge.
+            // Should have the stealth visibility state, whether the control is interactive or static.
             $exception = new ExpectationException('"' . $activityname . '" is not Available', $this->getSession());
-            $this->find('named_partial', array('badge', get_string('hiddenoncoursepage')), $exception, $activitynode);
+            $xpath = $this->get_activity_visibility_xpath(get_string('hiddenoncoursepage'));
+            $this->find('xpath', $xpath, $exception, $activitynode);
 
             // Additional check if this is a teacher in editing mode.
             if ($this->is_editing_on()) {
@@ -828,7 +836,8 @@ class behat_course extends behat_base {
 
             // Should be hidden.
             $exception = new ExpectationException('"' . $activityname . '" is not hidden', $this->getSession());
-            $this->find('named_partial', array('badge', get_string('hiddenfromstudents')), $exception, $activitynode);
+            $xpath = $this->get_activity_visibility_xpath(get_string('hiddenfromstudents'));
+            $this->find('xpath', $xpath, $exception, $activitynode);
 
             // Additional check if this is a teacher in editing mode.
             if ($this->is_editing_on()) {
@@ -868,7 +877,8 @@ class behat_course extends behat_base {
 
             // Should be hidden.
             $exception = new ExpectationException('"' . $activityname . '" is not hidden', $this->getSession());
-            $this->find('named_partial', array('badge', get_string('hiddenfromstudents')), $exception, $activitynode);
+            $xpath = $this->get_activity_visibility_xpath(get_string('hiddenfromstudents'));
+            $this->find('xpath', $xpath, $exception, $activitynode);
         }
     }
 
@@ -1456,6 +1466,25 @@ class behat_course extends behat_base {
         }
 
         return 'format_' . str_replace('page-course-view-', '', $bodyid);
+    }
+
+    /**
+     * Get an XPath for a visibility control, static indicator, or section badge.
+     *
+     * Subsections still use section visibility badges instead of activity visibility controls.
+     *
+     * @param string $label the full visibility state label
+     * @return string
+     */
+    protected function get_activity_visibility_xpath(string $label): string {
+        $accessiblename = behat_context_helper::escape(get_string('cmvisibility_name', 'core_courseformat', $label));
+        $label = behat_context_helper::escape($label);
+        return ".//*[@data-region='visibility']//button[@aria-label={$accessiblename}]" .
+            " | .//*[@data-region='visibility']//span[" .
+                "contains(concat(' ', normalize-space(@class), ' '), ' visually-hidden ')" .
+                " and normalize-space(.)={$accessiblename}]" .
+            " | .//*[self::span or self::button][contains(concat(' ', normalize-space(@class), ' '), ' badge ')]" .
+                "[text()[contains(., {$label})]]";
     }
 
     /**

@@ -365,27 +365,28 @@ button.section-collapsemenu {
     .activity-grid {
         display: grid;
         align-items: center;
-        grid-template-columns: 1fr min-content min-content min-content;
+        grid-template-columns: 1fr min-content min-content min-content min-content;
         grid-template-areas:
-            "icon          groupmode     completion    actions"
-            "name          name          name          name"
-            "altcontent    altcontent    altcontent    altcontent"
-            "afterlink     afterlink     afterlink     afterlink"
-            "visibility    visibility    visibility    visibility"
-            "dates         dates         dates         dates"
-            "availability  availability  availability  availability";
+            "icon          groupmode     visibility    completion    actions"
+            "name          name          name          name          name"
+            "altcontent    altcontent    altcontent    altcontent    altcontent"
+            "afterlink     afterlink     afterlink     afterlink     afterlink"
+            "dates         dates         dates         dates         dates"
+            "availability  availability  availability  availability  availability";
         @include media-breakpoint-down(sm) {
-            grid-template-columns: 1fr min-content;
+            grid-template-columns: 1fr min-content min-content;
             grid-template-areas:
-                "icon          actions"
-                "name          name"
-                "altcontent    altcontent"
-                "afterlink     afterlink"
-                "visibility    visibility"
-                "dates         dates"
-                "groupmode     groupmode"
-                "completion    completion"
-                "availability  availability";
+                "icon          visibility    actions"
+                "name          name          name"
+                "altcontent    altcontent    altcontent"
+                "afterlink     afterlink     afterlink"
+                "dates         dates         dates"
+                "groupmode     groupmode     groupmode"
+                "completion    completion    completion"
+                "availability  availability  availability";
+        }
+        &:not(.noname-grid) .activity-badges {
+            margin-inline-start: map-get($spacers, 2);
         }
     }
     // Activity card specific grid layout for activities without name.
@@ -593,6 +594,56 @@ button.section-collapsemenu {
                 font-size: 12px;
                 width: 12px;
                 height: 12px;
+            }
+        }
+    }
+
+    .activity-visibility {
+        .activity-visibility-trigger,
+        .activity-visibility-indicator {
+            .icon {
+                margin: 0;
+                // Centre glyphs wider than the icon box, such as eye-slash.
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+        // Match the height of the controls in the activity icon row.
+        .activity-visibility-trigger.mds-btn {
+            block-size: $activity-controls-height;
+            padding-block: 0;
+            white-space: nowrap;
+        }
+        .activity-visibility-icon {
+            display: inline-flex;
+            align-items: center;
+        }
+        .activity-visibility-indicator {
+            gap: $mds-spacing-xxs;
+            color: var(--mds-text-subtle);
+            font-size: $mds-font-size-paragraph-small;
+            // Same focus ring as the design system controls in the row.
+            &:focus-visible {
+                outline: $mds-stroke-weight-md solid var(--mds-focus-default);
+                outline-offset: $mds-spacing-offset;
+            }
+            .icon {
+                inline-size: $mds-icons-xs;
+                block-size: $mds-icons-xs;
+                font-size: $mds-icons-xs;
+            }
+        }
+        // Show the server-rendered trigger as icon only on small screens until the React one replaces it.
+        @include media-breakpoint-down(sm) {
+            .activity-visibility-trigger.mds-btn:not(.mds-btn--icon-only) {
+                justify-content: center;
+                inline-size: $activity-controls-height;
+                padding-inline: 0;
+                .activity-visibility-label,
+                .mds-dropdown-trigger__chevron {
+                    display: none;
+                }
             }
         }
     }
@@ -1308,5 +1359,24 @@ body.editing#page-course-learningoutcomes .activity-item {
     &:hover:not(:has(.activity:hover)),
     &.selected {
         outline: none;
+    }
+}
+
+// The portalled menu needs a stacking order to stay above positioned course controls.
+.mds-dropdown-menu:has(> .activity-visibility-menu) {
+    z-index: $zindex-dropdown;
+}
+
+// Keep the items as direct flex items of the menu, so its gap stops one focus outline overlapping the next item.
+.activity-visibility-menu {
+    display: contents;
+    // Keep the menu at the design system minimum width, wrapping long labels and descriptions.
+    > .mds-dropdown-item {
+        max-inline-size: 13.5625rem; /* 217px */
+        .mds-dropdown-item__label {
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+        }
     }
 }

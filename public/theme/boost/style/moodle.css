@@ -35596,14 +35596,17 @@ button.section-collapsemenu:hover .collapsemenu-text {
 .activity-item .activity-grid {
   display: grid;
   align-items: center;
-  grid-template-columns: 1fr min-content min-content min-content;
-  grid-template-areas: "icon          groupmode     completion    actions" "name          name          name          name" "altcontent    altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink     afterlink" "visibility    visibility    visibility    visibility" "dates         dates         dates         dates" "availability  availability  availability  availability";
+  grid-template-columns: 1fr min-content min-content min-content min-content;
+  grid-template-areas: "icon          groupmode     visibility    completion    actions" "name          name          name          name          name" "altcontent    altcontent    altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink     afterlink     afterlink" "dates         dates         dates         dates         dates" "availability  availability  availability  availability  availability";
 }
 @media (max-width: 575.98px) {
   .activity-item .activity-grid {
-    grid-template-columns: 1fr min-content;
-    grid-template-areas: "icon          actions" "name          name" "altcontent    altcontent" "afterlink     afterlink" "visibility    visibility" "dates         dates" "groupmode     groupmode" "completion    completion" "availability  availability";
+    grid-template-columns: 1fr min-content min-content;
+    grid-template-areas: "icon          visibility    actions" "name          name          name" "altcontent    altcontent    altcontent" "afterlink     afterlink     afterlink" "dates         dates         dates" "groupmode     groupmode     groupmode" "completion    completion    completion" "availability  availability  availability";
   }
+}
+.activity-item .activity-grid:not(.noname-grid) .activity-badges {
+  margin-inline-start: 0.5rem;
 }
 .activity-item .activity-grid.noname-grid {
   grid-template-columns: min-content 1fr min-content min-content;
@@ -35790,6 +35793,47 @@ button.section-collapsemenu:hover .collapsemenu-text {
   font-size: 12px;
   width: 12px;
   height: 12px;
+}
+.activity-item .activity-visibility .activity-visibility-trigger .icon,
+.activity-item .activity-visibility .activity-visibility-indicator .icon {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.activity-item .activity-visibility .activity-visibility-trigger.mds-btn {
+  block-size: 1.75rem;
+  padding-block: 0;
+  white-space: nowrap;
+}
+.activity-item .activity-visibility .activity-visibility-icon {
+  display: inline-flex;
+  align-items: center;
+}
+.activity-item .activity-visibility .activity-visibility-indicator {
+  gap: 0.25rem;
+  color: var(--mds-text-subtle);
+  font-size: 0.875rem;
+}
+.activity-item .activity-visibility .activity-visibility-indicator:focus-visible {
+  outline: 0.125rem solid var(--mds-focus-default);
+  outline-offset: 0.0625rem;
+}
+.activity-item .activity-visibility .activity-visibility-indicator .icon {
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  font-size: 0.75rem;
+}
+@media (max-width: 575.98px) {
+  .activity-item .activity-visibility .activity-visibility-trigger.mds-btn:not(.mds-btn--icon-only) {
+    justify-content: center;
+    inline-size: 1.75rem;
+    padding-inline: 0;
+  }
+  .activity-item .activity-visibility .activity-visibility-trigger.mds-btn:not(.mds-btn--icon-only) .activity-visibility-label,
+  .activity-item .activity-visibility .activity-visibility-trigger.mds-btn:not(.mds-btn--icon-only) .mds-dropdown-trigger__chevron {
+    display: none;
+  }
 }
 .activity-item .activity-altcontent {
   grid-area: altcontent;
@@ -36414,6 +36458,22 @@ body.editing#page-course-learningoutcomes .activity-item {
 }
 body.editing#page-course-learningoutcomes .activity-item:hover:not(:has(.activity:hover)), body.editing#page-course-learningoutcomes .activity-item.selected {
   outline: none;
+}
+
+.mds-dropdown-menu:has(> .activity-visibility-menu) {
+  z-index: 1000;
+}
+
+.activity-visibility-menu {
+  display: contents;
+}
+.activity-visibility-menu > .mds-dropdown-item {
+  max-inline-size: 13.5625rem; /* 217px */
+}
+.activity-visibility-menu > .mds-dropdown-item .mds-dropdown-item__label {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 /*

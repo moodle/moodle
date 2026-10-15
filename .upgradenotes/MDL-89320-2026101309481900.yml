@@ -1,0 +1,13 @@
+issueNumber: MDL-89320
+notes:
+  core_courseformat:
+    - message: >-
+        In edit mode, `core_courseformat\output\local\content\cm\visibility` now
+        exports the visibility dropdown for every activity when the user can
+        change its visibility, without calling `show_visibility()`. That method
+        now only controls the static indicator outside edit mode. The dropdown
+        is rendered by the new `core_course/local/cm/VisibilityDropdown` React
+        component, and the `core_courseformat/local/content/cm/visibility`
+        template uses the new `reactprops`, `state`, `icon`, `label`,
+        `accessiblename` and `tooltip` context variables.
+      type: changed

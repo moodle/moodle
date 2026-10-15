@@ -41,8 +41,8 @@ Feature: Bulk course section actions one section per page
     Then "Select section Section 1" "checkbox" should not exist
 
   Scenario: Bulk availability sections in one section per page
-    Given I should not see "Hidden from students" in the "Activity sample 1" "activity"
-    And I should not see "Hidden from students" in the "Activity sample 2" "activity"
+    Given "Hidden from students" "button" should not exist in the "Activity sample 1" "core_courseformat > Activity visibility"
+    And "Hidden from students" "button" should not exist in the "Activity sample 2" "core_courseformat > Activity visibility"
     And I should not see "Hidden from students" in the "Section 1" "section"
     And I should not see "Hidden from students" in the "Section 2" "section"
     And I click on "Select section Section 1" "checkbox"
@@ -50,8 +50,8 @@ Feature: Bulk course section actions one section per page
     And I click on "Sections availability" "button" in the "sticky-footer" "region"
     And I click on "Hide on course page" "radio" in the "Section availability" "dialogue"
     When I click on "Apply" "button" in the "Section availability" "dialogue"
-    And I should see "Hidden from students" in the "Activity sample 1" "activity"
-    And I should see "Hidden from students" in the "Activity sample 2" "activity"
+    And "Hidden from students" "button" should exist in the "Activity sample 1" "core_courseformat > Activity visibility"
+    And "Hidden from students" "button" should exist in the "Activity sample 2" "core_courseformat > Activity visibility"
     And I should see "Hidden from students" in the "Section 1" "section"
     And I should not see "Hidden from students" in the "Section 2" "section"
     And I should see "0 selected" in the "sticky-footer" "region"

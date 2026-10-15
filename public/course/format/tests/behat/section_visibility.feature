@@ -29,28 +29,28 @@ Feature: Verify section visibility interface
     Given I hide section "1"
     And I open "Activity sample 1" actions menu
     And I choose "Availability > Make available but don't show on course page" in the open action menu
-    And I should see "Available but not shown on course page" in the "Activity sample 1" "activity"
+    And "Available but not shown on course page" "button" should exist in the "Activity sample 1" "core_courseformat > Activity visibility"
     When I show section "1"
-    Then I should not see "Available but not shown on course page" in the "Activity sample 1" "activity"
+    Then "Available but not shown on course page" "button" should not exist in the "Activity sample 1" "core_courseformat > Activity visibility"
 
   @javascript
   Scenario: Hide a section also hides the activities.
     When I hide section "1"
     Then I should see "Hidden from students" in the "Section 1" "section"
-    And I should see "Hidden from students" in the "Activity sample 1" "activity"
+    And "Hidden from students" "button" should exist in the "Activity sample 1" "core_courseformat > Activity visibility"
     And I show section "1"
     And I should not see "Hidden from students" in the "Section 1" "section"
-    And I should not see "Hidden from students" in the "Activity sample 1" "activity"
+    And "Hidden from students" "button" should not exist in the "Activity sample 1" "core_courseformat > Activity visibility"
 
   @javascript
   Scenario: Hidden activities in hidden sections stay hidden when the section is shown.
     Given I open "Activity sample 1" actions menu
     And I choose "Hide" in the open action menu
-    And I should see "Hidden from students" in the "Activity sample 1" "activity"
+    And "Hidden from students" "button" should exist in the "Activity sample 1" "core_courseformat > Activity visibility"
     And I hide section "1"
-    And I should see "Hidden from students" in the "Activity sample 1" "activity"
+    And "Hidden from students" "button" should exist in the "Activity sample 1" "core_courseformat > Activity visibility"
     When I show section "1"
-    Then I should see "Hidden from students" in the "Activity sample 1" "activity"
+    Then "Hidden from students" "button" should exist in the "Activity sample 1" "core_courseformat > Activity visibility"
 
   @javascript
   Scenario: Hidden sections can be shown and hidden using the drop down menu in the activity card.

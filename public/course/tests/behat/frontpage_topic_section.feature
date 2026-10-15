@@ -57,15 +57,15 @@ Feature: Site home activities section
     And I should see "Frontpage assignment" in the "region-main" "region"
     Then I open "Frontpage assignment" actions menu
     And I choose "Availability > Make available but don't show on course page" in the open action menu
-    And I should see "Available but not shown on course page" in the "Frontpage assignment" "core_courseformat > Activity visibility"
+    And "Available but not shown on course page" "button" should exist in the "Frontpage assignment" "core_courseformat > Activity visibility"
     And I open "Frontpage assignment" actions menu
     And I choose "Availability > Show on course page" in the open action menu
-    And I should not see "Available but not shown on course page" in the "Frontpage assignment" "activity"
-    And I should not see "Hidden from students" in the "Frontpage assignment" "activity"
+    And "Available but not shown on course page" "button" should not exist in the "Frontpage assignment" "core_courseformat > Activity visibility"
+    And "Hidden from students" "button" should not exist in the "Frontpage assignment" "core_courseformat > Activity visibility"
     And I open "Frontpage assignment" actions menu
     And I choose "Availability > Hide on course page" in the open action menu
-    And I should not see "Available but not shown on course page" in the "Frontpage assignment" "activity"
-    And I should see "Hidden from students" in the "Frontpage assignment" "core_courseformat > Activity visibility"
+    And "Available but not shown on course page" "button" should not exist in the "Frontpage assignment" "core_courseformat > Activity visibility"
+    And "Hidden from students" "button" should exist in the "Frontpage assignment" "core_courseformat > Activity visibility"
 
   @javascript
   Scenario: Admin can delete an activity in the frontpage

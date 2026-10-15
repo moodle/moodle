@@ -45,7 +45,7 @@ Feature: Edit activities in Additional activities block
     And I turn editing mode on
     When I open "My forum name" actions menu
     And I choose "Availability > Make available but don't show on course page" in the open action menu
-    Then I should see "Available but not shown on course page" in the "My forum name" "core_courseformat > Activity visibility"
+    Then "Available but not shown on course page" "button" should exist in the "My forum name" "core_courseformat > Activity visibility"
     # Make sure that "Availability" dropdown in the edit menu has three options.
     And I open "My forum name" actions menu
     And I choose "Edit settings" in the open action menu
@@ -54,7 +54,7 @@ Feature: Edit activities in Additional activities block
     And the "Availability" select box should contain "Hide on course page"
     And the field "Availability" matches value "Make available but don't show on course page"
     And I press "Save and return to course"
-    And I should see "Available but not shown on course page" in the "My forum name" "core_courseformat > Activity visibility"
+    And "Available but not shown on course page" "button" should exist in the "My forum name" "core_courseformat > Activity visibility"
     And I turn editing mode off
     And I should see "Available but not shown on course page" in the "My forum name" "core_courseformat > Activity visibility"
     And I log out

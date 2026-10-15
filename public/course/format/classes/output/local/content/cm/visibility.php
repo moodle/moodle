@@ -75,20 +75,19 @@ class visibility implements named_templatable, renderable {
      * @return stdClass|null data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): ?stdClass {
-        if (!$this->show_visibility()) {
-            return null;
-        }
         if (!$this->format->show_activity_editor_options($this->mod)) {
             return null;
         }
-        $format = $this->format;
+        $editing = $this->format->show_editor();
         // In rare legacy cases, the section could be stealth (orphaned) but they are not editable.
-        if (!$format->show_editor()
-            || !has_capability('moodle/course:activityvisibility', $this->mod->context)) {
-            return $this->build_static_data($output);
-        } else {
+        if ($editing && has_capability('moodle/course:activityvisibility', $this->mod->context)) {
             return $this->build_editor_data($output);
         }
+        // While editing, the static indicator shows every state, so a teacher who cannot change it can still read it.
+        if (!$editing && !$this->show_visibility()) {
+            return null;
+        }
+        return $this->build_static_data($output);
     }
 
     /**
@@ -134,26 +133,112 @@ class visibility implements named_templatable, renderable {
         \renderer_base $output,
         choicelist $choice,
     ): stdClass {
-        $badgetext = $output->visually_hidden_text(get_string('availability'));
-
-        if (!$this->mod->visible) {
-            $badgetext .= get_string('hiddenfromstudents');
-            $icon = $this->get_icon('hide');
-        } else if ($this->mod->is_stealth()) {
-            $badgetext .= get_string('hiddenoncoursepage');
-            $icon = $this->get_icon('stealth');
-        } else {
-            $badgetext .= get_string("availability_show", 'core_courseformat');
-            $icon = $this->get_icon('show');
-        }
+        $state = $this->get_state();
+        $data = $this->get_state_data($output, $state);
         $dropdown = new status(
-            $output->render($icon) . ' ' . $badgetext,
+            $data->accessiblename,
             $choice,
             ['dialogwidth' => status::WIDTH['big']],
         );
+        $data->isInteractive = true;
+        $data->dropwdown = $dropdown->export_for_template($output);
+        $data->reactprops = json_encode(
+            $this->get_react_props($output, $choice),
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+        );
+        return $data;
+    }
+
+    /**
+     * Get the props for the visibility dropdown React component.
+     *
+     * @param \renderer_base $output
+     * @param choicelist $choice the choice list
+     * @return array
+     */
+    protected function get_react_props(\renderer_base $output, choicelist $choice): array {
+        $value = '';
+        $options = [];
+        foreach ($choice->export_for_template($output)['options'] as $option) {
+            if ($option['disabled']) {
+                continue;
+            }
+            if (!empty($option['selected'])) {
+                $value = $option['value'];
+            }
+            $extras = $choice->get_option_extras($option['value']);
+            // In hidden sections, "show" makes the activity stealth.
+            $optionstate = ($option['value'] === 'show' && !$this->section->visible) ? 'stealth' : $option['value'];
+            $options[] = [
+                'value' => $option['value'],
+                'label' => $option['name'],
+                'description' => $option['description'] ?? '',
+                'icon' => $output->render($this->get_icon($optionstate)),
+                'mutation' => $extras['data-action'] ?? '',
+                // What the trigger shows once the option is applied.
+                'state' => $optionstate,
+                'triggerlabel' => get_string("cmvisibility_{$optionstate}", 'core_courseformat'),
+                'accessiblename' => get_string(
+                    'cmvisibility_name',
+                    'core_courseformat',
+                    $this->get_state_name($optionstate),
+                ),
+            ];
+        }
+        return [
+            'cmid' => (int) $this->mod->id,
+            'value' => $value,
+            'options' => $options,
+        ];
+    }
+
+    /**
+     * Get the current visibility state of the activity.
+     *
+     * The state is what students get (shown, hidden or stealth). It is not always the
+     * selected choice: a visible activity in a hidden section is stealth, although
+     * the selected choice is "show".
+     *
+     * @return string show, hide or stealth
+     */
+    protected function get_state(): string {
+        if (!$this->mod->visible) {
+            return 'hide';
+        }
+        if ($this->mod->is_stealth()) {
+            return 'stealth';
+        }
+        return 'show';
+    }
+
+    /**
+     * Get the name of a visibility state.
+     *
+     * @param string $state the visibility state (show, hide or stealth)
+     * @return string
+     */
+    protected function get_state_name(string $state): string {
+        return match ($state) {
+            'hide' => get_string('hiddenfromstudents'),
+            'stealth' => get_string('hiddenoncoursepage'),
+            default => get_string('cmvisibility_show_name', 'core_courseformat'),
+        };
+    }
+
+    /**
+     * Get the template data shared by the interactive control and the static indicator.
+     *
+     * @param \renderer_base $output
+     * @param string $state the visibility state (show, hide or stealth)
+     * @return stdClass
+     */
+    protected function get_state_data(\renderer_base $output, string $state): stdClass {
         return (object) [
-            'isInteractive' => true,
-            'dropwdown' => $dropdown->export_for_template($output),
+            'state' => $state,
+            'icon' => $output->render($this->get_icon($state)),
+            'label' => $this->format->show_editor() ? get_string("cmvisibility_{$state}", 'core_courseformat') : '',
+            'accessiblename' => get_string('cmvisibility_name', 'core_courseformat', $this->get_state_name($state)),
+            'tooltip' => $this->get_state_name($state),
         ];
     }
 
@@ -284,14 +369,13 @@ class visibility implements named_templatable, renderable {
     }
 
     /**
-     * Build the static badges data.
+     * Build the static indicator data.
      * @param \renderer_base $output typically, the renderer that's calling this function
      * @return stdClass|null data context for a mustache template
      */
     public function build_static_data(\renderer_base $output): ?stdClass {
-        $data = (object) [
-            'isInteractive' => false,
-        ];
+        $data = $this->get_state_data($output, $this->get_state());
+        $data->isInteractive = false;
 
         if (!$this->mod->visible) {
             $data->modhiddenfromstudents = true;

@@ -60,7 +60,7 @@ Feature: Validate some activity editing has a non-ajax alternative
     And I should see "Show on course page"
     And I should see "Hide on course page"
     And I should see "Make available but don't show on course page"
-    And ".activity-badges" "css_element" should not exist
+    And I should see "Available on course page" in the "Activity sample 1" "core_courseformat > Activity visibility"
     When I click on "Hide on course page" "link" in the "Activity sample 1" "activity"
     Then I should see "Hidden from students" in the "Activity sample 1" "core_courseformat > Activity visibility"
     And I should not see "Available but not shown on course page" in the "Activity sample 1" "core_courseformat > Activity visibility"
@@ -68,7 +68,7 @@ Feature: Validate some activity editing has a non-ajax alternative
     And I should not see "Hidden from students" in the "Activity sample 1" "core_courseformat > Activity visibility"
     And I should see "Available but not shown on course page" in the "Activity sample 1" "core_courseformat > Activity visibility"
     And I click on "Show on course page" "link" in the "Activity sample 1" "activity"
-    And ".activity-badges" "css_element" should not exist
+    And I should see "Available on course page" in the "Activity sample 1" "core_courseformat > Activity visibility"
 
   Scenario: Duplicate activity can be done without ajax
     Given I log in as "teacher1"

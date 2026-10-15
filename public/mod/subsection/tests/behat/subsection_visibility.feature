@@ -37,10 +37,10 @@ Feature: Subsection visibility should work as a module
       | Description                         | Hidden assignment description |
       | assignsubmission_onlinetext_enabled | 1                             |
     Then I should see "Hidden from students" in the "Subsection 1" "section"
-    And I should see "Hidden from students" in the "Hidden assignment name" "activity"
+    And "Hidden from students" "button" should exist in the "Hidden assignment name" "core_courseformat > Activity visibility"
     And I show section "Section 1"
     And I should see "Hidden from students" in the "Subsection 1" "section"
-    And I should see "Hidden from students" in the "Hidden assignment name" "activity"
+    And "Hidden from students" "button" should exist in the "Hidden assignment name" "core_courseformat > Activity visibility"
 
   @javascript
   Scenario: Subsections created on a visible section behave like a normal module when parent visibility is toggled
@@ -51,10 +51,10 @@ Feature: Subsection visibility should work as a module
       | page       | Page 1       | C1     | page1       | 1       |
     When I am on "Course 1" course homepage
     And I should not see "Hidden from students" in the "Subsection 1" "section"
-    And I should not see "Hidden from students" in the "Page 1" "activity"
+    And "Hidden from students" "button" should not exist in the "Page 1" "core_courseformat > Activity visibility"
     Then I hide section "Section 1"
     And I should see "Hidden from students" in the "Subsection 1" "section"
-    And I should see "Hidden from students" in the "Page 1" "activity"
+    And "Hidden from students" "button" should exist in the "Page 1" "core_courseformat > Activity visibility"
     And I show section "Section 1"
     And I should not see "Hidden from students" in the "Subsection 1" "section"
-    And I should not see "Hidden from students" in the "Page 1" "activity"
+    And "Hidden from students" "button" should not exist in the "Page 1" "core_courseformat > Activity visibility"

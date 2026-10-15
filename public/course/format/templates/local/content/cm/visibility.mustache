@@ -17,29 +17,38 @@
 {{!
     @template core_courseformat/local/content/cm/visibility
 
-    Template to displays if an activity is in hidden or stealth mode.
+    Template to display the activity visibility.
+
+    In edit mode, users who can change the visibility get an interactive dropdown on every activity,
+    and other users get a static indicator on every activity. Outside edit mode, the static indicator
+    is displayed for hidden and stealth activities only.
 
     Example context (json):
     {
         "modhiddenfromstudents" : "1",
-        "modstealth" : "1",
+        "modstealth" : "0",
         "isInteractive": "1",
+        "state": "hide",
+        "icon": "<i class=\"icon fa-solid fa-eye-slash fa-fw\" aria-hidden=\"true\"></i>",
+        "label": "Hidden",
+        "accessiblename": "Availability: Hidden from students",
+        "tooltip": "Hidden from students",
+        "reactprops": "{\"cmid\":1,\"value\":\"hide\",\"options\":[]}",
         "dropwdown": {
             "buttonid": "dropwdownbutton_648b1549b929e30",
-            "buttoncontent": "Show on course page",
+            "buttoncontent": "Hidden from students",
             "choices": {
                 "description": null,
                 "options": [
                     {
                         "value": "show",
                         "name": "Show on course page",
-                        "description": "Available to students.",
+                        "description": "Available to students subject to restrictions.",
                         "url": null,
                         "icon": null,
                         "disabled": false,
                         "hasicon": false,
                         "hasurl": false,
-                        "selected": true,
                         "optionnumber": 1,
                         "first": true,
                         "optionuniqid": "choice_option_648b1549b929e31"
@@ -53,6 +62,7 @@
                         "disabled": false,
                         "hasicon": false,
                         "hasurl": false,
+                        "selected": true,
                         "optionnumber": 2,
                         "first": false,
                         "optionuniqid": "choice_option_648b1549b929e32"
@@ -64,23 +74,38 @@
     }
 }}
 {{#isInteractive}}
-    <div class="activity-badges my-1" data-region="visibility">
+    <div class="activity-badges activity-visibility" data-region="visibility" data-visibility="{{state}}">
+    {{#react}}
+    {
+        "component": "@moodle/lms/core_course/local/cm/VisibilityDropdown",
+        "props": {{{reactprops}}}
+    }
     {{#dropwdown}}
         {{< core/local/dropdown/status}}
-            {{$ buttonclasses }} badge rounded-pill bg-secondary text-dark dropdown-toggle border-0 {{/ buttonclasses }}
+            {{$ buttonclasses }}{{!
+                }}mds-btn btn btn-outline-secondary mds-btn--size-md mds-dropdown-trigger activity-visibility-trigger{{!
+            }}{{/ buttonclasses }}
+            {{$ buttoncontent }}
+                <span class="activity-visibility-icon" aria-hidden="true">{{{icon}}}</span>
+                <span class="activity-visibility-label" aria-hidden="true">{{label}}</span>
+                <span class="visually-hidden">{{accessiblename}}</span>
+                <i class="mds-dropdown-trigger__chevron" aria-hidden="true"></i>
+            {{/ buttoncontent }}
         {{/ core/local/dropdown/status}}
     {{/dropwdown}}
+    {{/react}}
     </div>
 {{/isInteractive}}
 {{^isInteractive}}
-    {{#modhiddenfromstudents}}
-        <div class="activity-badges my-1 d-flex align-self-start align-items-center" data-region="visibility">
-            <span class="badge rounded-pill">{{#pix}}i/show, core{{/pix}}{{#str}}hiddenfromstudents{{/str}}</span>
-        </div>
-    {{/modhiddenfromstudents}}
-    {{#modstealth}}
-        <div class="activity-badges my-1 d-flex align-self-start align-items-center" data-region="visibility">
-            <span class="badge rounded-pill">{{#pix}}t/stealth, core{{/pix}}{{#str}}hiddenoncoursepage{{/str}}</span>
-        </div>
-    {{/modstealth}}
+    <div class="activity-badges activity-visibility d-flex align-items-center"{{!
+        }} data-region="visibility" data-visibility="{{state}}">
+        {{! Tooltip on a wrapper: aria-describedby stays off the indicator, and focusin still bubbles up to it. }}
+        <span class="d-inline-flex" data-bs-toggle="tooltip" data-bs-title="{{tooltip}}">
+            <span class="activity-visibility-indicator d-inline-flex align-items-center" tabindex="0">
+                <span class="d-inline-flex" aria-hidden="true">{{{icon}}}</span>
+                {{#label}}<span class="activity-visibility-label" aria-hidden="true">{{label}}</span>{{/label}}
+                <span class="visually-hidden">{{accessiblename}}</span>
+            </span>
+        </span>
+    </div>
 {{/isInteractive}}

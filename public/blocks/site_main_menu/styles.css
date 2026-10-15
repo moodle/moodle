@@ -1,15 +1,14 @@
 /* Imitate mobile grid for activity card. */
 .block_site_main_menu .activity-item .activity-grid {
-    grid-template-columns: 1fr min-content;
+    grid-template-columns: 1fr min-content min-content;
     grid-template-areas:
-        "icon          actions"
-        "name          name"
-        "visibility    visibility"
-        "dates         dates"
-        "completion    completion"
-        "altcontent    altcontent"
-        "afterlink     afterlink"
-        "availability  availability";
+        "icon          visibility    actions"
+        "name          name          name"
+        "dates         dates         dates"
+        "completion    completion    completion"
+        "altcontent    altcontent    altcontent"
+        "afterlink     afterlink     afterlink"
+        "availability  availability  availability";
 }
 
 .block_site_main_menu .activity-item .activity-grid.noname-grid {

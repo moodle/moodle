@@ -24,11 +24,11 @@
 
 $string['addsection'] = 'Add section';
 $string['availability_show'] = 'Show on course page';
-$string['availability_show_help'] = 'Available to students (subject to any access restrictions which may be set).';
+$string['availability_show_help'] = 'Available to students subject to restrictions.';
 $string['availability_hide'] = 'Hide on course page';
 $string['availability_hide_help'] = 'Not available to students.';
 $string['availability_stealth'] = 'Make available but don\'t show on course page';
-$string['availability_stealth_help'] = 'Available to students if you provide a link. Activities will still appear in the gradebook and other reports.';
+$string['availability_stealth_help'] = 'Available to students if you provide a link.';
 $string['bulkedit'] = 'Bulk actions';
 $string['bulkeditingcourse'] = 'Bulk edit course: {$a}';
 $string['bulkcancel'] = 'Close bulk actions';
@@ -74,6 +74,11 @@ $string['cmsduplicate'] = 'Duplicate activities';
 $string['cmsmove'] = 'Move activities';
 $string['cmsmove_title'] = 'Move selected activities';
 $string['cmsmove_info'] = 'Move {$a} activities after';
+$string['cmvisibility_hide'] = 'Hidden';
+$string['cmvisibility_name'] = 'Availability: {$a}';
+$string['cmvisibility_show'] = 'Available';
+$string['cmvisibility_show_name'] = 'Available on course page';
+$string['cmvisibility_stealth'] = 'Not shown';
 $string['courseindex'] = 'Course index';
 $string['linearnavigationsettings'] = 'Enable linear navigation';
 $string['linearnavigationsettings_help'] = 'Display \'Previous\' and \'Next\' buttons on activity pages to help learners move sequentially through the course.';
