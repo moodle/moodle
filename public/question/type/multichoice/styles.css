@@ -24,12 +24,12 @@
 
 /* Editing form. */
 body#page-question-type-multichoice div[id^=fitem_id_][id*=answer_] {
-    background: #eee;
+    background-color: var(--mds-bg-surface-strong);
     margin-top: 0;
     margin-bottom: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--mds-border-default);
     border-bottom: 0;
 }
 
@@ -45,23 +45,23 @@ body#page-question-type-multichoice div[id^=fitem_id_] .fitemtitle {
 }
 
 body#page-question-type-multichoice div[id^=fitem_id_][id*=fraction_] {
-    background: #eee;
+    background-color: var(--mds-bg-surface-strong);
     margin-bottom: 0;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--mds-border-default);
     border-top: 0;
     border-bottom: 0;
 }
 
 body#page-question-type-multichoice div[id^=fitem_id_][id*=feedback_] {
-    background: #eee;
+    background-color: var(--mds-bg-surface-strong);
     margin-bottom: 2em;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--mds-border-default);
     border-top: 0;
 }
 
