@@ -30,11 +30,15 @@ class frozen_clock implements \core\clock {
      * Create a new instance of the frozen clock.
      *
      * @param null|int $time The initial time to use. If not specified, the current time is used.
+     * @param null|DateTimeImmutable $datetime The initial datetime to use. Takes precedence over $time.
      */
     public function __construct(
         ?int $time = null,
+        ?DateTimeImmutable $datetime = null,
     ) {
-        if ($time) {
+        if ($datetime) {
+            $this->time = $datetime;
+        } else if ($time) {
             // Note that the constructor with time zone does not work when specifying a timestamp,
             // so we have to set timezone separately afterward.
             $this->time = (new \DateTimeImmutable("@{$time}"))
