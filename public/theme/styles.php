@@ -133,7 +133,10 @@ if ($themerev <= 0 or $themerev != $rev or $themesubrev != $currentthemesubrev) 
 make_localcache_directory('theme', false);
 
 if ($type === 'editor' || $type === 'editor-rtl') {
-    $csscontent = $theme->get_css_content_editor();
+    if (!$csscontent = $theme->get_editor_css_cached_content()) {
+        $csscontent = $theme->get_css_content_editor();
+        $theme->set_editor_css_content_cache($csscontent);
+    }
 
     if ($cache) {
         css_store_css($theme, $candidatesheet, $csscontent);
