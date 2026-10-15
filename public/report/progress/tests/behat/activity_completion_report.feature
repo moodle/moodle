@@ -109,6 +109,43 @@ Feature: Teacher can view and override users' activity completion data via the p
     And I toggle the manual completion state of "my assignment"
     And the manual completion button of "my assignment" is displayed as "Mark as done"
 
+  # Course comprising an activity with automatic completion (student must view it and receive a
+  # passing grade). Confirms overriding to complete resolves an existing passing grade instead of
+  # storing plain complete, and that the resulting completed-with-pass state stays reversible.
+  @javascript
+  Scenario: Overriding to complete resolves an existing passing grade, and stays reversible
+    Given the following "activities" exist:
+      | activity | name            | intro   | course | idnumber | section | completion | completionview | completionusegrade | completionpassgrade | gradepass |
+      | assign   | my assignment 4 | A4 desc | C1     | assign4  | 0       | 2          | 1              | 1                   | 1                    | 50        |
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
+    And I turn editing mode on
+    And I give the grade "60.00" to the user "Ann, Jill, Grainne, Beauchamp" for the grade item "my assignment 4"
+    And I press "Save changes"
+    And I am on "Course 1" course homepage
+    And I navigate to "Reports" in current page administration
+    And I click on "Activity completion" "link"
+    And "Ann, Jill, Grainne, Beauchamp, my assignment 4: Not completed" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
+
+    # Overriding to complete picks up the existing passing grade - both in the report's own AJAX
+    # response (no reload) and in a fresh server render, so they must agree.
+    When I click on "my assignment 4" "link" in the "Ann, Jill, Grainne, Beauchamp" "table_row"
+    And I click on "Save changes" "button"
+    Then "Ann, Jill, Grainne, Beauchamp, my assignment 4: Completed (achieved pass grade, set by Teacher)" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
+    And I reload the page
+    And "Ann, Jill, Grainne, Beauchamp, my assignment 4: Completed (achieved pass grade, set by Teacher)" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
+
+    # The completed-with-pass override stays clickable after a reload - it can still be reverted.
+    And I click on "my assignment 4" "link" in the "Ann, Jill, Grainne, Beauchamp" "table_row"
+    And I click on "Save changes" "button"
+    And I reload the page
+    And "Ann, Jill, Grainne, Beauchamp, my assignment 4: Not completed (set by Teacher)" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
+
+    # And overriding again re-resolves the same passing grade.
+    And I click on "my assignment 4" "link" in the "Ann, Jill, Grainne, Beauchamp" "table_row"
+    And I click on "Save changes" "button"
+    And I reload the page
+    And "Ann, Jill, Grainne, Beauchamp, my assignment 4: Completed (achieved pass grade, set by Teacher)" "icon" should exist in the "Ann, Jill, Grainne, Beauchamp" "table_row"
+
   Scenario: Download button exist activity completion report.
     Given I am on the "Course 1" Course page logged in as teacher1
     When I navigate to "Reports > Activity completion" in current page administration
