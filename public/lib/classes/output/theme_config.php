@@ -1011,6 +1011,38 @@ class theme_config {
     }
 
     /**
+     * Generate the editor content css cache key.
+     *
+     * @return string The editor content css cache key.
+     */
+    public function get_editor_css_cache_key(): string {
+        return 'editor_' . $this->get_css_cache_key();
+    }
+
+    /**
+     * Set the editor content CSS cache.
+     *
+     * @param string $csscontent The editor content CSS.
+     * @return bool True if the content was successfully cached.
+     */
+    public function set_editor_css_content_cache(string $csscontent): bool {
+        $cache = cache::make('core', 'postprocessedcss');
+
+        return $cache->set($this->get_editor_css_cache_key(), $csscontent);
+    }
+
+    /**
+     * Return the cached editor content CSS.
+     *
+     * @return bool|string The cached editor content CSS or false if not found.
+     */
+    public function get_editor_css_cached_content(): bool|string {
+        $cache = cache::make('core', 'postprocessedcss');
+
+        return $cache->get($this->get_editor_css_cache_key());
+    }
+
+    /**
      * Get the theme designer css markup,
      * the parameters are coming from css_urls().
      *

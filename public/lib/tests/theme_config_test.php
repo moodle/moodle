@@ -195,6 +195,31 @@ final class theme_config_test extends advanced_testcase {
     }
 
     /**
+     * Test that the editor content CSS is cached separately from the main CSS, per direction.
+     */
+    public function test_editor_css_content_cache(): void {
+        $this->resetAfterTest();
+
+        $theme = theme_config::load('boost');
+        $theme->force_svg_use(true);
+
+        $theme->set_rtl_mode(false);
+        $this->assertFalse($theme->get_editor_css_cached_content());
+        $this->assertEquals('editor_boost_ltr', $theme->get_editor_css_cache_key());
+
+        $this->assertTrue($theme->set_editor_css_content_cache('.ltr {}'));
+        $this->assertSame('.ltr {}', $theme->get_editor_css_cached_content());
+
+        // The main CSS cache is not affected.
+        $this->assertFalse($theme->has_css_cached_content());
+
+        // Other directions have their own entry.
+        $theme->set_rtl_mode(true);
+        $this->assertEquals('editor_boost_rtl', $theme->get_editor_css_cache_key());
+        $this->assertFalse($theme->get_editor_css_cached_content());
+    }
+
+    /**
      * Test that {@see theme_config::get_all_block_regions()} returns localised list of region names.
      *
      * @covers ::get_all_block_regions
