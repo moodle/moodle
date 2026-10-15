@@ -17,6 +17,7 @@
 namespace core_admin\reportbuilder\local\systemreports;
 
 use core\oauth2\server\entity\client_entity;
+use core\oauth2\server\expiry_helper;
 use core\output\help_icon;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\system_report;
@@ -41,6 +42,9 @@ class oauth2_server_client_secrets extends system_report {
         $this->add_base_condition_simple("client_secret.revoked", 0);
         // Register entity name for columns and filters.
         $this->annotate_entity('client_secret', new lang_string('oauth2server_client', 'admin'));
+        $clientjoinsql = "LEFT JOIN {oauth2_server_clients} client
+                                 ON client.clientidentifier = client_secret.clientidentifier";
+        $this->add_join($clientjoinsql);
         $this->add_columns();
         $this->set_default_no_results_notice(new lang_string('oauth2server_noactivesecrets', 'admin'));
     }
@@ -77,6 +81,11 @@ class oauth2_server_client_secrets extends system_report {
                 return $value ? userdate($value, get_string('strftimedatemonthtimeshort24', 'langconfig')) : '-';
             }));
 
+        $now = \core\di::get(\core\clock::class)->time();
+        // Set threshold to midnight of day 31 (+31 days) so the less-than-or-equal check inclusively covers all
+        // secrets expiring through 23:59:59 on the 30th calendar day.
+        $expirythreshold = \core\di::get(expiry_helper::class)->get_expiry_threshold(31)->getTimestamp();
+
         // Expiry time.
         $this->add_column((new column(
             'expirytime',
@@ -85,18 +94,55 @@ class oauth2_server_client_secrets extends system_report {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TIMESTAMP)
-            ->add_fields('client_secret.expirytime')
+            ->add_fields('client_secret.expirytime, client.status as clientstatus')
             ->set_is_sortable(true)
             ->set_help_icon(new help_icon('oauth2server_expirycolumn', 'admin', \core_date::get_user_timezone()))
-            ->add_callback(function ($value) {
-                return $value ? userdate($value, get_string('strftimedatemonthtimeshort24', 'langconfig')) : '-';
+            ->add_callback(function ($value, \stdClass $row) use ($now, $expirythreshold) {
+                $expirytime = $row->expirytime;
+                $isclientactive = (int) $row->clientstatus === client_entity::STATUS_ACTIVE;
+
+                if (!$expirytime) {
+                    return '-';
+                }
+
+                $expiry = userdate(
+                    $expirytime,
+                    get_string('strftimedatemonthtimeshort24', 'langconfig')
+                );
+
+                // If the client is active and the secret is expiring within 30 days, show a warning icon next to the
+                // expiry date.
+                if ($isclientactive && $expirytime > $now && $expirytime <= $expirythreshold) {
+                    $icon = \html_writer::tag(
+                        'i',
+                        '',
+                        [
+                            'class' => 'fa fa-exclamation-triangle text-warning',
+                            'aria-hidden' => 'true',
+                        ]
+                    );
+                    $warning = \html_writer::tag(
+                        'a',
+                        $icon,
+                        [
+                            'class' => 'text-decoration-none ms-2',
+                            'role' => 'button',
+                            'aria-label' => get_string('oauth2server_viewwarningdetails', 'admin'),
+                            'tabindex' => '0',
+                            'data-bs-toggle' => 'popover',
+                            'data-bs-trigger' => 'focus',
+                            'data-bs-placement' => 'right',
+                            'data-bs-content' => get_string('oauth2server_secretexpirywarning', 'admin'),
+                        ]
+                    );
+
+                    $expiry .= $warning;
+                }
+
+                return $expiry;
             }));
 
         // Status.
-        $clientjoinsql = "LEFT JOIN {oauth2_server_clients} client
-                              ON client.clientidentifier = client_secret.clientidentifier";
-        $this->add_join($clientjoinsql);
-
         $this->add_column((new column(
             'status',
             new lang_string('status', 'core'),
@@ -106,8 +152,8 @@ class oauth2_server_client_secrets extends system_report {
             ->set_type(column::TYPE_TEXT)
             ->add_fields('client_secret.expirytime, client.status as clientstatus')
             ->set_is_sortable(true)
-            ->add_callback(function ($value, \stdClass $row) {
-                $isexpired = $row->expirytime <= time();
+            ->add_callback(function ($value, \stdClass $row) use ($now) {
+                $isexpired = $row->expirytime <= $now;
                 $isclientdisabled = (int) $row->clientstatus === client_entity::STATUS_DISABLED;
 
                 if ($isexpired) { // Secret is expired.

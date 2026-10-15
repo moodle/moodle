@@ -2380,8 +2380,8 @@ function xmldb_main_upgrade($oldversion) {
 
     // Automatically generated Moodle v5.3.0 release upgrade line.
     // Put any upgrade step following this.
-    //
-    if ($oldversion < 2026100500.03) {
+
+    if ($oldversion < 2026100500.04) {
         // Define fields timeexpirywarned and timeexpirednotified to be added to rest_api_tokens.
         $table = new xmldb_table('rest_api_tokens');
         $fields = [
@@ -2402,7 +2402,21 @@ function xmldb_main_upgrade($oldversion) {
         $DB->set_field_select('rest_api_tokens', 'timeexpirednotified', $now, 'expirytime <= :now', ['now' => $now]);
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2026100500.03);
+        upgrade_main_savepoint(true, 2026100500.04);
+    }
+
+    if ($oldversion < 2026100500.04) {
+        // Define field lastexpirynotification to be added to oauth2_server_client_secrets.
+        $table = new xmldb_table('oauth2_server_client_secrets');
+        $field = new xmldb_field('lastexpirynotification', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'lastaccessed');
+
+        // Conditionally launch add field lastexpirynotification.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2026100500.04);
     }
 
     return true;
