@@ -37,7 +37,7 @@ Feature: Assign group override
   Scenario: Add, modify then delete a group override
     Given I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group | Group 1              |
@@ -53,13 +53,14 @@ Feature: Assign group override
     And I press "Continue"
     And I should not see "Group 1"
 
+  @javascript
   Scenario: Duplicate a group override
     Given the following "mod_assign > group overrides" exist:
       | assignment            | group | duedate              |
       | Test assignment name  | G1    | ##1 Jan 2020 08:00## |
     And I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     Then I should see "Wednesday, 1 January 2020, 8:00"
     And I click on "copy" "link"
     And I set the following fields to these values:
@@ -129,7 +130,7 @@ Feature: Assign group override
       | Group mode             | Visible groups           |
     And I press "Save and display"
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group         | Group 1                  |
@@ -154,6 +155,7 @@ Feature: Assign group override
     And I am on the "Test assignment name" Activity page logged in as student3
     And the activity date in "Test assignment name" should contain "Opens: Tuesday, 1 January 2030, 8:00"
 
+  @javascript
   Scenario: Override a group when teacher is in no group, and does not have accessallgroups permission, and the activity's group mode is "separate groups"
     Given the following "permission overrides" exist:
       | capability                  | permission | role           | contextlevel | reference |
@@ -163,10 +165,11 @@ Feature: Assign group override
       | assign   | Assignment 2 | Assignment 2 description | C1     | 1         |
     And I am on the "Assignment 2" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     Then I should see "There are no groups in this course."
     And the "Add group override" "button" should be disabled
 
+  @javascript
   Scenario: A teacher without accessallgroups permission should only be able to add group override for groups that he/she is a member of,
         when the activity's group mode is "separate groups"
     Given the following "permission overrides" exist:
@@ -180,11 +183,12 @@ Feature: Assign group override
       | teacher1 | G1    |
     And I am on the "Assignment 2" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     And I press "Add group override"
     Then the "Override group" select box should contain "Group 1"
     And the "Override group" select box should not contain "Group 2"
 
+  @javascript
   Scenario: A teacher without accessallgroups permission should only be able to see the group overrides for groups that he/she is a member of,
         when the activity's group mode is "separate groups"
     Given the following "permission overrides" exist:
@@ -202,10 +206,11 @@ Feature: Assign group override
       | Assignment 2  | G2    | ##1 Jan 2020 08:00##      |
     When I am on the "Assignment 2" Activity page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     Then I should see "Group 1" in the ".generaltable" "css_element"
     And I should not see "Group 2" in the ".generaltable" "css_element"
 
+  @javascript
   Scenario: "Not visible" groups should not be available for group overrides
     Given the following "groups" exist:
       | name                                 | course | idnumber | visibility | participation |
@@ -217,7 +222,7 @@ Feature: Assign group override
       | Only visible to members/Non-Participation | C1     | MN       | 1          | 0             |
     When I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     And I press "Add group override"
     Then I should see "Visible to everyone/Participation" in the "Override group" "select"
     And I should see "Visible to everyone/Non-Participation" in the "Override group" "select"
@@ -256,7 +261,7 @@ Feature: Assign group override
     And "Sam1 Student1" row "Final grade" column of "submissions" table should contain "90.00"
     # Modify the group override by changing the due date to a past date.
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     And I click on "Edit" "link" in the "Group 1" "table_row"
     When I set the following fields to these values:
       | Recalculate penalty | Yes                |
@@ -267,7 +272,7 @@ Feature: Assign group override
     And "Sam1 Student1" row "Final grade" column of "submissions" table should contain "80.00"
     # Delete the group override.
     And I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     And I click on "Delete" "link" in the "Group 1" "table_row"
     And I click on "Recalculate penalty for user(s) in the override" "checkbox" in the "Confirm" "dialogue"
     And I click on "Continue" "button" in the "Confirm" "dialogue"

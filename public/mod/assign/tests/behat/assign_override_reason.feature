@@ -48,7 +48,7 @@ Feature: Assign override reason
   Scenario: Add a group override with a reason
     Given I am on the "Test assignment name" Activity page logged in as teacher1
     When I navigate to "Overrides" in current page administration
-    And I select "Group overrides" from the "jump" singleselect
+    And I set the field "Overrides" to "Group overrides"
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group | Group 1 |
