@@ -138,12 +138,12 @@ $dialogue-exception-call-border-color:  var(--mds-border-default) !default;
 
 $dialogue-lightbox-bg: var(--mds-bg-surface-default) !default;
 
-$chooserdialogue-bg:                    #f2f2f2 !default;
-$chooserdialogue-options-border-color:  #bbb !default;
+$chooserdialogue-bg:                    var(--mds-bg-surface-strong) !default;
+$chooserdialogue-options-border-color:  var(--mds-border-default) !default;
 
-$choosercontainer-label-border-color:       $white !default;
-$choosercontainer-instruction-bg:           $white !default;
-$choosercontainer-chooseform-selected-bg:   $white !default;
+$choosercontainer-label-border-color:       var(--mds-bg-surface-default) !default;
+$choosercontainer-instruction-bg:           var(--mds-bg-surface-default) !default;
+$choosercontainer-chooseform-selected-bg:   var(--mds-bg-surface-default) !default;
 
 $formlisting-bg:            var(--#{$prefix}white) !default;
 $formlisting-border-color:  #ddd !default;

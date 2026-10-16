@@ -29,3 +29,10 @@ Feature: Use the qbank plugin manager page for editquestion
     Then I should see "Status"
     And the "Edit question" action should exist for the "First question" question in the question bank
     And the "Duplicate" action should exist for the "First question" question in the question bank
+
+  @javascript @accessibility
+  Scenario: The question type chooser meets accessibility standards
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
+    When I press "Create a new question ..."
+    And I set the field "True/False" to "1"
+    Then the ".choosercontainer" "css_element" should meet accessibility standards

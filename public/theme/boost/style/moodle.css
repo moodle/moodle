@@ -31398,7 +31398,7 @@ audio.mediaplugin_html5audio {
 
 .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
   padding: 0;
-  background: #f2f2f2;
+  background: var(--mds-bg-surface-strong);
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
 }
@@ -31423,7 +31423,7 @@ audio.mediaplugin_html5audio {
 /* Various settings for the options area */
 .choosercontainer #chooseform .options {
   position: relative;
-  border-bottom: 1px solid #bbb;
+  border-bottom: 1px solid var(--mds-border-default);
 }
 
 /* Only set these options if we're showing the js container */
@@ -31474,7 +31474,7 @@ audio.mediaplugin_html5audio {
   display: block;
   margin: 0;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #ffffff;
+  border-bottom: 1px solid var(--mds-bg-surface-default);
 }
 
 .choosercontainer #chooseform .option .icon {
@@ -31508,7 +31508,7 @@ audio.mediaplugin_html5audio {
   left: 240px;
   margin: 0;
   padding: 1.6em;
-  background-color: #ffffff;
+  background-color: var(--mds-bg-surface-default);
   overflow-x: hidden;
   overflow-y: auto;
   line-height: 2em;
@@ -31521,7 +31521,7 @@ audio.mediaplugin_html5audio {
 }
 
 .choosercontainer #chooseform .selected {
-  background-color: #ffffff;
+  background-color: var(--mds-bg-surface-default);
   margin-top: -1px;
   padding-top: 1px;
 }
