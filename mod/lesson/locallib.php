@@ -3965,7 +3965,7 @@ abstract class lesson_page extends lesson_base {
         if (is_object($id) && !empty($id->qtype)) {
             $page = $id;
         } else {
-            $page = $DB->get_record("lesson_pages", array("id" => $id));
+            $page = $DB->get_record("lesson_pages", ["id" => $id, "lessonid" => $lesson->id]);
             if (!$page) {
                 throw new \moodle_exception('cannotfindpages', 'lesson');
             }

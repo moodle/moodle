@@ -286,4 +286,34 @@ final class locallib_test extends \advanced_testcase {
         $lesson = new lesson($lesson);
         $this->assertEquals($expected, $lesson->get_last_attempt($attempts));
     }
+
+    /**
+     * Test that a page can only be loaded via the lesson it belongs to.
+     *
+     * @covers \lesson_page::load
+     */
+    public function test_load_page_from_other_lesson(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $lessonmodule1 = $this->getDataGenerator()->create_module('lesson', ['course' => $course->id]);
+        $lessonmodule2 = $this->getDataGenerator()->create_module('lesson', ['course' => $course->id]);
+        $lesson1 = new lesson($lessonmodule1);
+
+        /** @var \mod_lesson_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        $page1 = $generator->create_content($lessonmodule1);
+        $page2 = $generator->create_content($lessonmodule2);
+
+        // Loading a page via its own lesson works.
+        $page = \lesson_page::load($page1->id, $lesson1);
+        $this->assertEquals($page1->id, $page->id);
+        $this->assertEquals($lesson1->id, $page->lessonid);
+
+        // Loading a page via another lesson must fail.
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage(get_string('cannotfindpages', 'lesson'));
+        \lesson_page::load($page2->id, $lesson1);
+    }
 }
