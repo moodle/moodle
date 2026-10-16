@@ -102,6 +102,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\hook\admin_setting_notification;
+use core\output\notification;
+
 define('INSECURE_DATAROOT_WARNING', 1);
 define('INSECURE_DATAROOT_ERROR', 2);
 
@@ -1160,17 +1163,50 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
     }
 
     $form .= $setting->output_setting_flags();
+    $isforcedcore = $setting->is_forceable() && array_key_exists($setting->name, $CFG->config_php_settings);
+    $isforcedplugin = array_key_exists($setting->plugin, $CFG->forced_plugin_settings)
+        && array_key_exists($setting->name, $CFG->forced_plugin_settings[$setting->plugin]);
 
-    $context->warning = $warning;
-    $context->override = '';
-    if (empty($setting->plugin)) {
-        if ($setting->is_forceable() && array_key_exists($setting->name, $CFG->config_php_settings)) {
-            $context->override = get_string('configoverride', 'admin');
+    // Dispatch the hook for all settings.
+    $notificationhook = new admin_setting_notification($setting);
+    \core\di::get(\core\hook\manager::class)->dispatch($notificationhook);
+
+    // If there are notifications, process them.
+    $context->notifications = [];
+    $hooknotifications = $notificationhook->get_notifications();
+
+    // Map notification types to the corresponding Bootstrap alert class.
+    $types = [
+        notification::NOTIFY_SUCCESS => 'success',
+        notification::NOTIFY_ERROR => 'danger',
+        notification::NOTIFY_WARNING => 'warning',
+        notification::NOTIFY_INFO => 'info',
+    ];
+
+    // Collect all the notifications.
+    if (!empty($hooknotifications)) {
+        // Collect all the notifications.
+        foreach ($hooknotifications as $notification) {
+            $type = $notification->get_message_type();
+            $context->notifications[] = [
+                'type' => $types[$type] ?? $types[notification::NOTIFY_INFO],
+                'message' => clean_text($notification->get_message()),
+            ];
         }
-    } else {
-        if (array_key_exists($setting->plugin, $CFG->forced_plugin_settings) and array_key_exists($setting->name, $CFG->forced_plugin_settings[$setting->plugin])) {
-            $context->override = get_string('configoverride', 'admin');
-        }
+    } else if ($isforcedcore || $isforcedplugin) {
+        // If there are no notifications, create a default notification.
+        $context->notifications[] = [
+            'type' => $types[notification::NOTIFY_INFO],
+            'message' => get_string('configoverride', 'admin'),
+        ];
+    }
+
+    // Include any warnings.
+    if (!empty($warning)) {
+        $context->notifications[] = [
+            'type' => $types[notification::NOTIFY_WARNING],
+            'message' => clean_text($warning),
+        ];
     }
 
     $defaults = array();

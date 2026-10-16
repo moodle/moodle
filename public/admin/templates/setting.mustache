@@ -20,10 +20,12 @@
     Admin setting template.
 
     Context variables required for this template:
+    * id - id of the wrapping form-item div
     * labelfor - id of the form element
     * title - Setting title
-    * override - Overridden message
-    * warning - Warning message
+    * notifications - Array of notification objects, each with:
+        * type - Bootstrap alert type string: 'success', 'danger', 'warning', or 'info'
+        * message - Notification message, may contain safe HTML (sanitized via clean_text() before rendering)
     * name - Setting name
     * error - Error message
     * element - The Element HTML
@@ -33,13 +35,18 @@
 
     Example context (json):
     {
+        "id": "admin-id0",
         "title": "Setting title",
-        "labelfor": "id0",
-        "override": "Overidden",
-        "warning": "Warning",
+        "labelfor": "id1",
+        "notifications": [
+            {
+                "type": "info",
+                "message": "This setting is managed by a plugin."
+            }
+        ],
         "name": "Name",
         "error": "Error",
-        "element": "Raw HTML",
+        "element": "<input type=\"text\" id=\"id1\" name=\"s_name\">",
         "forceltr": false,
         "default": "Default value"
     }
@@ -52,25 +59,17 @@
         {{#customcontrol}}
             <p {{#labelfor}}id="{{labelfor}}_label"{{/labelfor}}>
                 {{{title}}}
-                {{#override}}
-                    <div class="alert alert-info">{{override}}</div>
-                {{/override}}
-                {{#warning}}
-                    <div class="alert alert-warning">{{warning}}</div>
-                {{/warning}}
             </p>
         {{/customcontrol}}
         {{^customcontrol}}
             <label {{#labelfor}}for="{{labelfor}}"{{/labelfor}}>
                 {{{title}}}
-                {{#override}}
-                    <div class="alert alert-info">{{override}}</div>
-                {{/override}}
-                {{#warning}}
-                    <div class="alert alert-warning">{{warning}}</div>
-                {{/warning}}
             </label>
         {{/customcontrol}}
+        {{#notifications}}
+            <br>
+            <div class="alert alert-{{type}} d-inline-block">{{{message}}}</div>
+        {{/notifications}}
         <span class="form-shortname d-block small text-muted">{{{name}}}</span>
     </div>
     <div class="form-setting col-sm-9">

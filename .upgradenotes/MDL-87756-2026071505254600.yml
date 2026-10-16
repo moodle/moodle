@@ -1,0 +1,9 @@
+issueNumber: MDL-87756
+notes:
+  core:
+    - message: >-
+        Admin settings now dispatch the `core\hook\admin_setting_notification`
+        hook when rendering each setting row. Plugins can implement a listener
+        for this hook to add custom `\core\output\notification` messages
+        (info, warning, success, or error).
+      type: changed
