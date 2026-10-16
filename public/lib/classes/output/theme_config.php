@@ -1289,8 +1289,11 @@ class theme_config {
         }
 
         // Try to save memory.
-        $compiler = null;
         unset($compiler);
+
+        // Try even harder (see MDL-89443).
+        gc_collect_cycles();
+        gc_mem_caches();
 
         return $compiled;
     }

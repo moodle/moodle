@@ -38,6 +38,38 @@ require_once($CFG->libdir . '/outputlib.php');
  */
 final class theme_config_test extends advanced_testcase {
     /**
+     * Confirm that cyclic references created during SCSS compilation are released.
+     */
+    public function test_get_css_content_from_scss_releases_cycles(): void {
+        $theme = theme_config::load('boost');
+        $theme->prescsscallback = null;
+        $theme->extrascsscallback = null;
+
+        $scss = '';
+        for ($i = 0; $i < 10; $i++) {
+            $scss .= ".test-{$i} { color: red; &:hover { color: blue; } }\n";
+        }
+        $theme->scss = static fn() => $scss;
+
+        $method = new ReflectionMethod(theme_config::class, 'get_css_content_from_scss');
+
+        gc_collect_cycles();
+        $gcenabled = gc_enabled();
+        gc_disable();
+        try {
+            $css = $method->invoke($theme, false);
+            $remainingcycles = gc_collect_cycles();
+        } finally {
+            if ($gcenabled) {
+                gc_enable();
+            }
+        }
+
+        $this->assertSame(0, $remainingcycles);
+        $this->assertStringContainsString('.test-0:hover', $css);
+    }
+
+    /**
      * This function will test directives used to serve SVG images to make sure
      * this are making the right decisions.
      */
