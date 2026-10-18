@@ -539,3 +539,28 @@ Feature: Create OAuth2 clients
     And I log in as "user"
     And I click on "Site administration" "link"
     And "OAuth 2 clients" "link" should not exist
+
+  Scenario: Generating a secret notifies everyone who can manage OAuth2 clients
+    Given the following "users" exist:
+      | username | firstname | lastname | email             |
+      | maria    | Maria     | Manager  | maria@example.com |
+    And the following "role assigns" exist:
+      | user  | role    | contextlevel | reference |
+      | maria | manager | System       |           |
+    And I click on "Create client" "link"
+    And I set the field "Name" to "Reporting service"
+    And I click on "Confidential" "radio"
+    And I set the field "Authorization Code" to "0"
+    And I set the field "Client credentials" to "1"
+    And I set the field "View courses and course categories" to "1"
+    And I press "Create client"
+    And I press "Generate secret"
+    And I click on "Close" "button" in the "Secret generated" "dialogue"
+    # Only tasks queued before the current second are due, so give the notice's task a second.
+    And I wait "1" seconds
+    And I run all adhoc tasks
+    And I log in as "maria"
+    When I open the notification popover
+    And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
+    Then I should see "New secret created for OAuth 2 client \"Reporting service\""
+    And I should see "Admin User created a new secret for the OAuth 2 client \"Reporting service\""
