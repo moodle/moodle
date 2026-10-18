@@ -1110,6 +1110,11 @@ $string['oauth2server_revokeactivesecrettoaddnew'] = 'To generate a new secret, 
 $string['oauth2server_revokeinactivesecrettoaddnew'] = 'To generate a new secret, you must first revoke one of the existing <strong>Inactive</strong> secrets.';
 $string['oauth2server_rotateexpiringsecrets'] = 'To avoid service disruptions for this client, please visit the <a href="{$a}">Manage secrets</a> page to rotate the affected secrets before they expire.';
 $string['oauth2server_scopes'] = 'Scopes';
+$string['oauth2server_secretcreatednoticebody'] = '<p>{$a->creator} created a new secret for the OAuth 2 client "{$a->name}" on {$a->sitename}. It expires on {$a->expiry}.</p>
+<p>If you weren\'t expecting it, revoke it now on the client\'s <a href="{$a->url}">Manage secrets</a> page.</p>';
+$string['oauth2server_secretcreatednoticebodyautomated'] = '<p>An automated process created a new secret for the OAuth 2 client "{$a->name}" on {$a->sitename}. It expires on {$a->expiry}.</p>
+<p>If you weren\'t expecting it, revoke it now on the client\'s <a href="{$a->url}">Manage secrets</a> page.</p>';
+$string['oauth2server_secretcreatednoticesubject'] = 'New secret created for OAuth 2 client "{$a}"';
 $string['oauth2server_secretexpireindaynotificationsubject'] = 'OAuth 2 client "{$a}" has secrets expiring in 1 day';
 $string['oauth2server_secretexpireindaysnotificationsubject'] = 'OAuth 2 client "{$a->clientname}" has secrets expiring in {$a->expirydays} days';
 $string['oauth2server_secretexpiresinday'] = 'The OAuth 2 client "{$a}" has 1 secret expiring in 1 day.';

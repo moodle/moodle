@@ -52,6 +52,25 @@ $messageproviders = array (
         'capability' => 'moodle/api:createtoken',
     ],
 
+    // A personal access token was created on the user's account. The email is sent directly by
+    // \core\credential_notice, so this provider only adds the notification and never emails.
+    'personalaccesstokencreated' => [
+        'defaults' => [
+            'popup' => MESSAGE_FORCED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_DISALLOWED,
+        ],
+        'capability' => 'moodle/api:createtoken',
+    ],
+
+    // A secret was created for an OAuth 2 client. Notification only, for the same reason.
+    'oauth2clientsecretcreated' => [
+        'defaults' => [
+            'popup' => MESSAGE_FORCED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_DISALLOWED,
+        ],
+        'capability' => 'moodle/site:manageoauth2clients',
+    ],
+
     // Notices that an admin might be interested in.
     'notices' => array (
         'defaults' => [

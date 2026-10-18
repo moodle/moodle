@@ -58,6 +58,17 @@ Feature: Manage personal access tokens
     And I should not see "This secret is shown only once"
     And I should not see "Your new token"
 
+  @javascript
+  Scenario: Creating a token notifies its owner
+    Given I am on the "user > Personal access tokens" page logged in as "user1"
+    And I click on "Create token" "link"
+    And I set the following fields to these values:
+      | Name                         | Attendance export |
+      | scope_core_grades_grade_read | 1                 |
+    And I press "Create token"
+    When I open the notification popover
+    Then I should see "New personal access token \"Attendance export\" created on your account" in the ".popover-region-notifications" "css_element"
+
   Scenario: A token cannot be created without a scope
     Given I am on the "user > Personal access tokens" page logged in as "user1"
     And I click on "Create token" "link"
