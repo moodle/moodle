@@ -56,6 +56,11 @@ class manager {
     const ADHOC_TASK_FAILED_RETENTION = 4 * WEEKSECS;
 
     /**
+     * @var int The maximum fail delay in seconds between task retries (24 hours).
+     */
+    public const MAX_FAIL_DELAY = \DAYSECS;
+
+    /**
      * @var ?task_base $runningtask Used to tell what is the current running task in this process.
      */
     public static ?task_base $runningtask = null;
