@@ -65,10 +65,13 @@ abstract class exception_response extends \core\router\schema\response\response 
         return new payload_response(
             payload: static::get_payload_data($exception, ...$extra),
             request: $request,
-            response: new Response(
-                status: static::get_exception_status_code(),
-                body: $exception->getMessage(),
-                reason: explode("\n", $exception->getMessage())[0],
+            response: static::add_additional_headers(
+                new Response(
+                    status: static::get_exception_status_code(),
+                    body: $exception->getMessage(),
+                    reason: explode("\n", $exception->getMessage())[0],
+                ),
+                $exception,
             ),
         );
     }
@@ -146,5 +149,33 @@ abstract class exception_response extends \core\router\schema\response\response 
         }
 
         return $data;
+    }
+
+    /**
+     * Add additional headers to the response.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param \Exception $exception
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    protected static function add_additional_headers(
+        \Psr\Http\Message\ResponseInterface $response,
+        \Exception $exception,
+    ): \Psr\Http\Message\ResponseInterface {
+        foreach (static::get_additional_headers($exception) as $name => $value) {
+            $response = $response->withAddedHeader($name, $value);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get any headers to add to the response.
+     *
+     * @param \Exception $exception The exception for which to get additional headers.
+     * @return array<string,string>
+     */
+    protected static function get_additional_headers(\Exception $exception): array {
+        return [];
     }
 }
