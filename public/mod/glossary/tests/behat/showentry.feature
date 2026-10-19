@@ -30,3 +30,38 @@ Feature: Show glossary entry
     Then the page title should contain "clamor | Underused words"
     And "clamor" "heading" should exist
     And I should see "A loud noise."
+
+  Scenario: Entries from another glossary are not shown in entry view
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher2 | Teacher   | 2        | teacher2@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 2 | C2        | 0        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher2 | C2     | editingteacher |
+    And the following "activities" exist:
+      | activity | name            | course | idnumber |
+      | glossary | Secret glossary | C2     | g2       |
+    And the following "mod_glossary > entries" exist:
+      | glossary | concept           | definition             | user     |
+      | g2       | Confidential Term | Top secret definition. | teacher2 |
+    When I am on the "Underused words > Confidential Term" "mod_glossary > Entry" page logged in as teacher1
+    Then I should not see "Top secret definition."
+    And I should see "No entries found in this section"
+    And I am on the "Underused words > clamor" "mod_glossary > Entry" page
+    And I should see "A loud noise."
+    And I am on the "Secret glossary > Confidential Term" "mod_glossary > Entry" page logged in as teacher2
+    And I should see "Top secret definition."
+
+  Scenario: Entries exported to the main glossary are shown in entry view of their source glossary
+    Given the following "activities" exist:
+      | activity | name          | course | idnumber | mainglossary |
+      | glossary | Main glossary | C1     | g3       | 1            |
+    And the following "mod_glossary > entries" exist:
+      | glossary | sourceglossary | concept   | definition                 | user     |
+      | g3       | g1             | cacophony | A harsh mixture of sounds. | teacher1 |
+    When I am on the "Underused words > cacophony" "mod_glossary > Entry" page logged in as teacher1
+    Then I should see "A harsh mixture of sounds."
+    And I should see "Exported entry"
