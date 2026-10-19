@@ -300,8 +300,8 @@ final class moodle_api_authentication_middleware_test extends route_testcase {
     }
 
     /**
-     * A valid API key token which does not carry a scope required by the route is denied with a 401
-     * (unauthorized) response, rather than being permitted to authenticate.
+     * A valid API key token which does not carry a scope required by the route is denied with a 403
+     * (forbidden) response, rather than being permitted to authenticate.
      */
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_api_key_auth_with_missing_scope_is_denied(): void {
@@ -322,11 +322,8 @@ final class moodle_api_authentication_middleware_test extends route_testcase {
                 new scopeset(new \fake_oauth2scope\route\scope\resource\read()),
             ]);
 
-        $response = $this->get_middleware()->process($request, $this->get_recording_handler());
-
-        $this->assertEquals(401, $response->getStatusCode());
-        $payload = json_decode((string) $response->getBody());
-        $this->assertEquals('access_denied', $payload->error);
+        $this->expectException(\core\exception\insufficient_scope_exception::class);
+        $this->get_middleware()->process($request, $this->get_recording_handler());
     }
 
     /**
@@ -358,8 +355,8 @@ final class moodle_api_authentication_middleware_test extends route_testcase {
     }
 
     /**
-     * A valid OAuth2 login which does not carry a scope required by the route is denied with a 401
-     * (unauthorized) response.
+     * A valid OAuth2 login which does not carry a scope required by the route is denied with a 403
+     * (forbidden) response.
      */
     #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
     public function test_oauth2_login_with_missing_scope_is_denied(): void {
@@ -382,11 +379,8 @@ final class moodle_api_authentication_middleware_test extends route_testcase {
                 new scopeset(new \fake_oauth2scope\route\scope\resource\read()),
             ]);
 
-        $response = $this->get_middleware($server)->process($request, $this->get_recording_handler());
-
-        $this->assertEquals(401, $response->getStatusCode());
-        $payload = json_decode((string) $response->getBody());
-        $this->assertEquals('access_denied', $payload->error);
+        $this->expectException(\core\exception\insufficient_scope_exception::class);
+        $this->get_middleware($server)->process($request, $this->get_recording_handler());
     }
 
     /**
