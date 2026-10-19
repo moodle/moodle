@@ -1441,4 +1441,231 @@ final class lib_test extends \advanced_testcase {
             'attempts' => $attempts,
         ];
     }
+
+    /**
+     * Build the args array for the question_data fragment callback.
+     *
+     * @param \stdClass $quiz quiz instance (with cmid).
+     * @param \stdClass $course course the request is scoped to.
+     * @param int $categoryid question category to filter on.
+     * @param string $view view class name.
+     * @param int|null $bankcmid cmid of the question bank being browsed, defaults to the quiz.
+     * @return array
+     */
+    private function question_data_fragment_args(
+        \stdClass $quiz,
+        \stdClass $course,
+        int $categoryid,
+        string $view = \mod_quiz\question\bank\custom_view::class,
+        ?int $bankcmid = null,
+    ): array {
+        return [
+            'cmid' => $bankcmid ?? $quiz->cmid,
+            'quizcmid' => $quiz->cmid,
+            'courseid' => $course->id,
+            'view' => $view,
+            'filter' => json_encode(['category' => ['jointype' => 1, 'values' => [$categoryid]]]),
+            'jointype' => '1',
+            'qpage' => '0',
+            'qperpage' => '100',
+            'extraparams' => '{}',
+            'sortdata' => '{}',
+        ];
+    }
+
+    /**
+     * Loading the question bank fragment requires mod/quiz:manage.
+     *
+     * @covers ::mod_quiz_output_fragment_question_data
+     */
+    public function test_question_data_fragment_requires_manage_capability(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+
+        $course = $generator->create_course();
+        $quiz = $this->create_test_quiz($course);
+        $student = $generator->create_and_enrol($course, 'student');
+        $cat = $questiongenerator->create_question_category(['contextid' => \context_course::instance($course->id)->id]);
+
+        $this->setUser($student);
+        $this->expectException(\required_capability_exception::class);
+        mod_quiz_output_fragment_question_data($this->question_data_fragment_args($quiz, $course, $cat->id));
+    }
+
+    /**
+     * The question_data fragment only serves categories the user may view in the bank, so a
+     * teacher's own-course access does not extend to another course's categories.
+     *
+     * @covers ::mod_quiz_output_fragment_question_data
+     */
+    public function test_question_data_fragment_scoped_to_usable_categories(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+
+        $c1 = $generator->create_course();
+        $c2 = $generator->create_course();
+        $quiz = $this->create_test_quiz($c1);
+        $teacher = $generator->create_and_enrol($c1, 'editingteacher');
+        $othercat = $questiongenerator->create_question_category(['contextid' => \context_course::instance($c2->id)->id]);
+        $questiongenerator->create_question(
+            'shortanswer',
+            null,
+            ['category' => $othercat->id, 'name' => 'Other course question'],
+        );
+
+        $this->setUser($teacher);
+        $this->expectException(\required_capability_exception::class);
+        mod_quiz_output_fragment_question_data($this->question_data_fragment_args($quiz, $c1, $othercat->id));
+    }
+
+    /**
+     * A teacher loads questions from a category in their own course.
+     *
+     * @covers ::mod_quiz_output_fragment_question_data
+     */
+    public function test_question_data_fragment_allows_own_category(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+
+        $course = $generator->create_course();
+        $quiz = $this->create_test_quiz($course);
+        $teacher = $generator->create_and_enrol($course, 'editingteacher');
+        $cat = $questiongenerator->create_question_category(
+            ['contextid' => \context_module::instance($quiz->cmid)->id],
+        );
+        $questiongenerator->create_question(
+            'shortanswer',
+            null,
+            ['category' => $cat->id, 'name' => 'Own course question'],
+        );
+
+        $this->setUser($teacher);
+        $html = mod_quiz_output_fragment_question_data($this->question_data_fragment_args($quiz, $course, $cat->id));
+        $this->assertStringContainsString('Own course question', $html);
+    }
+
+    /**
+     * A teacher editing a quiz browses a shared bank in another course where they only hold
+     * question bank capabilities, not mod/quiz:manage.
+     *
+     * @covers ::mod_quiz_output_fragment_question_data
+     */
+    public function test_question_data_fragment_allows_shared_bank_without_manage(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+
+        $c1 = $generator->create_course();
+        $c2 = $generator->create_course();
+        $quiz = $this->create_test_quiz($c1);
+        $teacher = $generator->create_and_enrol($c1, 'editingteacher');
+
+        $qbank = $generator->create_module('qbank', ['course' => $c2->id]);
+        $qbankcontext = \context_module::instance($qbank->cmid);
+        $roleid = $generator->create_role();
+        assign_capability('moodle/question:viewall', CAP_ALLOW, $roleid, \context_system::instance()->id);
+        role_assign($roleid, $teacher->id, $qbankcontext->id);
+        $this->assertFalse(has_capability('mod/quiz:manage', $qbankcontext, $teacher));
+
+        $cat = $questiongenerator->create_question_category(['contextid' => $qbankcontext->id]);
+        $questiongenerator->create_question(
+            'shortanswer',
+            null,
+            ['category' => $cat->id, 'name' => 'Shared bank question'],
+        );
+
+        $this->setUser($teacher);
+        $html = mod_quiz_output_fragment_question_data(
+            $this->question_data_fragment_args($quiz, $c1, $cat->id, bankcmid: $qbank->cmid),
+        );
+        $this->assertStringContainsString('Shared bank question', $html);
+    }
+
+    /**
+     * The question_data fragment rejects a quizcmid that is not a quiz.
+     *
+     * @covers ::mod_quiz_output_fragment_question_data
+     */
+    public function test_question_data_fragment_rejects_non_quiz_quizcmid(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+
+        $course = $generator->create_course();
+        $quiz = $this->create_test_quiz($course);
+        $assign = $generator->create_module('assign', ['course' => $course->id]);
+        $teacher = $generator->create_and_enrol($course, 'editingteacher');
+        $cat = $questiongenerator->create_question_category(
+            ['contextid' => \context_module::instance($quiz->cmid)->id],
+        );
+
+        $this->setUser($teacher);
+        $this->expectException(\dml_missing_record_exception::class);
+        mod_quiz_output_fragment_question_data(
+            $this->question_data_fragment_args($assign, $course, $cat->id, bankcmid: $quiz->cmid),
+        );
+    }
+
+    /**
+     * The question_data fragment rejects a bank cmid of a module without a question bank.
+     *
+     * @covers ::mod_quiz_output_fragment_question_data
+     */
+    public function test_question_data_fragment_rejects_non_bank_cmid(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+
+        $course = $generator->create_course();
+        $quiz = $this->create_test_quiz($course);
+        $assign = $generator->create_module('assign', ['course' => $course->id]);
+        $teacher = $generator->create_and_enrol($course, 'editingteacher');
+        $cat = $questiongenerator->create_question_category(
+            ['contextid' => \context_module::instance($quiz->cmid)->id],
+        );
+
+        $this->setUser($teacher);
+        $this->expectException(\invalid_parameter_exception::class);
+        mod_quiz_output_fragment_question_data(
+            $this->question_data_fragment_args($quiz, $course, $cat->id, bankcmid: $assign->cmid),
+        );
+    }
+
+    /**
+     * The custom_view constructor requires mod/quiz:manage on the quiz, so the question bank view
+     * cannot be reached through the core_question fragment with a quizcmid the user cannot manage.
+     *
+     * @covers \mod_quiz\question\bank\custom_view::__construct
+     */
+    public function test_custom_view_requires_manage_via_core_question_fragment(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/question/lib.php');
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        $c1 = $generator->create_course();
+        $c2 = $generator->create_course();
+        $ownquiz = $this->create_test_quiz($c1);
+        $foreignquiz = $this->create_test_quiz($c2);
+        $teacher = $generator->create_and_enrol($c1, 'editingteacher');
+
+        $args = [
+            'cmid' => $ownquiz->cmid,
+            'courseid' => $c1->id,
+            'view' => \mod_quiz\question\bank\custom_view::class,
+            'filter' => '{}',
+            'jointype' => '1',
+            'qpage' => '0',
+            'qperpage' => '100',
+            'sortdata' => '{}',
+            'extraparams' => json_encode(['quizcmid' => $foreignquiz->cmid, 'requirebankswitch' => false]),
+        ];
+
+        $this->setUser($teacher);
+        $this->expectException(\required_capability_exception::class);
+        core_question_output_fragment_question_data($args);
+    }
 }
