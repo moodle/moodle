@@ -34,6 +34,7 @@ use core_question\local\bank\condition;
 use core_question\local\bank\column_manager_base;
 use core_question\local\bank\filter_condition_manager;
 use core_question\local\bank\question_version_status;
+use mod_quiz\quiz_settings;
 
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 /**
@@ -85,7 +86,10 @@ class custom_view extends \core_question\local\bank\view {
         $this->init_columns($this->wanted_columns(), $this->heading_column());
         $this->pagesize = self::DEFAULT_PAGE_SIZE;
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
-        [$this->quiz, ] = get_module_from_cmid($extraparams['quizcmid']);
+        // Load the quiz these questions are being added to and check the user can manage it.
+        $quizsettings = quiz_settings::create_for_cmid(clean_param($extraparams['quizcmid'], PARAM_INT));
+        require_capability('mod/quiz:manage', $quizsettings->get_context());
+        [$this->quiz, ] = get_module_from_cmid($quizsettings->get_cmid());
         $this->set_quiz_has_attempts(quiz_has_attempts($this->quiz->id));
         $this->requirebankswitch = $extraparams['requirebankswitch'] ?? true;
     }
