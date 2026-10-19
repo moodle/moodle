@@ -74,4 +74,33 @@ class behat_mod_glossary extends behat_base {
         $this->execute("behat_forms::press_button", get_string('savechanges'));
         $this->execute("behat_forms::press_button", get_string('back', 'mod_glossary'));
     }
+
+    /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "mod_glossary > [page type]" page'.
+     *
+     * Recognised page names are:
+     * | pagetype | name meaning                        | description                                    |
+     * | Entry    | Glossary name > Entry concept       | The glossary view page showing a single entry  |
+     *
+     * @param string $type identifies which type of page this is, e.g. 'Entry'.
+     * @param string $identifier identifies the particular page, e.g. 'Test glossary > Test concept'.
+     * @return moodle_url the corresponding URL.
+     * @throws Exception with a meaningful error message if the specified page cannot be found.
+     */
+    protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
+        global $DB;
+
+        switch (strtolower($type)) {
+            case 'entry':
+                [$glossaryname, $concept] = explode(' > ', $identifier, 2);
+                return new moodle_url('/mod/glossary/view.php', [
+                    'id' => $this->get_cm_by_activity_name('glossary', $glossaryname)->id,
+                    'mode' => 'entry',
+                    'hook' => $DB->get_field('glossary_entries', 'id', ['concept' => $concept], MUST_EXIST),
+                ]);
+
+            default:
+                throw new Exception("Unrecognised page type '{$type}'");
+        }
+    }
 }

@@ -41,9 +41,19 @@ class behat_mod_glossary_generator extends behat_generator_base {
                 'singular' => 'entry',
                 'datagenerator' => 'entry',
                 'required' => ['glossary', 'concept', 'definition'],
-                'switchids' => ['glossary' => 'glossaryid', 'user' => 'userid'],
+                'switchids' => ['glossary' => 'glossaryid', 'sourceglossary' => 'sourceglossaryid', 'user' => 'userid'],
             ],
         ];
+    }
+
+    /**
+     * Get the id of the glossary an entry was exported from, using an activity idnumber.
+     *
+     * @param string $idnumber
+     * @return int The glossary id
+     */
+    protected function get_sourceglossary_id(string $idnumber): int {
+        return $this->get_glossary_id($idnumber);
     }
 
     /**
