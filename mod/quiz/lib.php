@@ -2465,6 +2465,7 @@ function quiz_delete_references($quizid): void {
  * @return string
  */
 function mod_quiz_output_fragment_question_data(array $args): string {
+    global $DB;
     // Return if there is no args.
     if (empty($args)) {
         return '';
@@ -2475,9 +2476,35 @@ function mod_quiz_output_fragment_question_data(array $args): string {
 
     // Build required parameters.
     $cmid = clean_param($args['cmid'], PARAM_INT);
+    $quizcm = get_coursemodule_from_id('quiz', $cmid, 0, false, MUST_EXIST);
     $thispageurl = new \moodle_url('/mod/quiz/edit.php', ['cmid' => $cmid]);
-    $thiscontext = \context_module::instance($cmid);
+    $thiscontext = \context_module::instance($quizcm->id);
     $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
+    require_capability('mod/quiz:manage', $thiscontext);
+
+    // The filter can name categories in any context. Restrict it to the contexts this
+    // quiz exposes in the question bank, so it cannot be used to read the question banks
+    // of other courses.
+    $allowedcontextids = array_map(
+        static fn(\context $context): int => $context->id,
+        $contexts->having_one_edit_tab_cap('questions'),
+    );
+    $filtercategoryids = clean_param_array($params['filter']['category']['values'] ?? [], PARAM_INT);
+    if ($filtercategoryids) {
+        [$insql, $inparams] = $DB->get_in_or_equal($filtercategoryids, SQL_PARAMS_NAMED);
+        $filtercontextids = $DB->get_fieldset_select('question_categories', 'DISTINCT contextid', "id {$insql}", $inparams);
+        foreach ($filtercontextids as $filtercontextid) {
+            if (!in_array((int) $filtercontextid, $allowedcontextids, true)) {
+                throw new \required_capability_exception(
+                    \context::instance_by_id($filtercontextid),
+                    'moodle/question:viewall',
+                    'nopermissions',
+                    '',
+                );
+            }
+        }
+    }
+
     $defaultcategory = question_make_default_categories($contexts->all());
     $params['cat'] = implode(',', [$defaultcategory->id, $defaultcategory->contextid]);
 
@@ -2487,6 +2514,9 @@ function mod_quiz_output_fragment_question_data(array $args): string {
 
     // Custom question bank View.
     $viewclass = clean_param($args['view'], PARAM_NOTAGS);
+    if (!class_exists($viewclass) || !is_a($viewclass, \core_question\local\bank\view::class, true)) {
+        throw new \invalid_parameter_exception('Invalid view class');
+    }
     $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $params, $extraparams);
 
     // Question table.

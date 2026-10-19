@@ -483,6 +483,9 @@ class view {
      */
     protected function get_column_type($columnname) {
         if (empty($this->requiredcolumns[$columnname])) {
+            if (!class_exists($columnname) || !is_a($columnname, column_base::class, true)) {
+                throw new \coding_exception('Invalid column class: ' . $columnname);
+            }
             $this->requiredcolumns[$columnname] = new $columnname($this);
         }
     }
