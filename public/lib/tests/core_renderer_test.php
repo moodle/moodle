@@ -35,6 +35,7 @@ use moodle_page;
 #[\PHPUnit\Framework\Attributes\CoversClass(\core\hook\output\before_standard_footer_html_generation::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(\core\hook\output\after_standard_main_region_html_generation::class)]
 #[\PHPUnit\Framework\Attributes\CoversClass(\core\hook\output\before_html_attributes::class)]
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\hook\output\before_help_icon_rendered::class)]
 final class core_renderer_test extends \advanced_testcase {
 
     /**
@@ -560,5 +561,60 @@ EOF
         $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
 
         $this->assertNull($renderer->edit_switch());
+    }
+
+    /**
+     * Test that the help icon hook can completely replace the output.
+     */
+    public function test_before_help_icon_rendered_replacement(): void {
+        require_once(__DIR__ . '/fixtures/core_renderer/before_help_icon_rendered_replacement_callbacks.php');
+
+        \core\di::set(
+            \core\hook\manager::class,
+            \core\hook\manager::phpunit_get_instance([
+                'test_plugin1' => __DIR__ . '/fixtures/core_renderer/before_help_icon_rendered_replacement_hooks.php',
+            ]),
+        );
+
+        $page = new moodle_page();
+        $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
+
+        $html = $renderer->help_icon('moodledocslink', 'core');
+        $this->assertIsString($html);
+        $this->assertStringContainsString('Replaced help icon', $html);
+        $this->assertStringContainsString('custom-replacement', $html);
+        // The original help icon template output should not be present.
+        $this->assertStringNotContainsString('data-bs-toggle="popover"', $html);
+    }
+
+    /**
+     * Test that the help icon hook can add content before and after the icon.
+     */
+    public function test_before_help_icon_rendered_before_and_after(): void {
+        require_once(__DIR__ . '/fixtures/core_renderer/before_help_icon_rendered_beforeafter_callbacks.php');
+
+        \core\di::set(
+            \core\hook\manager::class,
+            \core\hook\manager::phpunit_get_instance([
+                'test_plugin1' => __DIR__ . '/fixtures/core_renderer/before_help_icon_rendered_beforeafter_hooks.php',
+            ]),
+        );
+
+        $page = new moodle_page();
+        $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
+
+        $html = $renderer->help_icon('moodledocslink', 'core');
+        $this->assertIsString($html);
+        // The original help icon should still be present.
+        $this->assertStringContainsString('data-bs-toggle="popover"', $html);
+        // Before and after content should be present.
+        $this->assertStringContainsString('before-help-icon', $html);
+        $this->assertStringContainsString('after-help-icon', $html);
+        // Verify order: before comes first, after comes last.
+        $beforepos = strpos($html, 'before-help-icon');
+        $popoverpos = strpos($html, 'data-bs-toggle="popover"');
+        $afterpos = strpos($html, 'after-help-icon');
+        $this->assertLessThan($popoverpos, $beforepos);
+        $this->assertGreaterThan($popoverpos, $afterpos);
     }
 }
