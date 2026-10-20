@@ -1209,6 +1209,16 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
         ];
     }
 
+    // Deprecated since Moodle 6.0 (MDL-87756): these are no longer rendered by core_admin/setting, but are still
+    // provided so existing theme overrides of the template keep working. Use 'notifications' instead.
+    $context->warning = $warning;
+    $context->override = '';
+    if (!empty($hooknotifications)) {
+        $context->override = reset($hooknotifications)->get_message();
+    } else if ($isforcedcore || $isforcedplugin) {
+        $context->override = get_string('configoverride', 'admin');
+    }
+
     $defaults = array();
     if (!is_null($defaultinfo)) {
         if ($defaultinfo === '') {

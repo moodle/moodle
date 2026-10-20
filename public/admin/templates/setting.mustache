@@ -16,6 +16,9 @@
 }}
 {{!
     @template core_admin/setting
+    @deprecated since Moodle 6.0 - the `override` and `warning` context variables are no longer rendered by core, use
+    `notifications` instead. They are still provided so existing theme overrides keep working.
+    @todo Final deprecation on Moodle 7.0. See MDL-90164.
 
     Admin setting template.
 
@@ -26,6 +29,8 @@
     * notifications - Array of notification objects, each with:
         * type - Bootstrap alert type string: 'success', 'danger', 'warning', or 'info'
         * message - Notification message, may contain safe HTML (sanitized via clean_text() before rendering)
+    * override - Deprecated, use notifications. Config override message
+    * warning - Deprecated, use notifications. Warning message
     * name - Setting name
     * error - Error message
     * element - The Element HTML
