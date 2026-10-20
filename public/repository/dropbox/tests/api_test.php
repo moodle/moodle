@@ -280,7 +280,7 @@ final class api_test extends \advanced_testcase {
 
         $mock->expects($this->once())
             ->method('fetch_dropbox_data')
-            ->will($this->throwException(new \repository_dropbox\authentication_exception('Exception should be caught')));
+            ->willThrowException(new \repository_dropbox\authentication_exception('Exception should be caught'));
 
         $this->assertNull($mock->logout());
     }
@@ -296,7 +296,7 @@ final class api_test extends \advanced_testcase {
 
         $mock->expects($this->once())
             ->method('fetch_dropbox_data')
-            ->will($this->throwException(new \repository_dropbox\rate_limit_exception));
+            ->willThrowException(new \repository_dropbox\rate_limit_exception);
 
         $this->expectException(\repository_dropbox\rate_limit_exception::class);
         $mock->logout();
