@@ -43,7 +43,7 @@ Feature: Average grades are displayed in the gradebook
     And I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I press "Delete" action in the "Student 5" report row
-    And I click on "Delete" "button" in the "Delete user" "dialogue"
+    And I click on "Delete" "button" in the "Delete user Student 5?" "dialogue"
     # Enable averages
     And I am on the "Course 1" "grades > course grade settings" page
     And I set the following fields to these values:

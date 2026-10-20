@@ -73,7 +73,7 @@ Feature: Bulk enrolments
     And I press "Add to selection"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I press "Delete" action in the "Student 1" report row
-    And I click on "Delete" "button" in the "Delete user" "dialogue"
+    And I click on "Delete" "button" in the "Delete user Student 1?" "dialogue"
     And I navigate to "Users > Accounts > Bulk user actions" in site administration
     And I set the field "id_action" to "Add to cohort"
     And I press "Go"

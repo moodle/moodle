@@ -77,13 +77,18 @@
         if ($confirm != md5($delete)) {
             echo $OUTPUT->header();
             $fullname = fullname($user, true);
-            echo $OUTPUT->heading(get_string('deleteuser', 'admin'));
+            echo $OUTPUT->heading(get_string('deleteuserx', 'admin', $fullname));
 
             $optionsyes = array('delete'=>$delete, 'confirm'=>md5($delete), 'sesskey'=>sesskey());
             $deleteurl = new moodle_url($returnurl, $optionsyes);
             $deletebutton = new single_button($deleteurl, get_string('delete'), 'post');
 
-            echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$fullname'"), $deletebutton, $returnurl);
+            echo $OUTPUT->confirm(
+                \core\user::get_deletion_confirmation_text(),
+                $deletebutton,
+                $returnurl,
+                ['confirmtitle' => get_string('deleteuserx', 'admin', $fullname)]
+            );
             echo $OUTPUT->footer();
             die;
         } else {

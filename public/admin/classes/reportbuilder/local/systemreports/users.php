@@ -373,8 +373,8 @@ class users extends system_report {
             [
                 'class' => 'text-danger',
                 'data-modal' => 'confirmation',
-                'data-modal-title-str' => json_encode(['deleteuser', 'admin']),
-                'data-modal-content-str' => ':deletestr',
+                'data-modal-title-str' => ':deletetitle',
+                'data-modal-content' => ':deletestr',
                 'data-modal-yes-button-str' => json_encode(['delete', 'core']),
                 'data-modal-destination' => ':deleteurl',
 
@@ -383,12 +383,16 @@ class users extends system_report {
             new lang_string('delete', 'moodle'),
         ))->add_callback(static function (\stdclass $row) use ($USER, $contextsystem): bool {
 
-            // Populate deletion modal attributes.
-            $row->deletestr = json_encode([
-                'deletecheckfull',
-                'moodle',
+            $row->deletetitle = json_encode([
+                'deleteuserx',
+                'admin',
                 fullname($row, true),
             ]);
+
+            // Populate deletion modal content, once per report. Not in add_actions(), as the page context may not be set yet.
+            static $deletionconfirmationtext = null;
+            $deletionconfirmationtext ??= \core\user::get_deletion_confirmation_text();
+            $row->deletestr = $deletionconfirmationtext;
 
             $row->deleteurl = (new moodle_url('/admin/user.php', [
                 'delete' => $row->id,

@@ -118,3 +118,4 @@ userfeedbackencouragement,core_admin
 noscales,core_grades
 homeheader,core
 revokedapitoken,core_error
+deletecheckfull,core

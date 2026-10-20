@@ -50,4 +50,31 @@ class hook_callbacks {
             );
         }
     }
+
+    /**
+     * Provide confirmation text when deleting users.
+     *
+     * @param \core_user\hook\before_deletion_confirmation_html_generation $hook
+     */
+    public static function user_deletion_confirmation_text(
+        \core_user\hook\before_deletion_confirmation_html_generation $hook
+    ): void {
+        global $OUTPUT;
+
+        if (!get_config('tool_dataprivacy', 'automaticdeletionrequests')) {
+            return;
+        }
+
+        $newwindowicon = $OUTPUT->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ms-1']);
+        $helplink = html_writer::link(
+            get_docs_url('Data_privacy'),
+            get_string('morehelp') . $newwindowicon,
+            ['target' => '_blank'],
+        );
+
+        $hook->add_html(
+            html_writer::tag('p', get_string('automaticdeletionrequestswarning', 'tool_dataprivacy')) .
+            html_writer::tag('p', $helplink)
+        );
+    }
 }
