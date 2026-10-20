@@ -112,7 +112,7 @@ class text_filter extends \core_filters\text_filter {
                 } else {
                     $cmd  = "cd $CFG->dirroot/filter/algebra; ./algebra2tex.pl $algebra";
                 }
-                $texexp = `$cmd`;
+                $texexp = shell_exec($cmd);
                 if (preg_match('/parsehilight/', $texexp)) {
                     $text = str_replace($matches[0][$i], "<b>Syntax error:</b> " . $texexp, $text);
                 } else if ($texexp) {
