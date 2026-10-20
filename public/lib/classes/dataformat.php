@@ -51,7 +51,7 @@ class dataformat {
         if (!class_exists($classname)) {
             throw new coding_exception('Invalid dataformat', $dataformat);
         }
-        return new $classname();
+        return di::make($classname);
     }
 
     /**

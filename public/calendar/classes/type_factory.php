@@ -16,6 +16,8 @@
 
 namespace core_calendar;
 
+use core\di;
+
 /**
  * Class \core_calendar\type_factory.
  *
@@ -47,7 +49,7 @@ class type_factory {
             $class = "\\calendartype_gregorian\\structure";
         }
 
-        return new $class();
+        return di::make($class);
     }
 
     /**
