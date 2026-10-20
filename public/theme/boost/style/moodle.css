@@ -17816,7 +17816,7 @@ readers do not read off random characters that represent icons */
   --bs-link-hover-color: #0c5699;
   --bs-link-hover-color-rgb: 12, 86, 153;
   --bs-link-hover-decoration: underline;
-  --bs-code-color: #db1a74;
+  --bs-code-color: #af155d;
   --bs-highlight-color: #1d2125;
   --bs-highlight-bg: #fcefdc;
   --bs-border-width: 1px;
@@ -17888,7 +17888,7 @@ readers do not read off random characters that represent icons */
   --bs-link-hover-color: #8cb9e1;
   --bs-link-color-rgb: 111, 167, 217;
   --bs-link-hover-color-rgb: 140, 185, 225;
-  --bs-code-color: #e976ac;
+  --bs-code-color: #f1a3c7;
   --bs-highlight-color: #dee2e6;
   --bs-highlight-bg: #60451f;
   --bs-border-color: #495057;
@@ -43256,6 +43256,66 @@ table .sticky-column {
 .table-responsive .table .accesshide {
   position: relative !important; /* stylelint-disable-line declaration-no-important */
   display: block;
+}
+
+/**
+ * Inline code in table cells.
+ *
+ * Shared by the page (moodle.scss) and by the editor content (editor.scss), so that code reads the same while it is
+ * being edited as it does once it is published.
+ */
+:root,
+[data-bs-theme=light] {
+  --bs-table-code-color: var(--bs-code-color);
+}
+
+[data-bs-theme=dark] {
+  --bs-table-code-color: #f8d1e3;
+}
+
+.table > tbody > tr > *,
+:is(.table-striped > tbody > tr:nth-of-type(odd) > *, .table-striped-columns > :not(caption) > tr > :nth-child(even), .table-hover > tbody > tr:hover > *, .table-active, .table-active > *) {
+  --bs-code-color: var(--bs-table-code-color);
+}
+
+:is(.table-striped > tbody > tr:nth-of-type(odd) > *, .table-striped-columns > :not(caption) > tr > :nth-child(even), .table-hover > tbody > tr:hover > *, .table-active, .table-active > *):is(.table-primary, .table-primary *),
+.table > :is(thead, tfoot) :is(.table-primary, .table-primary *) {
+  --bs-code-color: #831046;
+}
+
+:is(.table-striped > tbody > tr:nth-of-type(odd) > *, .table-striped-columns > :not(caption) > tr > :nth-child(even), .table-hover > tbody > tr:hover > *, .table-active, .table-active > *):is(.table-secondary, .table-secondary *),
+.table > :is(thead, tfoot) :is(.table-secondary, .table-secondary *) {
+  --bs-code-color: #831046;
+}
+
+:is(.table-striped > tbody > tr:nth-of-type(odd) > *, .table-striped-columns > :not(caption) > tr > :nth-child(even), .table-hover > tbody > tr:hover > *, .table-active, .table-active > *):is(.table-success, .table-success *),
+.table > :is(thead, tfoot) :is(.table-success, .table-success *) {
+  --bs-code-color: #831046;
+}
+
+:is(.table-striped > tbody > tr:nth-of-type(odd) > *, .table-striped-columns > :not(caption) > tr > :nth-child(even), .table-hover > tbody > tr:hover > *, .table-active, .table-active > *):is(.table-info, .table-info *),
+.table > :is(thead, tfoot) :is(.table-info, .table-info *) {
+  --bs-code-color: #831046;
+}
+
+:is(.table-striped > tbody > tr:nth-of-type(odd) > *, .table-striped-columns > :not(caption) > tr > :nth-child(even), .table-hover > tbody > tr:hover > *, .table-active, .table-active > *):is(.table-warning, .table-warning *),
+.table > :is(thead, tfoot) :is(.table-warning, .table-warning *) {
+  --bs-code-color: #831046;
+}
+
+:is(.table-striped > tbody > tr:nth-of-type(odd) > *, .table-striped-columns > :not(caption) > tr > :nth-child(even), .table-hover > tbody > tr:hover > *, .table-active, .table-active > *):is(.table-danger, .table-danger *),
+.table > :is(thead, tfoot) :is(.table-danger, .table-danger *) {
+  --bs-code-color: #831046;
+}
+
+:is(.table-striped > tbody > tr:nth-of-type(odd) > *, .table-striped-columns > :not(caption) > tr > :nth-child(even), .table-hover > tbody > tr:hover > *, .table-active, .table-active > *):is(.table-light, .table-light *),
+.table > :is(thead, tfoot) :is(.table-light, .table-light *) {
+  --bs-code-color: #831046;
+}
+
+:is(.table-striped > tbody > tr:nth-of-type(odd) > *, .table-striped-columns > :not(caption) > tr > :nth-child(even), .table-hover > tbody > tr:hover > *, .table-active, .table-active > *):is(.table-dark, .table-dark *),
+.table > :is(thead, tfoot) :is(.table-dark, .table-dark *) {
+  --bs-code-color: #f8d1e3;
 }
 
 /**
