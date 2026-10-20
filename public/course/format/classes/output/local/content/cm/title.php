@@ -228,7 +228,7 @@ class title extends inplace_editable implements named_templatable, renderable {
         // Return instance.
         $modinfo = get_fast_modinfo($coursemodulerecord->course);
         $cm = $modinfo->get_cm($itemid);
-        $section = $modinfo->get_section_info($cm->sectionnum);
+        $section = $modinfo->get_section_info_by_id($cm->sectionid);
 
         $format = course_get_format($cm->course);
         return new static($format, $section, $cm, [], true);

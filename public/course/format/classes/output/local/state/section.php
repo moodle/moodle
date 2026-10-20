@@ -94,7 +94,7 @@ class section implements renderable {
         ];
 
         if ($format->is_section_visible($section)) {
-            $data->sectionurl = course_get_url($course, $section->section, ['navigation' => true])?->out(false);
+            $data->sectionurl = course_get_url($course, $section, ['navigation' => true])?->out(false);
         }
 
         if (empty($modinfo->sections[$section->section])) {

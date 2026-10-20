@@ -68,8 +68,7 @@ class stateactions extends stateactions_base {
         }
 
         // Mark the new one.
-        $sectioninfo = get_fast_modinfo($course->id)->get_section_info($section->section);
-        \core_courseformat\formatactions::section($course->id)->set_marker($sectioninfo, true);
+        \core_courseformat\formatactions::section($course->id)->set_marker($section, true);
         $updates->add_section_put($section->id);
         if ($previousmarker) {
             $section = $modinfo->get_section_info($previousmarker);

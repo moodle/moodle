@@ -90,26 +90,26 @@ class sectionselector implements named_templatable, renderable {
         $disabledlink = $this->get_section_url($course, $allsections[$data->currentsection]);
         $sectionwithchildren = [];
         // First get any section with chidren (easier to process later in a regular loop).
-        foreach ($allsections as $section) {
+        foreach ($allsections as $index => $section) {
             if (!$section->uservisible) {
-                unset($allsections[$section->sectionnum]);
+                unset($allsections[$index]);
                 continue;
             }
             $sectiondelegated = $section->get_component_instance();
             if ($sectiondelegated) {
-                unset($allsections[$section->sectionnum]);
+                unset($allsections[$index]);
                 $parentsection = $sectiondelegated->get_parent_section();
                 // If the section is delegated we need to get the parent section and add the section to the parent section array.
                 if ($parentsection) {
-                    $sectionwithchildren[$parentsection->sectionnum][] = $section;
+                    $sectionwithchildren[$parentsection->id][] = $section;
                 }
             }
         }
 
         foreach ($allsections as $section) {
             $this->add_section_menu($format, $course, $section);
-            if (isset($sectionwithchildren[$section->sectionnum])) {
-                foreach ($sectionwithchildren[$section->sectionnum] as $subsection) {
+            if (isset($sectionwithchildren[$section->id])) {
+                foreach ($sectionwithchildren[$section->id] as $subsection) {
                     $this->add_section_menu($format, $course, $subsection, true);
                 }
             }
