@@ -1,0 +1,69 @@
+/**
+ * Inline code in table cells.
+ *
+ * Shared by the page (moodle.scss) and by the editor content (editor.scss), so that code reads the same while it is
+ * being edited as it does once it is published.
+ */
+
+// The body cells of a table inherit the row background, so a coloured row or cell only shows its tint where Bootstrap
+// paints it as a box shadow: on striped, hovered and active cells. Anywhere else it shows the normal table background
+// and inline code keeps the global colour. Header and footer cells are not affected and always show the tint.
+$table-shaded-cells: (
+    ".table-striped > tbody > tr:nth-of-type(#{$table-striped-order}) > *",
+    ".table-striped-columns > :not(caption) > tr > :nth-child(#{$table-striped-columns-order})",
+    ".table-hover > tbody > tr:hover > *",
+    ".table-active",
+    ".table-active > *",
+);
+
+// Whether a coloured row or cell shows its tint on every body cell, and not just on the shaded ones. On the page the
+// body cells inherit the row background (see tables.scss), so only the shaded cells show it. The editor does not load
+// that rule, so Bootstrap paints the tint on every cell there and editor.scss turns this on.
+$table-tint-on-all-cells: false !default;
+
+// The colours of inline code in table cells, so that a theme which changes $code-color can change these too. The dark
+// one is for dark mode and for .table-dark, and the tinted one is for the light tints of the other table variants.
+$table-code-color-dark: $mds-color-pink-100 !default;
+$table-code-color-tinted: $mds-color-pink-700 !default;
+
+// The cells which show the tint of a coloured row or cell.
+$table-tinted-cells: if(
+    $table-tint-on-all-cells,
+    append($table-shaded-cells, ".table > tbody > tr > *", comma),
+    $table-shaded-cells
+);
+
+// In dark mode the shading makes a cell lighter than the surface behind it. On a raised surface, such as the question
+// bank table, a hovered cell is too light for the global pink-200, so use pink-100 instead. Use it on all body cells too,
+// so inline code keeps the same colour on striped and non-striped rows and does not change on hover.
+//
+// The colour is declared once for each colour mode, on the element which sets the mode, and the cells read it from
+// there. It cannot be a dark-mode mixin override on the cells: that selector only asks for a dark ancestor, so it would also
+// match a cell in a light region of a dark page (data-bs-theme can be set on any element) and draw pink-100 on white.
+// A custom property is inherited from the nearest ancestor which declares it, so the nearest colour mode wins, however
+// the modes are nested.
+//
+// The light value is the global one, resolved on the element which sets the mode. Keep this block above the dark one:
+// :root also matches the html tag in dark mode, and both have the same specificity.
+:root,
+[data-bs-theme="light"] {
+    --#{$prefix}table-code-color: var(--#{$prefix}code-color);
+}
+
+@include color-mode(dark) {
+    --#{$prefix}table-code-color: #{$table-code-color-dark};
+}
+
+.table > tbody > tr > *,
+:is(#{$table-shaded-cells}) {
+    --#{$prefix}code-color: var(--#{$prefix}table-code-color);
+}
+
+// The tints stay light in both colour modes and get darker on hover and active, so inline code on them needs a darker
+// colour than the global one. The .table-dark tint stays dark in both colour modes, so code on it uses the dark mode one.
+@each $color, $value in $table-variants {
+    :is(#{$table-tinted-cells}):is(.table-#{$color}, .table-#{$color} *),
+    .table > :is(thead, tfoot) :is(.table-#{$color}, .table-#{$color} *) {
+        --#{$prefix}code-color: #{if($color == "dark", $table-code-color-dark, $table-code-color-tinted)};
+    }
+}

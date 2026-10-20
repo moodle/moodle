@@ -63,6 +63,11 @@ $theme-colors: map-merge((
 $link-decoration: none !default;
 $link-hover-decoration: underline !default;
 
+// Inline code
+// Darker and lighter than $pink so that code stays readable on tinted surfaces such as alerts and table stripes.
+$code-color:      $mds-color-pink-600 !default;
+$code-color-dark: $mds-color-pink-200 !default;
+
 // Border radius
 $border-radius: .5rem !default;
 $border-radius-lg: .6rem !default;
