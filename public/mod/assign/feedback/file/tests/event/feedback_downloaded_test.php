@@ -58,7 +58,7 @@ final class feedback_downloaded_test extends \advanced_testcase {
         $this->assertEquals('Feedback file downloaded', $event->get_name());
 
         $this->assertEquals(
-            "The user with id '{$user->id}' downloaded feeedback file 'testfile.txt'" .
+            "The user with id '{$user->id}' downloaded feedback file 'testfile.txt'" .
             " ('{$file->get_id()}') for the assignment with course module id '{$assign->cmid}'.",
             $event->get_description(),
         );
