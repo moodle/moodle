@@ -1,5 +1,13 @@
 # core_user (subsystem) Upgrade notes
 
+## 6.0dev
+
+### Added
+
+- A new hook, \core_user\hook\before_deletion_confirmation_html_generation, has been added to allow plugins to extend user deletion confirmation messaging. The hook is dispatched by \core\user::get_deletion_confirmation_text(). Plugins can append HTML to the confirmation dialog by registering a callback in db/hooks.php and calling $hook->add_html($html).
+
+  For more information see [MDL-62843](https://tracker.moodle.org/browse/MDL-62843)
+
 ## 5.3
 
 ### Changed

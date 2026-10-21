@@ -6,6 +6,47 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
+## 6.0dev
+
+### core
+
+#### Added
+
+- A new `\core\hook\output\before_help_icon_rendered` hook is dispatched when a help icon is rendered. Callbacks can modify the template context (e.g. the popover `text`), add HTML before or after the icon using `add_before_icon()` and `add_after_icon()`, or replace the whole help icon output using `set_replacement()`.
+
+  For more information see [MDL-88319](https://tracker.moodle.org/browse/MDL-88319)
+
+#### Changed
+
+- Admin settings now dispatch the `core\hook\admin_setting_notification` hook when rendering each setting row. Plugins can implement a listener for this hook to add custom `\core\output\notification` messages (info, warning, success, or error).
+
+  For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+
+#### Deprecated
+
+- The `deletecheckfull` language string has been deprecated and should no longer be used. It has been replaced by the `deleteuserdatawarning` language string.
+
+  For more information see [MDL-62843](https://tracker.moodle.org/browse/MDL-62843)
+- The `override` and `warning` context variables of the `core_admin/setting` template are deprecated and are no longer rendered by core. Use the new `notifications` context variable instead. Theme and plugin overrides of this template should be updated; the old variables are still provided until their final deprecation.
+
+  For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+
+### core_completion
+
+#### Fixed
+
+- update_state() now accepts COMPLETION_COMPLETE_PASS when overriding, and a later automatic call (e.g. a grade change) recomputes the complete/complete-pass substate for an overridden activity instead of leaving it frozen.
+
+  For more information see [MDL-87084](https://tracker.moodle.org/browse/MDL-87084)
+
+### core_user
+
+#### Added
+
+- A new hook, \core_user\hook\before_deletion_confirmation_html_generation, has been added to allow plugins to extend user deletion confirmation messaging. The hook is dispatched by \core\user::get_deletion_confirmation_text(). Plugins can append HTML to the confirmation dialog by registering a callback in db/hooks.php and calling $hook->add_html($html).
+
+  For more information see [MDL-62843](https://tracker.moodle.org/browse/MDL-62843)
+
 ## 5.3
 
 ### core

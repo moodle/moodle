@@ -1,5 +1,28 @@
 # core (subsystem) Upgrade notes
 
+## 6.0dev
+
+### Added
+
+- A new `\core\hook\output\before_help_icon_rendered` hook is dispatched when a help icon is rendered. Callbacks can modify the template context (e.g. the popover `text`), add HTML before or after the icon using `add_before_icon()` and `add_after_icon()`, or replace the whole help icon output using `set_replacement()`.
+
+  For more information see [MDL-88319](https://tracker.moodle.org/browse/MDL-88319)
+
+### Changed
+
+- Admin settings now dispatch the `core\hook\admin_setting_notification` hook when rendering each setting row. Plugins can implement a listener for this hook to add custom `\core\output\notification` messages (info, warning, success, or error).
+
+  For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+
+### Deprecated
+
+- The `deletecheckfull` language string has been deprecated and should no longer be used. It has been replaced by the `deleteuserdatawarning` language string.
+
+  For more information see [MDL-62843](https://tracker.moodle.org/browse/MDL-62843)
+- The `override` and `warning` context variables of the `core_admin/setting` template are deprecated and are no longer rendered by core. Use the new `notifications` context variable instead. Theme and plugin overrides of this template should be updated; the old variables are still provided until their final deprecation.
+
+  For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+
 ## 5.3
 
 ### Added
