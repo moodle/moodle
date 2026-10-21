@@ -72,6 +72,16 @@ const stringPromiseCache = new Map<string, Promise<string>>();
 const getCacheKey = (key: string, component: string, lang: string): string =>
     `core_str/${key}/${component}/${lang}`;
 
+/**
+ * Create a resolved Promise that React's `use()` can read without suspending.
+ *
+ * @param value The resolved string.
+ * @returns A Promise already marked as fulfilled.
+ */
+const getResolvedPromise = (value: string): Promise<string> =>
+    // React reads `status` and `value` to return the result synchronously instead of suspending for a render.
+    Object.assign(Promise.resolve(value), {status: 'fulfilled', value});
+
 // --- Core string API ---
 
 /**
@@ -100,7 +110,7 @@ export const getRequestedStrings = (requests: StringRequest[]): Promise<string>[
 
         // 1. Check M.str in-memory cache.
         if (M.str[component]?.[key] !== undefined) {
-            const promise = Promise.resolve(M.util.get_string(key, component, param));
+            const promise = getResolvedPromise(M.util.get_string(key, component, param));
             promiseCache.set(cacheKey, promise);
             stringPromises[i] = promise;
             continue;
@@ -113,7 +123,7 @@ export const getRequestedStrings = (requests: StringRequest[]): Promise<string>[
                 M.str[component] = {};
             }
             M.str[component][key] = cached;
-            const promise = Promise.resolve(M.util.get_string(key, component, param));
+            const promise = getResolvedPromise(M.util.get_string(key, component, param));
             promiseCache.set(cacheKey, promise);
             stringPromises[i] = promise;
             continue;
