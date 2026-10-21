@@ -426,6 +426,12 @@ a.ygtvspacer:hover {
 .file-picker.fp-dlg .fp-dlg-buttons {
     margin: 0 20px;
 }
+
+.file-picker.fp-dlg .fp-dlg-butrename {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
 // Error dialogue on Upload (File Picker only)
 .file-picker.fp-msg {
     text-align: center;
