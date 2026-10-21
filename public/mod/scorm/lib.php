@@ -1453,7 +1453,7 @@ function mod_scorm_get_fontawesome_icon_map() {
     return [
         'mod_scorm:asset' => 'fa-regular fa-file-zipper',
         'mod_scorm:assetc' => 'fa-regular fa-file-zipper',
-        'mod_scorm:browsed' => 'fa-regular fa-eye',
+        'mod_scorm:browsed' => 'fa-solid fa-eye',
         'mod_scorm:completed' => 'fa-regular fa-square-check',
         'mod_scorm:failed' => 'fa-xmark',
         'mod_scorm:incomplete' => 'fa-regular fa-pen-to-square',

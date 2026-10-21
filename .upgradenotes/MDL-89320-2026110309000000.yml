@@ -1,0 +1,12 @@
+issueNumber: MDL-89320
+notes:
+  core:
+    - message: >-
+        The eye icons now use the solid Font Awesome style site-wide. This
+        affects the `core:i/hide`, `core:i/show`, `core:t/hide` and `core:t/show`
+        mappings, and the `mod_scorm:browsed` mapping. The corresponding SVG
+        fallbacks have also been updated. Themes and plugins using these icons
+        inherit the new appearance unless they override them. Theme and plugin
+        developers should review any icon overrides to keep them consistent
+        with the solid style.
+      type: changed
