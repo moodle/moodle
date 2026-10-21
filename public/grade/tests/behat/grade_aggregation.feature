@@ -41,6 +41,8 @@ Feature: We can use calculated grade totals
       | assign   | C1     | a8       | Test assignment eight | Submit something! | Sub category 2 & | 20    |
       | assign   | C1     | a9       | Test assignment nine  | Submit something! | Sub category 2 & | 10    |
       | assign   | C1     | 10       | Test assignment ten   | Submit nothing!   | Sub category 2 & | 15    |
+    # All nine aggregation methods: Mean(0), Median(2), Lowest(4), Highest(6),
+    # Mode(8), Weighted mean(10), Simple weighted mean(11), Extra credits(12), Natural(13).
     And the following config values are set as admin:
       | grade_aggregations_visible | 0,2,4,6,8,10,11,12,13 |
     And the following "grade grades" exist:
