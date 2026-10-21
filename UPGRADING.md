@@ -6,6 +6,16 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
+## 5.2.4+
+
+### core_completion
+
+#### Fixed
+
+- update_state() now accepts COMPLETION_COMPLETE_PASS when overriding, and a later automatic call (e.g. a grade change) recomputes the complete/complete-pass substate for an overridden activity instead of leaving it frozen.
+
+  For more information see [MDL-87084](https://tracker.moodle.org/browse/MDL-87084)
+
 ## 5.2.4
 
 ### core

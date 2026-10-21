@@ -1,5 +1,13 @@
 # core_completion (subsystem) Upgrade notes
 
+## 5.2.4+
+
+### Fixed
+
+- update_state() now accepts COMPLETION_COMPLETE_PASS when overriding, and a later automatic call (e.g. a grade change) recomputes the complete/complete-pass substate for an overridden activity instead of leaving it frozen.
+
+  For more information see [MDL-87084](https://tracker.moodle.org/browse/MDL-87084)
+
 ## 5.2
 
 ### Changed
