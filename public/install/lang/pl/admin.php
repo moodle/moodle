@@ -39,6 +39,6 @@ $string['cliunknowoption'] = 'Nieznane opcje:
   {$a}
 Proszę użyć opcji --help.';
 $string['cliyesnoprompt'] = 'wpisz y (czyli tak) lub n (czyli nie)';
-$string['environmentrequireinstall'] = 'jest niezbędne, aby było zainstalowane i włączone';
+$string['environmentrequireinstall'] = 'musi być zainstalowane i włączone';
 $string['environmentrequireversion'] = 'wymagana jest wersja {$a->needed}, a ty używasz wersji {$a->current}';
 $string['upgradekeyset'] = 'Zaktualizuj klucz (pozostaw puste jeśli nie jest to skonfigurowane)';
