@@ -38227,6 +38227,12 @@ a.ygtvspacer:hover {
   margin: 0 20px;
 }
 
+.file-picker.fp-dlg .fp-dlg-butrename {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .file-picker.fp-msg {
   text-align: center;
 }
