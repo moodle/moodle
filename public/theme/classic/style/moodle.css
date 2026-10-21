@@ -37701,6 +37701,39 @@ table .sticky-column {
   background-color: rgba(var(--bs-emphasis-color-rgb), 0.075);
 }
 
+.table-primary {
+  --bs-code-color: #831046;
+}
+
+.table-secondary {
+  --bs-code-color: #831046;
+}
+
+.table-success {
+  --bs-code-color: #831046;
+}
+
+.table-info {
+  --bs-code-color: #831046;
+}
+
+.table-warning {
+  --bs-code-color: #831046;
+}
+
+.table-danger {
+  --bs-code-color: #831046;
+}
+
+.table-light {
+  --bs-code-color: #831046;
+}
+
+:is(.table-striped > tbody > tr:nth-of-type(odd) > *, .table-striped-columns > :not(caption) > tr > :nth-child(even), .table-hover > tbody > tr:hover > *, .table-active, .table-active > *):is(.table-dark, .table-dark *),
+.table > :is(thead, tfoot) :is(.table-dark, .table-dark *) {
+  --bs-code-color: #f8d1e3;
+}
+
 .table-responsive {
   scrollbar-width: thin;
   scrollbar-color: #6a737b #f8f9fa;

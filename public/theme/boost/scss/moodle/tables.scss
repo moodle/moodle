@@ -49,6 +49,38 @@ table {
     }
 }
 
+// The colours of inline code in coloured table rows and cells, so that a theme which changes $code-color can change
+// these too. They are the design system pink-700 and pink-100, as hex values because theme_classic also compiles this
+// file without the tokens. The editor content uses the same values (see editor.scss).
+$table-code-color-tinted: #831046 !default;
+$table-code-color-dark: #f8d1e3 !default;
+
+// Tinted table backgrounds get darker on hover and active, so inline code needs a darker colour than the global one to
+// stay readable.
+@each $color, $value in $table-variants {
+    @if $color != "dark" {
+        .table-#{$color} {
+            --#{$prefix}code-color: #{$table-code-color-tinted};
+        }
+    }
+}
+
+// The .table-dark tint is dark, so inline code on it needs a light colour. Body cells inherit the row background (see
+// above), so they only show the tint where Bootstrap paints it as a box shadow: on striped, hovered and active cells.
+// Header and footer cells always show it.
+$table-shaded-cells: (
+    ".table-striped > tbody > tr:nth-of-type(#{$table-striped-order}) > *",
+    ".table-striped-columns > :not(caption) > tr > :nth-child(#{$table-striped-columns-order})",
+    ".table-hover > tbody > tr:hover > *",
+    ".table-active",
+    ".table-active > *",
+);
+
+:is(#{$table-shaded-cells}):is(.table-dark, .table-dark *),
+.table > :is(thead, tfoot) :is(.table-dark, .table-dark *) {
+    --#{$prefix}code-color: #{$table-code-color-dark};
+}
+
 .table-responsive {
     @include thin-scrolls($gray-100);
     // Fix dropdown menu position inside responsive tables.
