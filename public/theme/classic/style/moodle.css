@@ -13385,7 +13385,7 @@ readers do not read off random characters that represent icons */
   --bs-link-hover-color: #0c5699;
   --bs-link-hover-color-rgb: 12, 86, 153;
   --bs-link-hover-decoration: underline;
-  --bs-code-color: #db1a74;
+  --bs-code-color: #af155d;
   --bs-highlight-color: #1d2125;
   --bs-highlight-bg: #fcefdc;
   --bs-border-width: 1px;
@@ -13457,7 +13457,7 @@ readers do not read off random characters that represent icons */
   --bs-link-hover-color: #8cb9e1;
   --bs-link-color-rgb: 111, 167, 217;
   --bs-link-hover-color-rgb: 140, 185, 225;
-  --bs-code-color: #e976ac;
+  --bs-code-color: #f1a3c7;
   --bs-highlight-color: #dee2e6;
   --bs-highlight-bg: #60451f;
   --bs-border-color: #495057;
