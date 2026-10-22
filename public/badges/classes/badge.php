@@ -817,7 +817,7 @@ class badge {
     public function save_alignment($alignment, $alignmentid = 0) {
         global $DB;
 
-        $record = $DB->record_exists('badge_alignment', array('id' => $alignmentid));
+        $record = $DB->record_exists('badge_alignment', ['id' => $alignmentid, 'badgeid' => $this->id]);
         if ($record) {
             $alignment->id = $alignmentid;
             return $DB->update_record('badge_alignment', $alignment);
