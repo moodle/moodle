@@ -78,10 +78,10 @@
 
     // Links and coloured text. Bootstrap's dark defaults tint the theme colours by 40%, which lands just under
     // WCAG AA against a raised surface, so derive them instead.
-    --#{$prefix}link-color: #{dark-readable($primary)};
-    --#{$prefix}link-color-rgb: #{to-rgb(dark-readable($primary))};
-    --#{$prefix}link-hover-color: #{dark-readable($primary, $min: 7)};
-    --#{$prefix}link-hover-color-rgb: #{to-rgb(dark-readable($primary, $min: 7))};
+    --#{$prefix}link-color: #{dark-readable($link-color)};
+    --#{$prefix}link-color-rgb: #{to-rgb(dark-readable($link-color))};
+    --#{$prefix}link-hover-color: #{dark-readable($link-color, $min: 7)};
+    --#{$prefix}link-hover-color-rgb: #{to-rgb(dark-readable($link-color, $min: 7))};
     // Only the hued theme colours: Bootstrap's light, dark and secondary emphasis colours are already greys chosen
     // for a dark background, and tinting them would make them worse.
     @each $name in ("primary", "success", "info", "warning", "danger") {
@@ -92,8 +92,8 @@
     // indicators are non-text, so the 3:1 threshold applies.
     --#{$prefix}focus-ring-color: #{rgba(dark-readable($primary, $min: 3), $focus-ring-opacity)};
 
-    --mds-text-link-primary-default: #{dark-readable($primary)};
-    --mds-text-link-primary-hover: #{dark-readable($primary, $min: 7)};
+    --mds-text-link-primary-default: #{dark-readable($link-color)};
+    --mds-text-link-primary-hover: #{dark-readable($link-color, $min: 7)};
     --mds-text-link-primary-disabled: #{$gray-500};
     --mds-text-feedback-primary: #{dark-readable($primary)};
     // The danger text tokens drive the invalid state of the design system form controls and the required marker.
