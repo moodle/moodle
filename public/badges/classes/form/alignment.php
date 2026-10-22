@@ -16,7 +16,6 @@
 
 namespace core_badges\form;
 use moodleform;
-use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
@@ -63,8 +62,7 @@ class alignment extends moodleform {
             'wrap="virtual" rows="8" cols="70"');
         $this->add_action_buttons();
         if ($action == 'edit' || $alignmentid) {
-            $alignment = new stdClass();
-            $alignment = $DB->get_record_select('badge_alignment', 'id = ?', [$alignmentid]);
+            $alignment = $DB->get_record('badge_alignment', ['id' => $alignmentid, 'badgeid' => $badge->id], '*', MUST_EXIST);
             $this->set_data($alignment);
             // Freeze all elements if badge is active or locked.
             if ($badge->is_active() || $badge->is_locked()) {
