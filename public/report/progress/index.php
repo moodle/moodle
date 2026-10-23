@@ -210,7 +210,7 @@ if ($dataformat !== '' && $grandtotal && count($activities) > 0) {
             if (array_key_exists($activity->id, $user->progress)) {
                 $thisprogress = $user->progress[$activity->id];
                 $overrideby = $thisprogress->overrideby;
-                $date = userdate($thisprogress->timemodified, "%F %T");
+                $date = $thisprogress->timemodified ? userdate($thisprogress->timemodified, "%F %T") : '';
                 $state = $thisprogress->completionstate;
             } else {
                 $overrideby = 0;
@@ -445,7 +445,7 @@ foreach($progress as $user) {
             $thisprogress = $user->progress[$activity->id];
             $state = $thisprogress->completionstate;
             $overrideby = $thisprogress->overrideby;
-            $date = userdate($thisprogress->timemodified);
+            $date = $thisprogress->timemodified ? userdate($thisprogress->timemodified) : '';
         } else {
             $state = COMPLETION_INCOMPLETE;
             $overrideby = 0;
