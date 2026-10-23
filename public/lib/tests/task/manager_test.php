@@ -646,6 +646,55 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
+     * Test that adhoc_task_delayed() marks a task as failed once it has exhausted its
+     * last available attempt.
+     *
+     * @covers \core\task\manager::adhoc_task_delayed
+     */
+    public function test_adhoc_task_delayed_marks_failed_when_attempts_exhausted(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Freeze time.
+        $clock = $this->createMock(\core\clock::class);
+        $clock->method('time')->willReturn(1000);
+        \core\di::set(\core\clock::class, $clock);
+
+        // Create and queue task.
+        $task = new adhoc_test_task();
+        $taskid = \core\task\manager::queue_adhoc_task($task);
+
+        // Reload task from DB.
+        $record = $DB->get_record('task_adhoc', ['id' => $taskid], '*', MUST_EXIST);
+        $task = \core\task\manager::adhoc_task_from_record($record);
+
+        // Simulate this being the task's last available attempt.
+        $task->set_attempts_available(1);
+        $task->set_soft_retry_delay(120);
+        $task->set_next_run_time(1000);
+
+        $lockfactory = \core\lock\lock_config::get_lock_factory('cron');
+        $lock = $lockfactory->get_lock('adhoc_' . $taskid, 10);
+        $task->set_lock($lock);
+
+        ob_start();
+        \core\task\manager::adhoc_task_delayed($task);
+        ob_end_clean();
+
+        // Reload after update.
+        $record = $DB->get_record('task_adhoc', ['id' => $taskid], '*', MUST_EXIST);
+        $task = \core\task\manager::adhoc_task_from_record($record);
+
+        // All attempts are now used up.
+        $this->assertEquals(0, $task->get_attempts_available());
+
+        // The task must now be flagged as a genuine failure, with the same end state as a task
+        // that failed for normal reasons: fail delay capped at the maximum, not faildelay = 0.
+        $this->assertEquals(\core\task\manager::MAX_FAIL_DELAY, $task->get_fail_delay());
+    }
+
+    /**
      * Data provider for test_adhoc_task_delayed.
      *
      * @return array
