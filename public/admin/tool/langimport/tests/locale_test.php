@@ -55,7 +55,7 @@ final class locale_test extends \advanced_testcase {
                 'set_locale',
             ])
             ->getMock();
-        $mock->method('get_locale')->will($this->returnValue('en'));
+        $mock->method('get_locale')->willReturn('en');
         $setinvocations = $this->exactly(2);
         $mock
             ->expects($setinvocations)
@@ -78,7 +78,7 @@ final class locale_test extends \advanced_testcase {
                 'set_locale',
             ])
             ->getMock();
-        $mock->expects($this->exactly(1))->method('get_locale')->will($this->returnValue('en'));
+        $mock->expects($this->exactly(1))->method('get_locale')->willReturn('en');
         $setinvocations = $this->exactly(2);
         $mock
             ->expects($setinvocations)

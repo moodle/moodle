@@ -95,10 +95,10 @@ final class filterset_test extends advanced_testcase {
     public function test_add_filter_value(): void {
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 'name' => filter::class,
                 'species' => filter::class,
-            ]));
+            ]);
 
         // Initially an empty list.
         $this->assertEmpty($filterset->get_filters());
@@ -142,9 +142,9 @@ final class filterset_test extends advanced_testcase {
         // Mock the get_optional_filters function.
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                  'name' => get_class($namefilter),
-             ]));
+             ]);
 
         // Add a filter to the list.
         // This is the 'name' filter.
@@ -160,7 +160,7 @@ final class filterset_test extends advanced_testcase {
         // Mock the get_optional_filters function.
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         // Add a filter to the list.
         // This is the 'name' filter.
@@ -181,9 +181,9 @@ final class filterset_test extends advanced_testcase {
         // Mock the get_optional_filters function.
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 $filtername => get_class($otherfilter),
-            ]));
+            ]);
 
         // Add a filter to the list.
         // This is the 'name' filter.
@@ -214,9 +214,9 @@ final class filterset_test extends advanced_testcase {
         // Mock the get_optional_filters function.
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 $filtername => get_class($otherfilter),
-            ]));
+            ]);
 
         $result = $filterset->add_filter_from_params($filtername, filter::JOINTYPE_DEFAULT, ['kevin']);
 
@@ -237,9 +237,9 @@ final class filterset_test extends advanced_testcase {
         // Mock the get_optional_filters function.
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 'name' => '\\moodle\\this\\is\\a\\fake\\class\\name',
-            ]));
+            ]);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -261,9 +261,9 @@ final class filterset_test extends advanced_testcase {
         // Mock the get_optional_filters function.
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 $filtername => get_class($otherfilter),
-            ]));
+            ]);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("The filter 'unknownfilter' was not recognised.");
@@ -276,10 +276,10 @@ final class filterset_test extends advanced_testcase {
     public function test_duplicate_filter_value(): void {
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 'name' => filter::class,
                 'species' => filter::class,
-            ]));
+            ]);
 
         // Add a filter to the list.
         // This is the 'name' filter.
@@ -301,10 +301,10 @@ final class filterset_test extends advanced_testcase {
     public function test_check_validity_optional_filters_not_specified(): void {
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 'name' => filter::class,
                 'species' => filter::class,
-            ]));
+            ]);
 
         $this->assertNull($filterset->check_validity());
     }
@@ -350,13 +350,13 @@ final class filterset_test extends advanced_testcase {
     public function test_get_filters(): void {
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 // Filters are not defined lexically.
                 'd' => filter::class,
                 'b' => filter::class,
                 'a' => filter::class,
                 'c' => filter::class,
-            ]));
+            ]);
 
         // Filters are added in a different non-lexical order.
         $c = new filter('c');
@@ -386,13 +386,13 @@ final class filterset_test extends advanced_testcase {
     public function test_get_filter(): void {
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 // Filters are not defined lexically.
                 'd' => filter::class,
                 'b' => filter::class,
                 'a' => filter::class,
                 'c' => filter::class,
-            ]));
+            ]);
 
         // Filters are added in a different non-lexical order.
         $c = new filter('c');
@@ -420,9 +420,9 @@ final class filterset_test extends advanced_testcase {
     public function test_get_filter_unknown(): void {
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 'a' => filter::class,
-            ]));
+            ]);
 
         $a = new filter('a');
         $filterset->add_filter($a);
@@ -438,9 +438,9 @@ final class filterset_test extends advanced_testcase {
     public function test_get_filter_not_yet_added(): void {
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 'a' => filter::class,
-            ]));
+            ]);
 
         $this->expectException(UnexpectedValueException::Class);
         $this->expectExceptionMessage("The filter specified (a) has not been created.");
@@ -458,15 +458,15 @@ final class filterset_test extends advanced_testcase {
             'get_required_filters',
         ]);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 'a' => filter::class,
                 'c' => get_class($otherfilter),
-            ]));
+            ]);
         $filterset->method('get_required_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 'b' => get_class($otherfilter),
                 'd' => filter::class,
-            ]));
+            ]);
 
         $this->assertEquals([
             'a' => filter::class,
@@ -487,17 +487,17 @@ final class filterset_test extends advanced_testcase {
             'get_required_filters',
         ]);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 'a' => filter::class,
                 'b' => get_class($otherfilter),
                 'd' => filter::class,
-            ]));
+            ]);
         $filterset->method('get_required_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 'b' => get_class($otherfilter),
                 'c' => filter::class,
                 'd' => filter::class,
-            ]));
+            ]);
 
         $this->expectException(InvalidArgumentException::Class);
         $this->expectExceptionMessage("Some filter types are both required, and optional: b, d");
@@ -511,11 +511,11 @@ final class filterset_test extends advanced_testcase {
     public function test_has_filter(): void {
         $filterset = $this->get_mocked_filterset(['get_optional_filters']);
         $filterset->method('get_optional_filters')
-            ->will($this->returnValue([
+            ->willReturn([
                 // Define filters 'a', and 'b'.
                 'a' => filter::class,
                 'b' => filter::class,
-            ]));
+            ]);
 
         // Only add filter 'a'.
         $a = new filter('a');

@@ -284,7 +284,7 @@ final class tour_test extends \advanced_testcase {
         $DB = $this->mock_database();
         $DB->expects($this->once())
             ->method('update_record')
-            ->willReturn($this->returnSelf());
+            ->willReturnSelf();
 
         $DB->expects($this->never())
             ->method('insert_record');
@@ -325,7 +325,7 @@ final class tour_test extends \advanced_testcase {
 
         $DB->expects($this->once())
             ->method('update_record')
-            ->willReturn($this->returnSelf());
+            ->willReturnSelf();
 
         $DB->expects($this->never())
             ->method('insert_record');
@@ -802,7 +802,7 @@ final class tour_test extends \advanced_testcase {
             $tour->expects($this->once())
                 ->method('set_config')
                 ->with($this->equalTo('majorupdatetime'), $setconfig)
-                ->will($this->returnSelf());
+                ->willReturnSelf();
         } else {
             $tour->expects($this->never())
                 ->method('set_config');
@@ -1031,7 +1031,7 @@ final class tour_test extends \advanced_testcase {
 
         $tour->expects($this->once())
             ->method('get_config')
-            ->will($this->returnValue($fullconfig));
+            ->willReturn($fullconfig);
 
         $this->assertEquals($expectedvalues, $tour->get_filter_values($filtername));
     }
@@ -1089,7 +1089,7 @@ final class tour_test extends \advanced_testcase {
 
         $tour->expects($this->once())
             ->method('get_config')
-            ->will($this->returnValue($currentvalues));
+            ->willReturn($currentvalues);
 
         $tour->expects($this->once())
             ->method('set_config')

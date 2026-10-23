@@ -124,21 +124,21 @@ final class manager_util_test extends \advanced_testcase {
 
         $behatconfigutil->expects($this->any())
             ->method('get_list_of_themes')
-            ->will($this->returnValue($themelist));
+            ->willReturn($themelist);
 
         // Theme directory for testing.
         $behatconfigutil->expects($this->any())
             ->method('get_theme_test_directory')
-            ->will($this->returnValueMap($map));
+            ->willReturnMap($map);
 
         // Theme directory for testing.
         $behatconfigutil->expects($this->any())
-                ->method('get_theme_config')
-                ->will($this->returnValueMap($thememap));
+            ->method('get_theme_config')
+            ->willReturnMap($thememap);
 
         $behatconfigutil->expects($this->any())
             ->method('get_default_theme')
-            ->will($this->returnValue('defaulttheme'));
+            ->willReturn('defaulttheme');
 
         return $behatconfigutil;
     }
@@ -511,7 +511,7 @@ final class manager_util_test extends \advanced_testcase {
 
         $behatconfigutil->expects($this->any())
             ->method('get_blacklisted_tests_for_theme')
-            ->will($this->returnValueMap($map));
+            ->willReturnMap($map);
 
         $behatconfigutil->set_theme_suite_to_include_core_features(true);
         $config = $behatconfigutil->get_config_file_contents($this->corefeatures, $this->corecontexts);
@@ -575,7 +575,7 @@ final class manager_util_test extends \advanced_testcase {
 
         $behatconfigutil->expects($this->any())
             ->method('get_blacklisted_tests_for_theme')
-            ->will($this->returnValueMap($map));
+            ->willReturnMap($map);
 
         $behatconfigutil->set_theme_suite_to_include_core_features(true);
         $config = $behatconfigutil->get_config_file_contents($this->corefeatures, $this->corecontexts);

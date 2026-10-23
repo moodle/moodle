@@ -411,7 +411,7 @@ EOD;
             ->getMock();
         $map = [[$toolproxy['id'], $toolproxy]];
         $reghelper->method('get_tool_proxy')
-            ->will($this->returnValueMap($map));
+            ->willReturnMap($map);
         $reg = $reghelper->config_to_registration((object)$config, $type['id'], (object)$type);
         $this->assertFalse(isset($reg['client_id']));
         $this->assertFalse(isset($reg['initiate_login_uri']));
