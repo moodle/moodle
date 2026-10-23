@@ -47,6 +47,7 @@ final class externallib_test extends externallib_advanced_testcase {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
+        \mod_forum\subscriptions::reset_discussion_cache();
 
         require_once($CFG->dirroot . '/mod/forum/externallib.php');
     }
@@ -55,6 +56,7 @@ final class externallib_test extends externallib_advanced_testcase {
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
+        \mod_forum\subscriptions::reset_discussion_cache();
         parent::tearDown();
     }
 
@@ -1782,6 +1784,79 @@ final class externallib_test extends externallib_advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
         $this->assertStringContainsString(' unlocked the discussion:', $event->get_description());
+    }
+
+    /**
+     * set_lock_state must reject a discussion that does not belong to the supplied forum.
+     *
+     * @covers \mod_forum_external::set_lock_state
+     */
+    public function test_set_lock_state_discussion_not_in_forum(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Two forums; the discussion belongs to the second one.
+        $course = self::getDataGenerator()->create_course();
+        $forum = self::getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        $otherforum = self::getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_forum');
+        $discussion = $generator->create_discussion([
+            'course' => $course->id,
+            'forum' => $otherforum->id,
+            'userid' => get_admin()->id,
+        ]);
+
+        self::setAdminUser();
+
+        // The discussion id does not match the supplied forum id.
+        try {
+            mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
+            $this->fail('Exception expected due to discussion not belonging to the forum.');
+        } catch (\moodle_exception $e) {
+            $this->assertEquals('invaliddiscussionid', $e->errorcode);
+        }
+
+        // The discussion must not have been locked.
+        $this->assertEquals(0, $DB->get_field('forum_discussions', 'timelocked', ['id' => $discussion->id]));
+    }
+
+    /**
+     * set_subscription_state must reject a discussion that does not belong to the supplied forum.
+     *
+     * @covers \mod_forum_external::set_subscription_state
+     */
+    public function test_set_subscription_state_discussion_not_in_forum(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Two forums; the discussion belongs to the second one.
+        $course = self::getDataGenerator()->create_course();
+        $forum = self::getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        $otherforum = self::getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_forum');
+        $discussion = $generator->create_discussion([
+            'course' => $course->id,
+            'forum' => $otherforum->id,
+            'userid' => get_admin()->id,
+        ]);
+
+        self::setAdminUser();
+
+        // The discussion id does not match the supplied forum id.
+        try {
+            mod_forum_external::set_subscription_state($forum->id, $discussion->id, true);
+            $this->fail('Exception expected due to discussion not belonging to the forum.');
+        } catch (\moodle_exception $e) {
+            $this->assertEquals('invaliddiscussionid', $e->errorcode);
+        }
+
+        // The user must not have been subscribed to the discussion.
+        $this->assertFalse($DB->record_exists('forum_discussion_subs', [
+            'userid' => get_admin()->id,
+            'discussion' => $discussion->id,
+        ]));
     }
 
     /*
