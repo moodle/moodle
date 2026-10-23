@@ -56,6 +56,11 @@ class manager {
     const ADHOC_TASK_FAILED_RETENTION = 4 * WEEKSECS;
 
     /**
+     * @var int The maximum fail delay in seconds between task retries (24 hours).
+     */
+    public const MAX_FAIL_DELAY = \DAYSECS;
+
+    /**
      * @var ?task_base $runningtask Used to tell what is the current running task in this process.
      */
     public static ?task_base $runningtask = null;
@@ -1325,8 +1330,14 @@ class manager {
         if ($delay === null) {
             $retrycount = max(0, 12 - $task->get_attempts_available());
             // Cap exponent to 11 as this will exceed 24 hours.
-            $delay = min(86400, 60 * (int) pow(2, min($retrycount, 11)));
+            $delay = min(self::MAX_FAIL_DELAY, 60 * (int) pow(2, min($retrycount, 11)));
         }
+
+        // Subtract one from the available adhoc task attempts.
+        if ($task->get_attempts_available() > 0) {
+            $task->set_attempts_available($task->get_attempts_available() - 1);
+        }
+        $exhausted = ($task->get_attempts_available() === 0);
 
         // Schedule next adhoc task run.
         $task->set_next_run_time($now + $delay);
@@ -1337,26 +1348,41 @@ class manager {
             " (delay {$delay}s)"
         );
 
-        // Finalise log. Not failed.
-        logmanager::finalise_log();
+        if ($exhausted) {
+            mtrace(
+                "Adhoc task has run out of soft retry attempts and will be marked as failed: " .
+                get_class($task)
+            );
+        }
+
+        // Finalise log. Failed if the task has run out of attempts.
+        logmanager::finalise_log($exhausted);
 
         // Reset adhoc task metadata.
         $task->set_timestarted();
         $task->set_hostname();
         $task->set_pid();
 
-        // Subtract one from the available adhoc task attempts.
-        if ($task->get_attempts_available() > 0) {
-            $task->set_attempts_available($task->get_attempts_available() - 1);
+        if ($exhausted) {
+            // Mark the task as failed as the attempts are exhausted. This must result in the same end state as
+            // a task that failed for normal reasons, which is a fail delay capped at the maximum.
+            $task->set_fail_delay(self::MAX_FAIL_DELAY);
+
+            // Dispatch hook now that the task is exhausted and considered failed.
+            $hook = new \core\hook\task\after_failed_task_max_delay(
+                task: $task,
+            );
+            \core\di::get(\core\hook\manager::class)->dispatch($hook);
+        } else {
+            // This is not a failure, the task still has attempts left.
+            $task->set_fail_delay(0);
         }
 
         // Persist modified adhoc task to DB.
-        // Reset fail delay — this is not a failure.
-        $task->set_fail_delay(0);
         $record = self::record_from_adhoc_task($task);
         $DB->update_record('task_adhoc', $record);
 
-        // Release lock, prevent fail delay and adhoc task failure.
+        // Release locks.
         $task->release_concurrency_lock();
         $task->get_lock()->release();
         self::$runningtask = null;
@@ -1388,8 +1414,8 @@ class manager {
         }
 
         // Max of 24 hour delay.
-        if ($delay >= 86400) {
-            $delay = 86400;
+        if ($delay >= self::MAX_FAIL_DELAY) {
+            $delay = self::MAX_FAIL_DELAY;
 
             // Dispatch hook when max fail delay has reached.
             $hook = new \core\hook\task\after_failed_task_max_delay(
@@ -1501,8 +1527,8 @@ class manager {
         }
 
         // Max of 24 hour delay.
-        if ($delay >= 86400) {
-            $delay = 86400;
+        if ($delay >= self::MAX_FAIL_DELAY) {
+            $delay = self::MAX_FAIL_DELAY;
 
             // Dispatch hook when max fail delay has reached.
             $hook = new \core\hook\task\after_failed_task_max_delay(
