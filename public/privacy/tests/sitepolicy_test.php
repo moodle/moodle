@@ -238,7 +238,7 @@ final class sitepolicy_test extends advanced_testcase {
             ->getMock();
         $mock->expects($this->any())
             ->method('get_all_handlers')
-            ->will($this->returnValue(['testtool_testhandler' => 'mock_sitepolicy_handler']));
+            ->willReturn(['testtool_testhandler' => 'mock_sitepolicy_handler']);
         return $mock;
     }
 

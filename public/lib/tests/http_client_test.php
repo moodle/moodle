@@ -191,10 +191,10 @@ final class http_client_test extends \advanced_testcase {
 
         // Make the mock return a different string.
         $blocked = "http://blocked.com";
-        $mockhelper->expects($this->any())->method('get_blocked_url_string')->will($this->returnValue($blocked));
+        $mockhelper->expects($this->any())->method('get_blocked_url_string')->willReturn($blocked);
 
         // And make the mock security helper block all URLs. This helper instance doesn't care about config.
-        $mockhelper->expects($this->any())->method('url_is_blocked')->will($this->returnValue(true));
+        $mockhelper->expects($this->any())->method('url_is_blocked')->willReturn(true);
 
         $client = new \core\http_client(['securityhelper' => $mockhelper]);
 
