@@ -25,7 +25,9 @@ $state-danger-border: var(--#{$prefix}state-danger-border) !default;
 $primary-nav-padding-y: ($spacer * 0.25) !default;
 $primary-nav-padding-x: ($spacer * 0.5) !default;
 
-$navbar-height: 60px !default;
+$navbar-height: 64px !default;
+// Maximum width of the top navbar contents. The navbar background and border still span the full window.
+$navbar-content-maxwidth: 1440px !default;
 $stickyfooter-height: 4rem !default;
 $stickyfooter-supplementary-height: 2.5rem !default;
 $course-content-maxwidth: 830px !default;
