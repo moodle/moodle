@@ -33,6 +33,7 @@ require_once($CFG->dirroot . '/enrol/imsenterprise/lib.php');
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_imsenterprise_plugin::class, 'process_person_tag')]
 final class imsenterprise_test extends \advanced_testcase {
 
     /**
@@ -163,8 +164,6 @@ final class imsenterprise_test extends \advanced_testcase {
     /**
      * Updating a user's email address via an IMS Enterprise import should invalidate any outstanding
      * forgot-password tokens for that user, the same way changing the email via core\user::update_user() does.
-     *
-     * @covers \enrol_imsenterprise_plugin::process_person_tag
      */
     public function test_user_update_email_invalidates_password_reset_tokens(): void {
         global $DB;

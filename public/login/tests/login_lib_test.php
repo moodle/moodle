@@ -35,6 +35,7 @@ require_once($CFG->dirroot . '/login/lib.php');
  * @copyright  2017 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('core_login_generate_password_reset')]
 final class login_lib_test extends \advanced_testcase {
 
     public function test_core_login_process_password_reset_one_time_without_username_protection(): void {
@@ -163,8 +164,6 @@ final class login_lib_test extends \advanced_testcase {
 
     /**
      * Test that generating a new password reset token removes any previous outstanding token for the user.
-     *
-     * @covers ::core_login_generate_password_reset
      */
     public function test_core_login_generate_password_reset_removes_previous_token(): void {
         global $DB;
