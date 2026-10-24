@@ -34,6 +34,8 @@ require_once($CFG->libdir . '/filterlib.php');
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('filter_get_active_in_context')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('filter_preload_activities')]
 final class filterlib_test extends \advanced_testcase {
 
     private function assert_only_one_filter_globally($filter, $state) {
@@ -679,9 +681,6 @@ final class filterlib_test extends \advanced_testcase {
      * preloaded cache is the same as the result from calling the standard
      * function filter_get_active_in_context without cache in many aspects but never
      * looks at the order. Here we do this.
-     *
-     * @covers ::filter_get_active_in_context
-     * @covers ::filter_preload_activities
      */
     public function test_sorting_of_preload(): void {
         global $FILTERLIB_PRIVATE;
@@ -726,9 +725,6 @@ final class filterlib_test extends \advanced_testcase {
      * Test that filter sorting is correct when one filter is left at its site-level
      * default and another is overridden at course level. This mirrors the original
      * bug scenario described in MDL-73856.
-     *
-     * @covers ::filter_get_active_in_context
-     * @covers ::filter_preload_activities
      */
     public function test_sorting_of_preload_with_course_override(): void {
         global $FILTERLIB_PRIVATE;

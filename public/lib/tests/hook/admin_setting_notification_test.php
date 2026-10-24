@@ -20,17 +20,15 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Test hook for displaying a notification for an admin setting.
  *
- * @coversDefaultClass \core\hook\admin_setting_notification
- *
  * @package    core
  * @copyright  2026 Abhinav Gandham <abhinavgandham@catalyst-au.net>
  * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversClass(\core\hook\admin_setting_notification::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core\hook\manager::class, 'dispatch')]
 final class admin_setting_notification_test extends \advanced_testcase {
     /**
      * Test the construction of the hook with a sample setting object.
-     *
-     * @covers ::__construct
      */
     public function test_hook_construction(): void {
         $setting = new \stdClass();
@@ -43,9 +41,6 @@ final class admin_setting_notification_test extends \advanced_testcase {
 
     /**
      * Test adding a notification and retrieving it.
-     *
-     * @covers ::add_notification
-     * @covers ::get_notifications
      */
     public function test_add_notification_single(): void {
         $setting = new \stdClass();
@@ -86,9 +81,6 @@ final class admin_setting_notification_test extends \advanced_testcase {
      * Test adding multiple notifications and retrieving them.
      *
      * @param array $messages List of notification messages to add.
-     *
-     * @covers ::add_notification
-     * @covers ::get_notifications
      */
     public function test_add_notification_multiple(array $messages): void {
         $setting = new \stdClass();
@@ -111,10 +103,6 @@ final class admin_setting_notification_test extends \advanced_testcase {
 
     /**
      * Test dispatching the hook with a listener that adds a notification.
-     *
-     * @covers ::add_notification
-     * @covers ::get_notifications
-     * @covers \core\hook\manager::dispatch
      */
     public function test_hook_dispatch_with_listener(): void {
         $setting = new \stdClass();
@@ -135,9 +123,6 @@ final class admin_setting_notification_test extends \advanced_testcase {
 
     /**
      * Test dispatching the hook with no listeners redirected, ensuring no notifications are added.
-     *
-     * @covers ::get_notifications
-     * @covers \core\hook\manager::dispatch
      */
     public function test_hook_dispatch_with_no_listeners(): void {
         $setting = new \stdClass();

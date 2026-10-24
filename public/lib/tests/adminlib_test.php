@@ -31,6 +31,7 @@ require_once($CFG->libdir.'/adminlib.php');
 #[\PHPUnit\Framework\Attributes\CoversFunction('db_should_replace')]
 #[\PHPUnit\Framework\Attributes\CoversFunction('admin_output_new_settings_by_page')]
 #[\PHPUnit\Framework\Attributes\CoversFunction('admin_apply_default_settings')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('format_admin_setting')]
 final class adminlib_test extends \advanced_testcase {
 
     /**
@@ -205,8 +206,6 @@ final class adminlib_test extends \advanced_testcase {
 
     /**
      * The deprecated override and warning context variables of core_admin/setting must still be provided.
-     *
-     * @covers ::format_admin_setting
      */
     public function test_format_admin_setting_provides_deprecated_context(): void {
         global $CFG, $OUTPUT;
