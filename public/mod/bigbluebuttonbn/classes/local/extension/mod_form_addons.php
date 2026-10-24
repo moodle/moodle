@@ -101,7 +101,16 @@ abstract class mod_form_addons {
     public function completion_rule_enabled(array $data): bool {
         return false;
     }
-
+    /**
+     * Form adjustments before setting data.
+     *
+     * @param array|null $defaultvalues
+     * @return void
+     */
+    public function data_preprocessing(?array &$defaultvalues): void {
+        // Nothing for now.
+    } 
+    
     /**
      * Form adjustments after setting data
      *
@@ -109,5 +118,5 @@ abstract class mod_form_addons {
      */
     public function definition_after_data() {
         // Nothing for now.
-    }
+    }                    
 }
