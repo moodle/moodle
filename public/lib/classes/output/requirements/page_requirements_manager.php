@@ -1880,9 +1880,6 @@ EOF;
         // First the skip links.
         $output = $renderer->render_skip_links($this->skiplinks);
 
-        // Include the Polyfills.
-        $output .= html_writer::script('', $this->js_fix_url('/lib/polyfills/polyfill.js'));
-
         // YUI3 JS needs to be loaded early in the body. It should be cached well by the browser.
         $output .= $this->get_yui3lib_headcode();
 

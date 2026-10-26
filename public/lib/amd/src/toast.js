@@ -140,7 +140,7 @@ export const removeToastRegion = async(parent, newParent = document) => {
     if (regionToRemove) {
         const targetRegion = getRegionFromParent(newParent);
 
-        regionToRemove.children.forEach((node) => {
+        [...regionToRemove.children].forEach((node) => {
             targetRegion.insertBefore(node, targetRegion.firstChild);
         });
 

@@ -197,13 +197,7 @@ export default class {
      * @returns {Object|null}
      */
     fileDraggableData(state, dataTransfer) {
-        const files = [];
-        // Browsers do not provide the file list until the drop event.
-        if (dataTransfer.files?.length > 0) {
-            dataTransfer.files.forEach(file => {
-                files.push(file);
-            });
-        }
+        const files = dataTransfer.files ? [...dataTransfer.files] : [];
         return {
             type: 'files',
             files,

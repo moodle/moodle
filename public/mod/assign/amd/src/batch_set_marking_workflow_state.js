@@ -31,7 +31,7 @@
 const filterOptions = (context, args) => {
     const options = args[context];
     const workflowstate = document.getElementById('id_markingworkflowstate');
-    workflowstate.children.forEach((item) => {
+    [...workflowstate.children].forEach((item) => {
         if (options.includes(item.value)) {
             item.removeAttribute('disabled');
         } else {
