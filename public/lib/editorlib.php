@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\di;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -129,7 +131,7 @@ function get_texteditor($editorname) {
     if (!class_exists($classname)) {
         return false;
     }
-    return new $classname();
+    return di::make($classname);
 }
 
 /**

@@ -75,7 +75,7 @@ class authentication {
 
         require_once("{$CFG->dirroot}/auth/$auth/auth.php");
         $class = "auth_plugin_$auth";
-        return new $class();
+        return di::make($class);
     }
 
     /**

@@ -24,6 +24,8 @@
 
 namespace core\antivirus;
 
+use core\di;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -263,7 +265,7 @@ class manager {
         if (!class_exists($classname)) {
             return false;
         }
-        return new $classname();
+        return di::make($classname);
     }
 
     /**

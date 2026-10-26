@@ -24,6 +24,8 @@
 
 namespace core\message\inbound;
 
+use core\di;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -197,7 +199,7 @@ class manager {
             return false;
         }
 
-        $handler = new $classname;
+        $handler = di::make($classname);
         if (isset($record->id)) {
             $handler->set_id($record->id);
         }

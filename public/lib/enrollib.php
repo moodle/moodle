@@ -25,6 +25,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\di;
+
 defined('MOODLE_INTERNAL') || die();
 
 /** Course enrol instance enabled. (used in enrol->status) */
@@ -128,7 +130,7 @@ function enrol_get_plugins($enabled) {
             }
         }
 
-        $result[$plugin] = new $class();
+        $result[$plugin] = di::make($class);
     }
 
     return $result;
@@ -162,7 +164,7 @@ function enrol_get_plugin($name) {
         }
     }
 
-    return new $class();
+    return di::make($class);
 }
 
 /**
