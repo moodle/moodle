@@ -35668,16 +35668,24 @@ button.section-collapsemenu:hover .collapsemenu-text {
   color: var(--bs-gray-700);
   display: flex;
   flex-wrap: wrap;
-  column-gap: 0.75rem;
+  gap: var(--mds-spacing-xs, 0.5rem);
+  margin-block: var(--mds-spacing-md, 1rem);
 }
-@media (max-width: 575.98px) {
-  .activity-item .activity-dates {
-    margin-top: 0.5rem;
-  }
+.activity-item .activity-dates > [data-react-component] {
+  display: contents;
 }
-.activity-item .activity-dates .date-item-label {
-  font-weight: 600;
-  margin-right: 0.25rem;
+.activity-item .activity-dates .mds-badge {
+  display: inline-flex;
+  padding: var(--mds-spacing-xxs, 0.25rem) var(--mds-spacing-xs, 0.5rem);
+  border-radius: var(--mds-border-radius-sm);
+  background-color: transparent;
+  gap: var(--mds-spacing-xxs, 0.25rem);
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-xs);
+  flex-wrap: wrap;
+  white-space: normal;
+  max-width: 100%;
 }
 .activity-item .activity-name-area {
   grid-area: name;
@@ -41129,26 +41137,28 @@ select {
   border-bottom: 0;
 }
 .path-mod .activity-dates {
-  padding-top: 0.5rem;
-  padding-bottom: 1rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem 1.5rem;
+  padding-block: var(--mds-spacing-md, 1rem);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mds-spacing-xs, 0.5rem);
   width: 100%;
   align-items: center;
 }
-.path-mod .activity-dates .date-item {
-  color: var(--bs-gray-700);
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
+.path-mod .activity-dates > [data-react-component] {
+  display: contents;
 }
-.path-mod .activity-dates .date-item:not(:last-child)::after {
-  display: none;
-}
-.path-mod .activity-dates .date-item .date-item-label {
-  font-weight: 600;
-  margin-right: 0.25rem;
+.path-mod .activity-dates .mds-badge {
+  display: inline-flex;
+  padding: var(--mds-spacing-xxs, 0.25rem) var(--mds-spacing-xs, 0.5rem);
+  border-radius: var(--mds-border-radius-sm);
+  background-color: transparent;
+  gap: var(--mds-spacing-xxs, 0.25rem);
+  font-size: var(--mds-font-size-paragraph-small);
+  font-weight: var(--mds-font-weight-medium);
+  line-height: var(--mds-line-height-paragraph-xs);
+  flex-wrap: wrap;
+  white-space: normal;
+  max-width: 100%;
 }
 .path-mod .activity-details .completion-info {
   padding-top: 0.5rem;
@@ -41236,11 +41246,6 @@ select {
   margin-right: 0.25rem;
 }
 
-@media (max-width: 767px) {
-  .path-mod .activity-dates {
-    grid-template-columns: 1fr;
-  }
-}
 .path-mod-choice .horizontal .choices .option {
   display: inline-block;
 }

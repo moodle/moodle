@@ -27,27 +27,28 @@ select {
         }
     }
     .activity-dates {
-        padding-top: map-get($spacers, 2);
-        padding-bottom: map-get($spacers, 3);
-        display: grid;
-        grid-template-columns: 1fr 1fr; // Creates two equal columns
-        gap: map-get($spacers, 2) map-get($spacers, 4); // Vertical and horizontal spacing
+        padding-block: var(--mds-spacing-md, 1rem);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--mds-spacing-xs, 0.5rem);
         width: 100%;
         align-items: center;
-        .date-item {
-            color: var(--#{$prefix}gray-700);
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
-
-            &:not(:last-child)::after {
-                display: none;
-            }
-
-            .date-item-label {
-                font-weight: 600;
-                margin-right: map-get($spacers, 1);
-            }
+        > [data-react-component] {
+            display: contents;
+        }
+        .mds-badge {
+            display: inline-flex;
+            padding: var(--mds-spacing-xxs, 0.25rem) var(--mds-spacing-xs, 0.5rem);
+            border-radius: var(--mds-border-radius-sm);
+            // Follow the card background, including on hover, instead of the fixed subtle badge colour.
+            background-color: transparent;
+            gap: var(--mds-spacing-xxs, 0.25rem);
+            font-size: var(--mds-font-size-paragraph-small);
+            font-weight: var(--mds-font-weight-medium);
+            line-height: var(--mds-line-height-paragraph-xs);
+            flex-wrap: wrap;
+            white-space: normal;
+            max-width: 100%;
         }
     }
     .activity-details {
@@ -153,12 +154,6 @@ select {
         i {
             margin-right: map-get($spacers, 1);
         }
-    }
-}
-
-@media (max-width: 767px) {
-    .path-mod .activity-dates {
-        grid-template-columns: 1fr; // Stack them on small screens
     }
 }
 

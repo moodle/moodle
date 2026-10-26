@@ -22,6 +22,7 @@ Feature: Manage BigBlueButton session timings
       | blockname         | contextlevel | reference | pagetypepattern | defaultregion |
       | calendar_upcoming | System       | 1         | my-index        | side-post     |
 
+  @javascript
   Scenario Outline: Setting and verifying BBB activity open and close times
     Given the following "activities" exist:
       | course | activity        | name  | openingtime   | closingtime   |

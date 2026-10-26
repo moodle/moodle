@@ -44,6 +44,10 @@
         },
         "hasextras": true,
         "extras": ["<span class=\"badge bg-secondary\">[extras]</span>"],
+        "dates": {
+            "hasdates": true,
+            "activitydates": "<div data-react-component=\"@moodle/lms/core_course/ActivityDates\" data-react-props=\"{}\"></div>"
+        },
         "activityinfo": {
             "hasmodavailability": true,
             "activityname": "Activity example",
@@ -52,12 +56,6 @@
             "hasdates": true,
             "isautomatic": true,
             "istrackeduser": true,
-            "activitydates": [
-                {
-                    "label": "Opens:",
-                    "datestring": "6 April 2021, 6:46 PM"
-                }
-            ],
             "completiondetails": [
                 {
                     "statuscomplete": 1,
@@ -91,11 +89,7 @@
     {{#dates}}
         {{#hasdates}}
             <div data-region="activity-dates" class="activity-dates me-sm-2">
-                {{#activitydates}}
-                    {{$core_course/activity_date}}
-                        {{>core_course/activity_date}}
-                    {{/core_course/activity_date}}
-                {{/activitydates}}
+                {{{activitydates}}}
             </div>
         {{/hasdates}}
     {{/dates}}

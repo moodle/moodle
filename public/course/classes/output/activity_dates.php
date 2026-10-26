@@ -27,7 +27,15 @@ use templatable;
  * @package    core_course
  * @copyright  2023 Mikel Martín <mikel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 6.0 MDL-87838. The dates are now rendered by the core_course/ActivityDates React component.
+ * @todo MDL-90180 Final deprecation in Moodle 7.0
  */
+#[\core\attribute\deprecated(
+    replacement: activity_dates_component::class,
+    since: '6.0',
+    reason: 'The activity dates are now rendered by the core_course/ActivityDates React component',
+    mdl: 'MDL-87838',
+)]
 class activity_dates implements renderable, templatable {
     /**
      * Constructor.
@@ -38,6 +46,7 @@ class activity_dates implements renderable, templatable {
         /** @var array $activitydates the activity dates information. */
         protected array $activitydates,
     ) {
+        \core\deprecation::emit_deprecation_if_present($this);
     }
 
     /**

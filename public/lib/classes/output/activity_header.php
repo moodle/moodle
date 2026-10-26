@@ -194,8 +194,11 @@ class activity_header implements renderable, templatable {
             $activitycompletiondata = (new \core_course\output\completion_status($this->page->cm, $this->user->id))
                 ->export_for_template($output);
             $activitydates = \core\activity_dates::get_dates_for_module($this->page->cm, $this->user->id);
-            $activitydates = new \core_course\output\activity_dates($activitydates);
-            $activitydatesdata = (array) $activitydates->export_for_template($output);
+            $activitydates = new \core_course\output\activity_dates_component($activitydates);
+            $activitydatesdata = ['hasdates' => $activitydates->has_dates()];
+            if ($activitydatesdata['hasdates']) {
+                $activitydatesdata['activitydates'] = $output->render($activitydates);
+            }
             $data = array_merge($activitycompletiondata, $activitydatesdata);
             $data['description'] = $this->description;
             if (
@@ -307,7 +310,11 @@ class activity_header implements renderable, templatable {
             return false;
         }
 
-        $dates = $output->render_from_template('core_course/activity_dates', $data);
+        $dates = html_writer::div(
+            html_writer::div($data['activitydates'], 'activity-dates', ['data-region' => 'activity-dates']),
+            '',
+            array_filter(['data-activityname' => $this->page->cm?->get_formatted_name()]),
+        );
         $this->page->add_header_extras($dates);
         return true;
     }

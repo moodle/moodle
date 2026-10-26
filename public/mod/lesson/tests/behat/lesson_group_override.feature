@@ -137,6 +137,7 @@ Feature: Lesson group override
     And I set the field "userpassword" to "moodle_rules"
     And I press "Continue"
 
+  @javascript
   Scenario: Allow a group to have a different due date
     Given the following "mod_lesson > group overrides" exist:
       | lesson           | group | deadline             |
@@ -156,6 +157,7 @@ Feature: Lesson group override
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
 
+  @javascript
   Scenario: Allow a group to have a different start date
     Given the following "mod_lesson > group overrides" exist:
       | lesson           | group | available            |
