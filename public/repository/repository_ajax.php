@@ -201,6 +201,9 @@ switch ($action) {
             $record = new stdClass();
             $record->filepath = $saveas_path;
             $record->filename = $saveas_filename;
+            if (core_text::strlen($record->filename) > file_storage::MAX_FILENAME_LENGTH) {
+                throw new moodle_exception('filenametoolong', 'repository', '', file_storage::MAX_FILENAME_LENGTH);
+            }
             $record->component = 'user';
             $record->filearea = 'draft';
             $record->itemid = $itemid;

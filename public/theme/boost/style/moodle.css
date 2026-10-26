@@ -31318,6 +31318,7 @@ audio.mediaplugin_html5audio {
 
 .moodle-dialogue-exception .moodle-exception-message {
   margin: 1em;
+  overflow-wrap: anywhere;
 }
 
 .moodle-dialogue-exception .moodle-exception-param {
@@ -38226,6 +38227,12 @@ a.ygtvspacer:hover {
 
 .file-picker.fp-dlg .fp-dlg-buttons {
   margin: 0 20px;
+}
+
+.file-picker.fp-dlg .fp-dlg-butrename {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .file-picker.fp-msg {
