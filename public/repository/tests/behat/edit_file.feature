@@ -54,3 +54,18 @@ Feature: Edit file feature
     When I click on "Update" "button"
     Then I should see "empty_edited.txt" in the ".fp-content .fp-hascontextmenu .fp-filename" "css_element"
     And I should not see "empty.txt" in the ".fp-content .fp-hascontextmenu .fp-filename" "css_element"
+
+  @javascript
+  Scenario: Editing a file name longer than the database column is rejected
+    Given I follow "Manage private files"
+    And I click on "Display folder with file icons" "link" in the ".filemanager" "css_element"
+    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
+    And I click on "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]/descendant::a[normalize-space(.)='empty.txt']" "xpath_element"
+    And I should see "Edit empty.txt"
+    # The name below is 256 characters, one more than the files.filename column holds.
+    And I set the following fields to these values:
+      | Name | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.txt |
+    When I click on "Update" "button"
+    Then I should see "The file name, including its extension, must not be longer than 255 characters." in the "File name too long" "dialogue"
+    And I click on "OK" "button" in the "File name too long" "dialogue"
+    And I should see "empty.txt" in the ".fp-content .fp-file" "css_element"

@@ -688,11 +688,16 @@ M.core_filepicker.init = function(Y, options) {
                         }
                         // error checking
                         if (data && data.error) {
-                            if (data.errorcode === 'invalidfiletypewithaccepted') {
-                                // File type errors are not really errors, so report them less scarily.
+                            var friendlytitles = {
+                                invalidfiletypewithaccepted: 'invalidfiletypetitle',
+                                filenametoolong: 'filenametoolongtitle',
+                            };
+                            if (friendlytitles[data.errorcode]) {
+                                // Problems with the chosen file are not really errors, so report them less scarily.
+                                var titlekey = friendlytitles[data.errorcode];
                                 Y.use('moodle-core-notification-alert', function() {
                                     return new M.core.alert({
-                                        title: M.util.get_string('invalidfiletypetitle', 'repository'),
+                                        title: M.util.get_string(titlekey, 'repository'),
                                         message: data.error,
                                     });
                                 });

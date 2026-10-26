@@ -272,6 +272,9 @@ M.form_filemanager.init = function(Y, options) {
             if (errorCode === 'invalidfiletype') {
                 header = M.util.get_string('invalidfiletypetitle', 'repository');
             }
+            if (errorCode === 'filenametoolong') {
+                header = M.util.get_string('filenametoolongtitle', 'repository');
+            }
             if (!this.msg_dlg) {
                 this.msg_dlg_node = Y.Node.create(M.form_filemanager.templates.message);
                 var nodeid = this.msg_dlg_node.generateID();
@@ -857,6 +860,11 @@ M.form_filemanager.init = function(Y, options) {
             } else {
                 if (!newfilename) {
                     this.print_msg(M.util.get_string('enternewname', 'repository'), 'error');
+                    return;
+                }
+                if (Array.from(newfilename).length > options.maxfilenamelength) {
+                    this.print_msg(M.util.get_string('filenametoolong', 'repository', options.maxfilenamelength),
+                        'error', options, 'filenametoolong');
                     return;
                 }
 
