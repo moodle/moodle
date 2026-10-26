@@ -28,6 +28,7 @@ namespace tool_task;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
+use core\di;
 use core\task\manager;
 
 /**
@@ -90,7 +91,7 @@ class running_tasks_table extends \table_sql {
         $output = $row->classname;
         if ($row->type == 'scheduled') {
             if (class_exists($row->classname)) {
-                $task = new $row->classname;
+                $task = di::make($row->classname);
                 if ($task instanceof \core\task\scheduled_task) {
                     $output .= \html_writer::tag('div', $task->get_name(), ['class' => 'task-class']);
                 }
