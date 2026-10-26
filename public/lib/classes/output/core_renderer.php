@@ -4800,6 +4800,19 @@ EOD;
     }
 
     /**
+     * Wraps a JS snippet in an IIFE that removes its own script element from the DOM after executing.
+     *
+     * Use this for inline scripts emitted repeatedly (e.g. progress bar updates, streaming
+     * replacements) to prevent DOM node accumulation during long-running pages.
+     *
+     * @param string $js The JS snippet to wrap.
+     * @return string HTML script element.
+     */
+    protected function script_self_removing(string $js): string {
+        return html_writer::script("(function(s){\n{$js}s.remove();\n})(document.currentScript);");
+    }
+
+    /**
      * Renders a progress bar.
      *
      * Do not use $OUTPUT->render($bar), instead use progress_bar::create().
@@ -4827,7 +4840,7 @@ EOD;
      */
     public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate,
         bool $error = false): string {
-        return html_writer::script(js_writer::function_call('updateProgressBar', [
+        return $this->script_self_removing(js_writer::function_call('updateProgressBar', [
             $id,
             round($percent, 1),
             $msg,
@@ -4963,7 +4976,9 @@ EOD;
         // Create an unclosed element for the streamed content to append into.
         $id = uniqid();
         $html .= html_writer::start_tag($element, ['id' => $id]);
-        $html .= html_writer::tag('script', "document.querySelector('$selector').append(document.getElementById('$id'))");
+        $html .= $this->script_self_removing(
+            "document.querySelector('$selector').append(document.getElementById('$id'));"
+        );
         $html .= "\n";
         return $html;
     }
@@ -5010,7 +5025,7 @@ EOD;
         // Escape html for use inside a javascript string.
         $html = addslashes_js($html);
         $property = $outer ? 'outerHTML' : 'innerHTML';
-        $output = html_writer::tag('script', "document.querySelector('$selector').$property = '$html';");
+        $output = $this->script_self_removing("document.querySelector('$selector').$property = '$html';");
         $output .= "\n";
         return $output;
     }
