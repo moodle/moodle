@@ -637,10 +637,17 @@ function filter_preload_activities(course_modinfo $modinfo) {
     // Array lists filters that are banned at top level.
     $banned = array();
 
+    // Remember the order of filters from the system level.
+    $filterorder = [];
+
     // Add any active filters in parent contexts to the array.
     foreach ($filteractives as $row) {
         $depth = array_search($row->contextid, $parentcontextids);
         if ($depth !== false) {
+            if ($depth == 0) {
+                $filterorder[$row->filter] = $row->sortorder;
+            }
+
             // Find entry.
             if (!array_key_exists($row->filter, $courseactive)) {
                 $courseactive[$row->filter] = 0;
@@ -664,14 +671,14 @@ function filter_preload_activities(course_modinfo $modinfo) {
         }
     }
 
-    // Chuck away the ones that aren't active.
-    foreach ($courseactive as $filter => $score) {
-        if ($score <= 0) {
-            unset($courseactive[$filter]);
-        } else {
-            $courseactive[$filter] = array();
+    // Filters must be applied in order that is set at the system level.
+    uksort(
+        $courseactive,
+        function ($a, $b) use ($filterorder) {
+            // In case a filter has no system level sortorder, sort it last.
+            return ($filterorder[$a] ?? PHP_INT_MAX) <=> ($filterorder[$b] ?? PHP_INT_MAX);
         }
-    }
+    );
 
     // Loop through the contexts to reconstruct filter_active lists for each
     // cm on the course.
@@ -680,7 +687,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
     }
     foreach ($cmcontextids as $contextid) {
         // Copy course list.
-        $FILTERLIB_PRIVATE->active[$contextid] = $courseactive;
+        $contextactive = $courseactive;
 
         // Are there any changes to the active list?
         if (array_key_exists($contextid, $remainingactives)) {
@@ -688,14 +695,25 @@ function filter_preload_activities(course_modinfo $modinfo) {
                 if ($row->active > 0 && empty($banned[$row->filter])) {
                     // If it's marked active for specific context, add entry
                     // (doesn't matter if one exists already).
-                    $FILTERLIB_PRIVATE->active[$contextid][$row->filter] = array();
+                    $contextactive[$row->filter] = TEXTFILTER_ON;
                 } else {
                     // If it's marked inactive, remove entry (doesn't matter
                     // if it doesn't exist).
-                    unset($FILTERLIB_PRIVATE->active[$contextid][$row->filter]);
+                    $contextactive[$row->filter] = TEXTFILTER_OFF;
                 }
             }
         }
+
+        // We can safely remove inactive filters now without breaking filter order.
+        foreach ($contextactive as $filter => $score) {
+            if ($score <= 0) {
+                unset($contextactive[$filter]);
+            } else {
+                $contextactive[$filter] = [];
+            }
+        }
+
+        $FILTERLIB_PRIVATE->active[$contextid] = $contextactive;
     }
 
     // Process all config rows to add config data to these entries.
