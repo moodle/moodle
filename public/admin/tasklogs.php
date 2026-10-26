@@ -26,6 +26,7 @@ require_once(__DIR__ . '/../config.php');
 require_once("{$CFG->libdir}/adminlib.php");
 require_once("tool/task/lib.php");
 
+use core\di;
 use core_admin\reportbuilder\local\systemreports\task_logs;
 use core_reportbuilder\system_report_factory;
 
@@ -58,7 +59,7 @@ if (null !== $logid) {
     }
 
     try {
-        $class = new $log->classname;
+        $class = di::make($log->classname);
         $title = $class->get_name();
     } catch (Exception $e) {
         $title = $log->classname;
