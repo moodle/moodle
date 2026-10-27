@@ -16,52 +16,99 @@ $dark-surface-recessed: mix($gray-800, $gray-900, 50%) !default;   // Drawers, t
 // checkers which round differently.
 $dark-min-contrast: 4.6 !default;
 
-/**
- * Emit the content as a dark colour mode override of the rule it is written inside.
- *
- * Bootstrap's own color-mode() mixin puts the [data-bs-theme] selector at the point it is included, so nesting it
- * inside a rule produces a descendant selector and the attribute is on the html tag, an ancestor. This prefixes the
- * enclosing selector instead, which both matches and inherits that selector's specificity, so an override always
- * wins against the rule it belongs to without the ancestors having to be repeated by hand.
- *
- * selector-nest() rather than interpolating the parent directly: interpolation would paste a comma separated parent
- * in as one string and only the first of its selectors would get the attribute, letting the rest leak into light
- * mode.
- *
- * Use it beside the rule being corrected:
- *
- *     .my-panel {
- *         background-color: $gray-100;
- *
- *         @include dark-mode {
- *             background-color: var(--#{$prefix}gray-200);
- *         }
- *     }
- */
+// Emit the content as a dark colour mode override of the rule it is written inside.
+//
+// Bootstrap's own color-mode() mixin puts the [data-bs-theme] selector at the point it is included, so nesting it
+// inside a rule produces a descendant selector and the attribute is on the html tag, an ancestor. This prefixes the
+// enclosing selector instead, which both matches and inherits that selector's specificity, so an override always
+// wins against the rule it belongs to without the ancestors having to be repeated by hand.
+//
+// selector-nest() rather than interpolating the parent directly: interpolation would paste a comma separated parent
+// in as one string and only the first of its selectors would get the attribute, letting the rest leak into light
+// mode.
+//
+// Use it beside the rule being corrected:
+//
+//     .my-panel {
+//         background-color: $gray-100;
+//
+//         @include dark-mode {
+//             background-color: var(--#{$prefix}gray-200);
+//         }
+//     }
 @mixin dark-mode {
     @at-root #{selector-nest('[data-bs-theme="dark"]', &)} {
         @content;
     }
 }
 
-/**
- * Lighten a colour until it is readable on a dark surface.
- *
- * The theme colours are chosen for a white page and are mostly too dark to use as text once the page is dark. This
- * tints them in 5% steps and returns the first tint which reaches the required contrast, so that the dark palette
- * keeps meeting WCAG AA even when a site changes the brand colour.
- *
- * @param {Color} $color The colour to lighten.
- * @param {Color} $background The surface the colour is drawn on.
- * @param {Number} $min The contrast ratio to reach.
- * @return {Color}
- */
-@function dark-readable($color, $background: $dark-surface-raised, $min: $dark-min-contrast) {
-    $readable: $color;
-    @for $step from 1 through 20 {
-        @if contrast-ratio($background, $readable) < $min {
-            $readable: tint-color($color, percentage($step * 0.05));
+// Relative luminance of a colour, the same as Bootstrap's luminance() but without its divide() helper.
+//
+// divide() does long division one digit at a time, which is very slow in scssphp, so this multiplies by the reciprocals
+// of 255 and 12.92 instead (math.div is not available in scssphp).
+//
+// It reads Bootstrap's private $_luminance-list, so check both when upgrading Bootstrap: if luminance() has changed,
+// change this to match, and if $_luminance-list has gone, bring the table in here.
+//
+// @param {Color} $color
+// @return {Number}
+@function _relative-luminance($color) {
+    $luminance: 0;
+    // The channel weights and the .04045 threshold are the sRGB ones that WCAG uses to define relative luminance.
+    @each $channel, $weight in (red($color) .2126, green($color) .7152, blue($color) .0722) {
+        // 0.00392156862745098 is 1 / 255, and 0.07739938080495357 is 1 / 12.92.
+        @if $channel * 0.00392156862745098 < .04045 {
+            $luminance: $luminance + $channel * 0.00392156862745098 * 0.07739938080495357 * $weight;
+        }
+        @else {
+            $luminance: $luminance + nth($_luminance-list, $channel + 1) * $weight;
         }
     }
+    @return $luminance;
+}
+
+// Whether a colour reaches a contrast ratio against a background.
+//
+// The WCAG ratio is (lighter + .05) / (darker + .05), so this compares (lighter + .05) with $min * (darker + .05)
+// to get the same answer as contrast-ratio() >= $min without dividing. contrast-ratio() goes through Bootstrap's
+// luminance() and divide(), which are too slow to call on every step of dark-readable().
+//
+// @param {Color} $background
+// @param {Color} $foreground
+// @param {Number} $min
+// @return {Boolean}
+@function _contrast-reaches($background, $foreground, $min) {
+    $l1: _relative-luminance($background) + .05;
+    $l2: _relative-luminance(opaque($background, $foreground)) + .05;
+    @return if($l1 > $l2, $l1 >= $min * $l2, $l2 >= $min * $l1);
+}
+
+// Results of dark-readable(), keyed by its arguments. Several partials derive the same colours, and each derivation
+// is slow to compile.
+$_dark-readable-cache: ();
+
+// Lighten a colour until it is readable on a dark surface.
+//
+// The theme colours are chosen for a white page and are mostly too dark to use as text once the page is dark. This
+// tints them in 5% steps and returns the first tint which reaches the required contrast, so that the dark palette
+// keeps meeting WCAG AA even when a site changes the brand colour.
+//
+// @param {Color} $color The colour to lighten.
+// @param {Color} $background The surface the colour is drawn on.
+// @param {Number} $min The contrast ratio to reach.
+// @return {Color}
+@function dark-readable($color, $background: $dark-surface-raised, $min: $dark-min-contrast) {
+    $key: "#{$color} #{$background} #{$min}";
+    @if map-has-key($_dark-readable-cache, $key) {
+        @return map-get($_dark-readable-cache, $key);
+    }
+    // Stop as soon as the colour is readable: each check is slow to compile.
+    $readable: $color;
+    $step: 0;
+    @while $step < 20 and not _contrast-reaches($background, $readable, $min) {
+        $step: $step + 1;
+        $readable: tint-color($color, percentage($step * 0.05));
+    }
+    $_dark-readable-cache: map-merge($_dark-readable-cache, ($key: $readable)) !global;
     @return $readable;
 }

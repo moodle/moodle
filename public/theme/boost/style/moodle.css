@@ -30048,40 +30048,6 @@ textarea.form-control-lg {
  * Imported before the component partials so that they can each carry their own dark mode overrides next to the rules
  * those overrides correct. The dark palette itself lives in dark.scss, which is imported last.
  */
-/**
- * Emit the content as a dark colour mode override of the rule it is written inside.
- *
- * Bootstrap's own color-mode() mixin puts the [data-bs-theme] selector at the point it is included, so nesting it
- * inside a rule produces a descendant selector and the attribute is on the html tag, an ancestor. This prefixes the
- * enclosing selector instead, which both matches and inherits that selector's specificity, so an override always
- * wins against the rule it belongs to without the ancestors having to be repeated by hand.
- *
- * selector-nest() rather than interpolating the parent directly: interpolation would paste a comma separated parent
- * in as one string and only the first of its selectors would get the attribute, letting the rest leak into light
- * mode.
- *
- * Use it beside the rule being corrected:
- *
- *     .my-panel {
- *         background-color: $gray-100;
- *
- *         @include dark-mode {
- *             background-color: var(--bs-gray-200);
- *         }
- *     }
- */
-/**
- * Lighten a colour until it is readable on a dark surface.
- *
- * The theme colours are chosen for a white page and are mostly too dark to use as text once the page is dark. This
- * tints them in 5% steps and returns the first tint which reaches the required contrast, so that the dark palette
- * keeps meeting WCAG AA even when a site changes the brand colour.
- *
- * @param {Color} $color The colour to lighten.
- * @param {Color} $background The surface the colour is drawn on.
- * @param {Number} $min The contrast ratio to reach.
- * @return {Color}
- */
 /* core.less */
 :root {
   --bs-state-success-bg: #d7e4d6;
