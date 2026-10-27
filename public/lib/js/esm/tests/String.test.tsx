@@ -24,6 +24,7 @@ import {render, screen, act} from '@testing-library/react';
 import String from '@moodle/lms/core/String';
 import {getString, getStrings, getRequestedStrings, cacheStrings} from '@moodle/lms/core/stringUtils';
 import * as Ajax from '@moodle/lms/core/ajax';
+import {localStore} from '@moodle/lms/core/Storage';
 
 describe('@moodle/lms/core/String', () => {
     describe('getString', () => {
@@ -222,6 +223,35 @@ describe('@moodle/lms/core/String', () => {
             });
 
             expect(screen.getByText('Save')).toBeInTheDocument();
+        });
+    });
+
+    describe('<String> component with cached strings', () => {
+        beforeEach(() => {
+            // Restore the original implementation, as the global mock returns plain promises which always suspend.
+            (getRequestedStrings as jest.Mock).mockRestore();
+        });
+
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
+        it('renders a string from M.str without suspending', () => {
+            mockString('all', 'core', 'All');
+
+            const {container} = render(<String identifier="all" component="core">{'loading'}</String>);
+
+            expect(container.textContent).toBe('All');
+        });
+
+        it('renders a string from localStore without suspending', () => {
+            // Storage is disabled under Jest (jsrev is -1), so simulate a hit for this string.
+            jest.spyOn(localStore, 'get')
+                .mockImplementation((key) => (key === 'core_str/stored/core/en' ? 'Stored' : null));
+
+            const {container} = render(<String identifier="stored" component="core">{'loading'}</String>);
+
+            expect(container.textContent).toBe('Stored');
         });
     });
 

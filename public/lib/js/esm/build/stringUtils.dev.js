@@ -8,6 +8,10 @@ import { localStore } from "./Storage";
 const promiseCache = /* @__PURE__ */ new Map();
 const stringPromiseCache = /* @__PURE__ */ new Map();
 const getCacheKey = /* @__PURE__ */ __name((key, component, lang) => `core_str/${key}/${component}/${lang}`, "getCacheKey");
+const getResolvedPromise = /* @__PURE__ */ __name((value) => (
+  // React reads `status` and `value` to return the result synchronously instead of suspending for a render.
+  Object.assign(Promise.resolve(value), { status: "fulfilled", value })
+), "getResolvedPromise");
 const getRequestedStrings = /* @__PURE__ */ __name((requests) => {
   const stringPromises = new Array(requests.length);
   const pendingFetches = [];
@@ -16,7 +20,7 @@ const getRequestedStrings = /* @__PURE__ */ __name((requests) => {
     const component = rawComponent || "core";
     const cacheKey = getCacheKey(key, component, lang);
     if (M.str[component]?.[key] !== void 0) {
-      const promise = Promise.resolve(M.util.get_string(key, component, param));
+      const promise = getResolvedPromise(M.util.get_string(key, component, param));
       promiseCache.set(cacheKey, promise);
       stringPromises[i] = promise;
       continue;
@@ -27,7 +31,7 @@ const getRequestedStrings = /* @__PURE__ */ __name((requests) => {
         M.str[component] = {};
       }
       M.str[component][key] = cached;
-      const promise = Promise.resolve(M.util.get_string(key, component, param));
+      const promise = getResolvedPromise(M.util.get_string(key, component, param));
       promiseCache.set(cacheKey, promise);
       stringPromises[i] = promise;
       continue;
