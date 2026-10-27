@@ -1,0 +1,9 @@
+issueNumber: MDL-86636
+notes:
+  core_grades:
+    - message: >-
+        The behat steps `following "..." button should download an outcome file
+        that:` and `following "..." link should download an outcome file that:`
+        are deprecated. Use the equivalent `should download a file that:` steps
+        in `behat_download` instead, which work with any element.
+      type: deprecated
