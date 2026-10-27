@@ -25,7 +25,6 @@
 
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
-use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\ExpectationException;
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
@@ -42,7 +41,7 @@ class behat_download extends behat_base {
     /**
      * Downloads the file from a link on the page and verify the type and content.
      *
-     * @Then following :link_text should download a file that:
+     * @Then following ":element" should download a file that:
      *
      * @param string $element the text of the link.
      * @param TableNode $table the table of assertions to use the check the file contents.
@@ -55,10 +54,13 @@ class behat_download extends behat_base {
     /**
      * Downloads the file from the given element on the page and verify the type and content.
      *
-     * @Then following :link_text :selector_type should download a file that:
+     * Note the quotes around the placeholders: without them this step would be ambiguous
+     * with the one above, because an unquoted placeholder also matches a bare word.
+     *
+     * @Then following ":element" ":selectortype" should download a file that:
      *
      * @param string $element the text/locator of the element to download from.
-     * @param string $selectortype the selector type of $element, e.g. 'link', 'button', 'select'.
+     * @param string $selectortype the selector type of $element, e.g. 'link', 'button', 'css_element'.
      * @param TableNode $table the table of assertions to use the check the file contents.
      * @throws ExpectationException if the file cannot be downloaded, or if the download does not pass all the checks.
      */
@@ -73,7 +75,7 @@ class behat_download extends behat_base {
     /**
      * Downloads the file from a link on the page and verify the type and content.
      *
-     * @Then following :link_text in the :element_container_string :text_selector_string should download a file that:
+     * @Then following ":element" in the ":containerlocator" ":containertype" should download a file that:
      *
      * @param string $element the text of the link.
      * @param string $containerlocator the container element.
@@ -99,10 +101,10 @@ class behat_download extends behat_base {
     /**
      * Downloads the file from the given element inside a container and verify the type and content.
      *
-     * @Then following :link_text :selector_type in the :element_container_string :text_selector_string should download a file that:
+     * @Then following ":element" ":selectortype" in the ":containerlocator" ":containertype" should download a file that:
      *
      * @param string $element the text/locator of the element to download from.
-     * @param string $selectortype the selector type of $element, e.g. 'link', 'button', 'select'.
+     * @param string $selectortype the selector type of $element, e.g. 'link', 'button', 'css_element'.
      * @param string $containerlocator the container element.
      * @param string $containertype the container selector type.
      * @param TableNode $table the table of assertions to use the check the file contents.
@@ -123,29 +125,138 @@ class behat_download extends behat_base {
     /**
      * Download a file from the given element.
      *
+     * Any selector type can be used. What makes the element downloadable is not its
+     * selector type but what it does in the browser, which {@see get_download_request()}
+     * works out from the element itself.
+     *
      * @param string $element the text/locator of the element to download from.
      * @param string $containerlocator the container element.
      * @param string $containertype the container selector type.
-     * @param string $selectortype the selector type of $element, e.g. 'link', 'button', 'select'. Defaults to 'link'.
+     * @param string $selectortype the selector type of $element, e.g. 'link', 'button', 'css_element'.
      * @return string the file contents.
      * @throws ExpectationException if the download fails.
      */
-    protected function download_file(
+    public function download_file(
         string $element,
-        string $containerlocator,
-        string $containertype,
+        string $containerlocator = '',
+        string $containertype = '',
         string $selectortype = 'link'
     ): string {
-        if ($selectortype === 'button') {
-            return $this->download_file_from_button($element, $containerlocator, $containertype);
+        if ($containerlocator !== '' && $containertype !== '') {
+            $node = $this->get_node_in_container($selectortype, $element, $containertype, $containerlocator);
+        } else {
+            $node = $this->find($selectortype, $element);
         }
 
-        return behat_context_helper::get('behat_general')->download_file_from_link(
-            $element,
-            $containerlocator,
-            $containertype,
-            $selectortype
+        $this->ensure_node_is_visible($node);
+
+        [$url, $method, $params] = $this->get_download_request($node);
+
+        $headers = ['Cookie' => 'MoodleSession=' . $this->getSession()->getCookie('MoodleSession')];
+
+        if ($method === 'post') {
+            $filecontent = download_file_content($url, $headers, $params);
+        } else {
+            if ($params) {
+                // A GET submission replaces any query string already on the action.
+                $url = preg_replace('~\?.*$~', '', $url) . '?' . http_build_query($params);
+            }
+            $filecontent = download_file_content($url, $headers);
+        }
+
+        if ($filecontent === false) {
+            throw new ExpectationException(
+                'Failed to download the file from ' . $url,
+                $this->getSession(),
+            );
+        }
+
+        return $filecontent;
+    }
+
+    /**
+     * Work out the request the browser would make when the given element is activated.
+     *
+     * Only two things on a page start a download: a link, which fetches its href, and
+     * anything that submits a form, which sends the form action along with the form data.
+     * Every element worth passing to these steps is one or the other, so there is no need
+     * for a separate code path per selector type.
+     *
+     * @param NodeElement $node the element to download from.
+     * @return array [string $url, string $method, array $params] the request to make.
+     * @throws ExpectationException if the element cannot start a download.
+     */
+    protected function get_download_request(NodeElement $node): array {
+
+        // A link, or anything inside one, downloads its href.
+        if ($link = $node->find('xpath', '/ancestor-or-self::a[@href][1]')) {
+            return [$this->resolve_url($link->getAttribute('href')), 'get', []];
+        }
+
+        // Anything that submits a form downloads the form action, sending the form data with it.
+        if ($form = $this->get_associated_form($node)) {
+            if ($node->getAttribute('disabled')) {
+                throw new ExpectationException(
+                    'The "' . $node->getXpath() . '" element is disabled, so it cannot submit its form',
+                    $this->getSession(),
+                );
+            }
+
+            // The element's own form* attributes win over the form's, as they do in a browser.
+            $url = $node->getAttribute('formaction')
+                ?: $form->getAttribute('action')
+                ?: $this->getSession()->getCurrentUrl();
+            $method = $node->getAttribute('formmethod') ?: $form->getAttribute('method') ?: 'get';
+
+            return [$this->resolve_url($url), strtolower($method), $this->get_form_postdata($form, $node)];
+        }
+
+        throw new ExpectationException(
+            'The "' . $node->getXpath() . '" element is neither a link nor something that submits a form, ' .
+                'so it cannot be used to download a file',
+            $this->getSession(),
         );
+    }
+
+    /**
+     * Find the form the given element submits, whether it is inside one or associated with one by id.
+     *
+     * @param NodeElement $node the element to find the form for.
+     * @return NodeElement|null the form, or null if the element does not submit one.
+     */
+    protected function get_associated_form(NodeElement $node): ?NodeElement {
+
+        // An element anywhere on the page can name its form by id.
+        if ($formid = $node->getAttribute('form')) {
+            return $this->getSession()->getPage()->find('css', '#' . $formid);
+        }
+
+        return $node->find('xpath', '/ancestor::form[1]');
+    }
+
+    /**
+     * Turn the URL taken from the page into one download_file_content() can fetch.
+     *
+     * @param string $url an href or form action, which may be relative.
+     * @return string an absolute URL.
+     * @throws ExpectationException if there is no URL to download from.
+     */
+    protected function resolve_url(string $url): string {
+        $url = trim($url);
+
+        if ($url === '') {
+            throw new ExpectationException(
+                'The element to download from has no URL',
+                $this->getSession(),
+            );
+        }
+
+        if (!preg_match('~^https?://~', $url)) {
+            // Note out(false), so the parameter separators are plain & and not &amp;.
+            $url = (new moodle_url($url))->out(false);
+        }
+
+        return $url;
     }
 
     /**
@@ -278,118 +389,35 @@ class behat_download extends behat_base {
     }
 
     /**
-     * Given the text of a button, download the requested file and return the contents.
+     * Build the form body for a submitter, so the download request matches the browser submission.
      *
-     * @param string $element the text of the button.
-     * @param string $containerlocator optional container element locator.
-     * @param string $containertype optional container element selector type.
-     *
-     * @return string the content of the downloaded file.
-     */
-    public function download_file_from_button(string $element, string $containerlocator, string $containertype): string {
-        if ($containerlocator !== '' && $containertype !== '') {
-            $buttonnode = $this->get_node_in_container('button', $element, $containertype, $containerlocator);
-        } else {
-            $buttonnode = $this->find('button', $element);
-        }
-
-        $this->ensure_node_is_visible($buttonnode);
-
-        // Only check button-related attributes.
-        $url = $buttonnode->getAttribute('formaction');
-
-        $form = null;
-        // Case 1: button has form="id".
-        if ($formid = $buttonnode->getAttribute('form')) {
-            try {
-                $form = $this->find('css', '#' . $formid);
-            } catch (ElementNotFoundException $e) {
-                $form = null;
-            }
-        }
-        // Case 2: button is inside a form.
-        if (!$form) {
-            $form = $buttonnode->getParent();
-            while ($form && strtolower($form->getTagName()) !== 'form') {
-                $form = $form->getParent();
-            }
-        }
-
-        // Fallback to form action if formaction is not present.
-        if (!$url && $form) {
-            $url = $form->getAttribute('action');
-        }
-
-        if (!$url) {
-            throw new ExpectationException(
-                'Button does not have formaction or associated form action',
-                $this->getSession()
-            );
-        }
-
-        $url = trim($url);
-        if (!preg_match('~^https?://~', $url)) {
-            $url = (new \moodle_url($url))->out(true);
-        }
-
-        $session = $this->getSession()->getCookie('MoodleSession');
-        $headers = ['Cookie' => 'MoodleSession=' . $session];
-
-        // Determine method (button > form > default GET).
-        $method = strtolower($buttonnode->getAttribute('formmethod') ?: ($form ? $form->getAttribute('method') : 'get'));
-
-        // Build form submission data.
-        $postdata = $this->get_form_postdata($form, $buttonnode);
-
-        // POST request.
-        if ($method === 'post' && !empty($postdata)) {
-            return download_file_content($url, $headers, $postdata);
-        }
-
-        // GET with query params.
-        if (!empty($postdata)) {
-            $separator = str_contains($url, '?') ? '&' : '?';
-            $url .= $separator . http_build_query($postdata);
-        }
-
-        return download_file_content($url, $headers);
-    }
-
-    /**
-     * Build the form body for a submit button so the download request matches the browser submission.
-     *
-     * @param NodeElement|null $form the form element if one can be resolved.
-     * @param NodeElement $buttonnode the button trigger element.
+     * @param NodeElement $form the form being submitted.
+     * @param NodeElement $submitter the element submitting the form.
      * @return array the form data to submit.
      */
-    protected function get_form_postdata(?NodeElement $form, NodeElement $buttonnode): array {
+    protected function get_form_postdata(NodeElement $form, NodeElement $submitter): array {
         $postdata = [];
 
-        // Include clicked button.
-        if ($name = $buttonnode->getAttribute('name')) {
-            $postdata[$name] = $buttonnode->getAttribute('value') ?? '1';
+        // A submitter with a name contributes its own value, as it does in a browser.
+        if ($name = $submitter->getAttribute('name')) {
+            $postdata[$name] = $submitter->getAttribute('value') ?? '1';
         }
 
-        // No form, return only button data.
-        if (!$form) {
-            return $postdata;
-        }
-
-        foreach ($form->findAll('css', 'input, select, textarea') as $field) {
+        foreach ($this->get_form_fields($form) as $field) {
             $name = $field->getAttribute('name');
-            if (!$name) {
+            if (!$name || $field->getAttribute('disabled')) {
+                // A field with no name, or a disabled one, is never submitted.
                 continue;
             }
 
             $type = strtolower($field->getAttribute('type') ?? 'text');
             $tag = strtolower($field->getTagName());
 
-            // Skip irrelevant fields.
+            // Buttons are handled by the submitter above, and we cannot replay a file upload.
             if (in_array($type, ['submit', 'button', 'reset', 'image', 'file'], true)) {
                 continue;
             }
 
-            // Checkbox / radio.
             if (in_array($type, ['checkbox', 'radio'], true)) {
                 if ($field->isChecked()) {
                     $postdata[$name] = $field->getAttribute('value') ?? '1';
@@ -397,33 +425,42 @@ class behat_download extends behat_base {
                 continue;
             }
 
-            // Select.
-            if ($tag === 'select') {
-                $value = $field->getValue();
+            // Note getValue(), not getAttribute('value'): we want what the field holds now,
+            // not what it held when the page was first rendered.
+            $value = $field->getValue();
 
-                if (is_array($value)) {
-                    foreach ($value as $v) {
-                        $postdata[$name][] = $v;
-                    }
-                } else if ($value !== null && $value !== '') {
-                    $postdata[$name] = $value;
+            if ($tag === 'select' && is_array($value)) {
+                foreach ($value as $selected) {
+                    $postdata[$name][] = $selected;
                 }
-
-                continue;
-            }
-
-            // Textarea.
-            if ($tag === 'textarea') {
-                $postdata[$name] = $field->getValue();
-                continue;
-            }
-
-            // Default fields.
-            if (($value = $field->getAttribute('value')) !== null) {
+            } else if ($value !== null) {
                 $postdata[$name] = $value;
             }
         }
 
         return $postdata;
+    }
+
+    /**
+     * Get every field the given form submits, including any associated with it by id from elsewhere on the page.
+     *
+     * @param NodeElement $form the form.
+     * @return NodeElement[] the fields.
+     */
+    protected function get_form_fields(NodeElement $form): array {
+        $fields = $form->findAll('css', 'input, select, textarea');
+
+        if ($formid = $form->getAttribute('id')) {
+            $selector = "input[form='{$formid}'], select[form='{$formid}'], textarea[form='{$formid}']";
+            $fields = array_merge($fields, $this->getSession()->getPage()->findAll('css', $selector));
+        }
+
+        // A field inside the form can also name it, so drop anything we have seen already.
+        $unique = [];
+        foreach ($fields as $field) {
+            $unique[$field->getXpath()] = $field;
+        }
+
+        return array_values($unique);
     }
 }
