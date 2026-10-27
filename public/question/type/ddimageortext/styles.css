@@ -191,12 +191,12 @@ form.mform fieldset#id_previewareaheader .group8 {
 /* Editing form. Style repeated elements*/
 /*Top*/
 body#page-question-type-ddimageortext div[id^=fgroup_id_][id*=drags_] {
-    background: #eee;
+    background-color: var(--mds-bg-surface-strong);
     margin-top: 0;
     margin-bottom: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--mds-border-default);
     border-bottom: 0;
 }
 
@@ -205,23 +205,23 @@ body#page-question-type-ddimageortext div[id^=fgroup_id_][id*=drags_] .fgrouplab
 }
 /* Middle */
 body#page-question-type-ddimageortext div[id^=fitem_id_][id*=dragitem_] {
-    background: #eee;
+    background-color: var(--mds-bg-surface-strong);
     margin-bottom: 0;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--mds-border-default);
     border-top: 0;
     border-bottom: 0;
 }
 /* Bottom */
 body#page-question-type-ddimageortext div[id^=fitem_id_][id*=draglabel_] {
-    background: #eee;
+    background-color: var(--mds-bg-surface-strong);
     margin-bottom: 2em;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--mds-border-default);
     border-top: 0;
 }
 
@@ -233,4 +233,3 @@ div[id^="fitem_id_dragitem_"].mb-3 {
 }
 
 /* stylelint-enable declaration-no-important  */
-

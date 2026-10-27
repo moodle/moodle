@@ -189,12 +189,12 @@ form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
 /* Editing form. Style repeated elements*/
 /*Top*/
 body#page-question-type-ddmarker div[id^=fitem_id_][id*=hint_] {
-    background: #eee;
+    background-color: var(--mds-bg-surface-strong);
     margin-top: 0;
     margin-bottom: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--mds-border-default);
     border-bottom: 0;
 }
 
@@ -204,23 +204,23 @@ body#page-question-type-ddmarker div[id^=fitem_id_][id*=hint_] .fitemtitle {
 /* Middle */
 body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintoptions_],
 body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintshownumcorrect_] {
-    background: #eee;
+    background-color: var(--mds-bg-surface-strong);
     margin-bottom: 0;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--mds-border-default);
     border-top: 0;
     border-bottom: 0;
 }
 /* Bottom */
 body#page-question-type-ddmarker div[id^=fitem_id_][id*=hintclearwrong_] {
-    background: #eee;
+    background-color: var(--mds-bg-surface-strong);
     margin-bottom: 2em;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--mds-border-default);
     border-top: 0;
 }
 
