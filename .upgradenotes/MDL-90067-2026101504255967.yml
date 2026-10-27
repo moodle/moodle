@@ -1,0 +1,11 @@
+issueNumber: MDL-90067
+notes:
+  qtype:
+    - message: >-
+        The standard question types no longer hardcode colours for the repeated
+        answer, feedback and hint panels in their editing forms, so the panels
+        follow the colour mode. Question type plugins with similar rules should
+        replace them with design system tokens. For example `background-color:
+        var(--mds-bg-surface-strong)` and `border-color:
+        var(--mds-border-default)`.
+      type: changed

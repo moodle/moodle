@@ -50,3 +50,8 @@ Feature: Test editing a Short answer question
     And I should see "Newt is an OK good answer."
     And I should see "Generalfeedback: frog or toad would have been OK."
     And I should see "The correct answer is: frog"
+
+  @javascript @accessibility
+  Scenario: Edit a Short answer question and check accessibility
+    When I am on the "shortanswer-001 for editing" "core_question > edit" page logged in as teacher
+    Then the "#region-main" "css_element" should meet accessibility standards
