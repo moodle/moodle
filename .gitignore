@@ -61,3 +61,5 @@ jsconfig.json
 UPGRADING-CURRENT.md
 .phpunit.cache
 tsconfig.aliases.json
+# Local-only tooling / docker helpers (not shipped)
+/personal-resources/

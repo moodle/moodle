@@ -1,0 +1,557 @@
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="siteNav"><div class="wrap"><div class="bar">
+  <a class="logo" href="#top"><img src="{{{assets}}}/logo.webp" alt="ToBa Learn" width="168" height="48"></a>
+  <nav class="links" id="links" aria-label="Page sections">
+    <a href="#portals" data-nav>Portals</a>
+    <a href="#courses" data-nav>Courses</a>
+    <a href="#trust" data-nav>Trust</a>
+    <a href="#journey" data-nav>Journey</a>
+    <a href="#mentors" data-nav>Mentors</a>
+    <a href="#become-mentor" data-nav>Become a mentor</a>
+    <a href="#faq" data-nav>FAQ</a>
+    <a class="links-signin" href="{{{loginurl}}}" data-moodle-login>Sign in</a>
+  </nav>
+  <div class="cta">
+    <a class="btn light" href="{{{loginurl}}}" data-moodle-login>Sign in</a>
+    <a class="btn primary" href="#portals" data-nav>Explore portals</a>
+    <button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="links">Menu</button>
+  </div>
+</div></div></header>
+
+<main id="main">
+<div id="top"></div>
+<!-- HERO -->
+<div class="hero" id="hero"><div class="wrap"><div class="stage" id="stage">
+  <img class="bg" src="{{{assets}}}/hero.webp" alt="">
+  <div class="hero-grid">
+    <div class="hero-copy reveal">
+      <span class="pill">Employer upskilling · College fellowship</span>
+      <h1>Learning that leaves <span class="word" id="word">evidence</span>.</h1>
+      <p>Two portals. One honest standard. Nana Nova guides the craft; Dot Dot keeps every learner moving.</p>
+      <div class="row"><a class="btn primary" href="{{{loginurl}}}" data-moodle-login>Continue to sign in</a><a class="btn glass" href="#courses" data-nav>See courses</a></div>
+      <div class="hero-cast">
+        <span class="cast"><img src="{{{assets}}}/prof.webp" alt=""><b>Nana Nova</b><small>Expert guide</small></span>
+        <span class="cast"><img src="{{{assets}}}/bot.webp" alt=""><b>Dot Dot</b><small>Eager learner</small></span>
+      </div>
+    </div>
+    <div class="cont-card reveal" id="contCard">
+      <div class="top"><span class="eyebrow">Continue</span><span class="chip">Phase 1</span></div>
+      <h3>Foundations · Lesson 3</h3><p class="muted" style="font-size:14.5px">Evidence &amp; problem statements</p>
+      <div class="stats"><div class="stat"><b id="orbitPct">28%</b><span>Progress</span></div><div class="stat"><b>2</b><span>Courses</span></div><div class="stat"><b>P1</b><span>Phase</span></div></div>
+      <div class="pbar"><i id="heroBar"></i></div>
+      <button class="btn primary" id="resumeHero">Resume lesson</button>
+      <div class="saved" id="savedHero" aria-live="polite"></div>
+    </div>
+  </div>
+</div></div></div>
+
+<!-- PORTALS -->
+<section id="portals"><div class="wrap">
+  <div class="sec-head reveal"><div class="l"><span class="eyebrow">Two ways in</span><h2>One Learn account. Two portals.</h2></div>
+    <p class="muted" style="max-width:440px">Sign in once with Moodle. Your enrolment decides which portal you see — employer cohort or fellowship programme. The course bar stays the same.</p></div>
+
+  <div class="portal-shared reveal" role="group" aria-label="Shared across both portals">
+    <span class="portal-shared-lab">Same on both portals</span>
+    <ul>
+      <li><iconify-icon icon="hugeicons:book-open-01" width="18" height="18" aria-hidden="true"></iconify-icon><b>Assigned courses only</b><span>No open marketplace</span></li>
+      <li><iconify-icon icon="hugeicons:task-01" width="18" height="18" aria-hidden="true"></iconify-icon><b>Four gates</b><span>Foundations → Demo Day</span></li>
+      <li><iconify-icon icon="hugeicons:award-01" width="18" height="18" aria-hidden="true"></iconify-icon><b>70 / 100 pass</b><span>Same rubric for every gate</span></li>
+      <li><iconify-icon icon="hugeicons:certificate-01" width="18" height="18" aria-hidden="true"></iconify-icon><b>Certificate</b><span>Only when criteria are met</span></li>
+    </ul>
+  </div>
+
+  <div class="portal-switch reveal" role="tablist" aria-label="Choose portal">
+    <button type="button" class="on" role="tab" id="tabEmployer" aria-selected="true" aria-controls="portal-employer" data-portal="employer">
+      <iconify-icon icon="hugeicons:building-03" width="18" height="18" aria-hidden="true"></iconify-icon> Employer
+    </button>
+    <button type="button" role="tab" id="tabFellow" aria-selected="false" aria-controls="portal-fellow" data-portal="fellow">
+      <iconify-icon icon="hugeicons:graduation-scroll" width="18" height="18" aria-hidden="true"></iconify-icon> Fellowship
+    </button>
+  </div>
+
+  <div class="portal-panels">
+    <article class="portal-card on" id="portal-employer" role="tabpanel" aria-labelledby="tabEmployer">
+      <div class="portal-media">
+        <img src="{{{assets}}}/employer-trust.webp" alt="Employer teams learning with structured assigned courses">
+        <span class="portal-media-lab"><iconify-icon icon="hugeicons:building-03" width="16" height="16" aria-hidden="true"></iconify-icon> Employer</span>
+      </div>
+      <div class="portal-content">
+        <div class="portal-head">
+          <span class="chip">For organisations</span>
+          <h3>Employer portal</h3>
+          <p class="muted">Upskill assigned employee cohorts with mentor-reviewed evidence — not vanity completion dashboards.</p>
+        </div>
+        <dl class="portal-facts">
+          <div><dt><iconify-icon icon="hugeicons:user-group" width="18" height="18" aria-hidden="true"></iconify-icon> Who it’s for</dt><dd>L&amp;D teams, managers, and employees in a cohort</dd></div>
+          <div><dt><iconify-icon icon="hugeicons:bookmark-02" width="18" height="18" aria-hidden="true"></iconify-icon> Who assigns courses</dt><dd>Your employer or programme admin</dd></div>
+          <div><dt><iconify-icon icon="hugeicons:view" width="18" height="18" aria-hidden="true"></iconify-icon> After sign-in</dt><dd>Only the tracks assigned to your cohort</dd></div>
+          <div><dt><iconify-icon icon="hugeicons:chart-line-data-01" width="18" height="18" aria-hidden="true"></iconify-icon> Progress visibility</dt><dd>Managers see phase status; learners see mentor notes</dd></div>
+          <div><dt><iconify-icon icon="hugeicons:flag-01" width="18" height="18" aria-hidden="true"></iconify-icon> Finish line</dt><dd>Capstone reviewed against the published rubric</dd></div>
+        </dl>
+        <div class="portal-foot">
+          <a class="btn primary" href="{{{loginurl}}}" data-moodle-login>Sign in to Learn <iconify-icon icon="hugeicons:arrow-right-01" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+          <span class="muted portal-note">Opens Moodle. Your employer enrolment loads this portal.</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="portal-card" id="portal-fellow" role="tabpanel" aria-labelledby="tabFellow" hidden>
+      <div class="portal-media">
+        <img src="{{{assets}}}/fellowship-bridge.webp" alt="Fellowship bridge from campus learning to real craft">
+        <span class="portal-media-lab"><iconify-icon icon="hugeicons:graduation-scroll" width="16" height="16" aria-hidden="true"></iconify-icon> Fellowship</span>
+      </div>
+      <div class="portal-content">
+        <div class="portal-head">
+          <span class="chip">For colleges &amp; fellows</span>
+          <h3>Fellowship portal</h3>
+          <p class="muted">Bridge campus to craft — guided projects, labelled simulations, and a Demo Day you can defend.</p>
+        </div>
+        <dl class="portal-facts">
+          <div><dt><iconify-icon icon="hugeicons:user-group" width="18" height="18" aria-hidden="true"></iconify-icon> Who it’s for</dt><dd>College fellows and programme mentors</dd></div>
+          <div><dt><iconify-icon icon="hugeicons:bookmark-02" width="18" height="18" aria-hidden="true"></iconify-icon> Who assigns courses</dt><dd>Your college or fellowship programme</dd></div>
+          <div><dt><iconify-icon icon="hugeicons:view" width="18" height="18" aria-hidden="true"></iconify-icon> After sign-in</dt><dd>Only the tracks assigned to your cohort</dd></div>
+          <div><dt><iconify-icon icon="hugeicons:chart-line-data-01" width="18" height="18" aria-hidden="true"></iconify-icon> Progress visibility</dt><dd>Phase record + mentor change notes before each gate</dd></div>
+          <div><dt><iconify-icon icon="hugeicons:flag-01" width="18" height="18" aria-hidden="true"></iconify-icon> Finish line</dt><dd>Demo Day — defend artifacts in the room</dd></div>
+        </dl>
+        <div class="portal-foot">
+          <a class="btn primary" href="{{{loginurl}}}" data-moodle-login>Sign in to Learn <iconify-icon icon="hugeicons:arrow-right-01" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+          <span class="muted portal-note">Opens Moodle. Your fellowship enrolment loads this portal.</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</div></section>
+
+<!-- COURSES HIGHLIGHT -->
+<section id="courses" class="courses"><div class="wrap">
+  <div class="sec-head reveal"><div class="l"><span class="eyebrow">Courses</span><h2>Five programme tracks.</h2></div>
+    <p class="muted" style="max-width:400px">Click a card for full details. After sign-in you only see tracks your employer or programme assigns — never an open marketplace.</p></div>
+
+  <div class="course-rules reveal" role="group" aria-label="How every course works">
+    <span class="course-rules-lab">True for every track</span>
+    <ul>
+      <li><iconify-icon icon="hugeicons:bookmark-02" width="18" height="18" aria-hidden="true"></iconify-icon><b>Assigned only</b><span>No open marketplace</span></li>
+      <li><iconify-icon icon="hugeicons:task-01" width="18" height="18" aria-hidden="true"></iconify-icon><b>Four gates</b><span>20% · 25% · 20% · 35%</span></li>
+      <li><iconify-icon icon="hugeicons:award-01" width="18" height="18" aria-hidden="true"></iconify-icon><b>Pass bar</b><span>70 / 100 each gate</span></li>
+      <li><iconify-icon icon="hugeicons:flag-01" width="18" height="18" aria-hidden="true"></iconify-icon><b>Capstone</b><span>Reviewer can open cold</span></li>
+    </ul>
+  </div>
+
+  <div class="course-list" id="trackRow" aria-label="Programme tracks"></div>
+
+  <div class="finder reveal" id="finder">
+    <div class="finder-aside">
+      <span class="eyebrow">Track finder</span>
+      <h3>Need a starting suggestion?</h3>
+      <p class="muted">Three questions. A suggested track. Your admin still decides what you are assigned.</p>
+      <div class="steps-dots" id="dots"><i></i><i></i><i></i></div>
+    </div>
+    <div class="body">
+      <div class="bubble" id="fBubble" aria-live="polite"></div>
+      <div class="opts" id="fOpts"></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- TRUST -->
+<section id="trust"><div class="wrap">
+  <div class="sec-head reveal"><div class="l"><span class="eyebrow">Trust, shown not claimed</span><h2>Real guidance. Real review.</h2></div>
+    <p class="muted" style="max-width:400px">Nana Nova holds the standard. Dot Dot walks with every learner. We show culture — never fake placement stats.</p></div>
+  <div class="trust-hero reveal">
+    <img src="{{{assets}}}/trust-duo.webp" alt="Nana Nova and Dot Dot reviewing a holographic learning dashboard together">
+    <div class="trust-hero-copy">
+      <span class="eyebrow">Meet your guides</span>
+      <h3>Expert craft. Eager learning.</h3>
+      <p class="muted"><b>Nana Nova</b> is the expert with the glowing staff — rubrics, change notes, honest finish lines. <b>Dot Dot</b> is eager to learn — tips, progress, the next quest.</p>
+      <div class="hero-cast">
+        <span class="cast"><img src="{{{assets}}}/prof.webp" alt=""><b>Nana Nova</b><small>Expert · Mentor voice</small></span>
+        <span class="cast"><img src="{{{assets}}}/bot.webp" alt=""><b>Dot Dot</b><small>Companion · Learner energy</small></span>
+      </div>
+    </div>
+  </div>
+  <div class="trust-grid">
+    <button class="tcard reveal" aria-expanded="false"><img src="{{{assets}}}/employer-trust.webp" alt="Employees learning with Nana Nova in a workplace"><span class="lab">EMPLOYER</span><span class="txt"><b>Team upskilling</b>Assigned courses that stick<span class="more">Managers see phase progress. Employees get change notes they can apply before the next gate.</span></span></button>
+    <button class="tcard reveal" aria-expanded="false"><img src="{{{assets}}}/mentor-review.webp" alt="Nana Nova mentoring a learner while Dot Dot watches"><span class="lab">MENTOR</span><span class="txt"><b>Review that teaches</b>Rubric + written notes<span class="more">Nana Nova’s model: score the evidence, name one concrete next step, reopen when needed.</span></span></button>
+    <button class="tcard reveal" aria-expanded="false"><img src="{{{assets}}}/fellowship-bridge.webp" alt="Fellowship demo moment with Nana Nova and Dot Dot"><span class="lab">FELLOWSHIP</span><span class="txt"><b>Campus to craft</b>Defend artifacts, not slides<span class="more">The fellowship ends with demo day — tradeoffs challenged in the room, Dot Dot cheering every attempt.</span></span></button>
+  </div>
+  <div class="chips" role="group" aria-label="Our commitments">
+    <button class="chip" aria-pressed="false" data-note="You only see courses your cohort or employer assigns — there is no open shop to scroll.">Assigned courses only</button>
+    <button class="chip" aria-pressed="false" data-note="A certificate is issued only after published criteria are met and issuing is confirmed.">Certificate when ready</button>
+    <button class="chip" aria-pressed="false" data-note="Structured learning for teams and fellows. No job, placement or income is promised.">Jobs never implied</button>
+    <button class="chip" aria-pressed="false" data-note="Cohorts share calendars and announcements. No public rankings or leaderboards.">Cohort visibility</button>
+  </div>
+  <p class="chip-note" id="chipNote" aria-live="polite"></p>
+</div></section>
+
+<!-- DEMO BAND -->
+<div class="wrap"><div class="band reveal" id="band"><img src="{{{assets}}}/demo.webp" alt="" id="bandImg">
+  <div><span class="k">DEMO DAY</span><h2>Present work a room can challenge.</h2><p>Employers and fellows finish the same way — defense of artifacts against the published rubric.</p></div></div></div>
+
+<!-- JOURNEY -->
+<section id="journey" class="journey"><div class="wrap">
+  <div class="sec-head reveal"><div class="l"><span class="eyebrow">The spine</span><h2>Four gates. One honest arc.</h2></div>
+    <p class="muted" style="max-width:380px">Every track runs the same sequence. A gate unlocks only after the previous one passes at 70/100.</p></div>
+  <div class="jgrid">
+    <div class="gate-rail" role="tablist" aria-label="Learning phases" id="gates"></div>
+    <div class="gate-detail reveal">
+      <div class="gate-detail-top">
+        <span class="eyebrow" id="jCount">Gate 1 of 4</span>
+        <span class="chip" id="jWeight">20% of arc</span>
+      </div>
+      <h3 id="jTitle">Foundations</h3>
+      <p class="muted" id="jSummary"></p>
+      <div class="gate-meta">
+        <div><span class="muted">You submit</span><b id="jSubmit">—</b></div>
+        <div><span class="muted">Unlock rule</span><b id="jUnlock">—</b></div>
+        <div><span class="muted">Pass bar</span><b>70 / 100</b></div>
+      </div>
+      <p class="gate-say" id="jBubble" aria-live="polite"></p>
+      <div class="spine" aria-hidden="true"><i id="spine"></i></div>
+      <div class="jctrl">
+        <button type="button" class="btn light" id="jPrev"><iconify-icon icon="hugeicons:arrow-left-01" width="18" height="18" aria-hidden="true"></iconify-icon> Back</button>
+        <button type="button" class="btn primary" id="jNext">Next gate <iconify-icon icon="hugeicons:arrow-right-01" width="18" height="18" aria-hidden="true"></iconify-icon></button>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- PRODUCT / DASHBOARD -->
+<section id="product"><div class="wrap">
+  <div class="sec-head reveal"><div class="l"><span class="eyebrow">Inside the product</span><h2>Dashboard after sign-in.</h2></div><a class="btn primary" href="{{{loginurl}}}" data-moodle-login>Open Learn</a></div>
+  <div class="window reveal">
+    <div class="wtop"><i></i><i></i><i></i><span class="url">learn.toba-tech.ai / my</span></div>
+    <div class="wbody">
+      <div class="wside" role="tablist" aria-label="Dashboard views">
+        <button type="button" class="on" data-panel="p-home" role="tab" aria-selected="true"><iconify-icon icon="hugeicons:home-01" width="18" height="18" aria-hidden="true"></iconify-icon><span>Home</span></button>
+        <button type="button" data-panel="p-course" role="tab" aria-selected="false"><iconify-icon icon="hugeicons:book-open-01" width="18" height="18" aria-hidden="true"></iconify-icon><span>Course</span></button>
+        <button type="button" data-panel="p-feedback" role="tab" aria-selected="false"><iconify-icon icon="hugeicons:note-01" width="18" height="18" aria-hidden="true"></iconify-icon><span>Feedback</span></button>
+        <button type="button" data-panel="p-portfolio" role="tab" aria-selected="false"><iconify-icon icon="hugeicons:folder-01" width="18" height="18" aria-hidden="true"></iconify-icon><span>Portfolio</span></button>
+      </div>
+      <div class="wmain">
+        <div class="wpanel on" id="p-home">
+          <div class="dash-head">
+            <div>
+              <h3>Good afternoon, Aisha</h3>
+              <p class="muted">Employer portal · Product Management · sample learner</p>
+            </div>
+            <span class="chip">Phase 1 · Foundations</span>
+          </div>
+          <div class="dash-stats">
+            <div class="dstat"><b id="dashPct">28%</b><span>Course progress</span></div>
+            <div class="dstat"><b>1</b><span>Assigned course</span></div>
+            <div class="dstat"><b>0</b><span>Open reviews</span></div>
+            <div class="dstat"><b>70</b><span>Pass bar</span></div>
+          </div>
+          <div class="wgrid">
+            <div class="wcard">
+              <span class="eyebrow">Continue where you left</span>
+              <h3>Foundations · Lesson 3 — Evidence</h3>
+              <p class="muted" style="font-size:14px;margin:6px 0 12px">Evidence &amp; problem statements</p>
+              <div class="pbar" style="background:#fff"><i id="winBar"></i></div>
+              <button type="button" class="btn primary" id="resumeWin" style="margin-top:14px">Resume lesson</button>
+              <div class="saved" id="savedWin" style="text-align:left" aria-live="polite"></div>
+            </div>
+            <div class="wcard">
+              <span class="eyebrow">Assigned to you</span>
+              <div class="dash-course">
+                <div class="dash-course-thumb" aria-hidden="true"><iconify-icon icon="hugeicons:task-01" width="22" height="22"></iconify-icon></div>
+                <div>
+                  <b>Product Management</b>
+                  <span class="muted">Four gates · ~28h · Capstone required</span>
+                </div>
+              </div>
+              <div class="mini-gates">
+                <span class="on">1</span><span>2</span><span>3</span><span>4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="wpanel" id="p-course">
+          <div class="dash-head">
+            <div><h3>Product Management</h3><p class="muted">Assigned course · four phases must each pass at 70+</p></div>
+            <span class="chip">In progress</span>
+          </div>
+          <div class="phase-board" id="phaseBoard">
+            <div class="phase-row current"><span class="pn">01</span><div><b>Foundations</b><small>Skill lessons + practice checks</small></div><span class="pst on">In progress</span></div>
+            <div class="phase-row"><span class="pn">02</span><div><b>Guided project</b><small>Milestones with mentor checkpoints</small></div><span class="pst">Locked</span></div>
+            <div class="phase-row"><span class="pn">03</span><div><b>Industry simulation</b><small>Labelled simulated client change</small></div><span class="pst">Locked</span></div>
+            <div class="phase-row"><span class="pn">04</span><div><b>Demo day</b><small>Defend the capstone in the room</small></div><span class="pst">Locked</span></div>
+          </div>
+        </div>
+        <div class="wpanel" id="p-feedback">
+          <div class="dash-head">
+            <div>
+              <h3>Mentor feedback</h3>
+              <p class="muted">Sample learner view after sign-in. Rubric scores + one written change note. Attempts stay on record.</p>
+            </div>
+            <span class="chip">Gate 1 · Foundations</span>
+          </div>
+
+          <div class="fb-meta">
+            <div><span class="muted">Submission</span><b>Evidence brief</b></div>
+            <div><span class="muted">Attempt</span><b>1 of open</b></div>
+            <div><span class="muted">Status</span><b class="fb-status-warn">Changes requested</b></div>
+            <div><span class="muted">Next unlock</span><b>Guided project after 70+</b></div>
+          </div>
+
+          <div class="fb-card">
+            <div class="fb-top">
+              <div>
+                <span class="eyebrow">Released review</span>
+                <h3>Foundations · Evidence brief</h3>
+                <p class="muted" style="font-size:13.5px;margin-top:4px">Product Management · same rubric for employer &amp; fellowship</p>
+              </div>
+              <span class="verdict no">Below 70</span>
+            </div>
+
+            <div class="fb-scores fb-scores-bars">
+              <div>
+                <div class="fb-score-row"><span>Evidence / framing</span><b>18/30</b></div>
+                <div class="fb-bar"><i style="width:60%"></i></div>
+              </div>
+              <div>
+                <div class="fb-score-row"><span>Acceptance coverage</span><b>15/25</b></div>
+                <div class="fb-bar"><i style="width:60%"></i></div>
+              </div>
+              <div>
+                <div class="fb-score-row"><span>Prioritisation / tradeoffs</span><b>16/25</b></div>
+                <div class="fb-bar"><i style="width:64%"></i></div>
+              </div>
+              <div>
+                <div class="fb-score-row"><span>Communication / test plan</span><b>12/20</b></div>
+                <div class="fb-bar"><i style="width:60%"></i></div>
+              </div>
+            </div>
+
+            <div class="fb-total">
+              <div><span>Total</span><b>61 / 100</b></div>
+              <span class="muted">Pass bar 70 — gate stays closed until criteria met</span>
+            </div>
+
+            <div class="fb-note">
+              <span class="eyebrow">Change note (required before resubmit)</span>
+              <p><b>Change:</b> Name one assumption you cannot yet evidence, and add a source or interview note.</p>
+              <p><b>Keep:</b> Clear problem statement — do not rewrite that section.</p>
+            </div>
+
+            <div class="fb-actions">
+              <span class="btn primary" style="pointer-events:none">Resubmit attempt 2</span>
+              <span class="muted" style="font-size:13px">Earlier attempt 1 stays visible to you and your mentor.</span>
+            </div>
+          </div>
+
+          <div class="fb-history">
+            <span class="eyebrow">Attempt record</span>
+            <div class="fb-hist-row">
+              <span class="pn">01</span>
+              <div><b>Attempt 1 · Evidence brief</b><small>Scored 61/100 · changes requested</small></div>
+              <span class="pst">Released</span>
+            </div>
+            <div class="fb-hist-row muted-row">
+              <span class="pn">02</span>
+              <div><b>Attempt 2</b><small>Opens after you resubmit</small></div>
+              <span class="pst">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="wpanel" id="p-portfolio">
+          <div class="dash-head">
+            <div><h3>Portfolio</h3><p class="muted">Artifacts a reviewer can open without buying tools.</p></div>
+          </div>
+          <div class="port-grid">
+            <div class="port-item"><iconify-icon icon="hugeicons:file-01" width="20" height="20" aria-hidden="true"></iconify-icon><div><b>Evidence brief</b><small>Foundations · draft</small></div><span class="pst">Saved</span></div>
+            <div class="port-item"><iconify-icon icon="hugeicons:folder-01" width="20" height="20" aria-hidden="true"></iconify-icon><div><b>Capstone pack</b><small>Not started</small></div><span class="pst">—</span></div>
+            <div class="port-item"><iconify-icon icon="hugeicons:note-01" width="20" height="20" aria-hidden="true"></iconify-icon><div><b>Change log</b><small>Simulation · locked</small></div><span class="pst">Locked</span></div>
+            <div class="port-item"><iconify-icon icon="hugeicons:certificate-01" width="20" height="20" aria-hidden="true"></iconify-icon><div><b>Certificate</b><small>Issued when criteria met</small></div><span class="pst">Pending</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- MENTORS / FEEDBACK MODEL -->
+<section id="mentors" class="mentors"><div class="wrap">
+  <div class="sec-head reveal"><div class="l"><span class="eyebrow">Feedback model</span><h2>How mentor review actually works.</h2></div>
+    <p class="muted" style="max-width:420px">Every released review has rubric scores, a pass/fail against 70, and a written change note. Attempts stay on record — no silent overwrites.</p></div>
+
+  <div class="fb-process reveal" role="list">
+    <div class="fb-step" role="listitem">
+      <span class="bn">1</span>
+      <div><b>You submit evidence</b><p class="muted">Gate artifact for the current phase — draft, pack, or demo materials.</p></div>
+    </div>
+    <div class="fb-step" role="listitem">
+      <span class="bn">2</span>
+      <div><b>Mentor scores the rubric</b><p class="muted">Published criteria only. Same weights for employer and fellowship cohorts.</p></div>
+    </div>
+    <div class="fb-step" role="listitem">
+      <span class="bn">3</span>
+      <div><b>Change note is released</b><p class="muted">One concrete change to make. Strengths can be named; the gate still needs 70+.</p></div>
+    </div>
+    <div class="fb-step" role="listitem">
+      <span class="bn">4</span>
+      <div><b>You resubmit or unlock</b><p class="muted">Below 70 → reopen attempt. At 70+ → next gate unlocks. Prior attempts remain visible.</p></div>
+    </div>
+  </div>
+
+  <div class="mentor-grid">
+    <div class="mentor-visual reveal">
+      <img src="{{{assets}}}/mentor-review.webp" alt="Mentor reviewing learner evidence against a published rubric">
+      <div class="mentor-badge">
+        <iconify-icon icon="hugeicons:note-01" width="22" height="22" aria-hidden="true"></iconify-icon>
+        <div><b>Review record</b><small>Scores + note + attempt history</small></div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="rubric" id="rubric">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-wrap:wrap">
+          <span class="eyebrow">Interactive sample · Product rubric</span>
+          <span class="chip">Pass at 70 / 100</span>
+        </div>
+        <p class="muted" style="font-size:14px;margin-bottom:8px">Drag each criterion the way a mentor would. Verdict updates live — same bar learners see after sign-in.</p>
+        <div id="crits"></div>
+        <div class="total"><span>Total <b id="tot">60</b><span class="muted">/100</span></span><span class="verdict no" id="verdict">Changes requested</span></div>
+      </div>
+      <ul class="ticks" style="margin-top:18px">
+        <li><iconify-icon icon="hugeicons:tick-02" width="18" height="18" aria-hidden="true"></iconify-icon>Rubric scores are released with the note</li>
+        <li><iconify-icon icon="hugeicons:tick-02" width="18" height="18" aria-hidden="true"></iconify-icon>Below 70 keeps the next gate locked</li>
+        <li><iconify-icon icon="hugeicons:tick-02" width="18" height="18" aria-hidden="true"></iconify-icon>Earlier attempts stay on the learner record</li>
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<!-- BECOME A MENTOR -->
+<section id="become-mentor" class="become-mentor"><div class="wrap">
+  <div class="sec-head reveal"><div class="l"><span class="eyebrow">Join the review team</span><h2>Want to be a mentor?</h2></div>
+    <p class="muted" style="max-width:400px">We guide you through a short application, then our team contacts you for onboarding and track matching.</p></div>
+
+  <article class="become-card reveal">
+    <div class="become-media">
+      <img src="{{{assets}}}/mentor-review.webp" alt="Mentor reviewing learner evidence against a rubric">
+      <span class="portal-media-lab"><iconify-icon icon="hugeicons:user-group" width="16" height="16" aria-hidden="true"></iconify-icon> Mentors</span>
+    </div>
+    <div class="become-content">
+      <div class="portal-head" style="padding-top:22px">
+        <span class="chip">Application</span>
+        <h3>How mentoring works here</h3>
+        <p class="muted">Mentors score evidence against published rubrics, write change notes learners can apply, and hold the same 70/100 bar for employer and fellowship cohorts.</p>
+      </div>
+      <ol class="become-steps">
+        <li>
+          <span class="bn">1</span>
+          <div><b>Apply on the Google Form</b><span class="muted">Tell us your background, tracks you can review, and availability.</span></div>
+        </li>
+        <li>
+          <span class="bn">2</span>
+          <div><b>We review your details</b><span class="muted">Our team reads your submission and checks fit for open mentor seats.</span></div>
+        </li>
+        <li>
+          <span class="bn">3</span>
+          <div><b>We contact you</b><span class="muted">Next steps: intro call, rubric walkthrough, then access to review in Learn.</span></div>
+        </li>
+      </ol>
+      <div class="portal-foot">
+        <a class="btn primary" href="{{{mentorformurl}}}" target="_blank" rel="noopener noreferrer">
+          Apply to be a mentor <iconify-icon icon="hugeicons:arrow-right-01" width="16" height="16" aria-hidden="true"></iconify-icon>
+        </a>
+        <span class="muted portal-note">Opens a Google Form in a new tab. After you submit, we contact you — no Moodle account is created from the form alone.</span>
+      </div>
+    </div>
+  </article>
+</div></section>
+
+<!-- OUTCOMES / PORTFOLIO -->
+<section id="outcomes"><div class="wrap">
+  <div class="sec-head reveal"><div class="l"><span class="eyebrow">What you leave with</span><h2>A portfolio you can open cold.</h2></div>
+    <p class="muted" style="max-width:400px">Not attendance theatre — files, links, phase markers, and mentor notes from real reviews.</p></div>
+  <div class="outcome-grid reveal">
+    <article class="out-card">
+      <span class="oi"><iconify-icon icon="hugeicons:folder-01" width="22" height="22" aria-hidden="true"></iconify-icon></span>
+      <h3>Portfolio evidence</h3>
+      <p class="muted">Capstone and case study as files or links a reviewer can open without paid tools.</p>
+      <ul class="ticks tight">
+        <li><iconify-icon icon="hugeicons:tick-02" width="16" height="16" aria-hidden="true"></iconify-icon>Source + write-up</li>
+        <li><iconify-icon icon="hugeicons:tick-02" width="16" height="16" aria-hidden="true"></iconify-icon>Honest limits stated</li>
+      </ul>
+    </article>
+    <article class="out-card">
+      <span class="oi"><iconify-icon icon="hugeicons:task-01" width="22" height="22" aria-hidden="true"></iconify-icon></span>
+      <h3>Phase record</h3>
+      <p class="muted">Each gate shows reviewed, pending, or not yet met — taken from grades, never invented.</p>
+      <ul class="ticks tight">
+        <li><iconify-icon icon="hugeicons:tick-02" width="16" height="16" aria-hidden="true"></iconify-icon>Foundations → Demo Day</li>
+        <li><iconify-icon icon="hugeicons:tick-02" width="16" height="16" aria-hidden="true"></iconify-icon>70+ required per gate</li>
+      </ul>
+    </article>
+    <article class="out-card">
+      <span class="oi"><iconify-icon icon="hugeicons:note-01" width="22" height="22" aria-hidden="true"></iconify-icon></span>
+      <h3>Mentor notes</h3>
+      <p class="muted">Rubric scores plus written change notes, including earlier attempts kept on record.</p>
+      <ul class="ticks tight">
+        <li><iconify-icon icon="hugeicons:tick-02" width="16" height="16" aria-hidden="true"></iconify-icon>Score the evidence</li>
+        <li><iconify-icon icon="hugeicons:tick-02" width="16" height="16" aria-hidden="true"></iconify-icon>Name one next change</li>
+      </ul>
+    </article>
+    <article class="out-card">
+      <span class="oi"><iconify-icon icon="hugeicons:certificate-01" width="22" height="22" aria-hidden="true"></iconify-icon></span>
+      <h3>Certificate</h3>
+      <p class="muted">Issued only when published criteria are met and issuing is confirmed. Until then, results speak.</p>
+      <ul class="ticks tight">
+        <li><iconify-icon icon="hugeicons:tick-02" width="16" height="16" aria-hidden="true"></iconify-icon>All gates passed</li>
+        <li><iconify-icon icon="hugeicons:tick-02" width="16" height="16" aria-hidden="true"></iconify-icon>Issuing switched on</li>
+      </ul>
+    </article>
+  </div>
+</div></section>
+
+<!-- FAQ -->
+<section id="faq" style="background:#fff"><div class="wrap faq-grid">
+  <div class="faq-prof reveal"><div class="bubble" id="faqBubble" aria-live="polite">Open a question — Nana Nova will give you the short version. Dot Dot is listening too.</div><img id="faqProf" src="{{{assets}}}/prof.webp" alt="Nana Nova"></div>
+  <div class="reveal">
+    <span class="eyebrow">FAQ</span><h2 style="margin:14px 0 24px">Straight answers.</h2>
+    <div id="faqList"></div>
+  </div>
+</div></section>
+
+<!-- CTA -->
+<section style="padding-top:24px"><div class="wrap"><div class="cta-band reveal"><img class="bg" src="{{{assets}}}/cta.webp" alt="">
+  <h2>Enter your portal.</h2><p>Employer upskilling or fellowship bridge — sign in to see only what is assigned.</p><a class="btn light" href="{{{loginurl}}}" data-moodle-login>Sign in to Learn</a></div></div></section>
+</main>
+
+<footer class="site-foot" id="footer">
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <a class="logo" href="#top"><img src="{{{assets}}}/logo.webp" alt="ToBa Learn" width="200" height="56"></a>
+      <p class="muted">Employer and fellowship portals on one Moodle account. Assigned courses, mentor review, and proof of work.</p>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="#portals" data-nav>Portals</a>
+      <a href="#courses" data-nav>Courses</a>
+      <a href="#journey" data-nav>Journey</a>
+      <a href="#become-mentor" data-nav>Become a mentor</a>
+      <a href="#product" data-nav>Dashboard</a>
+      <a href="#outcomes" data-nav>Portfolio</a>
+      <a href="#faq" data-nav>FAQ</a>
+    </nav>
+    <div class="foot-cta">
+      <a class="btn primary" href="{{{loginurl}}}" data-moodle-login>Sign in to Learn</a>
+      <p class="muted">Your enrolment decides which portal opens.</p>
+    </div>
+  </div>
+  <div class="wrap foot-legal"><span>© ToBa Tech Solutions · ToBa Learn</span><span>Structured learning for employers and fellows — not a paid internship.</span></div>
+</footer>
+
+<!-- Dot Dot companion -->
+<div class="orbit" id="orbit">
+  <div class="say hide" id="say" role="status" aria-live="polite"><button type="button" class="x" id="sayX" aria-label="Dismiss"><iconify-icon icon="hugeicons:cancel-01" width="16" height="16" aria-hidden="true"></iconify-icon></button><span id="sayTxt"></span></div>
+  <button class="botbtn" id="botBtn" aria-label="Dot Dot, your eager guide. Click for a tip."><div class="tilt" id="tilt"><img class="bot" src="{{{assets}}}/bot.webp" alt="Dot Dot"></div></button>
+</div>
+<button class="orbit-hide" id="orbitHide">Hide Dot Dot</button>
+
+<!-- Course detail popup -->
+<div class="scrim" id="scrim" aria-hidden="true">
+  <div class="drawer course-modal" role="dialog" aria-modal="true" aria-labelledby="dTitle" id="drawer"></div>
+</div>
+<div class="toast" id="toast" role="status"></div>

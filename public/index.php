@@ -33,6 +33,15 @@ require_once($CFG->libdir .'/filelib.php');
 
 redirect_if_major_upgrade_required();
 
+// Guests see the LaunchPad marketing home (standalone HTML). Logged-in users
+// continue through the normal homepage redirects below.
+if (!defined('BEHAT_SITE_RUNNING') && !(defined('PHPUNIT_TEST') && PHPUNIT_TEST)
+        && !isloggedin()
+        && class_exists(\local_launchpad\page::class)) {
+    \local_launchpad\page::serve();
+    exit;
+}
+
 // Redirect logged-in users to homepage if required.
 $redirect = optional_param('redirect', 1, PARAM_BOOL);
 
