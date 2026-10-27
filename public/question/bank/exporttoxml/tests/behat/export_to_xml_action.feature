@@ -59,6 +59,6 @@ Feature: Use the qbank plugin manager page for exporttoxml
     And I click on "Essay Foo Bar" "checkbox"
     And I should see question bulk action "exportselected"
     And I click on question bulk action "exportselected"
-    Then following "Export as Moodle XML" button in the "#bulkactionsui-container" "css_element" should download a file that:
+    Then following "Export as Moodle XML" "button" in the "#bulkactionsui-container" "css_element" should download a file that:
       | Has mimetype                 | text/xml      |
       | Contains text in xml element | Essay Foo Bar |
