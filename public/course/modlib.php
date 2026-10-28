@@ -640,6 +640,10 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $data = $mform->get_data();
     }
 
+    // Pin identity to the capability-checked $cm, not the submitted form data.
+    $moduleinfo->coursemodule = $cm->id;
+    $moduleinfo->modulename = $cm->modname;
+
     // Attempt to include module library before we make any changes to DB.
     include_modulelib($moduleinfo->modulename);
 
