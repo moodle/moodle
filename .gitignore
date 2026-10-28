@@ -48,7 +48,6 @@ composer.phar
 /public/lib/yuilib/*/*/*-coverage.js
 atlassian-ide-plugin.xml
 /node_modules/
-/.vscode/
 moodle-plugin-ci.phar
 .eslintignore
 .stylelintignore
@@ -61,5 +60,7 @@ jsconfig.json
 UPGRADING-CURRENT.md
 .phpunit.cache
 tsconfig.aliases.json
-# Local-only tooling / docker helpers (not shipped)
+
+# Local personal notes / tooling (not part of Moodle / ToBa deploy).
 /personal-resources/
+config.bat

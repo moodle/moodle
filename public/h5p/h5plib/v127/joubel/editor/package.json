@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A general library that is supposed to be used in most PHP implementations of H5P.",
   "scripts": {
-    "build": "webpack && rm styles/css/index.js",
+    "build": "node init && webpack && rm styles/css/index.js",
     "watch": "webpack --watch"
   },
   "keywords": [],

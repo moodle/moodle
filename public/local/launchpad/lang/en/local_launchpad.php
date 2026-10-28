@@ -25,7 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'ToBa Learn LaunchPad';
-$string['privacy:metadata'] = 'The LaunchPad landing page does not store any personal data.';
+$string['privacy:metadata'] = 'The LaunchPad plugin does not store personal data beyond normal Moodle account and enrolment records.';
 $string['pagetitle'] = 'ToBa Learn · LaunchPad Fellowship';
 $string['mentorformurl'] = 'Become a mentor · Google Form URL';
 $string['mentorformurl_desc'] = 'Public Google Form link for mentor applications. Applicants are redirected here from the landing page. After they submit, your team contacts them for the next steps.';
+$string['emptystate_no_course'] = 'You do not have a LaunchPad course yet. When your place is confirmed, your programme admin will enrol you and your track will appear here.';
+$string['employee_area_title'] = 'Employee learning';
+$string['employee_area_heading'] = 'Employee area';
+$string['employee_area_body'] = 'Your employee access is active. Programme content will appear here when your organisation assigns it. This area does not enrol you in the Fellowship or grant mentor or admin rights.';
+$string['employee_access_denied'] = 'You do not have employee access. Ask your programme administrator if you expected to see this page.';
+$string['employee_cohort_name'] = 'ToBa Learn Employees';

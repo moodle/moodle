@@ -14,21 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Privacy subsystem implementation for local_launchpad.
- *
- * @package    local_launchpad
- * @copyright  2026 IntelliVerse-X
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace local_launchpad\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * This plugin stores no personal data.
+ * Privacy provider (null provider).
  *
+ * @package    local_launchpad
  * @copyright  2026 IntelliVerse-X
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

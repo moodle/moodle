@@ -50,22 +50,27 @@ class page {
 
         $pluginbase = $CFG->wwwroot . '/local/launchpad';
         $assets = $pluginbase . '/assets/img';
-        // After Moodle sign-in from this landing, land on the learner dashboard.
+        // Shared Moodle login (signup link appears on that page when registerauth is set).
         $loginurl = (new \moodle_url('/login/index.php'))->out(false);
         $dashurl = $CFG->wwwroot . '/my/';
+        // Employee CTA goes to the gated area; require_login() sends guests to Moodle login.
+        $employeeurl = (new \moodle_url('/local/launchpad/employee.php'))->out(false);
         $SESSION->wantsurl = $dashurl;
 
         // Mentor application Google Form (Site admin → Plugins → ToBa Learn LaunchPad).
         $mentorformurl = trim((string) get_config('local_launchpad', 'mentorformurl'));
-        if ($mentorformurl === '') {
-            // Replace with your live form, or set it in plugin settings.
-            $mentorformurl = 'https://docs.google.com/forms/d/e/1FAIpQLSf_REPLACE_WITH_YOUR_FORM/viewform';
+        $mentorformconfigured = ($mentorformurl !== ''
+            && !str_contains($mentorformurl, 'REPLACE_WITH_YOUR_FORM'));
+        if (!$mentorformconfigured) {
+            $mentorformurl = '';
         }
 
         $body = $OUTPUT->render_from_template('local_launchpad/body', [
             'assets' => $assets,
             'loginurl' => $loginurl,
+            'employeeurl' => $employeeurl,
             'mentorformurl' => $mentorformurl,
+            'mentorformconfigured' => $mentorformconfigured,
         ]);
 
         $cssurl = $pluginbase . '/styles.css';
