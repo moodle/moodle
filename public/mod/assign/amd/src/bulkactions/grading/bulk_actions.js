@@ -34,6 +34,7 @@ import {getString} from 'core/str';
 const Selectors = {
     selectBulkItemCheckbox: 'input[type="checkbox"][name="selectedusers"]',
     selectBulkItemTrigger: 'input[type="checkbox"][name="selectedusers"], input[type="checkbox"][name="selectall"]',
+    selectAllCheckbox: 'input[type="checkbox"][name="selectall"]',
 };
 
 export default class extends BulkActions {
@@ -244,6 +245,25 @@ export default class extends BulkActions {
     }
 
     registerItemSelectChangeEvent(eventHandler) {
+        // Ticking 'select all' must update the individual checkboxes before the bulk actions
+        // handler reads them. The legacy YUI code in mod/assign/module.js also does this, but the
+        // two modules are loaded by different loaders, so the order their 'change' listeners run
+        // in is not deterministic. When YUI lost the race the bulk actions handler saw nothing
+        // selected and tore the sticky footer down again. See MDL-83389.
+        const selectAllCheckbox = document.querySelector(Selectors.selectAllCheckbox);
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', (e) => {
+                document.querySelectorAll(Selectors.selectBulkItemCheckbox).forEach((checkbox) => {
+                    checkbox.checked = e.target.checked;
+                    const row = checkbox.closest('tr');
+                    if (row) {
+                        row.classList.toggle('selectedrow', e.target.checked);
+                        row.classList.toggle('unselectedrow', !e.target.checked);
+                    }
+                });
+            });
+        }
+
         const itemSelectCheckboxes = document.querySelectorAll(Selectors.selectBulkItemTrigger);
         itemSelectCheckboxes.forEach((checkbox) => {
             checkbox.addEventListener('change', eventHandler.bind(this));
