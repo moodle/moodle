@@ -295,6 +295,79 @@ final class modlib_test extends \advanced_testcase {
     }
 
     /**
+     * update_moduleinfo() takes the coursemodule from the passed $cm, not from the form data.
+     *
+     * @covers ::update_moduleinfo
+     */
+    public function test_update_moduleinfo_pins_coursemodule_from_cm(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $coursea = self::getDataGenerator()->create_course();
+        $courseb = self::getDataGenerator()->create_course();
+        $label = self::getDataGenerator()->create_module(
+            'label',
+            ['course' => $coursea->id, 'intro' => 'Original content', 'introformat' => FORMAT_HTML],
+        );
+        $otherlabel = self::getDataGenerator()->create_module(
+            'label',
+            ['course' => $courseb->id, 'intro' => 'Other content', 'introformat' => FORMAT_HTML],
+        );
+        $labelcm = get_coursemodule_from_id('', $label->cmid, 0, false, MUST_EXIST);
+        $othercm = get_coursemodule_from_id('', $otherlabel->cmid, 0, false, MUST_EXIST);
+
+        [$cm, $context, $module, $data, $cw] = get_moduleinfo_data($labelcm, $coursea);
+        $data->introeditor['text'] = 'Updated content';
+        $data->coursemodule = $othercm->id;
+
+        [$resultcm, $moduleinfo] = update_moduleinfo($labelcm, $data, $coursea);
+
+        $this->assertEquals($labelcm->id, $moduleinfo->coursemodule);
+        $this->assertEquals($labelcm->instance, $moduleinfo->instance);
+        $this->assertEquals('label', $moduleinfo->modulename);
+        $this->assertStringContainsString(
+            'Updated content',
+            $DB->get_field('label', 'intro', ['id' => $labelcm->instance], MUST_EXIST),
+        );
+        $this->assertEquals(
+            'Other content',
+            $DB->get_field('label', 'intro', ['id' => $othercm->instance], MUST_EXIST),
+        );
+    }
+
+    /**
+     * update_moduleinfo() takes the modulename from the passed $cm, not from the form data.
+     *
+     * @covers ::update_moduleinfo
+     */
+    public function test_update_moduleinfo_pins_modulename_from_cm(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $label = self::getDataGenerator()->create_module(
+            'label',
+            ['course' => $course->id, 'intro' => 'Original content', 'introformat' => FORMAT_HTML],
+        );
+        $labelcm = get_coursemodule_from_id('', $label->cmid, 0, false, MUST_EXIST);
+
+        [$cm, $context, $module, $data, $cw] = get_moduleinfo_data($labelcm, $course);
+        $data->introeditor['text'] = 'Updated content';
+        $data->modulename = 'url';
+
+        [$resultcm, $moduleinfo] = update_moduleinfo($labelcm, $data, $course);
+
+        $this->assertEquals('label', $moduleinfo->modulename);
+        $this->assertStringContainsString(
+            'Updated content',
+            $DB->get_field('label', 'intro', ['id' => $labelcm->instance], MUST_EXIST),
+        );
+        $this->assertEquals(0, $DB->count_records('url'));
+    }
+
+    /**
      * Test add_moduleinfo (only beforemod parameter for now).
      *
      * @covers \add_moduleinfo
