@@ -13,7 +13,7 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2400)}
 document.addEventListener('click',e=>{const a=e.target.closest('[data-toast]');if(a){e.preventDefault();toast(a.dataset.toast)}});
-/** Hugeicons (Iconify) helper — stroke-rounded set */
+/** Hugeicons (Iconify) helper, stroke-rounded set */
 const hi=(name,size=18)=>`<iconify-icon icon="hugeicons:${name}" width="${size}" height="${size}" aria-hidden="true"></iconify-icon>`;
 
 /* ----- Data ----- */
@@ -119,8 +119,15 @@ $$('.portal-switch [data-portal]').forEach(btn => btn.addEventListener('click', 
   });
 }));
 
-/* ----- Trust ----- */
-$$('.tcard').forEach(c=>c.addEventListener('click',()=>c.setAttribute('aria-expanded',c.getAttribute('aria-expanded')==='true'?'false':'true')));
+/* ----- Trust flip cards ----- */
+$$('.tcard').forEach(c=>{
+  const back=c.querySelector('.tcard-back');
+  c.addEventListener('click',()=>{
+    const open=c.getAttribute('aria-expanded')!=='true';
+    c.setAttribute('aria-expanded',open?'true':'false');
+    if(back) back.setAttribute('aria-hidden',open?'false':'true');
+  });
+});
 $$('.chips .chip').forEach(c=>c.addEventListener('click',()=>{$$('.chips .chip').forEach(x=>x.setAttribute('aria-pressed','false'));c.setAttribute('aria-pressed','true');$('#chipNote').textContent=c.dataset.note}));
 
 /* ----- Courses: 5 cards; full detail in popup ----- */
@@ -221,7 +228,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeTrack()});
 const FQ=[
  ['What do you enjoy making most?',[['Things that run by themselves',[0]],['Apps people click through',[1]],['Decisions and plans',[2,4]],['Stories that persuade',[3]]]],
  ['A friend asks for help. You…',[['Automate the boring part',[0,1]],['Ask what problem they’re really solving',[2]],['Work out who to tell, and how',[3]],['Wonder if others would pay for it',[4]]]],
- ['Which result would make you proudest?',[['A workflow a reviewer can rerun',[0]],['A form that never loses data',[1]],['A roadmap that survives tough questions',[2]],['A dossier that says “stop” — with evidence',[4,3]]]]
+ ['Which result would make you proudest?',[['A workflow a reviewer can rerun',[0]],['A form that never loses data',[1]],['A roadmap that survives tough questions',[2]],['A dossier that says “stop”, with evidence',[4,3]]]]
 ];
 let fs=0,score=[0,0,0,0,0];
 function renderFinder(){const dots=$$('#dots i');dots.forEach((d,i)=>d.classList.toggle('on',i<=fs&&fs<3||fs>=3));
@@ -230,7 +237,7 @@ function ask(){const q=FQ[fs];$('#fBubble').innerHTML=`<b>${fs+1}/3 ·</b> ${q[0
   $$('#dots i').forEach((d,i)=>d.classList.toggle('on',i<=fs));
   $$('#fOpts .opt').forEach(b=>b.onclick=()=>{q[1][+b.dataset.i][1].forEach(k=>score[k]++);fs++;setTimeout(()=>{fs<3?ask():result()},reduce?0:180)})}
 function result(){const best=score.indexOf(Math.max(...score)),t=TRACKS[best];
-  $('#fBubble').innerHTML=`Suggested start: <b>${t.n}</b> — ${t.s.toLowerCase()}. Capstone: <b>${t.cap.toLowerCase()}</b>. <span class="muted">Suggestion only; assignment comes from your programme.</span>`;
+  $('#fBubble').innerHTML=`Suggested start: <b>${t.n}</b>, ${t.s.toLowerCase()}. Capstone: <b>${t.cap.toLowerCase()}</b>. <span class="muted">Suggestion only; assignment comes from your programme.</span>`;
   $('#fOpts').innerHTML=`<button class="btn primary" id="fOpen">View ${t.n}</button><button class="btn light" id="fAgain">Try again</button>`;
   $$('.track').forEach(x=>x.classList.remove('pick'));const el=$('#track'+best);el.classList.add('pick');
   el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
@@ -377,21 +384,32 @@ document.addEventListener('click', e => {
   const href = a.getAttribute('href') || '';
   if (!href.startsWith('#')) return;
   e.preventDefault();
-  $('#links')?.classList.remove('open');
-  $('#menuBtn')?.setAttribute('aria-expanded', 'false');
+  closeMobileNav();
   goSection(href);
 });
 
 /* ----- Nav: active section + mobile menu ----- */
+function setMenuExpanded(open) {
+  const btn = $('#menuBtn');
+  const links = $('#links');
+  if (!btn || !links) return;
+  links.classList.toggle('open', open);
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+}
+function closeMobileNav() {
+  setMenuExpanded(false);
+}
 $('#menuBtn').onclick = () => {
-  const o = $('#links').classList.toggle('open');
-  $('#menuBtn').setAttribute('aria-expanded', o);
+  setMenuExpanded(!$('#links').classList.contains('open'));
 };
 document.addEventListener('click', e => {
   if (!$('#links')?.classList.contains('open')) return;
   if (e.target.closest('#links') || e.target.closest('#menuBtn')) return;
-  $('#links').classList.remove('open');
-  $('#menuBtn').setAttribute('aria-expanded', 'false');
+  closeMobileNav();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMobileNav();
 });
 
 const NAV_IDS = ['portals', 'courses', 'trust', 'journey', 'mentors', 'become-mentor', 'faq'];

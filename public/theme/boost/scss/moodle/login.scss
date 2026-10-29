@@ -147,35 +147,62 @@ $toba-body: "Gantari", system-ui, -apple-system, "Segoe UI", sans-serif;
     padding: $login-layout-panel-padding;
     display: flex;
     justify-content: center;
+    align-items: center;
     background: $toba-bg;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .login-layout-right-content {
     width: 100%;
     max-width: $login-layout-content-width;
-    margin: auto 0;
+    margin: auto;
+    box-sizing: border-box;
 }
 
 .login-container {
+    width: 100%;
+    box-sizing: border-box;
+
     .loginform,
     .toba-loginform {
         display: flex;
         flex-direction: column;
         align-items: stretch;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .login-form,
+    .login-form-username,
+    .login-form-password,
+    .login-form-submit,
+    .login-forgot,
+    .toba-fellowship-signup,
+    .toba-portal-switch {
+        width: 100%;
+        box-sizing: border-box;
     }
 }
 
 #loginlogo {
-    margin-top: -8px;
-    margin-bottom: 0.25rem;
+    margin-top: 0;
+    margin-bottom: 0.85rem;
     justify-content: center !important;
+    width: 100%;
 
     #logoimage {
+        display: block;
         height: 56px;
         width: auto;
         max-width: min(220px, 70vw);
+        margin-inline: auto;
         object-fit: contain;
     }
+}
+
+.toba-mobile-intro {
+    display: none !important;
 }
 
 .toba-portal-switch {
@@ -188,11 +215,14 @@ $toba-body: "Gantari", system-ui, -apple-system, "Segoe UI", sans-serif;
     background: #fff;
     border: 1px solid $toba-line;
     border-radius: 999px;
+    box-sizing: border-box;
     box-shadow: 0 1px 2px rgba(13, 20, 41, 0.04);
 }
 
 .toba-portal-tab {
     flex: 1 1 0;
+    min-width: 0;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -205,13 +235,24 @@ $toba-body: "Gantari", system-ui, -apple-system, "Segoe UI", sans-serif;
     font-weight: 600;
     font-size: 0.9rem;
     color: $toba-muted;
+    line-height: 1.2;
     transition: background 0.15s ease, color 0.15s ease;
+
+    span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
     &:hover,
     &:focus-visible {
         color: $toba-ink;
         background: $toba-blue-softer;
         outline: none;
+    }
+
+    &:focus-visible {
+        box-shadow: 0 0 0 0.2rem rgba(26, 97, 242, 0.25);
     }
 
     &.on {
@@ -223,6 +264,39 @@ $toba-body: "Gantari", system-ui, -apple-system, "Segoe UI", sans-serif;
             background: #0f4fd6;
             color: #fff;
         }
+    }
+}
+
+.toba-mentor-back {
+    display: none;
+    width: 100%;
+    margin: 0 0 0.85rem;
+    min-height: 44px;
+    border: 0;
+    background: transparent;
+    color: $toba-blue;
+    font-family: $toba-body;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0.35rem;
+
+    &.on,
+    body[data-toba-portal="mentor"] & {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+    }
+
+    &[hidden] {
+        display: none !important;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $toba-blue;
+        outline-offset: 2px;
+        border-radius: 8px;
     }
 }
 
@@ -257,6 +331,8 @@ $toba-body: "Gantari", system-ui, -apple-system, "Segoe UI", sans-serif;
             min-height: 2.75rem;
             box-shadow: none;
             color: $toba-ink;
+            width: 100%;
+            box-sizing: border-box;
 
             &::placeholder {
                 color: #6b778f;
@@ -273,21 +349,42 @@ $toba-body: "Gantari", system-ui, -apple-system, "Segoe UI", sans-serif;
             }
         }
 
-        .toggle-sensitive-wrapper .toggle-sensitive-btn {
-            --bs-btn-bg: #{$login-input-bg};
-            --bs-btn-border-color: #{$toba-line};
-            --bs-btn-hover-bg: #{$login-input-bg};
-            --bs-btn-hover-border-color: #{$toba-line};
-            --bs-btn-active-bg: #{$login-input-bg};
-            --bs-btn-active-border-color: #{$toba-line};
-            border-inline-start: none;
-            color: $toba-muted;
+        .toggle-sensitive-wrapper.input-group {
+            width: 100%;
+            flex-wrap: nowrap;
+            align-items: stretch;
 
-            &:focus,
-            &:focus-visible {
-                background-color: $login-input-bg;
-                border-color: $toba-blue;
-                box-shadow: 0 0 0 0.2rem rgba(26, 97, 242, 0.18);
+            > .form-control {
+                flex: 1 1 auto;
+                min-width: 0;
+                border-start-end-radius: 0;
+                border-end-end-radius: 0;
+            }
+
+            .toggle-sensitive-btn {
+                --bs-btn-bg: #{$login-input-bg};
+                --bs-btn-border-color: #{$toba-line};
+                --bs-btn-hover-bg: #{$login-input-bg};
+                --bs-btn-hover-border-color: #{$toba-line};
+                --bs-btn-active-bg: #{$login-input-bg};
+                --bs-btn-active-border-color: #{$toba-line};
+                flex: 0 0 auto;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 48px;
+                border-inline-start: none;
+                border-start-end-radius: 12px;
+                border-end-end-radius: 12px;
+                color: $toba-muted;
+
+                &:focus,
+                &:focus-visible {
+                    background-color: $login-input-bg;
+                    border-color: $toba-blue;
+                    box-shadow: 0 0 0 0.2rem rgba(26, 97, 242, 0.18);
+                    z-index: 1;
+                }
             }
         }
     }
@@ -360,13 +457,157 @@ $toba-body: "Gantari", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 @include media-breakpoint-down(lg) {
+    .pagelayout-login {
+        #page {
+            min-height: 100dvh;
+        }
+    }
+
+    // Keep the login screen clean on phones/tablets.
+    #page-footer,
+    .footer-popover,
+    .btn-footer-popover,
+    .footer-content-popover {
+        display: none !important;
+    }
+
     .login-layout-right {
-        padding: 1.5rem 1rem;
+        min-height: 100dvh;
+        padding:
+            max(1rem, env(safe-area-inset-top))
+            max(1.25rem, env(safe-area-inset-right))
+            max(1.25rem, env(safe-area-inset-bottom))
+            max(1.25rem, env(safe-area-inset-left));
+        justify-content: center;
+        align-items: center;
     }
 
     .login-layout-right-content {
-        max-width: 100%;
-        margin: 0;
+        width: 100%;
+        max-width: 420px;
+        margin: auto;
+        padding-block: 0.75rem 1.25rem;
+    }
+
+    .toba-portal-switch {
+        margin-bottom: 1.1rem;
+    }
+
+    .toba-portal-tab {
+        font-size: 0.82rem;
+        padding: 0.6rem 0.45rem;
+        gap: 0.3rem;
+    }
+
+    #loginlogo {
+        margin-bottom: 1rem;
+
+        #logoimage {
+            height: 48px;
+            max-width: min(200px, 65vw);
+        }
+    }
+
+    .toba-login-heading,
+    .toba-login-sub,
+    .toba-employer-signup-hint,
+    .toba-mentor-signup-hint,
+    .login-cookiesnotice {
+        text-align: center;
+    }
+
+    .login-container {
+        .login-form {
+            .form-label {
+                display: block;
+                width: 100%;
+                text-align: start;
+                margin-bottom: 0.35rem;
+            }
+
+            .form-control {
+                // Prevent iOS input zoom; keep readable tap targets.
+                font-size: 16px;
+                min-height: 48px;
+            }
+
+            .toggle-sensitive-wrapper.input-group {
+                width: 100%;
+
+                .toggle-sensitive-btn {
+                    min-height: 48px;
+                    min-width: 48px;
+                }
+            }
+        }
+
+        .login-forgot {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+        }
+
+        .toba-login-submit {
+            min-height: 48px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .toba-forgot-link,
+        .login-forgot a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-end;
+            min-height: 44px;
+            padding: 0.55rem 0;
+        }
+
+        .login-cookiesnotice .btn-link {
+            min-height: 44px;
+            padding: 0.55rem 0.35rem;
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .toba-login-heading {
+        font-size: 1.45rem;
+    }
+
+    .toba-login-sub {
+        font-size: 0.92rem;
+        margin-bottom: 1rem !important;
+    }
+
+    .toba-portal-tab {
+        font-size: 0.8rem;
+        padding: 0.55rem 0.35rem;
+
+        .fa {
+            font-size: 0.85rem;
+        }
+    }
+
+    .toba-fellowship-signup {
+        .toba-fellowship-actions {
+            flex-direction: column;
+        }
+
+        .toba-fellowship-signup-btn,
+        .toba-mentor-entry-btn {
+            width: 100%;
+            white-space: normal;
+            font-size: 0.92rem;
+            min-height: 48px;
+        }
+
+        .toba-btn-label-full {
+            display: none;
+        }
+
+        .toba-btn-label-short {
+            display: inline;
+        }
     }
 }
 
@@ -632,28 +873,56 @@ a.toba-portal-tab {
         display: none !important;
     }
 
-    .toba-fellowship-signup-btn {
+    .toba-fellowship-actions {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 0.65rem;
+        width: 100%;
+    }
+
+    .toba-btn-label-short {
+        display: none;
+    }
+
+    .toba-fellowship-signup-btn,
+    .toba-mentor-entry-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.55rem;
+        gap: 0.45rem;
+        flex: 1 1 0;
+        width: auto;
+        min-width: 0;
         border-radius: 999px;
-        min-height: 2.85rem;
-        padding: 0.65rem 1.25rem;
+        min-height: 44px;
+        padding: 0.65rem 0.85rem;
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: 0.88rem;
         letter-spacing: 0.01em;
-        width: 100%;
-        border: 1px solid rgba(26, 97, 242, 0.28);
-        background: linear-gradient(180deg, #f3f7ff 0%, #e8f0fe 100%);
-        color: $toba-blue;
+        white-space: nowrap;
         text-decoration: none;
-        box-shadow: 0 1px 2px rgba(13, 20, 41, 0.04), 0 6px 16px rgba(26, 97, 242, 0.1);
         transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 
         .fa {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
+
+        &:focus-visible {
+            outline: 2px solid $toba-blue;
+            outline-offset: 2px;
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+
+    .toba-fellowship-signup-btn {
+        border: 1px solid rgba(26, 97, 242, 0.28);
+        background: linear-gradient(180deg, #f3f7ff 0%, #e8f0fe 100%);
+        color: $toba-blue;
+        box-shadow: 0 1px 2px rgba(13, 20, 41, 0.04), 0 6px 16px rgba(26, 97, 242, 0.1);
 
         &:hover,
         &:focus {
@@ -666,8 +935,31 @@ a.toba-portal-tab {
         }
 
         &:active {
-            transform: translateY(0);
             box-shadow: 0 3px 10px rgba(26, 97, 242, 0.2);
+        }
+    }
+
+    .toba-mentor-entry-btn {
+        margin-top: 0;
+        border: 1px solid $toba-line;
+        background: #fff;
+        color: $toba-ink;
+        box-shadow: 0 1px 2px rgba(13, 20, 41, 0.04);
+
+        &:hover,
+        &:focus {
+            background: $toba-blue-softer;
+            border-color: darken($toba-line, 6%);
+            color: $toba-ink;
+            text-decoration: none;
+            box-shadow: 0 6px 16px rgba(13, 20, 41, 0.08);
+            transform: translateY(-1px);
+        }
+
+        &.on {
+            background: $toba-navy;
+            border-color: $toba-navy;
+            color: #fff;
         }
     }
 
@@ -679,7 +971,8 @@ a.toba-portal-tab {
     }
 }
 
-.toba-employer-signup-hint {
+.toba-employer-signup-hint,
+.toba-mentor-signup-hint {
     display: none;
     text-align: center;
     margin: 0 0 1rem;
@@ -687,18 +980,164 @@ a.toba-portal-tab {
     color: $toba-muted;
     line-height: 1.4;
 
-    &.on,
-    body[data-toba-portal="employer"] & {
-        display: block;
-    }
-
     &[hidden] {
         display: none !important;
     }
 }
 
+.toba-employer-signup-hint {
+    &.on,
+    body[data-toba-portal="employer"] & {
+        display: block;
+    }
+}
+
+.toba-mentor-signup-hint {
+    &.on,
+    body[data-toba-portal="mentor"] & {
+        display: block;
+    }
+}
+
+/* Cookie / alert modal — accurate mobile sizing on the login page */
+.pagelayout-login {
+    .login-cookiesnotice {
+        margin-top: 0.75rem;
+
+        .btn-link {
+            color: $toba-muted;
+            text-decoration: underline;
+            text-underline-offset: 0.15em;
+            font-size: 0.875rem;
+
+            &:hover,
+            &:focus-visible {
+                color: $toba-ink;
+            }
+        }
+    }
+
+    .modal {
+        .modal-dialog {
+            margin: 1rem auto;
+            max-width: min(520px, calc(100vw - 2rem));
+            width: calc(100% - 2rem);
+        }
+
+        .modal-dialog-scrollable {
+            height: auto;
+            max-height: calc(100dvh - 2rem);
+
+            .modal-content {
+                height: auto;
+                max-height: calc(100dvh - 2rem);
+                border-radius: 16px;
+                overflow: hidden;
+            }
+
+            .modal-body {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        .modal-header {
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 1rem 1rem 0.85rem;
+
+            .modal-title {
+                white-space: normal;
+                overflow: visible;
+                text-overflow: unset;
+                line-height: 1.3;
+                font-size: 1.05rem;
+                font-weight: 600;
+                color: $toba-ink;
+                text-wrap: balance;
+                padding-inline-end: 0.25rem;
+            }
+
+            .btn-close {
+                margin-top: 0.15rem;
+                flex: 0 0 auto;
+            }
+        }
+
+        .modal-body {
+            padding: 0.85rem 1rem 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: $toba-ink;
+
+            p {
+                margin-bottom: 0.85rem;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+
+        .modal-footer {
+            padding: 0.85rem 1rem 1rem;
+            gap: 0.5rem;
+
+            .btn {
+                min-height: 44px;
+                min-width: 5.5rem;
+                padding: 0.6rem 1.25rem;
+                border-radius: 999px;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-down(lg) {
+    .pagelayout-login .modal {
+        .modal-dialog,
+        .modal-dialog-scrollable {
+            margin: max(0.75rem, env(safe-area-inset-top)) auto max(0.75rem, env(safe-area-inset-bottom));
+            max-width: calc(100vw - 1.5rem);
+            width: calc(100% - 1.5rem);
+            max-height: calc(100dvh - 1.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        }
+
+        .modal-dialog-scrollable .modal-content {
+            max-height: calc(100dvh - 1.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        }
+
+        .modal-dialog-scrollable .modal-body {
+            max-height: min(52dvh, 360px);
+        }
+
+        .modal-footer {
+            flex-direction: column-reverse;
+
+            .btn {
+                width: 100%;
+            }
+        }
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .toba-portal-tab {
+    .toba-portal-tab,
+    .toba-fellowship-signup-btn,
+    .toba-mentor-entry-btn {
         transition: none;
+    }
+}
+
+@media (prefers-contrast: more) {
+    .toba-portal-tab.on {
+        outline: 2px solid #fff;
+        outline-offset: -4px;
+    }
+
+    .login-container .login-form .form-control:focus {
+        outline: 2px solid $toba-blue;
+        outline-offset: 1px;
     }
 }

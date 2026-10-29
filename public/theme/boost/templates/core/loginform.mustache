@@ -68,23 +68,115 @@
 }}
 
 <style>
-/* Create Fellowship account — critical styles (works before SCSS rebuild) */
+/* Mobile-first critical login styles (works before SCSS rebuild) */
+/* Mobile intro intentionally hidden — keep login focused. */
+.toba-mobile-intro{display:none!important}
+.toba-portal-switch{display:flex;width:100%;max-width:100%;gap:4px;padding:4px;margin:0 auto 1.15rem;background:#fff;border:1px solid #e3e9f4;border-radius:999px;box-sizing:border-box}
+.toba-portal-tab{flex:1 1 0;min-width:0;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:0;background:transparent;border-radius:999px;padding:.65rem .5rem;font-weight:600;font-size:.88rem;color:#44506a;line-height:1.2}
+.toba-portal-tab span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toba-portal-tab.on{background:#1a61f2;color:#fff}
+.toba-portal-tab:focus-visible{outline:2px solid #1a61f2;outline-offset:2px}
+.toba-login-heading{text-align:center;margin-bottom:.35rem}
+.toba-login-sub{text-align:center}
+.toba-mentor-back{display:none;width:100%;margin:0 0 .85rem;min-height:44px;border:0;background:transparent;color:#1a61f2;font-weight:600;font-size:.9rem;text-align:center;padding:.35rem}
+.toba-mentor-back.on,body[data-toba-portal="mentor"] .toba-mentor-back{display:inline-flex;align-items:center;justify-content:center;gap:.4rem}
+.toba-mentor-back[hidden]{display:none!important}
+.toba-mentor-back:focus-visible{outline:2px solid #1a61f2;outline-offset:2px;border-radius:8px}
+.toba-fellowship-signup .toba-fellowship-actions{display:flex;flex-direction:row;align-items:stretch;gap:.65rem;width:100%}
+.toba-fellowship-signup .toba-fellowship-signup-btn,
+.toba-fellowship-signup .toba-mentor-entry-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+  flex:1 1 0;width:auto;min-width:0;min-height:44px;padding:.65rem .85rem;border-radius:999px;
+  font-weight:600;font-size:.88rem;letter-spacing:.01em;text-decoration:none;white-space:nowrap;
+}
 .toba-fellowship-signup .toba-fellowship-signup-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
-  width:100%;min-height:2.85rem;padding:.65rem 1.25rem;border-radius:999px;
-  font-weight:600;font-size:.95rem;letter-spacing:.01em;text-decoration:none;
   border:1px solid rgba(26,97,242,.28);
   background:linear-gradient(180deg,#f3f7ff 0%,#e8f0fe 100%);
   color:#1a61f2;
-  box-shadow:0 1px 2px rgba(13,20,41,.04),0 6px 16px rgba(26,97,242,.1);
-  transition:background .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease;
 }
 .toba-fellowship-signup .toba-fellowship-signup-btn:hover,
 .toba-fellowship-signup .toba-fellowship-signup-btn:focus{
   background:#1a61f2;border-color:#1a61f2;color:#fff;text-decoration:none;
-  box-shadow:0 8px 20px rgba(26,97,242,.28);transform:translateY(-1px);
 }
-.toba-fellowship-signup .toba-fellowship-signup-btn .fa{font-size:.95rem}
+.toba-fellowship-signup .toba-mentor-entry-btn{
+  margin-top:0;border:1px solid #e3e9f4;background:#fff;color:#0d1429;
+}
+.toba-fellowship-signup .toba-mentor-entry-btn:hover,
+.toba-fellowship-signup .toba-mentor-entry-btn:focus{
+  background:#ebf0fa;border-color:#cfd8ea;color:#0d1429;text-decoration:none;
+}
+.toba-fellowship-signup .toba-btn-label-short{display:none}
+.toba-mentor-signup-hint{display:none;text-align:center;margin:0 0 1rem;font-size:.8125rem;color:#44506a;line-height:1.45}
+.toba-mentor-signup-hint.on,body[data-toba-portal="mentor"] .toba-mentor-signup-hint{display:block}
+.toba-mentor-signup-hint[hidden]{display:none!important}
+.pagelayout-login .login-layout-right{display:flex;justify-content:center;align-items:center;overflow-y:auto;box-sizing:border-box}
+.pagelayout-login .login-layout-right-content{width:100%;max-width:520px;margin:auto;box-sizing:border-box}
+.pagelayout-login .login-container,
+.pagelayout-login .toba-loginform,
+.pagelayout-login .login-form,
+.pagelayout-login .login-form-username,
+.pagelayout-login .login-form-password,
+.pagelayout-login .login-form-submit,
+.pagelayout-login .toba-portal-switch,
+.pagelayout-login .toba-fellowship-signup{width:100%;box-sizing:border-box}
+.pagelayout-login #loginlogo{width:100%;margin:0 0 .85rem;justify-content:center!important}
+.pagelayout-login #loginlogo #logoimage{display:block;margin-inline:auto}
+.login-container .login-form .form-control{font-size:16px;min-height:48px;width:100%;box-sizing:border-box}
+.login-container .login-form .toggle-sensitive-wrapper.input-group{width:100%;flex-wrap:nowrap;align-items:stretch}
+.login-container .login-form .toggle-sensitive-wrapper.input-group > .form-control{flex:1 1 auto;min-width:0;border-top-right-radius:0;border-bottom-right-radius:0}
+.login-container .login-form .toggle-sensitive-wrapper .toggle-sensitive-btn{min-width:48px;min-height:48px;border-left:0;border-top-right-radius:12px;border-bottom-right-radius:12px;display:inline-flex;align-items:center;justify-content:center}
+.login-container .toba-login-submit{min-height:48px;width:100%}
+.login-container .login-forgot{display:flex;justify-content:flex-end;width:100%}
+.login-container .login-form-password .text-end a,
+.login-container a[href*="forgot_password"]{display:inline-flex;align-items:center;min-height:44px;padding:.55rem 0;line-height:1.3}
+.pagelayout-login .login-cookiesnotice{margin-top:.75rem}
+.pagelayout-login .toba-cookies-trigger{
+  display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.55rem .75rem;
+  font-size:.875rem;color:#44506a;text-decoration:underline;text-underline-offset:.15em;
+}
+@media (max-width:991.98px){
+  .pagelayout-login .login-layout-right{
+    padding:max(1rem,env(safe-area-inset-top)) max(1.25rem,env(safe-area-inset-right)) max(1.25rem,env(safe-area-inset-bottom)) max(1.25rem,env(safe-area-inset-left));
+    min-height:100dvh;justify-content:center;align-items:center;
+  }
+  .pagelayout-login .login-layout-right-content{max-width:420px;margin:auto;padding-block:.75rem 1.25rem}
+  .toba-portal-tab{font-size:.82rem;padding:.6rem .4rem;gap:.3rem}
+  /* Hide Moodle login footer clutter on phones/tablets */
+  .pagelayout-login #page-footer,
+  .pagelayout-login .footer-popover,
+  .pagelayout-login .btn-footer-popover,
+  .pagelayout-login .footer-content-popover{display:none!important}
+  /* Cookie popup — fit phone screens without truncating the title */
+  .pagelayout-login .modal .modal-dialog,
+  .pagelayout-login .modal .modal-dialog-scrollable{
+    margin:max(.75rem,env(safe-area-inset-top)) auto max(.75rem,env(safe-area-inset-bottom));
+    width:calc(100% - 1.5rem);max-width:calc(100vw - 1.5rem);height:auto;
+    max-height:calc(100dvh - 1.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  }
+  .pagelayout-login .modal .modal-dialog-scrollable .modal-content{
+    height:auto;max-height:calc(100dvh - 1.5rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    border-radius:16px;overflow:hidden;
+  }
+  .pagelayout-login .modal .modal-dialog-scrollable .modal-body{max-height:min(52dvh,360px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .pagelayout-login .modal .modal-header{align-items:flex-start;gap:.5rem}
+  .pagelayout-login .modal .modal-title{
+    white-space:normal!important;overflow:visible!important;text-overflow:unset!important;
+    line-height:1.3;font-size:1.05rem;font-weight:600;text-wrap:balance;
+  }
+  .pagelayout-login .modal .modal-footer{flex-direction:column-reverse}
+  .pagelayout-login .modal .modal-footer .btn{
+    width:100%;min-height:44px;border-radius:999px;font-weight:600;padding:.6rem 1.25rem;
+  }
+}
+@media (max-width:575.98px){
+  .toba-fellowship-signup .toba-fellowship-actions{flex-direction:column}
+  .toba-fellowship-signup .toba-fellowship-signup-btn,
+  .toba-fellowship-signup .toba-mentor-entry-btn{width:100%;white-space:normal;font-size:.92rem}
+  .toba-fellowship-signup .toba-btn-label-full{display:none}
+  .toba-fellowship-signup .toba-btn-label-short{display:inline}
+  .toba-login-heading{font-size:1.45rem}
+  .toba-login-sub{font-size:.92rem;margin-bottom:1rem!important}
+}
 </style>
 <div class="loginform toba-loginform" data-toba-loginform>
     {{#logourl}}
@@ -95,20 +187,26 @@
 
     <div class="toba-portal-switch" role="tablist" aria-label="Choose login portal">
         <button type="button" class="toba-portal-tab on" role="tab" id="toba-tab-employer"
-                aria-selected="true" aria-controls="toba-portal-panel" data-portal="employer">
+                aria-selected="true" aria-controls="toba-portal-panel" tabindex="0" data-portal="employer">
             <i class="fa fa-building" aria-hidden="true"></i>
             <span>Employer</span>
         </button>
         <button type="button" class="toba-portal-tab" role="tab" id="toba-tab-fellowship"
-                aria-selected="false" aria-controls="toba-portal-panel" data-portal="fellowship">
+                aria-selected="false" aria-controls="toba-portal-panel" tabindex="-1" data-portal="fellowship">
             <i class="fa fa-graduation-cap" aria-hidden="true"></i>
             <span>Fellowship</span>
         </button>
     </div>
 
-    <div id="toba-portal-panel" role="tabpanel" aria-labelledby="toba-tab-employer" data-toba-portal-panel>
+    <button type="button" class="toba-mentor-back" data-toba-mentor-back hidden>
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        <span>Back to Fellowship login</span>
+    </button>
+
+    <div id="toba-portal-panel" role="tabpanel" aria-labelledby="toba-tab-employer"
+         data-toba-portal-panel tabindex="-1">
         <h1 class="h2 toba-login-heading" data-portal-heading>Welcome back</h1>
-        <p class="toba-login-sub text-muted mb-4" data-portal-sub>
+        <p class="toba-login-sub text-muted mb-4" data-portal-sub aria-live="polite">
             Sign in to the Employer portal
         </p>
     </div>
@@ -148,17 +246,23 @@
                     !}}value="{{username}}" {{!
                     !}}placeholder="{{^canloginbyemail}}{{#str}}enterusername{{/str}}{{/canloginbyemail}}{{!
                     !}}{{#canloginbyemail}}{{#str}}loginenterusernameoremail{{/str}}{{/canloginbyemail}}" {{!
-                    !}}autocomplete="username">
+                    !}}autocomplete="username" {{!
+                    !}}autocapitalize="none" {{!
+                    !}}autocorrect="off" {{!
+                    !}}spellcheck="false" {{!
+                    !}}enterkeyhint="next" {{!
+                    !}}inputmode="email">
             </div>
             <div class="login-form-password mb-3">
                 <label for="password" class="form-label">{{#str}} password {{/str}}</label>
                 <input type="password" name="password" id="password" value="" {{!
                     !}}class="form-control" {{!
                     !}}placeholder="{{#str}}loginenterpassword{{/str}}" {{!
-                    !}}autocomplete="current-password">
+                    !}}autocomplete="current-password" {{!
+                    !}}enterkeyhint="go">
             </div>
-            <div class="text-end mb-3">
-                <a href="{{forgotpasswordurl}}">{{#str}}loginforgotpassword{{/str}}</a>
+            <div class="login-forgot text-end mb-3">
+                <a class="toba-forgot-link" href="{{forgotpasswordurl}}">{{#str}}loginforgotpassword{{/str}}</a>
             </div>
             {{#recaptcha}}
                 <div class="login-form-recaptcha mb-3">
@@ -174,14 +278,26 @@
         {{! Always render — visibility toggled by Fellowship portal tab. }}
         <div class="toba-fellowship-signup" data-toba-fellowship-signup>
             <div class="login-separator my-3">or</div>
-            <a class="btn toba-fellowship-signup-btn" id="toba-fellowship-register"
-               href="{{config.wwwroot}}/local/launchpad/register.php">
-                <i class="fa fa-user-plus" aria-hidden="true"></i>
-                <span>Create Fellowship account</span>
-            </a>
+            <div class="toba-fellowship-actions">
+                <a class="btn toba-fellowship-signup-btn" id="toba-fellowship-register"
+                   href="{{config.wwwroot}}/local/launchpad/register.php">
+                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                    <span class="toba-btn-label-full">Create Fellowship account</span>
+                    <span class="toba-btn-label-short">Create account</span>
+                </a>
+                <button type="button" class="btn toba-mentor-entry-btn" id="toba-mentor-entry"
+                        data-toba-mentor-entry data-portal="mentor" aria-pressed="false">
+                    <i class="fa fa-chalkboard-teacher" aria-hidden="true"></i>
+                    <span class="toba-btn-label-full">Are You a Mentor?</span>
+                    <span class="toba-btn-label-short">Mentor login</span>
+                </button>
+            </div>
         </div>
         <p class="toba-employer-signup-hint" data-toba-employer-signup-hint>
             Employer accounts are assigned by your organisation. Self-registration is for Fellowship only.
+        </p>
+        <p class="toba-mentor-signup-hint" data-toba-mentor-signup-hint hidden>
+            Mentor accounts are provisioned by ToBa. Use your mentor credentials to sign in.
         </p>
     {{/showloginform}}
     {{#hasauthinstructions}}
@@ -230,11 +346,11 @@
         </div>
     {{/languagemenu}}
     <div class="login-cookiesnotice text-center">
-        <button type="button" class="btn btn-link p-0" {{!
+        <button type="button" class="btn btn-link toba-cookies-trigger" {{!
         }} data-modal="alert"{{!
         }} data-modal-title-str='["cookiesenabled", "core"]' {{!
         }} data-modal-content-str='["cookiesenabled_help_html", "core"]'{{!
-        }}>{{#str}}cookiesnotice{{/str}}</button>
+        }} aria-haspopup="dialog">{{#str}}cookiesnotice{{/str}}</button>
     </div>
 </div>
 
@@ -253,6 +369,12 @@
                 sub: 'Sign in to the Fellowship portal',
                 cta: 'Sign in to Fellowship',
                 tabId: 'toba-tab-fellowship'
+            },
+            mentor: {
+                heading: 'Welcome back',
+                sub: 'Sign in to the Mentor portal',
+                cta: 'Sign in as Mentor',
+                tabId: 'toba-tab-fellowship'
             }
         };
 
@@ -261,7 +383,35 @@
             if (v === 'fellow' || v === 'fellowship') {
                 return 'fellowship';
             }
+            if (v === 'mentor' || v === 'mentors') {
+                return 'mentor';
+            }
             return 'employer';
+        }
+
+        function persistPortal(value) {
+            try {
+                window.localStorage.setItem(STORAGE_KEY, value);
+            } catch (e) {}
+            try {
+                window.sessionStorage.setItem(STORAGE_KEY, value);
+            } catch (e) {}
+        }
+
+        function readStoredPortal() {
+            try {
+                const local = window.localStorage.getItem(STORAGE_KEY);
+                if (local) {
+                    return normalize(local);
+                }
+            } catch (e) {}
+            try {
+                const session = window.sessionStorage.getItem(STORAGE_KEY);
+                if (session) {
+                    return normalize(session);
+                }
+            } catch (e) {}
+            return null;
         }
 
         function readInitial() {
@@ -271,10 +421,7 @@
                     return normalize(params.get('portal'));
                 }
             } catch (e) {}
-            try {
-                return normalize(window.localStorage.getItem(STORAGE_KEY));
-            } catch (e) {}
-            return 'employer';
+            return readStoredPortal() || 'employer';
         }
 
         function setPortal(portal) {
@@ -287,6 +434,7 @@
             const sub = formRoot && formRoot.querySelector('[data-portal-sub]');
             const cta = formRoot && formRoot.querySelector('[data-portal-cta]');
             const tabPanel = document.getElementById('toba-portal-panel');
+            const mentorBack = document.querySelector('[data-toba-mentor-back]');
 
             if (field) {
                 field.value = next;
@@ -305,9 +453,10 @@
             }
 
             document.querySelectorAll('.toba-portal-tab').forEach(function(btn) {
-                const on = btn.getAttribute('data-portal') === next;
+                const on = next !== 'mentor' && btn.getAttribute('data-portal') === next;
                 btn.classList.toggle('on', on);
                 btn.setAttribute('aria-selected', on ? 'true' : 'false');
+                btn.setAttribute('tabindex', on ? '0' : '-1');
             });
 
             if (panel) {
@@ -322,33 +471,102 @@
 
             const fellowshipSignup = document.querySelector('[data-toba-fellowship-signup]');
             const employerHint = document.querySelector('[data-toba-employer-signup-hint]');
+            const mentorHint = document.querySelector('[data-toba-mentor-signup-hint]');
+            const mentorEntry = document.querySelector('[data-toba-mentor-entry]');
             const showSignup = next === 'fellowship';
+            const showMentor = next === 'mentor';
             if (fellowshipSignup) {
                 fellowshipSignup.hidden = !showSignup;
                 fellowshipSignup.classList.toggle('on', showSignup);
                 fellowshipSignup.setAttribute('aria-hidden', showSignup ? 'false' : 'true');
             }
             if (employerHint) {
-                employerHint.hidden = showSignup;
-                employerHint.classList.toggle('on', !showSignup);
+                employerHint.hidden = showSignup || showMentor;
+                employerHint.classList.toggle('on', !showSignup && !showMentor);
+            }
+            if (mentorHint) {
+                mentorHint.hidden = !showMentor;
+                mentorHint.classList.toggle('on', showMentor);
+            }
+            if (mentorEntry) {
+                mentorEntry.setAttribute('aria-pressed', showMentor ? 'true' : 'false');
+                mentorEntry.classList.toggle('on', showMentor);
+            }
+            if (mentorBack) {
+                mentorBack.hidden = !showMentor;
+                mentorBack.classList.toggle('on', showMentor);
             }
 
-            try {
-                window.localStorage.setItem(STORAGE_KEY, next);
-            } catch (e) {}
+            persistPortal(next);
 
             try {
                 const url = new URL(window.location.href);
                 url.searchParams.set('portal', next);
+                // Keep Moodle loginredirect if present.
                 window.history.replaceState({}, '', url.toString());
             } catch (e) {}
         }
 
-        document.querySelectorAll('.toba-portal-tab').forEach(function(btn) {
+        const tabs = Array.from(document.querySelectorAll('.toba-portal-tab'));
+        tabs.forEach(function(btn) {
             btn.addEventListener('click', function() {
                 setPortal(btn.getAttribute('data-portal'));
             });
+            btn.addEventListener('keydown', function(event) {
+                const index = tabs.indexOf(btn);
+                if (index < 0) {
+                    return;
+                }
+                let nextIndex = null;
+                if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                    nextIndex = (index + 1) % tabs.length;
+                } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                    nextIndex = (index - 1 + tabs.length) % tabs.length;
+                } else if (event.key === 'Home') {
+                    nextIndex = 0;
+                } else if (event.key === 'End') {
+                    nextIndex = tabs.length - 1;
+                }
+                if (nextIndex === null) {
+                    return;
+                }
+                event.preventDefault();
+                const nextTab = tabs[nextIndex];
+                nextTab.focus();
+                setPortal(nextTab.getAttribute('data-portal'));
+            });
         });
+
+        document.querySelectorAll('[data-toba-mentor-entry]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                setPortal('mentor');
+            });
+        });
+
+        document.querySelectorAll('[data-toba-mentor-back]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                setPortal('fellowship');
+                const fellowshipTab = document.getElementById('toba-tab-fellowship');
+                if (fellowshipTab) {
+                    fellowshipTab.focus();
+                }
+            });
+        });
+
+        const loginForm = document.getElementById('login');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function() {
+                const field = document.getElementById('toba-portal-field');
+                const portal = normalize(field && field.value);
+                persistPortal(portal);
+                try {
+                    // Help Moodle return users to the same portal after a failed attempt.
+                    const action = new URL(loginForm.action, window.location.origin);
+                    action.searchParams.set('portal', portal);
+                    loginForm.action = action.toString();
+                } catch (e) {}
+            });
+        }
 
         // Default body portal before first paint so Fellowship CTA can show without a flash miss.
         try {

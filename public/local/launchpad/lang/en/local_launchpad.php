@@ -33,8 +33,8 @@ $string['mentorformurl_desc'] = 'Public Google Form link for mentor applications
 
 /* Fellowship self-registration. */
 $string['signupheading'] = 'Fellowship self-registration';
-$string['signupheading_desc'] = 'Fellows can create a Moodle account from the LaunchPad and login Fellowship tab. This requires Email-based self-registration (Site administration → Plugins → Authentication → Manage authentication → Self registration = Email-based self-registration). Install/upgrade enables it only when Self registration is currently empty. After email confirmation, programme admins still assign courses — there is no auto-enrolment.';
-$string['signupnotice'] = 'Fellowship registration — confirm your email, then your programme assigns courses. There is no open marketplace.';
+$string['signupheading_desc'] = 'Fellows can create a Moodle account from the LaunchPad and login Fellowship tab. This requires Email-based self-registration (Site administration → Plugins → Authentication → Manage authentication → Self registration = Email-based self-registration). Install/upgrade enables it only when Self registration is currently empty. After email confirmation, programme admins still assign courses. There is no auto-enrolment.';
+$string['signupnotice'] = 'Fellowship registration: confirm your email, then your programme assigns courses. There is no open marketplace.';
 $string['signupportalinvalid'] = 'Self-registration is only available for the Fellowship portal.';
 $string['registerfellowship'] = 'Register for Fellowship';
 $string['signinfellowship'] = 'Sign in to Fellowship';
