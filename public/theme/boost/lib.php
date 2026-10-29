@@ -55,20 +55,16 @@ function theme_boost_get_extra_scss($theme) {
         $content .= ' } }';
     }
 
-    // Sets the login background image.
+    // Login left panel: admin image if set, otherwise the ToBa bridge artwork.
     $loginbackgroundimageurl = $theme->setting_file_url('loginbackgroundimage', 'loginbackgroundimage');
-    $backgroundposition = '';
     if (empty($loginbackgroundimageurl)) {
-        // Use the default login background image.
-        $loginbackgroundimageurl = $theme->image_url(
-            'login_background',
-            'theme',
-        );
-        // Set the default background position to ensure the watermark is visible.
-        $backgroundposition = 'background-position: bottom right;';
+        $loginbackgroundimageurl = $theme->image_url('login_bridge', 'theme');
     }
+    // Soft navy wash: readable copy up top, bridge artwork visible through the mid/lower panel.
+    $overlay = 'linear-gradient(180deg, rgba(8, 18, 52, 0.72) 0%, rgba(8, 18, 52, 0.38) 34%, rgba(8, 18, 52, 0.12) 58%, rgba(8, 18, 52, 0.32) 100%)';
     $content .= 'body.pagelayout-login #page .login-layout-left { ';
-    $content .= "background-image: url('$loginbackgroundimageurl'); background-size: cover; {$backgroundposition}";
+    $content .= "background-image: {$overlay}, url('$loginbackgroundimageurl'); ";
+    $content .= 'background-size: cover; background-position: center 42%; background-repeat: no-repeat;';
     $content .= ' }';
 
     // Always return the background image with the scss when we have it.

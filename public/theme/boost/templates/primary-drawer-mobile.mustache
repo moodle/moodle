@@ -52,16 +52,16 @@
     {{$drawercloseonresize}}1{{/drawercloseonresize}}
     {{$drawerheading}}
         <a
-            href="{{{ config.homeurl }}}"
-            title="{{{ sitename }}}"
+            href="{{{ config.wwwroot }}}/"
+            title="ToBa Learn"
             data-region="site-home-link"
             class="aabtn text-reset d-flex align-items-center py-1 h-100"
         >
             {{# output.should_display_navbar_logo }}
-                <img src="{{output.get_compact_logo_url}}" class="logo py-1 h-100" alt="{{sitename}}">
+                <img src="{{output.get_compact_logo_url}}" class="logo py-1 h-100" alt="ToBa Learn">
             {{/ output.should_display_navbar_logo }}
             {{^ output.should_display_navbar_logo }}
-                <span class="sitename" title="{{{ sitename }}}">{{{ sitename }}}</span>
+                <span class="sitename" title="ToBa Learn">ToBa Learn</span>
             {{/ output.should_display_navbar_logo }}
         </a>
     {{/drawerheading}}

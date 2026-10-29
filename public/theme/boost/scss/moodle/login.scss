@@ -1,10 +1,24 @@
-$login-layout-left-bg: $primary !default;
+$login-layout-left-bg: #0d2461 !default;
 $login-layout-panel-padding: 3rem !default;
-$login-layout-content-width: 576px !default;
-$login-layout-copy-width: 360px !default;
-$login-input-bg: $gray-100 !default;
+$login-layout-content-width: 520px !default;
+$login-layout-copy-width: 420px !default;
+$login-input-bg: #f6f8fc !default;
+
+$toba-blue: #1a61f2;
+$toba-blue-soft: #e5edfa;
+$toba-blue-softer: #ebf0fa;
+$toba-navy: #0d2461;
+$toba-ink: #0d1429;
+$toba-muted: #44506a;
+$toba-line: #e3e9f4;
+$toba-bg: #f6f8fc;
+$toba-head: "Prosto One", system-ui, sans-serif;
+$toba-body: "Gantari", system-ui, -apple-system, "Segoe UI", sans-serif;
 
 .pagelayout-login {
+    font-family: $toba-body;
+    color: $toba-ink;
+
     #region-main,
     #region-main-box {
         border: 0;
@@ -14,43 +28,118 @@ $login-input-bg: $gray-100 !default;
     #page {
         margin: 0;
         min-height: 100vh;
-        background-color: $white;
+        background-color: $toba-bg;
+    }
+
+    h1,
+    h2,
+    .toba-login-title,
+    .toba-login-portal-heading,
+    .toba-login-heading {
+        font-family: $toba-head;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+        text-wrap: balance;
     }
 }
 
 .login-layout-left {
     background-color: $login-layout-left-bg;
-    color: color-contrast($login-layout-left-bg);
+    color: #fff;
     position: sticky;
     top: 0;
-    align-self: flex-start;
+    align-self: stretch;
+    min-height: 100vh;
+    max-height: 100vh;
     height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: $login-layout-panel-padding;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: clamp(1.75rem, 4vh, 3rem) clamp(1.5rem, 3vw, 2.75rem);
+    overflow: hidden;
 }
 
 .login-layout-left-content {
     max-width: $login-layout-copy-width;
-    text-align: center;
-}
-
-.login-layout-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    justify-items: center;
-}
-
-.login-layout-stat {
+    text-align: left;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.85rem;
+    margin: 0;
+    padding: 1rem 1.15rem 1.15rem;
+    border-radius: 20px;
+    background: rgba(8, 18, 52, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 16px 48px rgba(5, 12, 40, 0.28);
+    backdrop-filter: blur(10px);
 }
 
-.login-layout-stat-value {
-    font-size: $h5-font-size;
-    line-height: 1;
+.toba-login-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #9cc0ff;
+}
+
+.toba-login-title {
+    margin: 0;
+    font-size: clamp(1.65rem, 2.2vw, 2.15rem);
+    line-height: 1.12;
+    color: #fff;
+    text-shadow: 0 2px 18px rgba(5, 12, 40, 0.35);
+}
+
+.toba-login-lead {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 34ch;
+    text-wrap: pretty;
+}
+
+.toba-login-portal-line {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+    margin: 0.25rem 0 0;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+
+    &[hidden] {
+        display: none !important;
+    }
+}
+
+.toba-login-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: #fff;
+    color: $toba-navy;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    .fa {
+        font-size: 0.8rem;
+    }
+}
+
+.toba-login-portal-text {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 32ch;
+    text-wrap: pretty;
 }
 
 .login-layout-right {
@@ -58,6 +147,7 @@ $login-input-bg: $gray-100 !default;
     padding: $login-layout-panel-padding;
     display: flex;
     justify-content: center;
+    background: $toba-bg;
 }
 
 .login-layout-right-content {
@@ -66,48 +156,154 @@ $login-input-bg: $gray-100 !default;
     margin: auto 0;
 }
 
+.login-container {
+    .loginform,
+    .toba-loginform {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
 #loginlogo {
-    margin-top: -16px;
+    margin-top: -8px;
+    margin-bottom: 0.25rem;
+    justify-content: center !important;
 
     #logoimage {
-        height: 80px;
+        height: 56px;
         width: auto;
+        max-width: min(220px, 70vw);
+        object-fit: contain;
     }
+}
+
+.toba-portal-switch {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    gap: 4px;
+    padding: 4px;
+    margin: 0 auto 1.35rem;
+    background: #fff;
+    border: 1px solid $toba-line;
+    border-radius: 999px;
+    box-shadow: 0 1px 2px rgba(13, 20, 41, 0.04);
+}
+
+.toba-portal-tab {
+    flex: 1 1 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 0;
+    background: transparent;
+    border-radius: 999px;
+    padding: 0.7rem 1rem;
+    font-family: $toba-body;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: $toba-muted;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+        color: $toba-ink;
+        background: $toba-blue-softer;
+        outline: none;
+    }
+
+    &.on {
+        background: $toba-blue;
+        color: #fff;
+
+        &:hover,
+        &:focus-visible {
+            background: #0f4fd6;
+            color: #fff;
+        }
+    }
+}
+
+.toba-login-heading {
+    margin-bottom: 0.35rem;
+    text-align: center;
+    color: $toba-ink;
+}
+
+.toba-login-sub {
+    text-align: center;
+    color: $toba-muted !important;
+}
+
+.toba-login-note {
+    text-align: center;
+    color: $toba-muted !important;
+    line-height: 1.45;
 }
 
 .login-container {
     .login-form {
+        .form-label {
+            font-weight: 600;
+            color: $toba-ink;
+        }
+
         .form-control {
             background-color: $login-input-bg;
+            border-color: $toba-line;
+            border-radius: 12px;
+            min-height: 2.75rem;
             box-shadow: none;
+            color: $toba-ink;
+
+            &::placeholder {
+                color: #6b778f;
+            }
 
             &:hover {
                 background-color: $login-input-bg;
             }
 
             &:focus {
-                background-color: $login-input-bg;
-                border-color: $input-focus-border-color;
-                box-shadow: $input-focus-box-shadow;
+                background-color: #fff;
+                border-color: $toba-blue;
+                box-shadow: 0 0 0 0.2rem rgba(26, 97, 242, 0.18);
             }
         }
 
         .toggle-sensitive-wrapper .toggle-sensitive-btn {
             --bs-btn-bg: #{$login-input-bg};
-            --bs-btn-border-color: #{$input-border-color};
+            --bs-btn-border-color: #{$toba-line};
             --bs-btn-hover-bg: #{$login-input-bg};
-            --bs-btn-hover-border-color: #{$input-border-color};
+            --bs-btn-hover-border-color: #{$toba-line};
             --bs-btn-active-bg: #{$login-input-bg};
-            --bs-btn-active-border-color: #{$input-border-color};
+            --bs-btn-active-border-color: #{$toba-line};
             border-inline-start: none;
-            color: $gray-700;
+            color: $toba-muted;
 
             &:focus,
             &:focus-visible {
                 background-color: $login-input-bg;
-                border-color: $input-focus-border-color;
-                box-shadow: $input-focus-box-shadow;
+                border-color: $toba-blue;
+                box-shadow: 0 0 0 0.2rem rgba(26, 97, 242, 0.18);
             }
+        }
+    }
+
+    .toba-login-submit {
+        border-radius: 999px;
+        min-height: 2.85rem;
+        font-weight: 600;
+        background: $toba-blue;
+        border-color: $toba-blue;
+        box-shadow: 0 6px 18px rgba(26, 97, 242, 0.28);
+
+        &:hover,
+        &:focus {
+            background: #0f4fd6;
+            border-color: #0f4fd6;
         }
     }
 
@@ -115,7 +311,7 @@ $login-input-bg: $gray-100 !default;
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        color: $gray-600;
+        color: $toba-muted;
         font-size: $font-size-sm;
         text-transform: uppercase;
         letter-spacing: 0.08em;
@@ -124,31 +320,33 @@ $login-input-bg: $gray-100 !default;
         &::after {
             content: "";
             flex: 1;
-            border-top: $border-width solid $border-color;
+            border-top: $border-width solid $toba-line;
         }
     }
 
     .login-identityprovider-btn {
         width: 100%;
         background-color: $white;
-        border-color: $gray-400;
-        color: $gray-600;
+        border-color: $toba-line;
+        color: $toba-muted;
+        border-radius: 999px;
 
         &:hover,
         &:focus {
-            background-color: $gray-100;
-            border-color: $gray-500;
+            background-color: $toba-blue-softer;
+            border-color: darken($toba-line, 6%);
+            color: $toba-ink;
         }
     }
 
     .login-cookiesnotice {
         .btn-link {
             font-size: $font-size-sm;
-            color: $gray-600;
+            color: $toba-muted;
 
             &:hover,
             &:focus {
-                color: $gray-700;
+                color: $toba-ink;
             }
         }
     }
@@ -169,5 +367,338 @@ $login-input-bg: $gray-100 !default;
     .login-layout-right-content {
         max-width: 100%;
         margin: 0;
+    }
+}
+
+/* Portal switch tabs can be <a> or <button>/<span> on signup */
+a.toba-portal-tab {
+    text-decoration: none;
+    color: inherit;
+
+    &:hover {
+        text-decoration: none;
+    }
+}
+
+.toba-signupform {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    .toba-signup-notice {
+        border-radius: 14px;
+        border: 1px solid $toba-line;
+        background: $toba-blue-softer;
+        color: $toba-ink;
+        font-size: 0.875rem;
+        line-height: 1.45;
+        padding: 0.75rem 1rem;
+        margin: 0 0 1rem;
+    }
+
+    .toba-signup-form-body {
+        width: 100%;
+    }
+
+    /* Match login stacked field rhythm */
+    .mform {
+        fieldset {
+            border: 0;
+            margin: 0;
+            padding: 0;
+            min-width: 0;
+        }
+
+        .fdescription.required,
+        .fdescription {
+            font-size: 0.8125rem;
+            color: $toba-muted;
+            margin-bottom: 1rem;
+        }
+
+        .fitem {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.35rem;
+
+            .col-form-label,
+            .fitemtitle,
+            label {
+                font-weight: 600;
+                color: $toba-ink;
+                padding: 0;
+                margin: 0;
+                text-align: left;
+                float: none;
+                width: 100%;
+                max-width: none;
+            }
+
+            .felement,
+            .col-md-9,
+            .col-md-3 {
+                flex: 1 1 auto;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0;
+                float: none;
+            }
+
+            /* Vertical mform still emits bootstrap rows — collapse to login stack */
+            &.row {
+                display: flex;
+                flex-direction: column;
+                margin: 0 0 1rem;
+                --bs-gutter-x: 0;
+            }
+        }
+
+        .form-control,
+        .form-select,
+        select,
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            display: block;
+            width: 100%;
+            background-color: $login-input-bg;
+            border: 1px solid $toba-line;
+            border-radius: 12px;
+            min-height: 2.75rem;
+            padding: 0.5rem 0.85rem;
+            box-shadow: none;
+            color: $toba-ink;
+            font-family: $toba-body;
+
+            &::placeholder {
+                color: #6b778f;
+            }
+
+            &:hover {
+                background-color: $login-input-bg;
+            }
+
+            &:focus {
+                background-color: #fff;
+                border-color: $toba-blue;
+                box-shadow: 0 0 0 0.2rem rgba(26, 97, 242, 0.18);
+                outline: none;
+            }
+        }
+
+        /* Password policy helper under the password field */
+        #id_passwordpolicyinfo,
+        .felement > .text-muted,
+        .form-text {
+            font-size: 0.8125rem;
+            color: $toba-muted !important;
+            line-height: 1.4;
+            margin-top: 0.35rem;
+        }
+
+        .fitem_actionbuttons,
+        .btn-group,
+        .felement[data-fieldtype="button"],
+        .felement[data-fieldtype="submit"] {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        #id_submitbutton,
+        #id_cancel {
+            display: block;
+        }
+
+        .btn-primary,
+        #id_submitbutton {
+            width: 100%;
+            border-radius: 999px;
+            min-height: 2.85rem;
+            font-weight: 600;
+            font-family: $toba-body;
+            background: $toba-blue;
+            border-color: $toba-blue;
+            box-shadow: 0 6px 18px rgba(26, 97, 242, 0.28);
+
+            &:hover,
+            &:focus {
+                background: #0f4fd6;
+                border-color: #0f4fd6;
+            }
+        }
+
+        .btn-secondary,
+        #id_cancel {
+            width: 100%;
+            border-radius: 999px;
+            min-height: 2.85rem;
+            font-weight: 600;
+            font-family: $toba-body;
+            background: #fff;
+            border: 1px solid $toba-line;
+            color: $toba-ink;
+            box-shadow: none;
+
+            &:hover,
+            &:focus {
+                background: $toba-blue-softer;
+                border-color: $toba-line;
+                color: $toba-ink;
+            }
+        }
+
+        /* Hide default Moodle “required” footnote clutter when present */
+        .required .req,
+        .frequired {
+            color: $toba-blue;
+        }
+    }
+
+    .toba-signup-signin {
+        color: $toba-muted;
+
+        a {
+            color: $toba-blue;
+            font-weight: 600;
+            text-decoration: none;
+
+            &:hover,
+            &:focus {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    /* Searchable country field */
+    .form-autocomplete-selection {
+        min-height: 2.75rem;
+        border: 1px solid $toba-line !important;
+        border-radius: 12px !important;
+        background: $login-input-bg !important;
+        padding: 0.35rem 0.75rem !important;
+        box-shadow: none !important;
+
+        &:focus-within {
+            background: #fff !important;
+            border-color: $toba-blue !important;
+            box-shadow: 0 0 0 0.2rem rgba(26, 97, 242, 0.18) !important;
+        }
+    }
+
+    .form-autocomplete-suggestions {
+        border: 1px solid $toba-line !important;
+        border-radius: 14px !important;
+        box-shadow: 0 12px 32px rgba(13, 20, 41, 0.12) !important;
+        background: #fff !important;
+        max-height: 260px;
+        overflow: auto;
+
+        li {
+            padding: 0.55rem 0.9rem !important;
+
+            &:hover,
+            &[aria-selected="true"] {
+                background: $toba-blue-softer !important;
+                color: $toba-navy !important;
+            }
+        }
+    }
+
+    input.form-autocomplete-input {
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        min-height: 2.1rem;
+        padding: 0.25rem 0 !important;
+    }
+}
+
+.toba-fellowship-signup {
+    display: none;
+    text-align: center;
+    margin: 0 0 1rem;
+
+    &.on,
+    body[data-toba-portal="fellowship"] & {
+        display: block;
+    }
+
+    &[hidden] {
+        display: none !important;
+    }
+
+    .toba-fellowship-signup-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        border-radius: 999px;
+        min-height: 2.85rem;
+        padding: 0.65rem 1.25rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.01em;
+        width: 100%;
+        border: 1px solid rgba(26, 97, 242, 0.28);
+        background: linear-gradient(180deg, #f3f7ff 0%, #e8f0fe 100%);
+        color: $toba-blue;
+        text-decoration: none;
+        box-shadow: 0 1px 2px rgba(13, 20, 41, 0.04), 0 6px 16px rgba(26, 97, 242, 0.1);
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+
+        .fa {
+            font-size: 0.95rem;
+        }
+
+        &:hover,
+        &:focus {
+            background: $toba-blue;
+            border-color: $toba-blue;
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(26, 97, 242, 0.28);
+            transform: translateY(-1px);
+        }
+
+        &:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(26, 97, 242, 0.2);
+        }
+    }
+
+    .toba-fellowship-signup-note {
+        margin: 0.65rem 0 0;
+        font-size: 0.8125rem;
+        color: $toba-muted;
+        line-height: 1.4;
+    }
+}
+
+.toba-employer-signup-hint {
+    display: none;
+    text-align: center;
+    margin: 0 0 1rem;
+    font-size: 0.8125rem;
+    color: $toba-muted;
+    line-height: 1.4;
+
+    &.on,
+    body[data-toba-portal="employer"] & {
+        display: block;
+    }
+
+    &[hidden] {
+        display: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .toba-portal-tab {
+        transition: none;
     }
 }

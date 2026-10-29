@@ -17,33 +17,25 @@
 {{!
     @template core/login_panel
 
-    Default content for the left panel of the split-screen login layout.
+    Lean left panel for ToBa Learn login — image carries the story; copy stays short.
 
     Example context (json):
     {
-        "leftinstructions": "<p>Your learning journey starts here. Access courses, connect with peers, and achieve your goals.</p>"
+        "leftinstructions": ""
     }
 }}
-<div class="login-layout-left-content">
-    <h1 class="h2 mb-3">{{#str}}loginwelcometitle{{/str}}</h1>
-    <div class="mx-auto mb-4 text-start">
-        {{#leftinstructions}}
-            {{{leftinstructions}}}
-        {{/leftinstructions}}
-    </div>
-    <p class="mx-auto mb-4">{{#str}}loginpaneltagline{{/str}}</p>
-    <div class="login-layout-stats" role="presentation">
-        <div class="login-layout-stat">
-            <strong class="login-layout-stat-value">{{#str}}loginstatusers_value{{/str}}</strong>
-            <span>{{#str}}loginstatusers{{/str}}</span>
-        </div>
-        <div class="login-layout-stat">
-            <strong class="login-layout-stat-value">{{#str}}loginstatsites_value{{/str}}</strong>
-            <span>{{#str}}loginstatsites{{/str}}</span>
-        </div>
-        <div class="login-layout-stat">
-            <strong class="login-layout-stat-value">{{#str}}loginstatcountries_value{{/str}}</strong>
-            <span>{{#str}}loginstatcountries{{/str}}</span>
-        </div>
-    </div>
+<div class="login-layout-left-content toba-login-panel" data-toba-login-panel>
+    <p class="toba-login-eyebrow">ToBa Learn</p>
+    <h1 class="toba-login-title">One account.<br>Two portals.</h1>
+    <p class="toba-login-lead">Sign in once. Your enrolment opens the right portal.</p>
+
+    <p class="toba-login-portal-line" data-portal-copy="employer">
+        <span class="toba-login-chip"><i class="fa fa-building" aria-hidden="true"></i> Employer</span>
+        <span class="toba-login-portal-text">Upskill assigned teams with mentor-reviewed work.</span>
+    </p>
+
+    <p class="toba-login-portal-line" data-portal-copy="fellowship" hidden>
+        <span class="toba-login-chip"><i class="fa fa-graduation-cap" aria-hidden="true"></i> Fellowship</span>
+        <span class="toba-login-portal-text">Bridge campus to craft defend your Demo Day.</span>
+    </p>
 </div>

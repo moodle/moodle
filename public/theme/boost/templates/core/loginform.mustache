@@ -17,7 +17,7 @@
 {{!
     @template core/loginform
 
-    Moodle template for the login page.
+    Moodle template for the login page — ToBa Learn Employer / Fellowship UI.
 
     Context variables required for this template:
     * autofocusform: Auto focus on form ?,
@@ -58,23 +58,61 @@
         "loginurl": "http://localhost/stable_master/login/index.php",
         "signupurl": "http://localhost/stable_master/login/signup.php",
         "logourl": false,
-        "sitename": "Beer & Chips",
+        "sitename": "ToBa Learn",
         "logintoken": "randomstring",
-        "maintenance": "For full access to this site, you need to login in as an admin.",
+        "maintenance": "",
         "languagemenu": "Choose language",
         "togglepassword": true,
         "smallscreensonly": true
     }
 }}
 
-<div class="loginform">
+<style>
+/* Create Fellowship account — critical styles (works before SCSS rebuild) */
+.toba-fellowship-signup .toba-fellowship-signup-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.55rem;
+  width:100%;min-height:2.85rem;padding:.65rem 1.25rem;border-radius:999px;
+  font-weight:600;font-size:.95rem;letter-spacing:.01em;text-decoration:none;
+  border:1px solid rgba(26,97,242,.28);
+  background:linear-gradient(180deg,#f3f7ff 0%,#e8f0fe 100%);
+  color:#1a61f2;
+  box-shadow:0 1px 2px rgba(13,20,41,.04),0 6px 16px rgba(26,97,242,.1);
+  transition:background .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease;
+}
+.toba-fellowship-signup .toba-fellowship-signup-btn:hover,
+.toba-fellowship-signup .toba-fellowship-signup-btn:focus{
+  background:#1a61f2;border-color:#1a61f2;color:#fff;text-decoration:none;
+  box-shadow:0 8px 20px rgba(26,97,242,.28);transform:translateY(-1px);
+}
+.toba-fellowship-signup .toba-fellowship-signup-btn .fa{font-size:.95rem}
+</style>
+<div class="loginform toba-loginform" data-toba-loginform>
     {{#logourl}}
-        <div id="loginlogo" class="d-flex justify-content-center mb-4">
+        <div id="loginlogo" class="d-flex justify-content-center mb-3">
             <img id="logoimage" src="{{logourl}}" class="img-fluid" alt="{{sitename}}"/>
         </div>
     {{/logourl}}
-    <h1 class="h2">{{#str}}loginwelcomeback{{/str}}</h1>
-    <p class="text-muted mb-4">{{#str}} loginto, core, {{sitename}} {{/str}}</p>
+
+    <div class="toba-portal-switch" role="tablist" aria-label="Choose login portal">
+        <button type="button" class="toba-portal-tab on" role="tab" id="toba-tab-employer"
+                aria-selected="true" aria-controls="toba-portal-panel" data-portal="employer">
+            <i class="fa fa-building" aria-hidden="true"></i>
+            <span>Employer</span>
+        </button>
+        <button type="button" class="toba-portal-tab" role="tab" id="toba-tab-fellowship"
+                aria-selected="false" aria-controls="toba-portal-panel" data-portal="fellowship">
+            <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+            <span>Fellowship</span>
+        </button>
+    </div>
+
+    <div id="toba-portal-panel" role="tabpanel" aria-labelledby="toba-tab-employer" data-toba-portal-panel>
+        <h1 class="h2 toba-login-heading" data-portal-heading>Welcome back</h1>
+        <p class="toba-login-sub text-muted mb-4" data-portal-sub>
+            Sign in to the Employer portal
+        </p>
+    </div>
+
     {{#maintenance}}
         <div class="alert alert-danger login-maintenance">
             {{{maintenance}}}
@@ -94,6 +132,8 @@
             <input id="anchor" type="hidden" name="anchor" value="">
             <script>document.getElementById('anchor').value = location.hash;</script>
             <input type="hidden" name="logintoken" value="{{logintoken}}">
+            {{! UI-only portal hint — ignored by Moodle auth for now. }}
+            <input type="hidden" name="portal" id="toba-portal-field" value="employer">
             <div class="login-form-username mb-3">
                 <label for="username" class="form-label">
                     {{^canloginbyemail}}
@@ -126,9 +166,23 @@
                 </div>
             {{/recaptcha}}
             <div class="login-form-submit mb-3">
-                <button class="btn btn-primary w-100" type="submit" id="loginbtn">{{#str}}login{{/str}}</button>
+                <button class="btn btn-primary w-100 toba-login-submit" type="submit" id="loginbtn">
+                    <span data-portal-cta>Sign in to Employer</span>
+                </button>
             </div>
         </form>
+        {{! Always render — visibility toggled by Fellowship portal tab. }}
+        <div class="toba-fellowship-signup" data-toba-fellowship-signup>
+            <div class="login-separator my-3">or</div>
+            <a class="btn toba-fellowship-signup-btn" id="toba-fellowship-register"
+               href="{{config.wwwroot}}/local/launchpad/register.php">
+                <i class="fa fa-user-plus" aria-hidden="true"></i>
+                <span>Create Fellowship account</span>
+            </a>
+        </div>
+        <p class="toba-employer-signup-hint" data-toba-employer-signup-hint>
+            Employer accounts are assigned by your organisation. Self-registration is for Fellowship only.
+        </p>
     {{/showloginform}}
     {{#hasauthinstructions}}
         <div class="d-lg-none small mb-3">
@@ -136,25 +190,10 @@
         </div>
     {{/hasauthinstructions}}
     {{^hasauthinstructions}}
-        {{#cansignup}}
-            <div class="text-center small mb-3">
-                {{#instructions}}
-                    <span class="text-muted me-1">{{{instructions}}}</span>
-                {{/instructions}}
-                <a href="{{signupurl}}">{{#str}}loginstartsignup{{/str}}</a>
-            </div>
-        {{/cansignup}}
         {{^cansignup}}
             {{#instructions}}
-                <p class="small mb-3">{{{instructions}}}</p>
+                <p class="small mb-3 toba-employer-only-instructions" data-toba-employer-instructions>{{{instructions}}}</p>
             {{/instructions}}
-        {{/cansignup}}
-    {{/hasauthinstructions}}
-    {{#hasauthinstructions}}
-        {{#cansignup}}
-            <div class="text-center small mb-3">
-                <a href="{{signupurl}}">{{#str}}loginstartsignup{{/str}}</a>
-            </div>
         {{/cansignup}}
     {{/hasauthinstructions}}
     {{#hasidentityproviders}}
@@ -200,6 +239,124 @@
 </div>
 
 {{#js}}
+    (function() {
+        const STORAGE_KEY = 'toba_login_portal';
+        const COPY = {
+            employer: {
+                heading: 'Welcome back',
+                sub: 'Sign in to the Employer portal',
+                cta: 'Sign in to Employer',
+                tabId: 'toba-tab-employer'
+            },
+            fellowship: {
+                heading: 'Welcome back',
+                sub: 'Sign in to the Fellowship portal',
+                cta: 'Sign in to Fellowship',
+                tabId: 'toba-tab-fellowship'
+            }
+        };
+
+        function normalize(value) {
+            const v = (value || '').toLowerCase();
+            if (v === 'fellow' || v === 'fellowship') {
+                return 'fellowship';
+            }
+            return 'employer';
+        }
+
+        function readInitial() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                if (params.has('portal')) {
+                    return normalize(params.get('portal'));
+                }
+            } catch (e) {}
+            try {
+                return normalize(window.localStorage.getItem(STORAGE_KEY));
+            } catch (e) {}
+            return 'employer';
+        }
+
+        function setPortal(portal) {
+            const next = normalize(portal);
+            const meta = COPY[next];
+            const formRoot = document.querySelector('[data-toba-loginform]');
+            const panel = document.querySelector('[data-toba-login-panel]');
+            const field = document.getElementById('toba-portal-field');
+            const heading = formRoot && formRoot.querySelector('[data-portal-heading]');
+            const sub = formRoot && formRoot.querySelector('[data-portal-sub]');
+            const cta = formRoot && formRoot.querySelector('[data-portal-cta]');
+            const tabPanel = document.getElementById('toba-portal-panel');
+
+            if (field) {
+                field.value = next;
+            }
+            if (heading) {
+                heading.textContent = meta.heading;
+            }
+            if (sub) {
+                sub.textContent = meta.sub;
+            }
+            if (cta) {
+                cta.textContent = meta.cta;
+            }
+            if (tabPanel) {
+                tabPanel.setAttribute('aria-labelledby', meta.tabId);
+            }
+
+            document.querySelectorAll('.toba-portal-tab').forEach(function(btn) {
+                const on = btn.getAttribute('data-portal') === next;
+                btn.classList.toggle('on', on);
+                btn.setAttribute('aria-selected', on ? 'true' : 'false');
+            });
+
+            if (panel) {
+                panel.querySelectorAll('[data-portal-copy]').forEach(function(el) {
+                    const match = el.getAttribute('data-portal-copy') === next;
+                    el.hidden = !match;
+                });
+                panel.setAttribute('data-active-portal', next);
+            }
+
+            document.body.setAttribute('data-toba-portal', next);
+
+            const fellowshipSignup = document.querySelector('[data-toba-fellowship-signup]');
+            const employerHint = document.querySelector('[data-toba-employer-signup-hint]');
+            const showSignup = next === 'fellowship';
+            if (fellowshipSignup) {
+                fellowshipSignup.hidden = !showSignup;
+                fellowshipSignup.classList.toggle('on', showSignup);
+                fellowshipSignup.setAttribute('aria-hidden', showSignup ? 'false' : 'true');
+            }
+            if (employerHint) {
+                employerHint.hidden = showSignup;
+                employerHint.classList.toggle('on', !showSignup);
+            }
+
+            try {
+                window.localStorage.setItem(STORAGE_KEY, next);
+            } catch (e) {}
+
+            try {
+                const url = new URL(window.location.href);
+                url.searchParams.set('portal', next);
+                window.history.replaceState({}, '', url.toString());
+            } catch (e) {}
+        }
+
+        document.querySelectorAll('.toba-portal-tab').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                setPortal(btn.getAttribute('data-portal'));
+            });
+        });
+
+        // Default body portal before first paint so Fellowship CTA can show without a flash miss.
+        try {
+            document.body.setAttribute('data-toba-portal', readInitial());
+        } catch (e) {}
+        setPortal(readInitial());
+    })();
+
     {{^error}}
         {{#autofocusform}}
             require(['core_form/events'], function(FormEvent) {

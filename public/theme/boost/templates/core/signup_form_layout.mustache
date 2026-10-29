@@ -1,0 +1,289 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/signup_form_layout
+
+    ToBa Learn Fellowship registration — matched to the Employer / Fellowship login UI.
+
+    Example context (json):
+    {
+        "logourl": "https://moodle.org/logo/moodle-logo.svg",
+        "sitename": "ToBa Learn",
+        "formhtml": "<p>(Form html would go here)</p>"
+    }
+}}
+{{! Inline critical styles so register matches login even before theme SCSS cache rebuild. }}
+<style>
+.toba-signupform{display:flex;flex-direction:column;align-items:stretch;font-family:"Gantari",system-ui,-apple-system,"Segoe UI",sans-serif;color:#0d1429}
+.toba-signupform .toba-login-heading{font-family:"Prosto One",system-ui,sans-serif;font-weight:400;letter-spacing:-.01em;text-align:center;margin-bottom:.35rem;color:#0d1429}
+.toba-signupform .toba-login-sub{text-align:center;color:#44506a!important}
+.toba-signupform .toba-portal-switch{display:flex;width:100%;gap:4px;padding:4px;margin:0 auto 1.35rem;background:#fff;border:1px solid #e3e9f4;border-radius:999px;box-shadow:0 1px 2px rgba(13,20,41,.04)}
+.toba-signupform .toba-portal-tab{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border:0;background:transparent;border-radius:999px;padding:.7rem 1rem;font-weight:600;font-size:.9rem;color:#44506a;text-decoration:none;cursor:pointer}
+.toba-signupform a.toba-portal-tab:hover{color:#0d1429;background:#ebf0fa;text-decoration:none}
+.toba-signupform .toba-portal-tab.on{background:#1a61f2;color:#fff}
+.toba-signupform .mform fieldset{border:0;margin:0;padding:0;min-width:0}
+.toba-signupform .mform .fitem,.toba-signupform .mform .fitem.row{display:flex;flex-direction:column;align-items:stretch;gap:.35rem;margin:0 0 1rem;width:100%;--bs-gutter-x:0}
+.toba-signupform .mform .col-form-label,.toba-signupform .mform .fitemtitle,.toba-signupform .mform label{font-weight:600;color:#0d1429;padding:0;margin:0;text-align:left;float:none;width:100%;max-width:none}
+.toba-signupform .mform .felement,.toba-signupform .mform .col-md-9,.toba-signupform .mform .col-md-3{width:100%!important;max-width:100%!important;padding:0;float:none}
+.toba-signupform .mform .form-control,.toba-signupform .mform .form-select,.toba-signupform .mform select,.toba-signupform .mform input[type=text],.toba-signupform .mform input[type=password],.toba-signupform .mform input[type=email]{display:block;width:100%;background:#f6f8fc;border:1px solid #e3e9f4;border-radius:12px;min-height:2.75rem;padding:.5rem .85rem;box-shadow:none;color:#0d1429}
+.toba-signupform .mform .form-control:focus,.toba-signupform .mform .form-select:focus,.toba-signupform .mform select:focus,.toba-signupform .mform input:focus{background:#fff;border-color:#1a61f2;box-shadow:0 0 0 .2rem rgba(26,97,242,.18);outline:none}
+.toba-signupform .mform .form-text,.toba-signupform .mform #id_passwordpolicyinfo,.toba-signupform .mform .felement>.text-muted{font-size:.8125rem;color:#44506a!important;line-height:1.4;margin-top:.35rem}
+.toba-signupform .mform .fitem_actionbuttons,.toba-signupform .mform .felement[data-fieldtype=button],.toba-signupform .mform .felement[data-fieldtype=submit]{display:flex;flex-direction:column;gap:.65rem;margin-top:.5rem;width:100%}
+.toba-signupform .mform #id_submitbutton,.toba-signupform .mform .btn-primary{width:100%;border-radius:999px;min-height:2.85rem;font-weight:600;background:#1a61f2;border-color:#1a61f2;box-shadow:0 6px 18px rgba(26,97,242,.28);color:#fff}
+.toba-signupform .mform #id_submitbutton:hover,.toba-signupform .mform .btn-primary:hover{background:#0f4fd6;border-color:#0f4fd6}
+.toba-signupform .mform #id_cancel,.toba-signupform .mform .btn-secondary{width:100%;border-radius:999px;min-height:2.85rem;font-weight:600;background:#fff;border:1px solid #e3e9f4;color:#0d1429;box-shadow:none}
+.toba-signupform .mform #id_cancel:hover,.toba-signupform .mform .btn-secondary:hover{background:#ebf0fa}
+.toba-signupform .toba-signup-signin{text-align:center;margin-top:1rem;font-size:.875rem;color:#44506a}
+.toba-signupform .toba-signup-signin a{color:#1a61f2;font-weight:600;text-decoration:none}
+.toba-signupform .toba-signup-signin a:hover{text-decoration:underline}
+.toba-signupform .toba-signup-notice{border-radius:14px;border:1px solid #e3e9f4;background:#ebf0fa;color:#0d1429;font-size:.875rem;line-height:1.45;padding:.75rem 1rem;margin:0 0 1rem}
+/* Single searchable country dropdown */
+.toba-country-picker{position:relative;width:100%}
+.toba-country-picker-toggle{display:flex;align-items:center;justify-content:space-between;gap:.75rem;width:100%;min-height:2.75rem;padding:.5rem .85rem;border:1px solid #e3e9f4;border-radius:12px;background:#f6f8fc;color:#0d1429;font:inherit;font-weight:500;text-align:left;cursor:pointer}
+.toba-country-picker-toggle:focus,.toba-country-picker.open .toba-country-picker-toggle{outline:none;background:#fff;border-color:#1a61f2;box-shadow:0 0 0 .2rem rgba(26,97,242,.18)}
+.toba-country-picker-toggle .placeholder{color:#6b778f;font-weight:400}
+.toba-country-picker-caret{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #44506a;flex:none}
+.toba-country-picker-panel{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;background:#fff;border:1px solid #e3e9f4;border-radius:14px;box-shadow:0 12px 32px rgba(13,20,41,.12);overflow:hidden}
+.toba-country-picker.open .toba-country-picker-panel{display:block}
+.toba-country-picker-search{width:100%;border:0;border-bottom:1px solid #e3e9f4;padding:.7rem .9rem;font:inherit;color:#0d1429;background:#fff}
+.toba-country-picker-search:focus{outline:none}
+.toba-country-picker-list{list-style:none;margin:0;padding:.35rem 0;max-height:240px;overflow:auto}
+.toba-country-picker-list li{padding:.55rem .9rem;cursor:pointer;font-size:.95rem;color:#0d1429}
+.toba-country-picker-list li:hover,.toba-country-picker-list li[aria-selected=true]{background:#ebf0fa;color:#0d2461}
+.toba-country-picker-empty{padding:.75rem .9rem;color:#44506a;font-size:.875rem}
+#fitem_id_country select.toba-country-native{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;border:0!important;opacity:0!important}
+</style>
+
+<div class="signupform toba-signupform toba-loginform" data-toba-signupform data-toba-loginform>
+    {{#logourl}}
+        <div id="loginlogo" class="d-flex justify-content-center mb-3">
+            <img id="logoimage" src="{{logourl}}" class="img-fluid" alt="{{sitename}}"/>
+        </div>
+    {{/logourl}}
+
+    <div class="toba-portal-switch" role="tablist" aria-label="Choose portal">
+        <a class="toba-portal-tab" role="tab" id="toba-tab-employer"
+           href="{{config.wwwroot}}/login/index.php?portal=employer"
+           aria-selected="false">
+            <i class="fa fa-building" aria-hidden="true"></i>
+            <span>Employer</span>
+        </a>
+        <span class="toba-portal-tab on" role="tab" id="toba-tab-fellowship"
+              aria-selected="true" aria-current="page">
+            <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+            <span>Fellowship</span>
+        </span>
+    </div>
+
+    <div id="toba-portal-panel" class="mb-4" role="tabpanel" aria-labelledby="toba-tab-fellowship">
+        <h1 class="h2 toba-login-heading">Create your account</h1>
+        <p class="toba-login-sub text-muted mb-0">
+            Register for the Fellowship portal
+        </p>
+    </div>
+
+    <div class="toba-signup-form-body login-form">
+        {{{formhtml}}}
+    </div>
+
+    <p class="toba-signup-signin text-center small mt-3 mb-0">
+        Already have an account?
+        <a href="{{config.wwwroot}}/login/index.php?portal=fellowship">Sign in to Fellowship</a>
+    </p>
+</div>
+
+<script>
+(function() {
+    document.body.setAttribute('data-toba-portal', 'fellowship');
+
+    function applyFellowshipPanel() {
+        var panel = document.querySelector('[data-toba-login-panel]');
+        if (!panel) {
+            return;
+        }
+        panel.setAttribute('data-active-portal', 'fellowship');
+        panel.querySelectorAll('[data-portal-copy]').forEach(function(el) {
+            el.hidden = el.getAttribute('data-portal-copy') !== 'fellowship';
+        });
+    }
+
+    function enhanceCountrySelect() {
+        var select = document.getElementById('id_country');
+        if (!select || select.dataset.tobaEnhanced === '1') {
+            return;
+        }
+        // Only enhance a native <select>, never Moodle autocomplete.
+        var field = select.closest('[data-fieldtype]');
+        if (field && field.getAttribute('data-fieldtype') === 'autocomplete') {
+            return;
+        }
+        select.dataset.tobaEnhanced = '1';
+        select.classList.add('toba-country-native');
+        select.setAttribute('aria-hidden', 'true');
+        select.tabIndex = -1;
+
+        // Force empty unless a real country code is already chosen.
+        if (!select.value) {
+            select.selectedIndex = 0;
+            for (var i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === '') {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        var picker = document.createElement('div');
+        picker.className = 'toba-country-picker';
+        picker.innerHTML =
+            '<button type="button" class="toba-country-picker-toggle" aria-haspopup="listbox" aria-expanded="false">' +
+            '<span class="toba-country-picker-label placeholder">Select a country</span>' +
+            '<span class="toba-country-picker-caret" aria-hidden="true"></span>' +
+            '</button>' +
+            '<div class="toba-country-picker-panel" hidden>' +
+            '<input type="search" class="toba-country-picker-search" placeholder="Type to search countries" autocomplete="off" aria-label="Search countries">' +
+            '<ul class="toba-country-picker-list" role="listbox"></ul>' +
+            '<div class="toba-country-picker-empty" hidden>No countries match</div>' +
+            '</div>';
+
+        select.parentNode.insertBefore(picker, select);
+
+        var toggle = picker.querySelector('.toba-country-picker-toggle');
+        var label = picker.querySelector('.toba-country-picker-label');
+        var panelEl = picker.querySelector('.toba-country-picker-panel');
+        var search = picker.querySelector('.toba-country-picker-search');
+        var list = picker.querySelector('.toba-country-picker-list');
+        var empty = picker.querySelector('.toba-country-picker-empty');
+
+        var options = [];
+        Array.prototype.forEach.call(select.options, function(opt) {
+            var value = opt.value;
+            var text = (opt.textContent || '').trim();
+            if (!value) {
+                return;
+            }
+            // Skip placeholder rows like "Select a country..."
+            if (/^select a country/i.test(text)) {
+                return;
+            }
+            options.push({value: value, text: text});
+        });
+
+        function selectedText() {
+            var value = select.value;
+            if (!value) {
+                return '';
+            }
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === value) {
+                    return options[i].text;
+                }
+            }
+            return '';
+        }
+
+        function syncLabel() {
+            var text = selectedText();
+            if (text) {
+                label.textContent = text;
+                label.classList.remove('placeholder');
+            } else {
+                label.textContent = 'Select a country';
+                label.classList.add('placeholder');
+            }
+        }
+
+        function render(filter) {
+            var q = (filter || '').toLowerCase().trim();
+            list.innerHTML = '';
+            var shown = 0;
+            options.forEach(function(opt) {
+                if (q && opt.text.toLowerCase().indexOf(q) === -1) {
+                    return;
+                }
+                shown += 1;
+                var li = document.createElement('li');
+                li.setAttribute('role', 'option');
+                li.dataset.value = opt.value;
+                li.textContent = opt.text;
+                if (opt.value === select.value) {
+                    li.setAttribute('aria-selected', 'true');
+                }
+                li.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    select.value = opt.value;
+                    select.dispatchEvent(new Event('change', {bubbles: true}));
+                    syncLabel();
+                    close();
+                });
+                list.appendChild(li);
+            });
+            empty.hidden = shown > 0;
+        }
+
+        function open() {
+            picker.classList.add('open');
+            panelEl.hidden = false;
+            toggle.setAttribute('aria-expanded', 'true');
+            search.value = '';
+            render('');
+            setTimeout(function() { search.focus(); }, 0);
+        }
+
+        function close() {
+            picker.classList.remove('open');
+            panelEl.hidden = true;
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+
+        toggle.addEventListener('click', function() {
+            if (picker.classList.contains('open')) {
+                close();
+            } else {
+                open();
+            }
+        });
+        search.addEventListener('input', function() {
+            render(search.value);
+        });
+        search.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                close();
+                toggle.focus();
+            }
+        });
+        document.addEventListener('click', function(e) {
+            if (!picker.contains(e.target)) {
+                close();
+            }
+        });
+
+        syncLabel();
+    }
+
+    function boot() {
+        applyFellowshipPanel();
+        enhanceCountrySelect();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+})();
+</script>

@@ -261,21 +261,69 @@ class core_renderer extends \core_renderer {
      * @return string
      */
     public function render_login(\core_auth\output\login $form) {
-        global $CFG, $SITE;
+        global $CFG;
 
         $context = $form->export_for_template($this);
-        $url = $this->get_logo_url();
-        if ($url) {
-            $url = $url->out(false);
+        // Prefer the ToBa Learn brand mark shipped with LaunchPad.
+        $tobalogo = $CFG->dirroot . '/local/launchpad/assets/img/logo.webp';
+        if (is_readable($tobalogo)) {
+            $context->logourl = $CFG->wwwroot . '/local/launchpad/assets/img/logo.webp';
+        } else {
+            $url = $this->get_logo_url();
+            $context->logourl = $url ? $url->out(false) : false;
         }
-        $context->logourl = $url;
-        $context->sitename = format_string(
-            $SITE->fullname,
-            true,
-            ['context' => context_course::instance(SITEID), 'escape' => false]
-        );
+        $context->sitename = 'ToBa Learn';
         $context->hasauthinstructions = !empty($CFG->auth_instructions);
 
         return $this->render_from_template('core/loginform', $context);
+    }
+
+    /**
+     * Render the login signup form with the ToBa Learn brand mark.
+     *
+     * @param \moodleform $form Signup form.
+     * @return string
+     */
+    public function render_login_signup_form($form) {
+        global $CFG;
+
+        $context = $form->export_for_template($this);
+        $tobalogo = $CFG->dirroot . '/local/launchpad/assets/img/logo.webp';
+        if (is_readable($tobalogo)) {
+            $context['logourl'] = $CFG->wwwroot . '/local/launchpad/assets/img/logo.webp';
+        } else {
+            $url = $this->get_logo_url();
+            $context['logourl'] = $url ? $url->out(false) : false;
+        }
+        $context['sitename'] = 'ToBa Learn';
+
+        return $this->render_from_template('core/signup_form_layout', $context);
+    }
+
+    /**
+     * Prefer the ToBa Learn mark from LaunchPad for the navbar (dashboard included).
+     *
+     * @param int|null $maxwidth Unused; kept for signature compatibility.
+     * @param int|null $maxheight Unused; kept for signature compatibility.
+     * @return moodle_url|false
+     */
+    public function get_compact_logo_url($maxwidth = 300, $maxheight = 300) {
+        global $CFG;
+
+        $tobalogo = $CFG->dirroot . '/local/launchpad/assets/img/logo.webp';
+        if (is_readable($tobalogo)) {
+            return new moodle_url('/local/launchpad/assets/img/logo.webp');
+        }
+
+        return parent::get_compact_logo_url($maxwidth, $maxheight);
+    }
+
+    /**
+     * Show the navbar logo whenever the ToBa Learn mark (or a site compact logo) is available.
+     *
+     * @return bool
+     */
+    public function should_display_navbar_logo() {
+        return !empty($this->get_compact_logo_url());
     }
 }

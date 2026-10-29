@@ -33,10 +33,9 @@ require_once($CFG->libdir .'/filelib.php');
 
 redirect_if_major_upgrade_required();
 
-// Guests see the LaunchPad marketing home (standalone HTML). Logged-in users
-// continue through the normal homepage redirects below.
+// Site front is always the ToBa Learn LaunchPad (guests and signed-in users).
+// Signed-in visitors still see the marketing home; CTAs become "Access portal".
 if (!defined('BEHAT_SITE_RUNNING') && !(defined('PHPUNIT_TEST') && PHPUNIT_TEST)
-        && !isloggedin()
         && class_exists(\local_launchpad\page::class)) {
     \local_launchpad\page::serve();
     exit;
