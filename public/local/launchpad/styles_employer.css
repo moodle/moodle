@@ -1,4 +1,4 @@
-/* Employer portal shell (layout aligned to Fellowship / ToBa LaunchPad) � tokens aligned to ToBa-Learn-LaunchPad.html #portal.
+/* Employer portal shell — layout aligned to Fellowship / ToBa LaunchPad.
    No XP / gamification. Native Moodle activities stay on Moodle pages. */
 :root {
   --lp-bg: #F6F8FC;
@@ -117,7 +117,7 @@ body.local-launchpad-employer {
   color: #8FA6DA;
 }
 
-/* HTML x-lvcard � live level + XP toward next (links to Achievements). */
+/* HTML x-lvcard � live level + XP toward next (links to Achievements). */
 .lp-lvcard {
   display: block;
   margin: 0 4px 6px;
@@ -489,7 +489,7 @@ body.local-launchpad-employer {
   white-space: nowrap;
   transition: transform .15s, background .15s, box-shadow .15s;
 }
-.lp-btn:active { transform: scale(.97); }
+.lp-btn:active { transform: scale(.96); }
 .lp-btn-primary {
   background: #fff;
   color: var(--lp-navy);
@@ -759,11 +759,25 @@ body.local-launchpad-employer {
   padding: 24px;
   min-width: 0;
   box-shadow: none;
+  transition: transform .22s cubic-bezier(.2, 0, 0, 1), box-shadow .22s cubic-bezier(.2, 0, 0, 1);
 }
 .lp-card.lift { box-shadow: var(--lp-shadow); }
+.lp-card.lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(13, 20, 41, .06), 0 16px 40px rgba(13, 20, 41, .1);
+}
 .lp-card.soft {
   background: var(--lp-blue-softer);
   border-color: var(--lp-blue-soft);
+}
+.lp-reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: lp-reveal .55s cubic-bezier(.2, 0, 0, 1) forwards;
+  animation-delay: calc(var(--lp-d, 0) * 80ms);
+}
+@keyframes lp-reveal {
+  to { opacity: 1; transform: none; }
 }
 .lp-card-head {
   display: flex;
@@ -803,6 +817,27 @@ body.local-launchpad-employer {
 .lp-course-list a { text-decoration: none; color: inherit; }
 .lp-course-list b { display: block; font-size: 15.5px; }
 .lp-course-list .lp-muted { font-size: 13px; }
+.lp-course-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lp-course-main:hover b { color: var(--lp-blue); }
+.lp-course-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--lp-blue);
+  background: var(--lp-blue-soft);
+  border-radius: 999px;
+  padding: 3px 8px;
+}
+.lp-bar-thin { height: 6px; margin-top: 4px; max-width: 220px; }
 
 .lp-progress-block { display: flex; flex-direction: column; gap: 10px; }
 .lp-progress-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
@@ -994,7 +1029,7 @@ body.local-launchpad-employer {
   font-size: 16px;
 }
 .lp-cert small { color: var(--lp-muted); font-size: 13px; }
-/* HTML x-mascot + bubble � full figure beside speech, not a cropped circle. */
+/* HTML x-mascot + bubble � full figure beside speech, not a cropped circle. */
 .lp-mascot {
   display: flex;
   gap: 14px;
@@ -1460,13 +1495,77 @@ body.lp-orbit-is-hidden .lp-orbit { display: none; }
   }
 }
 
-/* —— Employer-only extras (gates + empty actions) —— */
+/* —— Employer-only extras (tiles, gates, Moodle tools) —— */
+.lp-tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.lp-tile {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid var(--lp-line);
+  box-shadow: 0 1px 2px rgba(13, 20, 41, .04);
+  min-width: 0;
+}
+.lp-tile-ico {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--lp-blue-soft);
+  color: var(--lp-blue);
+  display: grid;
+  place-items: center;
+  flex: none;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--lp-head);
+}
+.lp-tile[data-icon="courses"] .lp-tile-ico::before { content: "◎"; }
+.lp-tile[data-icon="check"] .lp-tile-ico::before { content: "✓"; }
+.lp-tile[data-icon="chart"] .lp-tile-ico::before { content: "%"; }
+.lp-tile[data-icon="bell"] .lp-tile-ico::before { content: "●"; font-size: 12px; }
+.lp-tile[data-icon="clock"] .lp-tile-ico::before { content: "◷"; }
+.lp-tile-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lp-tile-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+}
+.lp-tile-value {
+  font-family: var(--lp-head);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.lp-tile-sub {
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  line-height: 1.35;
+}
+
 .lp-emp-gates {
   list-style: none;
   margin: 14px 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
 }
 .lp-emp-gates li {
@@ -1475,6 +1574,11 @@ body.lp-orbit-is-hidden .lp-orbit { display: none; }
   background: #fff;
   overflow: hidden;
   min-width: 0;
+  transition: border-color .2s, box-shadow .2s;
+}
+.lp-emp-gates li.is-open:hover {
+  border-color: var(--lp-blue-soft);
+  box-shadow: 0 8px 20px rgba(26, 97, 242, .08);
 }
 .lp-emp-gates li.is-locked .lp-emp-gate-n {
   background: #EEF1F6;
@@ -1491,6 +1595,15 @@ body.lp-orbit-is-hidden .lp-orbit { display: none; }
   min-height: 100%;
 }
 a.lp-emp-gate:hover { background: var(--lp-blue-softer); }
+a.lp-emp-gate:focus-visible,
+.lp-btn:focus-visible,
+.lp-nav:focus-visible,
+.lp-iconbtn:focus-visible,
+.lp-xp-chip:focus-visible,
+.lp-menu-btn:focus-visible {
+  outline: 3px solid rgba(26, 97, 242, .35);
+  outline-offset: 2px;
+}
 .lp-emp-gate-n {
   width: 32px;
   height: 32px;
@@ -1512,12 +1625,18 @@ a.lp-emp-gate:hover { background: var(--lp-blue-softer); }
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 12px;
+}
+.lp-core-links-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 .lp-core-links .lp-btn {
-  justify-content: flex-start;
+  justify-content: center;
   width: 100%;
   border-radius: 12px;
+  min-height: 44px;
 }
 .lp-empty-actions {
   display: flex;
@@ -1526,9 +1645,25 @@ a.lp-emp-gate:hover { background: var(--lp-blue-softer); }
   justify-content: center;
   margin-top: 8px;
 }
+
+@media (max-width: 1100px) {
+  .lp-tiles { grid-template-columns: 1fr 1fr; }
+}
 @media (max-width: 900px) {
   .lp-emp-gates { grid-template-columns: 1fr 1fr; }
+  .lp-tiles { grid-template-columns: 1fr 1fr; }
+  .lp-core-links-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .lp-emp-gates { grid-template-columns: 1fr; }
+  .lp-tiles { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-reveal {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+  .lp-card.lift:hover { transform: none; }
 }

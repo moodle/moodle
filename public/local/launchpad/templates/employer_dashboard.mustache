@@ -45,3 +45,16 @@
     </main>
   </div>
 </div>
+
+{{#bot_url}}
+<div class="lp-orbit" id="lp-orbit" data-lp-orbit>
+  <div class="lp-orbit-say{{^orbit_tip}} is-hide{{/orbit_tip}}" id="lp-orbit-say" role="status">
+    <span class="lp-orbit-say-text">{{{orbit_tip}}}</span>
+    <button type="button" class="lp-orbit-say-x" data-lp-orbit-dismiss aria-label="{{strings.orbitdismiss}}">×</button>
+  </div>
+  <button type="button" class="lp-orbit-botbtn" data-lp-orbit-hop aria-label="{{strings.orbitaria}}">
+    <img class="lp-orbit-bot" src="{{bot_url}}" alt="">
+  </button>
+</div>
+<button type="button" class="lp-orbit-hide" data-lp-orbit-hide>{{strings.orbithide}}</button>
+{{/bot_url}}

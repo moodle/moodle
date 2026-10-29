@@ -1,5 +1,9 @@
 /**
- * Employer shell: mobile nav toggle + journey path (same as Fellowship).
+ * Employer shell: mobile nav, journey bars, Dot Dot orbit (Fellowship parity).
+ *
+ * @module     local_launchpad
+ * @copyright  2026 IntelliVerse-X
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 (function () {
     'use strict';
@@ -82,6 +86,65 @@
                     bar.style.width = w;
                 });
             });
+        });
+    }
+
+    // Dot Dot orbit (bottom-right companion) — same behaviour as Fellowship.
+    var orbit = document.getElementById('lp-orbit');
+    var orbitHide = document.querySelector('[data-lp-orbit-hide]');
+    var orbitSay = document.getElementById('lp-orbit-say');
+    var STORAGE_KEY = 'lp-employer-orbit-hidden';
+
+    function setOrbitHidden(hidden) {
+        document.body.classList.toggle('lp-orbit-is-hidden', hidden);
+        if (orbitHide) {
+            orbitHide.textContent = hidden
+                ? (orbitHide.getAttribute('data-show-label') || 'Show Dot Dot')
+                : (orbitHide.getAttribute('data-hide-label') || 'Hide Dot Dot');
+        }
+        try {
+            window.localStorage.setItem(STORAGE_KEY, hidden ? '1' : '0');
+        } catch (e) {
+            // Ignore private-mode storage failures.
+        }
+    }
+
+    if (orbitHide) {
+        orbitHide.setAttribute('data-hide-label', orbitHide.textContent);
+        orbitHide.setAttribute('data-show-label', 'Show Dot Dot');
+        var stored = null;
+        try {
+            stored = window.localStorage.getItem(STORAGE_KEY);
+        } catch (e) {
+            stored = null;
+        }
+        if (stored === '1') {
+            setOrbitHidden(true);
+        }
+        orbitHide.addEventListener('click', function () {
+            setOrbitHidden(!document.body.classList.contains('lp-orbit-is-hidden'));
+        });
+    }
+
+    if (orbit) {
+        var hopBtn = orbit.querySelector('[data-lp-orbit-hop]');
+        if (hopBtn) {
+            hopBtn.addEventListener('click', function () {
+                if (reduce) {
+                    return;
+                }
+                orbit.classList.remove('is-hop');
+                // Force reflow so the hop can replay.
+                void orbit.offsetWidth;
+                orbit.classList.add('is-hop');
+            });
+        }
+    }
+
+    var dismiss = document.querySelector('[data-lp-orbit-dismiss]');
+    if (dismiss && orbitSay) {
+        dismiss.addEventListener('click', function () {
+            orbitSay.classList.add('is-hide');
         });
     }
 })();

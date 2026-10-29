@@ -1,9 +1,9 @@
 {{!
     @template local_launchpad/employer_home
 
-    Employer home — Fellowship-aligned composition (hero, quest, SVG journey, 2-col cards).
+    Employer home — polished Fellowship-aligned composition over live Moodle data.
 }}
-<div class="lp-hero" data-region="employer-hero">
+<div class="lp-hero lp-reveal" data-region="employer-hero" style="--lp-d:0">
   <span class="lp-eyebrow">{{strings.eyebrow}}</span>
   <h2>{{strings.welcome}}</h2>
   <p class="lp-hero-lead">{{strings.assignedhelp}}</p>
@@ -24,7 +24,7 @@
         <div>
           <span class="lp-eyebrow">{{primarycourse.badge}}</span>
           <p class="lp-quest-title">{{primarycourse.name}}</p>
-          <p class="lp-muted">{{primarycourse.progresslabel}}</p>
+          <p class="lp-muted">{{#activitytotal}}{{strings.alldone}}{{/activitytotal}}{{^activitytotal}}{{primarycourse.progresslabel}}{{/activitytotal}}</p>
         </div>
         <a class="lp-btn lp-btn-primary" href="{{primarycourse.url}}">{{strings.opencourse}}</a>
       </div>
@@ -32,14 +32,30 @@
   {{/hasnext}}
 </div>
 
+{{#hastiles}}
+<ul class="lp-tiles lp-reveal" aria-label="{{strings.overview}}" style="--lp-d:1">
+  {{#tiles}}
+    <li class="lp-tile" data-icon="{{icon}}">
+      <span class="lp-tile-ico" aria-hidden="true"></span>
+      <div class="lp-tile-text">
+        <span class="lp-tile-label">{{label}}</span>
+        <b class="lp-tile-value">{{value}}</b>
+        <span class="lp-tile-sub">{{sub}}</span>
+      </div>
+    </li>
+  {{/tiles}}
+</ul>
+{{/hastiles}}
+
 {{#journey.has_gates}}
-<section class="lp-card lift lp-journey-card" data-region="employer-journey">
+<section class="lp-card lift lp-journey-card lp-reveal" data-region="employer-journey" style="--lp-d:2">
   <div class="lp-card-head">
     <h2 class="lp-journey-title">{{strings.journey}}</h2>
     {{#hasprimary}}
       <a class="lp-link" href="{{primarycourse.url}}">{{strings.opentrack}} →</a>
     {{/hasprimary}}
   </div>
+  <p class="lp-muted lp-sm">{{strings.journeyhelp}}</p>
   <div class="lp-journey{{#journey.compact}} compact{{/journey.compact}}" data-lp-journey>
     <div class="lp-journey-in">
       <svg viewBox="0 0 1000 {{journey.view_h}}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{{strings.journey}}">
@@ -64,7 +80,39 @@
 </section>
 {{/journey.has_gates}}
 
-<div class="lp-grid-2" data-region="employer-workspace">
+{{#hasgates}}
+<section class="lp-card lift lp-reveal" data-region="employer-sections" style="--lp-d:3">
+  <div class="lp-card-head">
+    <h3>{{strings.sections}}</h3>
+    {{#hasprimary}}
+      <a class="lp-link" href="{{primarycourse.url}}">{{strings.opencourse}} →</a>
+    {{/hasprimary}}
+  </div>
+  <p class="lp-muted lp-sm">{{strings.sectionshelp}}</p>
+  <ul class="lp-emp-gates">
+    {{#gates}}
+      <li class="{{#locked}}is-locked{{/locked}}{{^locked}}is-open{{/locked}}">
+        {{#hasurl}}
+          <a class="lp-emp-gate" href="{{url}}">
+            <span class="lp-emp-gate-n" aria-hidden="true">{{index}}</span>
+            <span class="lp-emp-gate-name">{{name}}</span>
+            <span class="lp-chip {{chiptype}}">{{chip}}</span>
+          </a>
+        {{/hasurl}}
+        {{^hasurl}}
+          <div class="lp-emp-gate" aria-disabled="true">
+            <span class="lp-emp-gate-n" aria-hidden="true">{{index}}</span>
+            <span class="lp-emp-gate-name">{{name}}</span>
+            <span class="lp-chip {{chiptype}}">{{chip}}</span>
+          </div>
+        {{/hasurl}}
+      </li>
+    {{/gates}}
+  </ul>
+</section>
+{{/hasgates}}
+
+<div class="lp-grid-2 lp-reveal" data-region="employer-workspace" style="--lp-d:4">
   <section class="lp-card lift">
     <div class="lp-card-head">
       <h3>{{strings.activities}}</h3>
@@ -100,28 +148,40 @@
     {{/hasactivities}}
   </section>
 
-  <section class="lp-card lift" id="assigned">
-    <div class="lp-card-head">
-      <h3>{{strings.assigned}}</h3>
-      <a class="lp-link" href="{{#hasprimary}}{{primarycourse.url}}{{/hasprimary}}{{^hasprimary}}{{urls.home}}{{/hasprimary}}">{{strings.opencourse}} →</a>
-    </div>
-    <p class="lp-muted lp-sm">{{strings.tip}}</p>
-    <ul class="lp-course-list">
-      {{#courses}}
-        <li>
-          <a href="{{url}}">
-            <b>{{name}}</b>
-            <span class="lp-muted">{{progresslabel}}</span>
-          </a>
-          <a class="lp-link-sm" href="{{url}}">{{strings.opencourse}}</a>
-        </li>
-      {{/courses}}
-    </ul>
-    <div class="lp-core-links">
-      <a class="lp-btn lp-btn-light" href="{{urls.mydashboard}}">{{strings.linkdashboard}}</a>
-      <a class="lp-btn lp-btn-light" href="{{#hasprimary}}{{urls.coursegrades}}{{/hasprimary}}{{^hasprimary}}{{urls.grades}}{{/hasprimary}}">{{strings.linkgrades}}</a>
-      <a class="lp-btn lp-btn-light" href="{{urls.calendar}}">{{strings.linkcalendar}}</a>
-      <a class="lp-btn lp-btn-light" href="{{urls.messages}}">{{strings.linkmessages}}</a>
-    </div>
-  </section>
+  <div class="lp-stack-lg">
+    <section class="lp-card lift" id="assigned">
+      <div class="lp-card-head">
+        <h3>{{strings.assigned}}</h3>
+      </div>
+      <p class="lp-muted lp-sm">{{strings.tip}}</p>
+      <ul class="lp-course-list">
+        {{#courses}}
+          <li>
+            <a class="lp-course-main" href="{{url}}">
+              <span class="lp-course-badge">{{badge}}</span>
+              <b>{{name}}</b>
+              <span class="lp-muted">{{progresslabel}}</span>
+              {{#hasprogress}}
+                <span class="lp-bar lp-bar-thin" aria-hidden="true"><i style="width:{{progress}}%"></i></span>
+              {{/hasprogress}}
+            </a>
+            <a class="lp-link-sm" href="{{url}}">{{strings.opencourse}}</a>
+          </li>
+        {{/courses}}
+      </ul>
+    </section>
+
+    <section class="lp-card lift soft">
+      <div class="lp-card-head">
+        <h3>{{strings.corelinks}}</h3>
+      </div>
+      <p class="lp-muted lp-sm">{{strings.corehelp}}</p>
+      <div class="lp-core-links lp-core-links-grid">
+        <a class="lp-btn lp-btn-light" href="{{urls.mydashboard}}">{{strings.linkdashboard}}</a>
+        <a class="lp-btn lp-btn-light" href="{{#hasprimary}}{{urls.coursegrades}}{{/hasprimary}}{{^hasprimary}}{{urls.grades}}{{/hasprimary}}">{{strings.linkgrades}}</a>
+        <a class="lp-btn lp-btn-light" href="{{urls.calendar}}">{{strings.linkcalendar}}</a>
+        <a class="lp-btn lp-btn-light" href="{{urls.messages}}">{{strings.linkmessages}}</a>
+      </div>
+    </section>
+  </div>
 </div>

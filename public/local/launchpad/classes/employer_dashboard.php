@@ -107,9 +107,16 @@ final class employer_dashboard {
             'heroring' => $heroring,
             'hasheroring' => $heroring !== null,
             'tiles' => self::tiles($courses, $hascourses, $sectiondone, $sectiontotal, $unread),
+            'hastiles' => true,
             'gates' => self::programme_gates($sections),
-            'journey' => self::journey_from_sections($sections, $sectiondone, $sectiontotal),
+            'hasgates' => $sections !== [],
+            'journey' => $hascourses
+                ? self::journey_from_sections($sections, $sectiondone, $sectiontotal)
+                : ['has_gates' => false],
             'bot_url' => $pluginbase . '/assets/img/bot.webp',
+            'orbit_tip' => $hascourses
+                ? get_string('employer_orbit_tip_home', 'local_launchpad')
+                : get_string('employer_orbit_tip_empty', 'local_launchpad'),
             'navgroups' => self::nav_groups($urls, $primary, $unread),
             'jumplist' => $jumplist,
             'unread' => $unread,
@@ -157,6 +164,13 @@ final class employer_dashboard {
             'linkprofile' => get_string('employer_link_profile', 'local_launchpad'),
             'tip' => get_string('employer_tip', 'local_launchpad'),
             'noactivities' => get_string('employer_no_activities', 'local_launchpad'),
+            'sections' => get_string('employer_sections_title', 'local_launchpad'),
+            'sectionshelp' => get_string('employer_sections_help', 'local_launchpad'),
+            'overview' => get_string('employer_overview_title', 'local_launchpad'),
+            'alldone' => get_string('employer_all_tracked_done', 'local_launchpad'),
+            'orbithide' => get_string('employer_orbit_hide', 'local_launchpad'),
+            'orbitdismiss' => get_string('employer_orbit_dismiss', 'local_launchpad'),
+            'orbitaria' => get_string('employer_orbit_aria', 'local_launchpad'),
         ];
     }
 
