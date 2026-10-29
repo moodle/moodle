@@ -67,7 +67,7 @@ if ($hassiteconfig) {
         'local_launchpad/mentorintro',
         get_string('mentorintro', 'local_launchpad'),
         get_string('mentorintro_desc', 'local_launchpad'),
-        'Apply on the form, we review fit, then we contact you for onboarding — same 70/100 bar for employer and fellowship cohorts.',
+        'Apply on the form, we review fit, then we contact you for onboarding. Same 70/100 bar for employer and fellowship cohorts.',
         PARAM_TEXT
     ));
 
@@ -182,7 +182,7 @@ if ($hassiteconfig) {
         'local_launchpad/footerlegal',
         get_string('footerlegal', 'local_launchpad'),
         get_string('footerlegal_desc', 'local_launchpad'),
-        'Structured learning for employers and fellows — not a paid internship.',
+        'Structured learning for employers and fellows, not a paid internship.',
         PARAM_TEXT
     ));
 

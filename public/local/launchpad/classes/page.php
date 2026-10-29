@@ -83,11 +83,11 @@ class page {
             'strsignupclosednote' => get_string('signupclosednote', 'local_launchpad'),
         ], $mentor, $footer));
 
-        $cssurl = $pluginbase . '/styles.css?v=202610282000';
-        $jsurl = $pluginbase . '/landing.js?v=202610282000';
+        $cssurl = $pluginbase . '/styles.css?v=202610291320';
+        $jsurl = $pluginbase . '/landing.js?v=202610291320';
         $title = s(get_string('pagetitle', 'local_launchpad'));
 
-        // Standalone document — no Boost header/footer.
+        // Standalone document, no Boost header/footer.
         header('Content-Type: text/html; charset=utf-8');
         echo '<!doctype html>' . "\n";
         echo '<html lang="en">' . "\n";
@@ -122,7 +122,7 @@ class page {
         $defaults = [
             'mentoreyebrow' => 'Join the review team',
             'mentortitle' => 'Want to be a mentor?',
-            'mentorintro' => 'Apply on the form, we review fit, then we contact you for onboarding — same 70/100 bar for employer and fellowship cohorts.',
+            'mentorintro' => 'Apply on the form, we review fit, then we contact you for onboarding. Same 70/100 bar for employer and fellowship cohorts.',
             'mentorchip' => 'Application',
             'mentorcardtitle' => 'How mentoring works here',
             'mentorcardbody' => 'Mentors score evidence against published rubrics, write change notes learners can apply, and hold the same 70/100 bar for employer and fellowship cohorts.',
