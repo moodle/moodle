@@ -8,6 +8,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## 5.2.4+
 
+### core
+
+#### Added
+
+- Added `theme_build_editor_css_for_themes()` to `lib/outputlib.php` to build and cache the editor content CSS for themes without changing the theme revisions. The editor content CSS is now cached in the `core/postprocessedcss` cache, using the new `theme_config::get_editor_css_cache_key()`, `theme_config::get_editor_css_cached_content()` and `theme_config::set_editor_css_content_cache()` methods.
+
+  For more information see [MDL-90110](https://tracker.moodle.org/browse/MDL-90110)
+
 ### core_completion
 
 #### Fixed
