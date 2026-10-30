@@ -67,6 +67,7 @@ class observer {
      * After login: honour login portal tab, then persona default home if still unset.
      *
      * From Fellowship UI / persona homes (PR #15) + login portal gate wiring.
+     * Deep wantsurl targets are preserved inside persona_home.
      *
      * @param \core\event\user_loggedin $event
      */

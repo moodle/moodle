@@ -1,0 +1,50 @@
+{{!
+    @template local_launchpad/employer_nav
+
+    Employer sidebar — matches Fellowship lp-side structure.
+}}
+<nav class="lp-side" id="lp-side" data-region="employer-nav" aria-label="{{portallabel}}">
+  <a class="lp-logo" href="{{urls.home}}"><span class="lp-logo-mark" aria-hidden="true"></span>ToBa Learn</a>
+  <div class="lp-role">{{rolelabel}}</div>
+
+  {{#hasheroring}}
+    <a class="lp-lvcard" href="{{urls.mycourses}}" title="{{strings.mycourses}}">
+      <div class="lp-lvcard-row">
+        <span class="lp-lvbadge" style="background:var(--lp-blue)" aria-hidden="true">%</span>
+        <div class="lp-lvcard-text">
+          <b>{{strings.mycourses}}</b>
+          <span>{{heroring}}% · {{coursecount}} {{strings.assigned}}</span>
+        </div>
+      </div>
+      <div class="lp-side-xpbar" aria-hidden="true"><i style="width:{{heroring}}%"></i></div>
+    </a>
+  {{/hasheroring}}
+
+  {{#navgroups}}
+    <div class="lp-nl">{{label}}</div>
+    {{#items}}
+      <a class="lp-nav{{#current}} is-current{{/current}}" href="{{url}}"{{#current}} aria-current="page"{{/current}} data-nav-key="{{key}}">
+        {{#icon_svg}}{{{icon_svg}}}{{/icon_svg}}
+        <span>{{label}}</span>
+        {{#hasbadge}}<span class="lp-nav-badge">{{badge}}</span>{{/hasbadge}}
+      </a>
+    {{/items}}
+  {{/navgroups}}
+
+  <div class="lp-me">
+    <div class="lp-av" aria-hidden="true">{{initials}}</div>
+    <div class="lp-me-text">
+      <b>{{fullname}}</b>
+      <span>{{rolelabel}}</span>
+    </div>
+  </div>
+
+  <a class="lp-nav" href="{{urls.public}}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>
+    <span>{{strings.publicsite}}</span>
+  </a>
+  <a class="lp-nav" href="{{urls.logout}}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 7V5a2 2 0 012-2h7v18h-7a2 2 0 01-2-2v-2"/><path d="M15 12H3m0 0l3-3m-3 3l3 3"/></svg>
+    <span>{{strings.signout}}</span>
+  </a>
+</nav>

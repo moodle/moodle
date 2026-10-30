@@ -31,6 +31,6 @@ $observers = [
     ],
     [
         'eventname' => '\core\event\user_loggedin',
-        'callback' => \local_launchpad\observer::class . '::user_loggedin',
+        'callback' => '\local_launchpad\observer::user_loggedin',
     ],
 ];

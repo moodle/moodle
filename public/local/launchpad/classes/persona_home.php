@@ -191,6 +191,9 @@ final class persona_home {
 
     /**
      * Redirect from /my/ to persona home when applicable (no loop).
+     *
+     * Pass ?noredirect=1 to keep the stock Moodle dashboard (Employer shell
+     * "Moodle dashboard" deep-link).
      */
     public static function maybe_redirect_from_my(): void {
         global $USER;
@@ -201,6 +204,10 @@ final class persona_home {
             return;
         }
         if (!isloggedin() || isguestuser() || empty($USER->id)) {
+            return;
+        }
+        // Opt-out for intentional Moodle /my/ visits from persona shells.
+        if (!empty(optional_param('noredirect', 0, PARAM_BOOL))) {
             return;
         }
         if (!self::is_my_home_page()) {

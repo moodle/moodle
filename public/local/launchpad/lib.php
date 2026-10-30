@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
  * Ensure Email self-registration is available before pages render.
  *
  * Covers sites that have not yet run the LaunchPad upgrade step.
+ * Persona /my/ redirects live in hook_callbacks → persona_home (Fellow,
+ * Mentor, Employer) so this callback stays registration-only.
  */
 function local_launchpad_before_http_headers(): void {
     if (during_initial_install()) {

@@ -30,6 +30,8 @@ require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
 require_once($CFG->dirroot . '/user/lib.php');
 
+use local_launchpad\account_persona;
+use local_launchpad\account_provision;
 use local_launchpad\registration;
 
 [$options, $unrecognized] = cli_get_params(
@@ -125,6 +127,19 @@ foreach ($demos as $demo) {
         $action = 'created';
     }
 
+    $cohortnote = '';
+    if ($demo['portal'] === 'employer') {
+        // Demo employer needs lp-employee cohort to open /local/launchpad/employee.php.
+        $cohortid = account_provision::ensure_employee_cohort();
+        require_once($CFG->dirroot . '/cohort/lib.php');
+        if (!cohort_is_member($cohortid, (int) $user->id)) {
+            cohort_add_member($cohortid, (int) $user->id);
+            $cohortnote = 'cohort=' . account_persona::EMPLOYEE_COHORT_IDNUMBER . ':added';
+        } else {
+            $cohortnote = 'cohort=' . account_persona::EMPLOYEE_COHORT_IDNUMBER . ':already';
+        }
+    }
+
     $created[] = [
         'label' => $demo['label'],
         'action' => $action,
@@ -132,6 +147,7 @@ foreach ($demos as $demo) {
         'email' => $demo['email'],
         'portal' => $demo['portal'],
         'id' => $user->id,
+        'cohort' => $cohortnote,
         'login' => (new moodle_url('/login/index.php', ['portal' => $demo['portal']]))->out(false),
     ];
 }
@@ -147,7 +163,13 @@ foreach ($created as $row) {
         $row['portal'],
         $row['id']
     ));
+    if (!empty($row['cohort'])) {
+        cli_writeln('  ' . $row['cohort']);
+    }
     cli_writeln('  login: ' . $row['login']);
+    if ($row['portal'] === 'employer') {
+        cli_writeln('  portal: ' . (new moodle_url('/local/launchpad/employee.php'))->out(false));
+    }
 }
 cli_writeln('');
 cli_writeln('Shared password: ' . $password);

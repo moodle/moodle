@@ -108,12 +108,12 @@
         </dl>
         <div class="portal-foot">
           {{#loggedin}}
-          <a class="btn primary" href="{{{employeeurl}}}">Access Employer portal <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
-          <span class="muted portal-note">Opens the employee area. Only employer-cohort accounts are allowed — fellows see an access denied message.</span>
+          <a class="btn primary" href="{{{employeeurl}}}" data-employer-portal>Access Employer portal <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+          <span class="muted portal-note">Opens the Employer dashboard. Only employer-cohort accounts are allowed — fellows see an access denied message.</span>
           {{/loggedin}}
           {{^loggedin}}
           <a class="btn primary" href="{{{employeeurl}}}">Sign in to Employer <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
-          <span class="muted portal-note">Opens Moodle login, then the employee area. Fellows are denied. Access is assigned by your programme admin — no public employee signup.</span>
+          <span class="muted portal-note">Opens Moodle login, then the Employer dashboard. Fellows are denied. Access is assigned by your programme admin — no public employee signup.</span>
           {{/loggedin}}
         </div>
       </div>

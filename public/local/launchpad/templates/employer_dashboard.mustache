@@ -1,0 +1,47 @@
+{{!
+    @template local_launchpad/employer_dashboard
+
+    Employer shell — same lp-* layout as Fellowship (PR #15 / LaunchPad HTML).
+}}
+<a class="lp-skip" href="#lp-main">{{strings.skiptomain}}</a>
+<div class="lp-shell" data-region="{{dataregion}}" id="lp-shell">
+  <div class="lp-scrim" data-lp-nav-close hidden></div>
+  {{> local_launchpad/employer_nav }}
+
+  <div class="lp-main-wrap">
+    <header class="lp-topbar" data-region="employer-topbar">
+      <div class="lp-topbar-start">
+        <button type="button" class="lp-menu-btn" data-lp-nav-toggle aria-expanded="false" aria-controls="lp-side">
+          <span aria-hidden="true">☰</span> {{strings.menu}}
+        </button>
+        <h1 class="lp-page-title">{{portallabel}}</h1>
+      </div>
+      <div class="lp-topbar-actions">
+        {{#hasheroring}}
+          <a class="lp-xp-chip" href="{{urls.mycourses}}" title="{{strings.mycourses}}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15v-4"/><path d="M12 15V8"/><path d="M16 15v-6"/></svg>
+            <b>{{heroring}}%</b> <span>{{strings.mycourses}}</span>
+          </a>
+        {{/hasheroring}}
+        <a class="lp-iconbtn" href="{{urls.notifications}}" aria-label="{{strings.notifications}}{{#hasunread}}, {{unread}}{{/hasunread}}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 9a6 6 0 0112 0c0 7 3 7 3 9H3c0-2 3-2 3-9"/><path d="M10 20a2 2 0 004 0"/></svg>
+          {{#hasunread}}<span class="lp-notif-dot">{{unread}}</span>{{/hasunread}}
+        </a>
+        <a class="lp-profile-icon" href="{{urls.profile}}" aria-label="{{strings.linkprofile}}" title="{{strings.linkprofile}}">
+          <span class="lp-av lp-av-sm" aria-hidden="true">{{initials}}</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="lp-main" id="lp-main" data-region="employer-main" tabindex="-1">
+      <div class="lp-inner">
+        {{#hascourses}}
+          {{> local_launchpad/employer_home }}
+        {{/hascourses}}
+        {{^hascourses}}
+          {{> local_launchpad/employer_empty }}
+        {{/hascourses}}
+      </div>
+    </main>
+  </div>
+</div>

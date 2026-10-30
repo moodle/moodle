@@ -19,7 +19,7 @@ Repository-backed tools to create the **LaunchPad** Moodle category/course skele
 - **Persona homes**: Employee → `/local/launchpad/employee.php`; Mentor → `/local/launchpad/mentor.php` (assigned `lp-*` links); Fellowship → `/local/launchpad/fellow.php` (shell + enrolled `lp-*` courses, native activity links, Moodle completion when enabled). Post-login and `/my/` redirect when wantsurl is default home. Unassigned learners still use `/my/` + empty-state. Emp/Mentor do not get the Fellowship shell.
 - Local-only **email signup** helper: `cli/enable_local_signup.php` (fail-closed to local targets).
 
-Does **not** delete legacy categories (e.g. an older Orientation category). Does **not** invent curriculum body text, mentors, grades, or certificates. Out of scope vs MVP §8: commerce, hiring, mentor marketplace. **Employee** access is cohort `lp-employee` + `/local/launchpad/employee.php` stub (no curriculum invented).
+Does **not** delete legacy categories (e.g. an older Orientation category). Does **not** invent curriculum body text, mentors, grades, or certificates. Out of scope vs MVP §8: commerce, hiring, mentor marketplace. **Employer** access is cohort `lp-employee` + `/local/launchpad/employee.php` dashboard shell (lists real enrolments; deep-links to Moodle courses / grades / calendar / messages / profile — no invented curriculum).
 
 ## Commands
 
