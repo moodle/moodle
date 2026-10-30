@@ -8,6 +8,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## 5.3+
 
+### core
+
+#### Added
+
+- Added `theme_build_editor_css_for_themes()` to `lib/outputlib.php` to build and cache the editor content CSS for themes without changing the theme revisions. The editor content CSS is now cached in the `core/postprocessedcss` cache, using the new `theme_config::get_editor_css_cache_key()`, `theme_config::get_editor_css_cached_content()` and `theme_config::set_editor_css_content_cache()` methods.
+
+  For more information see [MDL-90110](https://tracker.moodle.org/browse/MDL-90110)
+
 ### core_completion
 
 #### Fixed
@@ -15,6 +23,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - update_state() now accepts COMPLETION_COMPLETE_PASS when overriding, and a later automatic call (e.g. a grade change) recomputes the complete/complete-pass substate for an overridden activity instead of leaving it frozen.
 
   For more information see [MDL-87084](https://tracker.moodle.org/browse/MDL-87084)
+
+### qtype
+
+#### Changed
+
+- The standard question types no longer hardcode colours for the repeated answer, feedback and hint panels in their editing forms, so the panels follow the colour mode. Question type plugins with similar rules should replace them with design system tokens. For example `background-color: var(--mds-bg-surface-strong)` and `border-color: var(--mds-border-default)`.
+
+  For more information see [MDL-90067](https://tracker.moodle.org/browse/MDL-90067)
 
 ## 5.3
 
