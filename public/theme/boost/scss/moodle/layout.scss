@@ -193,14 +193,17 @@
         left: 0;
         right: 0;
 
+        // The toggle of an open drawer is hidden, so the gutter reserved for it is not needed.
         &.show-drawer-left {
             margin-left: $drawer-left-width;
             margin-right: 0;
+            padding-left: 0;
         }
 
         &.show-drawer-right {
             margin-left: 0;
             margin-right: $drawer-right-width;
+            padding-right: 0;
         }
 
         &.show-drawer-left.show-drawer-right {

@@ -45270,12 +45270,14 @@ body.tox-fullscreen .tox.tox-tinymce-aux {
   #page.drawers.show-drawer-left {
     margin-left: 285px;
     margin-right: 0;
+    padding-left: 0;
   }
 }
 @media (min-width: 992px) {
   #page.drawers.show-drawer-right {
     margin-left: 0;
     margin-right: 315px;
+    padding-right: 0;
   }
 }
 @media (min-width: 992px) {
