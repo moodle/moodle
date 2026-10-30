@@ -34103,16 +34103,15 @@ img.icon {
  *   band         The header strip the brand logo sits on.
  *   button       The CTA button fill. Not always the band colour: the Partners and feedback bands are light,
  *                so their buttons are near black instead.
- *   button-hover The hover and active fill. Given rather than derived, because it does not move in one
- *                direction across the four cards: the two brand fills darken, and the two near black ones
- *                lighten, having no room left to darken.
+ *   button-hover The hover and active fill. Given as a lighter shade across all four cards,
+ *                as the dark button fills have no room to darken further.
  *   tick         The check icons in the card body.
  */
 /* "From Moodle" CTA card grid on the admin notifications page (MDL-89290). */
 .admin-notification-ctas {
   margin-top: var(--mds-spacing-xl, 2rem);
   padding: var(--mds-spacing-xl, 2rem) 0;
-  background-color: var(--mds-bg-surface-subtle, #f8f9fa);
+  background-color: var(--bs-body-bg);
   border-top: 1px solid var(--mds-border-subtle, #e9ecef);
 }
 .admin-notification-ctas .admin-notification-ctas-heading {
@@ -34145,27 +34144,27 @@ img.icon {
 }
 
 .admin-notification-ctas .admin-notification-cta[data-cta-key=marketplace] {
-  --cta-band: #570d82;
-  --cta-button: #570d82;
-  --cta-button-hover: #32064c;
-  --cta-tick: #570d82;
+  --cta-band: #32064c;
+  --cta-button: #32064c;
+  --cta-button-hover: #4a0a70;
+  --cta-tick: #32064c;
 }
 [data-bs-theme=dark] .admin-notification-ctas .admin-notification-cta[data-cta-key=marketplace] {
-  --cta-button: #a37aba;
-  --cta-button-hover: #c4aad3;
-  --cta-tick: #bc9ecd;
+  --cta-button: #9983a6;
+  --cta-button-hover: #b7a8c0;
+  --cta-tick: #b7a8c0;
 }
 
 .admin-notification-ctas .admin-notification-cta[data-cta-key=moodlecloud] {
-  --cta-band: #194866;
-  --cta-button: #194866;
-  --cta-button-hover: #102f42;
-  --cta-tick: #194866;
+  --cta-band: #282828;
+  --cta-button: #282828;
+  --cta-button-hover: #545454;
+  --cta-tick: #282828;
 }
 [data-bs-theme=dark] .admin-notification-ctas .admin-notification-cta[data-cta-key=moodlecloud] {
-  --cta-button: #7591a3;
-  --cta-button-hover: #a3b6c2;
-  --cta-tick: #98adba;
+  --cta-button: #898989;
+  --cta-button-hover: #b4b4b4;
+  --cta-tick: darkgray;
 }
 
 .admin-notification-ctas .admin-notification-cta[data-cta-key=partners] {
@@ -34203,12 +34202,6 @@ img.icon {
   width: auto;
   max-height: 100%;
 }
-.admin-notification-ctas .admin-notification-cta .admin-notification-cta-logo-pill {
-  display: inline-flex;
-  padding: var(--mds-spacing-xs, 0.5rem) var(--mds-spacing-sm, 0.75rem);
-  background-color: #ffffff;
-  border-radius: var(--mds-border-radius-sm, 0.375rem);
-}
 .admin-notification-ctas .admin-notification-cta .admin-notification-cta-body {
   display: flex;
   flex: 1;
@@ -34224,7 +34217,7 @@ img.icon {
 }
 .admin-notification-ctas .admin-notification-cta .admin-notification-cta-ticks li {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--mds-spacing-xxs, 0.25rem);
 }
 .admin-notification-ctas .admin-notification-cta .admin-notification-cta-ticks .admin-notification-cta-tick {
