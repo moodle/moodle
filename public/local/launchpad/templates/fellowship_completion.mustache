@@ -1,0 +1,123 @@
+{{!
+    @template local_launchpad/fellowship_completion
+
+    Completion — gates ring, requirements table, locked certificate.
+}}
+{{#has_crumbs}}
+  <nav class="lp-crumbs" aria-label="{{#str}} fellowship_breadcrumb, local_launchpad {{/str}}">
+    {{#crumbs}}
+      {{#url}}<a href="{{url}}">{{label}}</a><span aria-hidden="true">/</span>{{/url}}
+      {{^url}}<span aria-current="page">{{label}}</span>{{/url}}
+    {{/crumbs}}
+  </nav>
+{{/has_crumbs}}
+
+<div class="lp-ach-head">
+  <div class="lp-row-sb">
+    <div>
+      {{#course_name}}<span class="lp-eyebrow">{{{course_name}}}</span>{{/course_name}}
+      {{^course_name}}<span class="lp-eyebrow">{{#str}} fellowship_nav_record, local_launchpad {{/str}}</span>{{/course_name}}
+      <h2>{{#str}} fellowship_nav_completion, local_launchpad {{/str}}</h2>
+    </div>
+    <span class="lp-chip {{status_chip}}">{{status_label}}</span>
+  </div>
+</div>
+
+{{^has_course}}
+  <div class="lp-empty" role="status">
+    <div class="lp-empty-mark" aria-hidden="true">LP</div>
+    <h2>{{#str}} fellowship_nav_completion, local_launchpad {{/str}}</h2>
+    <p>{{empty_message}}</p>
+  </div>
+{{/has_course}}
+
+{{#has_course}}
+  <div class="lp-grid-2">
+    <section class="lp-card lift lp-stack-lg">
+      <div class="lp-completion-hero">
+        <div class="lp-ring" style="width:{{ring_size}}px;height:{{ring_size}}px" aria-hidden="true">
+          <svg viewBox="0 0 {{ring_size}} {{ring_size}}">
+            <circle cx="{{ring_cx}}" cy="{{ring_cy}}" r="{{ring_radius}}" fill="none" stroke="var(--lp-blue-soft)" stroke-width="10"/>
+            <circle class="lp-ring-arc" cx="{{ring_cx}}" cy="{{ring_cy}}" r="{{ring_radius}}" fill="none" stroke="var(--lp-blue)" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ring_circ}}" stroke-dashoffset="{{ring_circ}}" data-to="{{ring_dashoffset}}" transform="rotate(-90 {{ring_cx}} {{ring_cy}})"/>
+          </svg>
+          <div class="lp-ring-v">
+            <b>{{ring_pct}}%</b>
+            <span>{{#str}} fellowship_completion_ring_label, local_launchpad {{/str}}</span>
+          </div>
+        </div>
+        <div class="lp-stack">
+          <h2 class="lp-completion-gates">{{gates_label}}</h2>
+          <p class="lp-muted lp-sm">{{#str}} fellowship_completion_gates_note, local_launchpad {{/str}}</p>
+        </div>
+      </div>
+
+      <div class="lp-table-wrap">
+        <table class="lp-table">
+          <thead>
+            <tr>
+              <th>{{#str}} fellowship_completion_col_req, local_launchpad {{/str}}</th>
+              <th>{{#str}} fellowship_completion_col_weight, local_launchpad {{/str}}</th>
+              <th>{{#str}} fellowship_completion_col_result, local_launchpad {{/str}}</th>
+              <th>{{#str}} fellowship_completion_col_status, local_launchpad {{/str}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{#str}} fellowship_completion_orientation, local_launchpad {{/str}}</td>
+              <td class="lp-num">—</td>
+              <td class="lp-num">—</td>
+              <td><span class="lp-chip ok">{{#str}} fellowship_completion_orientation_done, local_launchpad {{/str}}</span></td>
+            </tr>
+            {{#phases}}
+              <tr>
+                <td>{{name}}</td>
+                <td class="lp-num">{{weight_label}}</td>
+                <td class="lp-num">{{#has_score}}{{score}}{{/has_score}}{{^has_score}}—{{/has_score}}</td>
+                <td>
+                  {{#has_chip_class}}
+                    <span class="lp-chip {{chip}}">{{status}}</span>
+                  {{/has_chip_class}}
+                  {{^has_chip_class}}
+                    <span class="lp-chip">{{status}}</span>
+                  {{/has_chip_class}}
+                </td>
+              </tr>
+            {{/phases}}
+            <tr>
+              <td><b>{{#str}} fellowship_completion_weighted, local_launchpad {{/str}}</b></td>
+              <td class="lp-num">100%</td>
+              <td class="lp-num">{{weighted_display}}</td>
+              <td><span class="lp-chip {{weighted_chip}}">{{weighted_status}}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="lp-xs lp-muted">{{#str}} fellowship_completion_calc_note, local_launchpad {{/str}}</p>
+
+      {{#has_outstanding}}
+        <div class="lp-stack">
+          <h3>{{#str}} fellowship_completion_todo, local_launchpad {{/str}}</h3>
+          {{#outstanding}}
+            <div class="lp-todo-row"><span class="lp-chk" aria-hidden="true"></span><span>{{label}}</span></div>
+          {{/outstanding}}
+        </div>
+      {{/has_outstanding}}
+    </section>
+
+    <section class="lp-card lift lp-stack">
+      <h3>{{#str}} fellowship_completion_cert_heading, local_launchpad {{/str}}</h3>
+      <div class="lp-cert locked">
+        <span aria-hidden="true">🔒</span>
+        <b>{{#str}} fellowship_completion_cert_title, local_launchpad {{/str}}</b>
+        <small>{{#str}} fellowship_completion_cert_na, local_launchpad {{/str}}</small>
+      </div>
+      <div class="lp-mascot">
+        {{#prof_url}}
+          <img src="{{prof_url}}" alt="" style="height:90px">
+        {{/prof_url}}
+        <div class="lp-bubble">{{{cert_message}}}</div>
+      </div>
+      <p class="lp-xs lp-muted">{{#str}} fellowship_completion_cert_disclaimer, local_launchpad {{/str}}</p>
+    </section>
+  </div>
+{{/has_course}}

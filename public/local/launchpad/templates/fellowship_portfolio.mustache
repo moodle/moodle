@@ -1,0 +1,44 @@
+{{!
+    @template local_launchpad/fellowship_portfolio
+}}
+{{#has_crumbs}}
+  <nav class="lp-crumbs" aria-label="{{#str}} fellowship_breadcrumb, local_launchpad {{/str}}">
+    {{#crumbs}}
+      {{#url}}<a href="{{url}}">{{label}}</a><span aria-hidden="true">/</span>{{/url}}
+      {{^url}}<span aria-current="page">{{label}}</span>{{/url}}
+    {{/crumbs}}
+  </nav>
+{{/has_crumbs}}
+
+<div class="lp-ach-head">
+  <span class="lp-eyebrow">{{#str}} fellowship_nav_you, local_launchpad {{/str}}</span>
+  <h2>{{#str}} fellowship_nav_portfolio, local_launchpad {{/str}}</h2>
+  <p class="lp-muted">{{#str}} fellowship_portfolio_intro, local_launchpad {{/str}}</p>
+</div>
+
+{{#has_items}}
+  <div class="lp-stack">
+    {{#items}}
+      <article class="lp-card lift lp-port-item">
+        <div class="lp-row-sb">
+          <div>
+            <span class="lp-eyebrow">{{{course_name}}}</span>
+            <h3><a href="{{url}}">{{{name}}}</a></h3>
+            {{#when}}<p class="lp-xs lp-muted">{{when}}</p>{{/when}}
+          </div>
+          <span class="lp-chip {{chip}}">{{status}}</span>
+        </div>
+        {{#has_comment}}
+          <p class="lp-xs lp-muted">{{#str}} fellowship_portfolio_has_feedback, local_launchpad {{/str}}</p>
+        {{/has_comment}}
+      </article>
+    {{/items}}
+  </div>
+{{/has_items}}
+{{^has_items}}
+  <div class="lp-empty" role="status">
+    <div class="lp-empty-mark" aria-hidden="true">··</div>
+    <h2>{{#str}} fellowship_portfolio_empty_title, local_launchpad {{/str}}</h2>
+    <p>{{#str}} fellowship_portfolio_empty_body, local_launchpad {{/str}}</p>
+  </div>
+{{/has_items}}

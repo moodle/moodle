@@ -1,0 +1,42 @@
+{{!
+    @template local_launchpad/fellowship_calendar
+}}
+{{#has_crumbs}}
+  <nav class="lp-crumbs" aria-label="{{#str}} fellowship_breadcrumb, local_launchpad {{/str}}">
+    {{#crumbs}}
+      {{#url}}<a href="{{url}}">{{label}}</a><span aria-hidden="true">/</span>{{/url}}
+      {{^url}}<span aria-current="page">{{label}}</span>{{/url}}
+    {{/crumbs}}
+  </nav>
+{{/has_crumbs}}
+
+<div class="lp-ach-head">
+  <div class="lp-row-sb">
+    <div>
+      <span class="lp-eyebrow">{{#str}} fellowship_nav_you, local_launchpad {{/str}}</span>
+      <h2>{{#str}} fellowship_nav_calendar, local_launchpad {{/str}}</h2>
+      <p class="lp-muted">{{#str}} fellowship_calendar_intro, local_launchpad {{/str}}</p>
+    </div>
+    <a class="lp-btn lp-btn-light" href="{{moodle_calendar_url}}">{{#str}} fellowship_calendar_open_moodle, local_launchpad {{/str}}</a>
+  </div>
+</div>
+
+{{#has_items}}
+  <ul class="lp-course-list lp-cal-list">
+    {{#items}}
+      <li>
+        <a href="{{url}}">
+          <b>{{{name}}}</b>
+          <span class="lp-muted">{{when}}{{#course_name}} · {{{course_name}}}{{/course_name}}</span>
+        </a>
+      </li>
+    {{/items}}
+  </ul>
+{{/has_items}}
+{{^has_items}}
+  <div class="lp-empty" role="status">
+    <div class="lp-empty-mark" aria-hidden="true">··</div>
+    <h2>{{#str}} fellowship_calendar_empty_title, local_launchpad {{/str}}</h2>
+    <p>{{#str}} fellowship_calendar_empty_body, local_launchpad {{/str}}</p>
+  </div>
+{{/has_items}}

@@ -27,6 +27,10 @@ defined('MOODLE_INTERNAL') || die();
 $observers = [
     [
         'eventname' => '\core\event\user_created',
-        'callback' => '\local_launchpad\observer::user_created',
+        'callback' => \local_launchpad\observer::class . '::user_created',
+    ],
+    [
+        'eventname' => '\core\event\user_loggedin',
+        'callback' => \local_launchpad\observer::class . '::user_loggedin',
     ],
 ];

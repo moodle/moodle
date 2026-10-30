@@ -1,0 +1,143 @@
+{{!
+    @template local_launchpad/fellowship_home
+}}
+{{^has_courses}}
+  <div class="lp-empty" role="status">
+    <div class="lp-empty-mark" aria-hidden="true">LP</div>
+    <h2>{{welcome_heading}}</h2>
+    <p>{{empty_message}}</p>
+  </div>
+{{/has_courses}}
+{{#has_courses}}
+  <div class="lp-hero">
+    <div class="lp-hero-row">
+      <div class="lp-hero-main">
+        <span class="lp-eyebrow">{{#str}} fellowship_role_label, local_launchpad {{/str}}</span>
+        <h2>{{welcome_back}}</h2>
+        <p class="lp-hero-lead">{{#str}} fellowship_home_lead, local_launchpad {{/str}}</p>
+        {{#has_next}}
+          <div class="lp-quest">
+            <div>
+              <span class="lp-eyebrow">{{#str}} fellowship_next_activity, local_launchpad {{/str}}</span>
+              <p class="lp-quest-title">{{{next.name}}}</p>
+              <p class="lp-muted">{{next.modname_display}}{{#selected_course_name}} · {{{selected_course_name}}}{{/selected_course_name}}</p>
+            </div>
+            <a class="lp-btn lp-btn-primary" href="{{next.url}}">{{#str}} fellowship_open_activity, local_launchpad {{/str}}</a>
+          </div>
+        {{/has_next}}
+        {{^has_next}}
+          {{#has_percent}}
+            <p class="lp-muted">{{#str}} fellowship_all_tracked_done, local_launchpad {{/str}}</p>
+          {{/has_percent}}
+        {{/has_next}}
+      </div>
+      {{#show_hero_ring}}
+        <div class="lp-ring lp-hero-ring" style="width:{{ring_size}}px;height:{{ring_size}}px" role="img" aria-label="{{ring_pct}}% · {{ring_label}}">
+          <svg viewBox="0 0 {{ring_size}} {{ring_size}}" aria-hidden="true">
+            <circle class="lp-hero-ring-track" cx="{{ring_cx}}" cy="{{ring_cy}}" r="{{ring_radius}}" fill="none" stroke-width="10"/>
+            <circle class="lp-ring-arc lp-hero-ring-arc" cx="{{ring_cx}}" cy="{{ring_cy}}" r="{{ring_radius}}" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ring_circ}}" stroke-dashoffset="{{ring_circ}}" data-to="{{ring_dashoffset}}" transform="rotate(-90 {{ring_cx}} {{ring_cy}})"/>
+          </svg>
+          <div class="lp-ring-v">
+            <b>{{ring_pct}}%</b>
+            <span>{{ring_label}}</span>
+          </div>
+        </div>
+      {{/show_hero_ring}}
+    </div>
+  </div>
+
+  {{#journey.has_gates}}
+    <section class="lp-card lift lp-journey-card">
+      <div class="lp-card-head">
+        <h2 class="lp-journey-title">{{#str}} fellowship_your_journey, local_launchpad {{/str}}</h2>
+        <a class="lp-link" href="{{track_url}}">{{#str}} fellowship_open_track, local_launchpad {{/str}} →</a>
+      </div>
+      {{> local_launchpad/fellowship_journey}}
+    </section>
+  {{/journey.has_gates}}
+
+  {{#has_foundations_activities}}
+    <section class="lp-card lift lp-foundations-card">
+      <div class="lp-card-head">
+        <h3>{{#str}} fellowship_foundations_heading, local_launchpad {{/str}}</h3>
+        <a class="lp-link" href="{{track_url}}">{{#str}} fellowship_nav_track, local_launchpad {{/str}} →</a>
+      </div>
+      <ul class="lp-act-list lp-foundations-list">
+        {{#foundations_activities}}
+          <li class="lp-act{{#complete}} is-done{{/complete}}">
+            <span class="lp-chk{{#complete}} on{{/complete}}" aria-hidden="true">{{#complete}}✓{{/complete}}</span>
+            <div class="lp-act-meta">
+              <span class="lp-act-k">{{modname_display}}</span>
+              <a class="lp-act-t" href="{{url}}">{{{name}}}</a>
+            </div>
+            {{#tracked}}
+              <span class="lp-chip {{#complete}}ok{{/complete}}{{^complete}}line{{/complete}}">
+                {{#complete}}{{#str}} fellowship_complete, local_launchpad {{/str}}{{/complete}}
+                {{^complete}}{{#str}} fellowship_incomplete, local_launchpad {{/str}}{{/complete}}
+              </span>
+            {{/tracked}}
+            {{^tracked}}
+              <span class="lp-chip line">{{#str}} fellowship_not_tracked, local_launchpad {{/str}}</span>
+            {{/tracked}}
+          </li>
+        {{/foundations_activities}}
+      </ul>
+    </section>
+  {{/has_foundations_activities}}
+
+  <div class="lp-stats" role="list">
+    <div class="lp-stat" role="listitem">
+      <b>{{stat_badges_value}}</b>
+      <span>{{#str}} fellowship_stat_badges, local_launchpad {{/str}}</span>
+    </div>
+    <div class="lp-stat" role="listitem">
+      <b>{{stat_required_value}}</b>
+      <span>{{#str}} fellowship_stat_required, local_launchpad {{/str}}</span>
+    </div>
+    <div class="lp-stat" role="listitem">
+      <b class="lp-stat-gate">{{stat_gate_value}}</b>
+      <span>{{#str}} fellowship_stat_gate, local_launchpad {{/str}}</span>
+    </div>
+  </div>
+
+  <div class="lp-grid-2">
+    <section class="lp-card lift">
+      <div class="lp-card-head">
+        <h3>{{#str}} fellowship_recent_badges, local_launchpad {{/str}}</h3>
+        <a class="lp-link" href="{{achievements_url}}">{{#str}} fellowship_nav_achievements, local_launchpad {{/str}} →</a>
+      </div>
+      {{#has_recent_badges}}
+        <div class="lp-recent-badges">
+          {{#recent_badges}}
+            <div class="lp-bdg on lp-bdg-recent">
+              <span class="lp-bi" aria-hidden="true">{{display_icon}}</span>
+              <b>{{name}}</b>
+              <small>{{detail}}</small>
+            </div>
+          {{/recent_badges}}
+        </div>
+      {{/has_recent_badges}}
+      {{^has_recent_badges}}
+        <p class="lp-muted">{{#str}} fellowship_recent_badges_empty, local_launchpad {{/str}}</p>
+        <p class="lp-xs lp-muted">{{#str}} fellowship_recent_badges_empty_hint, local_launchpad {{/str}}</p>
+      {{/has_recent_badges}}
+    </section>
+    <section class="lp-card lift">
+      <div class="lp-card-head">
+        <h3>{{#str}} fellowship_your_courses, local_launchpad {{/str}}</h3>
+        <a class="lp-link" href="{{track_url}}">{{#str}} fellowship_nav_track, local_launchpad {{/str}} →</a>
+      </div>
+      <ul class="lp-course-list">
+        {{#courses}}
+          <li>
+            <a href="{{url}}">
+              <b>{{{fullname}}}</b>
+              <span class="lp-muted">{{idnumber}}</span>
+            </a>
+            <a class="lp-link-sm" href="{{moodle_url}}">{{#str}} fellowship_open_moodle_course, local_launchpad {{/str}}</a>
+          </li>
+        {{/courses}}
+      </ul>
+    </section>
+  </div>
+{{/has_courses}}

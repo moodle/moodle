@@ -1,0 +1,28 @@
+{{!
+    @template local_launchpad/fellowship_feedback_card
+}}
+<section class="lp-card lift lp-feedback-card{{#needs_attention}} is-attention{{/needs_attention}}">
+  <div class="lp-card-head">
+    <div>
+      <span class="lp-eyebrow">{{{course_name}}}</span>
+      <h3>{{{name}}}</h3>
+      {{#has_attempt}}
+        <p class="lp-xs lp-muted">{{#str}} fellowship_feedback_attempt, local_launchpad {{/str}} {{attempt}}{{#submitted_at}} · {{submitted_at}}{{/submitted_at}}</p>
+      {{/has_attempt}}
+    </div>
+    <span class="lp-chip {{chip}}">{{status_label}}</span>
+  </div>
+  <p class="lp-sm">{{summary}}</p>
+  {{#has_grade}}
+    <div class="lp-feedback-grade">
+      <b>{{grade_display}}</b>
+      {{#graded_at}}<span class="lp-muted lp-sm">{{#str}} fellowship_feedback_released, local_launchpad {{/str}} {{graded_at}}</span>{{/graded_at}}
+    </div>
+  {{/has_grade}}
+  {{#has_comment}}
+    <blockquote class="lp-quote">{{{comment_html}}}</blockquote>
+  {{/has_comment}}
+  <div class="lp-feedback-actions">
+    <a class="lp-btn {{#needs_attention}}lp-btn-primary{{/needs_attention}}{{^needs_attention}}lp-btn-light{{/needs_attention}}" href="{{url}}">{{cta_label}}</a>
+  </div>
+</section>

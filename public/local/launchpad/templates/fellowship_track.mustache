@@ -1,0 +1,139 @@
+{{!
+    @template local_launchpad/fellowship_track
+
+    My track — full journey, phase accordions, Capstone / meta / How completion.
+}}
+{{#has_crumbs}}
+  <nav class="lp-crumbs" aria-label="{{#str}} fellowship_breadcrumb, local_launchpad {{/str}}">
+    {{#crumbs}}
+      {{#url}}<a href="{{url}}">{{label}}</a><span aria-hidden="true">/</span>{{/url}}
+      {{^url}}<span aria-current="page">{{label}}</span>{{/url}}
+    {{/crumbs}}
+  </nav>
+{{/has_crumbs}}
+
+{{#multi_course}}
+  <div class="lp-course-switch" role="navigation" aria-label="{{#str}} fellowship_your_courses, local_launchpad {{/str}}">
+    {{#courses}}
+      <a class="lp-chip{{#selected}} is-on{{/selected}}" href="{{url}}">{{{fullname}}}</a>
+    {{/courses}}
+  </div>
+{{/multi_course}}
+
+<div class="lp-ach-head">
+  <span class="lp-eyebrow">{{#str}} fellowship_track_eyebrow, local_launchpad {{/str}}</span>
+  <div class="lp-row-sb">
+    <div>
+      <h2>{{{course_name}}}</h2>
+      <p class="lp-muted" style="max-width:760px">{{{course_lead}}}</p>
+    </div>
+    <a class="lp-btn lp-btn-light" href="{{moodle_course_url}}">{{#str}} fellowship_open_moodle_course, local_launchpad {{/str}}</a>
+  </div>
+</div>
+
+{{#journey.has_gates}}
+  <section class="lp-card lift lp-journey-card">
+    {{> local_launchpad/fellowship_journey}}
+  </section>
+{{/journey.has_gates}}
+
+<div class="lp-grid-2 lp-track-grid">
+  <div class="lp-stack">
+    {{#has_track_phases}}
+      {{#track_phases}}
+        <details class="lp-phase-acc{{^released}} is-off{{/released}}"{{#is_open}} open{{/is_open}}>
+          <summary>
+            <span class="lp-phase-n" aria-hidden="true">{{sectionnum}}</span>
+            <div class="lp-phase-sum">
+              <h3>{{name}}</h3>
+              <span class="lp-sm lp-muted">{{blurb}}</span>
+            </div>
+            {{#released}}
+              {{#has_chip_class}}
+                <span class="lp-chip {{chip}}">{{status}}</span>
+              {{/has_chip_class}}
+              {{^has_chip_class}}
+                <span class="lp-chip">{{status}}</span>
+              {{/has_chip_class}}
+            {{/released}}
+            {{^released}}
+              <span class="lp-chip line">{{#str}} fellowship_track_not_released, local_launchpad {{/str}}</span>
+            {{/released}}
+          </summary>
+          <div class="lp-phase-body">
+            {{#released}}
+              {{#has_activities}}
+                <ul class="lp-act-list">
+                  {{#activities}}
+                    <li class="lp-act{{#complete}} is-done{{/complete}}">
+                      <span class="lp-chk{{#complete}} on{{/complete}}" aria-hidden="true">{{#complete}}✓{{/complete}}</span>
+                      <div class="lp-act-meta">
+                        <span class="lp-act-k">{{modname_display}}</span>
+                        <a class="lp-act-t" href="{{url}}">{{{name}}}</a>
+                      </div>
+                      {{#tracked}}
+                        {{#complete}}
+                          <span class="lp-chip ok">{{#str}} fellowship_complete, local_launchpad {{/str}}</span>
+                        {{/complete}}
+                        {{^complete}}
+                          <span class="lp-chip">{{#str}} fellowship_incomplete, local_launchpad {{/str}}</span>
+                        {{/complete}}
+                      {{/tracked}}
+                      {{^tracked}}
+                        <span class="lp-chip line">{{#str}} fellowship_not_tracked, local_launchpad {{/str}}</span>
+                      {{/tracked}}
+                    </li>
+                  {{/activities}}
+                </ul>
+              {{/has_activities}}
+            {{/released}}
+            {{^released}}
+              <p class="lp-sm lp-muted">{{locked_note}}</p>
+            {{/released}}
+          </div>
+        </details>
+      {{/track_phases}}
+    {{/has_track_phases}}
+    {{^has_track_phases}}
+      <div class="lp-empty" role="status">
+        <div class="lp-empty-mark" aria-hidden="true">·</div>
+        <h2>{{#str}} fellowship_no_activities, local_launchpad {{/str}}</h2>
+      </div>
+    {{/has_track_phases}}
+    <p class="lp-note">{{#str}} fellowship_native_activities_note, local_launchpad {{/str}}</p>
+  </div>
+
+  <div class="lp-stack lp-stack-lg">
+    <section class="lp-card lift lp-stack">
+      <h3>{{#str}} fellowship_track_capstone, local_launchpad {{/str}}</h3>
+      <p class="lp-sm">{{{capstone_body}}}</p>
+    </section>
+
+    <section class="lp-card lift">
+      <dl class="lp-kv">
+        <dt>{{#str}} fellowship_track_meta_prereq, local_launchpad {{/str}}</dt>
+        <dd>{{{prerequisite}}}</dd>
+        <dt>{{#str}} fellowship_track_meta_device, local_launchpad {{/str}}</dt>
+        <dd>{{{device}}}</dd>
+        <dt>{{#str}} fellowship_track_meta_tools, local_launchpad {{/str}}</dt>
+        <dd>{{{tools}}}</dd>
+        <dt>{{#str}} fellowship_track_meta_mentor, local_launchpad {{/str}}</dt>
+        <dd>{{{mentor}}}</dd>
+      </dl>
+    </section>
+
+    <section class="lp-card lift lp-stack">
+      <h3>{{#str}} fellowship_track_how_completion, local_launchpad {{/str}}</h3>
+      <p class="lp-sm lp-muted">{{#str}} fellowship_track_how_completion_lead, local_launchpad {{/str}}</p>
+      {{#weight_rows}}
+        <div class="lp-weight-row">
+          <div class="lp-row-sb lp-sm">
+            <span>{{name}}</span>
+            <b class="lp-num">{{weight_label}}</b>
+          </div>
+          <div class="lp-bar lp-bar-thin" aria-hidden="true"><i style="width:{{bar_pct}}%"></i></div>
+        </div>
+      {{/weight_rows}}
+    </section>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+{{!
+    @template local_launchpad/fellowship_feedback
+
+    Live Moodle assign feedback. Empty banner = no released grade/comment yet;
+    cards always reflect current submission/grade state.
+}}
+{{#has_crumbs}}
+  <nav class="lp-crumbs" aria-label="{{#str}} fellowship_breadcrumb, local_launchpad {{/str}}">
+    {{#crumbs}}
+      {{#url}}<a href="{{url}}">{{label}}</a><span aria-hidden="true">/</span>{{/url}}
+      {{^url}}<span aria-current="page">{{label}}</span>{{/url}}
+    {{/crumbs}}
+  </nav>
+{{/has_crumbs}}
+
+<div class="lp-ach-head">
+  <span class="lp-eyebrow">{{#str}} fellowship_feedback_eyebrow, local_launchpad {{/str}}</span>
+  <h2>{{#str}} fellowship_nav_feedback, local_launchpad {{/str}}</h2>
+  <p class="lp-muted">{{#str}} fellowship_feedback_lead, local_launchpad {{/str}}</p>
+</div>
+
+{{^has_courses}}
+  <div class="lp-empty" role="status">
+    <div class="lp-empty-mark" aria-hidden="true">LP</div>
+    <h2>{{#str}} fellowship_nav_feedback, local_launchpad {{/str}}</h2>
+    <p>{{empty_message}}</p>
+  </div>
+{{/has_courses}}
+
+{{#has_courses}}
+  {{^has_assigns}}
+    <div class="lp-empty" role="status">
+      <div class="lp-empty-mark" aria-hidden="true">·</div>
+      <h2>{{#str}} fellowship_feedback_no_assigns_title, local_launchpad {{/str}}</h2>
+      <p>{{#str}} fellowship_feedback_no_assigns_body, local_launchpad {{/str}}</p>
+      <a class="lp-btn lp-btn-light" href="{{track_url}}">{{#str}} fellowship_nav_track, local_launchpad {{/str}}</a>
+    </div>
+  {{/has_assigns}}
+
+  {{#has_assigns}}
+    {{#show_empty_released}}
+      <div class="lp-empty lp-empty-avatar" role="status">
+        {{#empty_avatar_url}}
+          <img class="lp-empty-av" src="{{empty_avatar_url}}" alt="">
+        {{/empty_avatar_url}}
+        {{^empty_avatar_url}}
+          <div class="lp-empty-mark" aria-hidden="true">·</div>
+        {{/empty_avatar_url}}
+        <h2>{{empty_title}}</h2>
+        <p>{{empty_body}}</p>
+        {{#has_empty_cta}}
+          <a class="lp-btn lp-btn-light" href="{{empty_cta_url}}">{{empty_cta_label}}</a>
+        {{/has_empty_cta}}
+      </div>
+    {{/show_empty_released}}
+
+    {{#has_released}}
+      <div class="lp-stack lp-stack-lg">
+        <h3 class="lp-feedback-section">{{#str}} fellowship_feedback_section_released, local_launchpad {{/str}}</h3>
+        {{#released_items}}
+          {{> local_launchpad/fellowship_feedback_card}}
+        {{/released_items}}
+      </div>
+    {{/has_released}}
+
+    {{#has_open_items}}
+      <div class="lp-stack lp-stack-lg">
+        {{#has_released}}
+          <h3 class="lp-feedback-section">{{#str}} fellowship_feedback_section_open, local_launchpad {{/str}}</h3>
+        {{/has_released}}
+        {{#open_items}}
+          {{> local_launchpad/fellowship_feedback_card}}
+        {{/open_items}}
+      </div>
+    {{/has_open_items}}
+
+    {{#has_items}}
+      <p class="lp-xs lp-muted">{{#str}} fellowship_feedback_native_note, local_launchpad {{/str}}</p>
+    {{/has_items}}
+  {{/has_assigns}}
+{{/has_courses}}

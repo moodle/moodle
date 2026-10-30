@@ -1,4 +1,4 @@
-<a class="skip" href="#main">Skip to content</a>
+﻿<a class="skip" href="#main">Skip to content</a>
 
 <header class="nav" id="siteNav"><div class="wrap"><div class="bar">
   <a class="logo" href="#top"><img src="{{{assets}}}/logo.webp" alt="ToBa Learn" width="168" height="48"></a>
@@ -108,12 +108,12 @@
         </dl>
         <div class="portal-foot">
           {{#loggedin}}
-          <a class="btn primary" href="{{{portalurl}}}" data-moodle-portal>Access Employer portal <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
-          <span class="muted portal-note">Opens your dashboard. Employer enrolment controls what you see.</span>
+          <a class="btn primary" href="{{{employeeurl}}}">Access Employer portal <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+          <span class="muted portal-note">Opens the employee area. Only employer-cohort accounts are allowed — fellows see an access denied message.</span>
           {{/loggedin}}
           {{^loggedin}}
           <a class="btn primary" href="{{{employeeurl}}}">Sign in to Employer <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
-          <span class="muted portal-note">Opens Moodle login, then the employee area. Access is assigned by your programme admin. No public employee signup.</span>
+          <span class="muted portal-note">Opens Moodle login, then the employee area. Fellows are denied. Access is assigned by your programme admin — no public employee signup.</span>
           {{/loggedin}}
         </div>
       </div>
@@ -139,17 +139,17 @@
         </dl>
         <div class="portal-foot">
           {{#loggedin}}
-          <a class="btn primary" href="{{{portalurl}}}" data-moodle-portal>Access Fellowship portal <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
-          <span class="muted portal-note">Opens your dashboard. Fellowship enrolment controls what you see.</span>
+          <a class="btn primary" href="{{{fellowurl}}}">Access Fellowship portal <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+          <span class="muted portal-note">Opens the Fellowship shell. Only fellows are allowed — employees see an access denied message.</span>
           {{/loggedin}}
           {{^loggedin}}
           {{#cansignup}}
           <a class="btn primary" href="{{{signupurl}}}">{{strregisterfellowship}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
-          <a class="btn light" href="{{{loginurl}}}?portal=fellowship" data-moodle-login>{{strsigninfellowship}}</a>
+          <a class="btn light" href="{{{fellowurl}}}">{{strsigninfellowship}}</a>
           <span class="muted portal-note">{{strsignupconfirmnote}}</span>
           {{/cansignup}}
           {{^cansignup}}
-          <a class="btn primary" href="{{{loginurl}}}?portal=fellowship" data-moodle-login>{{strsigninfellowship}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+          <a class="btn primary" href="{{{fellowurl}}}">{{strsigninfellowship}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
           <span class="muted portal-note">{{strsignupclosednote}}</span>
           {{/cansignup}}
           {{/loggedin}}
@@ -574,14 +574,10 @@
           {{/mentorsteps}}
         </ol>
         <div class="become-info-foot">
-          {{#mentorformconfigured}}
           <a class="btn primary" href="{{{mentorformurl}}}" target="_blank" rel="noopener noreferrer">
             {{mentorctalabel}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon>
           </a>
-          {{/mentorformconfigured}}
-          {{^mentorformconfigured}}
-          <span class="muted portal-note">Mentor application link not configured yet. Site admins set it under Site administration → Plugins → ToBa Learn LaunchPad.</span>
-          {{/mentorformconfigured}}
+          <span class="muted portal-note">Opens a Google Form in a new tab. After you submit, we contact you — no Moodle account is created from the form alone.</span>
         </div>
       </article>
     </div>

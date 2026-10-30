@@ -1,0 +1,84 @@
+{{!
+    @template local_launchpad/fellowship_shell
+
+    Fellowship authenticated shell (side nav + main).
+}}
+<a class="lp-skip" href="#lp-main">{{#str}} fellowship_skip_to_content, local_launchpad {{/str}}</a>
+<div class="lp-shell" data-region="{{data_region}}" id="lp-shell">
+  <div class="lp-scrim" data-lp-nav-close hidden></div>
+  <nav class="lp-side" id="lp-side" aria-label="{{#str}} fellowship_nav_aria, local_launchpad {{/str}}">
+    <a class="lp-logo" href="{{home_url}}"><span class="lp-logo-mark" aria-hidden="true"></span>ToBa Learn</a>
+    <div class="lp-role">{{role_label}}</div>
+    <a class="lp-lvcard" href="{{achievements_url}}" title="{{#str}} fellowship_xp_title, local_launchpad {{/str}}">
+      <div class="lp-lvcard-row">
+        <span class="lp-lvbadge" style="background:{{level_color}}" aria-hidden="true">{{level_index}}</span>
+        <div class="lp-lvcard-text">
+          <b>{{level_name}}</b>
+          <span>{{xp_total}} XP{{#has_next_level}} · {{xp_to_next}} {{#str}} fellowship_xp_to_level, local_launchpad {{/str}} {{next_level_name}}{{/has_next_level}}{{^has_next_level}} · {{#str}} fellowship_level_top, local_launchpad {{/str}}{{/has_next_level}}</span>
+        </div>
+      </div>
+      <div class="lp-side-xpbar" aria-hidden="true"><i style="width:{{pct_to_next}}%"></i></div>
+    </a>
+    {{#nav_groups}}
+      <div class="lp-nl">{{group}}</div>
+      {{#items}}
+        <a class="lp-nav{{#current}} is-current{{/current}}" href="{{url}}"{{#current}} aria-current="page"{{/current}}>
+          {{#icon_svg}}{{{icon_svg}}}{{/icon_svg}}
+          <span>{{label}}</span>
+          {{#has_badge}}<span class="lp-nav-badge">{{badge}}</span>{{/has_badge}}
+        </a>
+      {{/items}}
+    {{/nav_groups}}
+    <div class="lp-me">
+      <div class="lp-av" aria-hidden="true">{{initials}}</div>
+      <div class="lp-me-text">
+        <b>{{{displayname}}}</b>
+        <span>{{role_label}}</span>
+      </div>
+    </div>
+    <a class="lp-nav" href="{{logout_url}}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 7V5a2 2 0 012-2h7v18h-7a2 2 0 01-2-2v-2"/><path d="M15 12H3m0 0l3-3m-3 3l3 3"/></svg>
+      <span>{{#str}} fellowship_nav_signout, local_launchpad {{/str}}</span>
+    </a>
+  </nav>
+  <div class="lp-main-wrap">
+    <header class="lp-topbar">
+      <div class="lp-topbar-start">
+        <button type="button" class="lp-menu-btn" data-lp-nav-toggle aria-expanded="false" aria-controls="lp-side">
+          <span aria-hidden="true">☰</span> {{#str}} fellowship_menu, local_launchpad {{/str}}
+        </button>
+        <h1 class="lp-page-title">{{pagetitle}}</h1>
+      </div>
+      <div class="lp-topbar-actions">
+        <a class="lp-xp-chip" href="{{achievements_url}}" title="{{#str}} fellowship_xp_title, local_launchpad {{/str}}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l2.2 4.6L19 9l-3.5 3.4.8 5.1L12 15.2 7.7 17.5l.8-5.1L5 9l4.8-1.4L12 3z"/></svg>
+          <b>{{xp_total}}</b> <span>XP</span>
+        </a>
+        <a class="lp-iconbtn" href="{{notifications_url}}" aria-label="{{notifications_label}}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 9a6 6 0 0112 0c0 7 3 7 3 9H3c0-2 3-2 3-9"/><path d="M10 20a2 2 0 004 0"/></svg>
+          {{#has_unread_notifications}}
+            <span class="lp-notif-dot">{{unread_notifications}}</span>
+          {{/has_unread_notifications}}
+        </a>
+        <a class="lp-profile-icon" href="{{profile_url}}" aria-label="{{#str}} fellowship_nav_account, local_launchpad {{/str}}" title="{{#str}} fellowship_nav_account, local_launchpad {{/str}}">
+          <span class="lp-av lp-av-sm" aria-hidden="true">{{initials}}</span>
+        </a>
+      </div>
+    </header>
+    <main class="lp-main" id="lp-main">
+      <div class="lp-inner">{{{content}}}</div>
+    </main>
+  </div>
+</div>
+{{#bot_url}}
+<div class="lp-orbit" id="lp-orbit" data-lp-orbit>
+  <div class="lp-orbit-say{{^orbit_tip}} is-hide{{/orbit_tip}}" id="lp-orbit-say" role="status">
+    <span class="lp-orbit-say-text">{{{orbit_tip}}}</span>
+    <button type="button" class="lp-orbit-say-x" data-lp-orbit-dismiss aria-label="{{#str}} fellowship_orbit_dismiss, local_launchpad {{/str}}">×</button>
+  </div>
+  <button type="button" class="lp-orbit-botbtn" data-lp-orbit-hop aria-label="{{#str}} fellowship_orbit_aria, local_launchpad {{/str}}">
+    <img class="lp-orbit-bot" src="{{bot_url}}" alt="">
+  </button>
+</div>
+<button type="button" class="lp-orbit-hide" data-lp-orbit-hide>{{#str}} fellowship_orbit_hide, local_launchpad {{/str}}</button>
+{{/bot_url}}

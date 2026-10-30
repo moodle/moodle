@@ -1,0 +1,31 @@
+{{!
+    @template local_launchpad/fellowship_journey
+
+    Shared four-gate journey path (home compact + Phase progress full).
+}}
+{{#journey.has_gates}}
+  <div class="lp-journey{{#journey.compact}} compact{{/journey.compact}}" data-lp-journey>
+    <div class="lp-journey-in">
+      <svg viewBox="0 0 1000 {{journey.view_h}}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{{#str}} fellowship_journey_aria, local_launchpad {{/str}}">
+        <path d="{{journey.path_d}}" fill="none" stroke="var(--lp-blue-soft)" stroke-width="14" stroke-linecap="round"/>
+        <path class="lp-journey-progress" d="{{journey.path_d}}" fill="none" stroke="var(--lp-blue)" stroke-width="14" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" data-to="{{journey.dash_offset}}"/>
+        <path d="{{journey.path_d}}" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="2 14" stroke-linecap="round" opacity=".7"/>
+        {{#journey.gates}}
+          <g class="lp-jn {{status}}" transform="translate({{cx}},{{cy}})">
+            <title>{{name}}</title>
+            <circle r="{{ring_r}}" class="ring"/>
+            <circle r="{{core_r}}" class="core"/>
+            <text y="{{mark_y}}" text-anchor="middle">{{mark}}</text>
+            <text class="lb" y="{{label_y}}" text-anchor="middle">{{short}}</text>
+            {{#show_sublabel}}
+              <text class="sb" y="74" text-anchor="middle">{{sublabel}}</text>
+            {{/show_sublabel}}
+          </g>
+        {{/journey.gates}}
+      </svg>
+      {{#bot_url}}
+        <img class="lp-jbot" src="{{bot_url}}" alt="" style="left:{{journey.bot_left}};top:{{journey.bot_top}}">
+      {{/bot_url}}
+    </div>
+  </div>
+{{/journey.has_gates}}

@@ -52,8 +52,11 @@ class page {
         $assets = $pluginbase . '/assets/img';
         $loginurl = (new \moodle_url('/login/index.php'))->out(false);
         $portalurl = (new \moodle_url('/my/'))->out(false);
-        // Employee CTA goes to the gated area; require_login() sends guests to Moodle login.
+        // Gated portals — same as pre-#14: CTA hits the PHP gate; require_login()
+        // sends guests to Moodle login with that page as return URL. Wrong persona
+        // sees access-denied (still logged in). Do NOT send these to /my/.
         $employeeurl = (new \moodle_url('/local/launchpad/employee.php'))->out(false);
+        $fellowurl = (new \moodle_url('/local/launchpad/fellow.php'))->out(false);
         // Always offer Fellowship register entry; register.php enables email signup.
         $signupurl = registration::fellowship_signup_url();
         $cansignup = true;
@@ -61,9 +64,13 @@ class page {
         // Real signed-in users (not the guest account) get portal CTAs.
         $loggedin = isloggedin() && !isguestuser();
 
-        // Only stash a post-login destination for guests still signing in.
+        // Do not force wantsurl=/my/ on every landing hit — that overwrote portal
+        // gates after login (persona_home then sent fellows/emps to their own home).
         if (!$loggedin) {
-            $SESSION->wantsurl = $portalurl;
+            $current = isset($SESSION->wantsurl) ? (string) $SESSION->wantsurl : '';
+            if (persona_home::should_override_default_home($current === '' ? null : $current)) {
+                $SESSION->wantsurl = $portalurl;
+            }
         }
 
         $mentor = self::mentor_context();
@@ -74,6 +81,7 @@ class page {
             'loginurl' => $loginurl,
             'portalurl' => $portalurl,
             'employeeurl' => $employeeurl,
+            'fellowurl' => $fellowurl,
             'signupurl' => $signupurl,
             'cansignup' => $cansignup,
             'loggedin' => $loggedin,
@@ -148,11 +156,14 @@ class page {
             ],
         ];
 
+        // Always expose the Apply CTA (pre-merge Dipesh landing): empty setting →
+        // placeholder URL until a real form is configured. Form alone never creates
+        // a Moodle mentor account.
         $mentorformurl = trim((string) get_config('local_launchpad', 'mentorformurl'));
         $mentorformconfigured = ($mentorformurl !== ''
             && !str_contains($mentorformurl, 'REPLACE_WITH_YOUR_FORM'));
-        if (!$mentorformconfigured) {
-            $mentorformurl = '';
+        if ($mentorformurl === '') {
+            $mentorformurl = 'https://docs.google.com/forms/d/e/1FAIpQLSf_REPLACE_WITH_YOUR_FORM/viewform';
         }
 
         return [

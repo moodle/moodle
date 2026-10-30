@@ -1,0 +1,106 @@
+{{!
+    @template local_launchpad/fellowship_achievements
+}}
+{{#has_crumbs}}
+  <nav class="lp-crumbs" aria-label="{{#str}} fellowship_breadcrumb, local_launchpad {{/str}}">
+    {{#crumbs}}
+      {{#url}}<a href="{{url}}">{{label}}</a><span aria-hidden="true">/</span>{{/url}}
+      {{^url}}<span aria-current="page">{{label}}</span>{{/url}}
+    {{/crumbs}}
+  </nav>
+{{/has_crumbs}}
+
+<div class="lp-ach-head">
+  <span class="lp-eyebrow">{{#str}} fellowship_achievements_eyebrow, local_launchpad {{/str}}</span>
+  <h2>{{#str}} fellowship_nav_achievements, local_launchpad {{/str}}</h2>
+  <p class="lp-muted">{{#str}} fellowship_achievements_lead, local_launchpad {{/str}}</p>
+</div>
+
+<section class="lp-card lift lp-stack-lg">
+  <div class="lp-card-head">
+    <h3>{{#str}} fellowship_level_path, local_launchpad {{/str}}</h3>
+    <span class="lp-xp-chip lp-xp-chip-static" title="{{#str}} fellowship_xp_title, local_launchpad {{/str}}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l2.2 4.6L19 9l-3.5 3.4.8 5.1L12 15.2 7.7 17.5l.8-5.1L5 9l4.8-1.4L12 3z"/></svg>
+      <b>{{xp_total}}</b> XP
+    </span>
+  </div>
+  <div class="lp-ladder" role="list">
+    {{#ladder}}
+      <div class="lp-ladder-step {{css}}" role="listitem"{{#is_now}} aria-current="true"{{/is_now}}>
+        <span class="lp-lvbadge" style="background:{{badge_color}}">{{mark}}</span>
+        <b>{{name}}</b>
+        <small>{{xp}} XP</small>
+      </div>
+    {{/ladder}}
+  </div>
+  {{#has_next_level}}
+    <div class="lp-ach-next">
+      <div class="lp-row-sb lp-sm">
+        <span>{{#str}} fellowship_level_now, local_launchpad {{/str}} <b>{{level_name}}</b></span>
+        <span>{{xp_to_next}} XP {{#str}} fellowship_xp_to_level, local_launchpad {{/str}} {{next_level_name}}</span>
+      </div>
+      <div class="lp-bar" aria-hidden="true"><i style="width:{{pct_to_next}}%"></i></div>
+    </div>
+  {{/has_next_level}}
+  {{^has_next_level}}
+    <p class="lp-sm lp-muted">{{#str}} fellowship_level_top, local_launchpad {{/str}}</p>
+  {{/has_next_level}}
+</section>
+
+<section class="lp-card lift lp-stack-lg">
+  <div class="lp-card-head">
+    <h3>{{#str}} fellowship_badges_heading, local_launchpad {{/str}}</h3>
+    <span class="lp-sm lp-muted">{{badges_earned}} {{#str}} fellowship_badges_of, local_launchpad {{/str}} {{badges_total}} {{#str}} fellowship_badges_earned, local_launchpad {{/str}}</span>
+  </div>
+  <div class="lp-badges">
+    {{#badges}}
+      <div class="lp-bdg {{css}}">
+        <span class="lp-bi" aria-hidden="true">{{display_icon}}</span>
+        <b>{{name}}</b>
+        <small>{{detail}}</small>
+      </div>
+    {{/badges}}
+  </div>
+</section>
+
+<div class="lp-grid-2">
+  <section class="lp-card lift lp-stack">
+    <h3>{{#str}} fellowship_xp_history, local_launchpad {{/str}}</h3>
+    {{#has_xp_log}}
+      <div class="lp-table-wrap">
+        <table class="lp-table">
+          <thead>
+            <tr>
+              <th>{{#str}} fellowship_xp_when, local_launchpad {{/str}}</th>
+              <th>{{#str}} fellowship_xp_what, local_launchpad {{/str}}</th>
+              <th>{{#str}} fellowship_xp_col, local_launchpad {{/str}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#xp_log}}
+              <tr>
+                <td class="lp-sm lp-muted">{{at}}</td>
+                <td>{{title}}</td>
+                <td class="lp-num">+{{xp}}</td>
+              </tr>
+            {{/xp_log}}
+          </tbody>
+        </table>
+      </div>
+    {{/has_xp_log}}
+    {{^has_xp_log}}
+      <p class="lp-muted">{{#str}} fellowship_xp_history_empty, local_launchpad {{/str}}</p>
+      <p class="lp-xs lp-muted">{{#str}} fellowship_xp_provisional_note, local_launchpad {{/str}}</p>
+    {{/has_xp_log}}
+  </section>
+  <section class="lp-card lift lp-stack">
+    <h3>{{#str}} fellowship_xp_how, local_launchpad {{/str}}</h3>
+    {{#xp_rules}}
+      <div class="lp-row-sb lp-sm">
+        <span>{{label}}</span>
+        <b class="lp-num">+{{xp}}</b>
+      </div>
+    {{/xp_rules}}
+    <p class="lp-xs lp-muted">{{#str}} fellowship_xp_how_note, local_launchpad {{/str}}</p>
+  </section>
+</div>

@@ -27,14 +27,17 @@ namespace local_launchpad;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Persist Fellowship portal preference after account creation.
+ * LaunchPad observers: Fellowship signup tagging + persona home routing.
  *
  * @copyright  2026 IntelliVerse-X
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class observer {
+
     /**
      * After auth_email creates the user, store toba_portal preference.
+     *
+     * From Landing-Page+Login-Screen (#14).
      *
      * @param \core\event\user_created $event
      */
@@ -58,5 +61,22 @@ class observer {
         }
 
         registration::apply_portal_preference($userid);
+    }
+
+    /**
+     * After login: honour login portal tab, then persona default home if still unset.
+     *
+     * From Fellowship UI / persona homes (PR #15) + login portal gate wiring.
+     *
+     * @param \core\event\user_loggedin $event
+     */
+    public static function user_loggedin(\core\event\user_loggedin $event): void {
+        $userid = (int) $event->userid;
+        if ($userid <= 0) {
+            return;
+        }
+        // Login form portal field (employer/fellowship) must win over /my/ defaults.
+        login_portal::maybe_pin_wantsurl_from_request();
+        persona_home::maybe_set_wantsurl($userid);
     }
 }

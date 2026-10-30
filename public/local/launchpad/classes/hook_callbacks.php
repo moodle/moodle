@@ -16,6 +16,7 @@
 
 namespace local_launchpad;
 
+use core\hook\output\before_http_headers;
 use core\hook\output\before_standard_top_of_body_html_generation;
 
 /**
@@ -26,6 +27,15 @@ use core\hook\output\before_standard_top_of_body_html_generation;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class hook_callbacks {
+
+    /**
+     * Redirect Emp/Mentor off /my/ onto persona home before headers flush.
+     *
+     * @param before_http_headers $hook
+     */
+    public static function before_http_headers(before_http_headers $hook): void {
+        persona_home::maybe_redirect_from_my();
+    }
 
     /**
      * Inject LaunchPad empty-state banner (cleared below fixed navbar).

@@ -1,0 +1,21 @@
+{{!
+    @template local_launchpad/fellowship_help
+}}
+{{#has_crumbs}}
+  <nav class="lp-crumbs" aria-label="{{#str}} fellowship_breadcrumb, local_launchpad {{/str}}">
+    {{#crumbs}}
+      {{#url}}<a href="{{url}}">{{label}}</a><span aria-hidden="true">/</span>{{/url}}
+      {{^url}}<span aria-current="page">{{label}}</span>{{/url}}
+    {{/crumbs}}
+  </nav>
+{{/has_crumbs}}
+
+<p class="lp-muted">{{#str}} fellowship_help_intro, local_launchpad {{/str}}</p>
+<div class="lp-stack">
+  {{#faqs}}
+    <details class="lp-faq">
+      <summary>{{q}}<span class="lp-faq-plus" aria-hidden="true">+</span></summary>
+      <p>{{a}}</p>
+    </details>
+  {{/faqs}}
+</div>

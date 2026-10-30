@@ -48,6 +48,10 @@ final class empty_state {
             // Admins manage structure elsewhere; do not show fellow empty-state copy.
             return false;
         }
+        // Employee / Mentor use persona homes — not Fellowship empty-state copy.
+        if (account_persona::is_employee((int) $USER->id) || account_persona::is_mentor((int) $USER->id)) {
+            return false;
+        }
 
         $path = '';
         try {
