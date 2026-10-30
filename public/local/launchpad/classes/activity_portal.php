@@ -204,8 +204,7 @@ final class activity_portal {
             }
             $hasfiles = $files !== [];
         } else {
-            // Interactive Moodle engines — open native mod URL from this shell.
-            $completion->set_module_viewed($cm);
+            // Interactive Moodle engines — keep completion for the native mod view.
             $needsengine = true;
             $isinportal = false;
         }
@@ -241,8 +240,9 @@ final class activity_portal {
             'activity' => [
                 'cmid' => (int) $cm->id,
                 'name' => format_string($title),
-                'title_main' => s($titlemain !== '' ? $titlemain : $titleplain),
-                'title_sub' => s($titlesub),
+                // Plain strings — Mustache {{ }} escapes; do not pre-s().
+                'title_main' => $titlemain !== '' ? $titlemain : $titleplain,
+                'title_sub' => $titlesub,
                 'hastitlesub' => $titlesub !== '',
                 'modname' => format_string($typename),
                 'modtype' => $modname,
@@ -260,7 +260,7 @@ final class activity_portal {
                 'complete' => $complete,
                 'bodyhtml' => $bodyhtml,
                 'hasbody' => $hasbody && !$isplaceholder,
-                'callouttext' => s($callouttext),
+                'callouttext' => $callouttext,
                 'hascallout' => $isplaceholder && $callouttext !== '',
                 'isplaceholder' => $isplaceholder,
                 'introhtml' => $introhtml,
