@@ -1,5 +1,19 @@
 # theme_boost Upgrade notes
 
+## 6.0dev
+
+### Added
+
+- The contents of the top navbar are now capped at `$navbar-content-maxwidth` (1440px by default) and centred, while the navbar background and bottom border still span the full window. The cap applies to the new `.navbar-content` class on the navbar's inner container in the `theme_boost/navbar` and `theme_boost/navbar-secure` templates. Child themes can set `$navbar-content-maxwidth: none` to restore the full-width layout.
+
+  For more information see [MDL-89293](https://tracker.moodle.org/browse/MDL-89293)
+
+### Changed
+
+- The top navbar is now 64px tall instead of 60px. The `$navbar-height` SCSS variable and the `--navbar-height` custom property reflect the new value, so anything positioned from them follows automatically. Themes or plugins that hardcode the old 60px offset need updating.
+
+  For more information see [MDL-89293](https://tracker.moodle.org/browse/MDL-89293)
+
 ## 5.3
 
 ### Added

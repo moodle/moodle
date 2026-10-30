@@ -12,9 +12,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- A new Behat step `I drop file "<path>" on "<element>" "<selectortype>"` has been added to `behat_general`. It dispatches a real HTML5 `DragEvent` sequence with a populated `DataTransfer`, allowing scenarios to exercise drop zones backed by `dndupload.js` and similar HTML5 file-drop code paths. The legacy `behat_general::i_drag_and_i_drop_it_in` simulates pointer events via jQuery-UI and cannot trigger HTML5 file drops.
+
+  For more information see [MDL-76512](https://tracker.moodle.org/browse/MDL-76512)
 - A new `\core\hook\output\before_help_icon_rendered` hook is dispatched when a help icon is rendered. Callbacks can modify the template context (e.g. the popover `text`), add HTML before or after the icon using `add_before_icon()` and `add_after_icon()`, or replace the whole help icon output using `set_replacement()`.
 
   For more information see [MDL-88319](https://tracker.moodle.org/browse/MDL-88319)
+- Added `theme_build_editor_css_for_themes()` to `lib/outputlib.php` to build and cache the editor content CSS for themes without changing the theme revisions. The editor content CSS is now cached in the `core/postprocessedcss` cache, using the new `theme_config::get_editor_css_cache_key()`, `theme_config::get_editor_css_cached_content()` and `theme_config::set_editor_css_content_cache()` methods.
+
+  For more information see [MDL-90110](https://tracker.moodle.org/browse/MDL-90110)
 
 #### Changed
 
@@ -31,6 +37,12 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
 
+#### Removed
+
+- Remove the polyfills in `lib/polyfills`. These were primarily for IE support and can now go, as all browsers now support the features each of the polyfills provided.
+
+  For more information see [MDL-76512](https://tracker.moodle.org/browse/MDL-76512)
+
 ### core_completion
 
 #### Fixed
@@ -39,6 +51,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87084](https://tracker.moodle.org/browse/MDL-87084)
 
+### core_course
+
+#### Changed
+
+- In the `dates` context of `core_courseformat/local/content/cm/activity`, `activitydates` is now the rendered dates component instead of a list of dates. Likewise, the `activitydates` context of the activity header now provides `hasdates` and the rendered `activitydates` component.
+
+  For more information see [MDL-87838](https://tracker.moodle.org/browse/MDL-87838)
+
+#### Deprecated
+
+- The `core_course/activity_date` and `core_course/activity_dates` templates, and the `core_course\output\activity_dates` class, are deprecated and are no longer used by core. The activity dates are now rendered by the `core_course/ActivityDates` React component, using the design system Badge. Use `core_course\output\activity_dates_component` instead, which formats the dates, including the dates relative to another date. Theme overrides of those templates, and of the `core_course/activity_date` block of `core_courseformat/local/content/cm/activity`, are no longer used.
+
+  For more information see [MDL-87838](https://tracker.moodle.org/browse/MDL-87838)
+
 ### core_user
 
 #### Added
@@ -46,6 +72,28 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - A new hook, \core_user\hook\before_deletion_confirmation_html_generation, has been added to allow plugins to extend user deletion confirmation messaging. The hook is dispatched by \core\user::get_deletion_confirmation_text(). Plugins can append HTML to the confirmation dialog by registering a callback in db/hooks.php and calling $hook->add_html($html).
 
   For more information see [MDL-62843](https://tracker.moodle.org/browse/MDL-62843)
+
+### qtype
+
+#### Changed
+
+- The standard question types no longer hardcode colours for the repeated answer, feedback and hint panels in their editing forms, so the panels follow the colour mode. Question type plugins with similar rules should replace them with design system tokens. For example `background-color: var(--mds-bg-surface-strong)` and `border-color: var(--mds-border-default)`.
+
+  For more information see [MDL-90067](https://tracker.moodle.org/browse/MDL-90067)
+
+### theme_boost
+
+#### Added
+
+- The contents of the top navbar are now capped at `$navbar-content-maxwidth` (1440px by default) and centred, while the navbar background and bottom border still span the full window. The cap applies to the new `.navbar-content` class on the navbar's inner container in the `theme_boost/navbar` and `theme_boost/navbar-secure` templates. Child themes can set `$navbar-content-maxwidth: none` to restore the full-width layout.
+
+  For more information see [MDL-89293](https://tracker.moodle.org/browse/MDL-89293)
+
+#### Changed
+
+- The top navbar is now 64px tall instead of 60px. The `$navbar-height` SCSS variable and the `--navbar-height` custom property reflect the new value, so anything positioned from them follows automatically. Themes or plugins that hardcode the old 60px offset need updating.
+
+  For more information see [MDL-89293](https://tracker.moodle.org/browse/MDL-89293)
 
 ## 5.3
 

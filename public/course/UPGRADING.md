@@ -1,5 +1,19 @@
 # core_course (subsystem) Upgrade notes
 
+## 6.0dev
+
+### Changed
+
+- In the `dates` context of `core_courseformat/local/content/cm/activity`, `activitydates` is now the rendered dates component instead of a list of dates. Likewise, the `activitydates` context of the activity header now provides `hasdates` and the rendered `activitydates` component.
+
+  For more information see [MDL-87838](https://tracker.moodle.org/browse/MDL-87838)
+
+### Deprecated
+
+- The `core_course/activity_date` and `core_course/activity_dates` templates, and the `core_course\output\activity_dates` class, are deprecated and are no longer used by core. The activity dates are now rendered by the `core_course/ActivityDates` React component, using the design system Badge. Use `core_course\output\activity_dates_component` instead, which formats the dates, including the dates relative to another date. Theme overrides of those templates, and of the `core_course/activity_date` block of `core_courseformat/local/content/cm/activity`, are no longer used.
+
+  For more information see [MDL-87838](https://tracker.moodle.org/browse/MDL-87838)
+
 ## 5.3
 
 ### Added

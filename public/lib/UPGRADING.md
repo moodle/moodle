@@ -4,9 +4,15 @@
 
 ### Added
 
+- A new Behat step `I drop file "<path>" on "<element>" "<selectortype>"` has been added to `behat_general`. It dispatches a real HTML5 `DragEvent` sequence with a populated `DataTransfer`, allowing scenarios to exercise drop zones backed by `dndupload.js` and similar HTML5 file-drop code paths. The legacy `behat_general::i_drag_and_i_drop_it_in` simulates pointer events via jQuery-UI and cannot trigger HTML5 file drops.
+
+  For more information see [MDL-76512](https://tracker.moodle.org/browse/MDL-76512)
 - A new `\core\hook\output\before_help_icon_rendered` hook is dispatched when a help icon is rendered. Callbacks can modify the template context (e.g. the popover `text`), add HTML before or after the icon using `add_before_icon()` and `add_after_icon()`, or replace the whole help icon output using `set_replacement()`.
 
   For more information see [MDL-88319](https://tracker.moodle.org/browse/MDL-88319)
+- Added `theme_build_editor_css_for_themes()` to `lib/outputlib.php` to build and cache the editor content CSS for themes without changing the theme revisions. The editor content CSS is now cached in the `core/postprocessedcss` cache, using the new `theme_config::get_editor_css_cache_key()`, `theme_config::get_editor_css_cached_content()` and `theme_config::set_editor_css_content_cache()` methods.
+
+  For more information see [MDL-90110](https://tracker.moodle.org/browse/MDL-90110)
 
 ### Changed
 
@@ -22,6 +28,12 @@
 - The `override` and `warning` context variables of the `core_admin/setting` template are deprecated and are no longer rendered by core. Use the new `notifications` context variable instead. Theme and plugin overrides of this template should be updated; the old variables are still provided until their final deprecation.
 
   For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+
+### Removed
+
+- Remove the polyfills in `lib/polyfills`. These were primarily for IE support and can now go, as all browsers now support the features each of the polyfills provided.
+
+  For more information see [MDL-76512](https://tracker.moodle.org/browse/MDL-76512)
 
 ## 5.3
 
