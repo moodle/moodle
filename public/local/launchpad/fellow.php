@@ -31,6 +31,12 @@ use local_launchpad\persona_home;
 require_login();
 
 $userid = (int) $USER->id;
+
+// Employer cohort never uses the Fellowship shell (even with lp-* enrolments).
+if (account_persona::is_employee($userid) && !is_siteadmin()) {
+    redirect(new moodle_url(persona_home::EMPLOYEE_PATH));
+}
+
 if (!fellowship_dashboard::can_access($userid)) {
     throw new \moodle_exception('fellowship_access_denied', 'local_launchpad');
 }
@@ -41,8 +47,7 @@ $courseid = optional_param('id', 0, PARAM_INT);
 $courses = fellowship_dashboard::list_courses($userid);
 $courseids = array_map(static fn($c) => (int) $c->id, $courses);
 
-// Mentors/employees must not land here via persona_home; still refuse if someone
-// is mentor-only without fellowship (admins may preview).
+// Refuse mentor-only / non-fellow visitors (admins may preview).
 if (!account_persona::is_fellowship($userid) && !is_siteadmin()) {
     throw new \moodle_exception('fellowship_access_denied', 'local_launchpad');
 }

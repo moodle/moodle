@@ -1,187 +1,215 @@
 {{!
     @template local_launchpad/employer_home
 
-    Employer home — polished Fellowship-aligned composition over live Moodle data.
+    Employer home — Figma dashboard cards over Moodle enrolments (no XP / invented times).
+    Order: hero → course sections journey → scoped activities → icon KPIs → badges + featured course.
 }}
-<div class="lp-hero lp-reveal" data-region="employer-hero" style="--lp-d:0">
-  <span class="lp-eyebrow">{{strings.eyebrow}}</span>
-  <h2>{{strings.welcome}}</h2>
-  <p class="lp-hero-lead">{{strings.assignedhelp}}</p>
 
-  {{#hasnext}}
-    <div class="lp-quest">
-      <div>
-        <span class="lp-eyebrow">{{strings.nextquest}}</span>
-        <p class="lp-quest-title">{{nextactivity.name}}</p>
-        <p class="lp-muted">{{nextactivity.modname}}{{#hasprimary}} · {{primarycourse.name}}{{/hasprimary}}</p>
+{{! —— 1. Figma hero —— }}
+<section class="lp-home-hero lp-reveal" data-region="employer-hero" style="--lp-d:0">
+  <div class="lp-hero lp-hero-figma">
+    {{#hero_image}}
+      <div class="lp-hero-media" aria-hidden="true">
+        <img src="{{hero_image}}" alt="" width="960" height="540" decoding="async">
       </div>
-      <a class="lp-btn lp-btn-primary" href="{{nextactivity.url}}">{{strings.openactivity}}</a>
-    </div>
-  {{/hasnext}}
-  {{^hasnext}}
-    {{#hasprimary}}
-      <div class="lp-quest">
-        <div>
-          <span class="lp-eyebrow">{{primarycourse.badge}}</span>
-          <p class="lp-quest-title">{{primarycourse.name}}</p>
-          <p class="lp-muted">{{#activitytotal}}{{strings.alldone}}{{/activitytotal}}{{^activitytotal}}{{primarycourse.progresslabel}}{{/activitytotal}}</p>
+    {{/hero_image}}
+    <div class="lp-hero-row">
+      <div class="lp-hero-main">
+        <span class="lp-eyebrow">{{rolelabel}}</span>
+        <h2>{{{welcome_html}}}</h2>
+        <p class="lp-hero-lead">{{strings.homelead}}</p>
+        {{#hasquest}}
+          {{#quest}}
+            <div class="lp-quest">
+              <span class="lp-quest-icon" aria-hidden="true">
+                <iconify-icon icon="hugeicons:book-open-01" width="22" height="22"></iconify-icon>
+              </span>
+              <div class="lp-quest-body">
+                <span class="lp-eyebrow">{{strings.nextquest}}</span>
+                <p class="lp-quest-title">{{title}}</p>
+                {{#meta}}<p class="lp-muted lp-quest-meta">{{meta}}</p>{{/meta}}
+                <div class="lp-quest-progress">
+                  <div class="lp-bar lp-bar-on-dark" aria-hidden="true"><i style="width:{{progress}}%"></i></div>
+                  <span class="lp-quest-pct">{{progresslabel}}</span>
+                </div>
+              </div>
+              <a class="lp-btn lp-btn-primary lp-quest-cta" href="{{url}}">{{cta}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+            </div>
+          {{/quest}}
+        {{/hasquest}}
+        {{^hasquest}}
+          {{#has_percent}}
+            <p class="lp-muted">{{strings.alldone}}</p>
+          {{/has_percent}}
+        {{/hasquest}}
+      </div>
+      {{#show_hero_ring}}
+        <div class="lp-hero-aside">
+          <div class="lp-ring lp-hero-ring" style="width:{{ring.size}}px;height:{{ring.size}}px" role="img" aria-label="{{ring.pct}}% · {{ring_label}}">
+            <svg viewBox="0 0 {{ring.size}} {{ring.size}}" aria-hidden="true">
+              <circle class="lp-hero-ring-track" cx="{{ring.cx}}" cy="{{ring.cy}}" r="{{ring.radius}}" fill="none" stroke-width="10"/>
+              <circle class="lp-ring-arc lp-hero-ring-arc" cx="{{ring.cx}}" cy="{{ring.cy}}" r="{{ring.radius}}" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{ring.circ}}" stroke-dashoffset="{{ring.circ}}" data-to="{{ring.dashoffset}}" transform="rotate(-90 {{ring.cx}} {{ring.cy}})"/>
+            </svg>
+            <div class="lp-ring-v">
+              <b>{{ring.pct}}%</b>
+              <span>{{ring_label}}</span>
+            </div>
+          </div>
         </div>
-        <a class="lp-btn lp-btn-primary" href="{{primarycourse.url}}">{{strings.opencourse}}</a>
-      </div>
-    {{/hasprimary}}
-  {{/hasnext}}
-</div>
-
-{{#hastiles}}
-<ul class="lp-tiles lp-reveal" aria-label="{{strings.overview}}" style="--lp-d:1">
-  {{#tiles}}
-    <li class="lp-tile" data-icon="{{icon}}">
-      <span class="lp-tile-ico" aria-hidden="true"></span>
-      <div class="lp-tile-text">
-        <span class="lp-tile-label">{{label}}</span>
-        <b class="lp-tile-value">{{value}}</b>
-        <span class="lp-tile-sub">{{sub}}</span>
-      </div>
-    </li>
-  {{/tiles}}
-</ul>
-{{/hastiles}}
-
-{{#journey.has_gates}}
-<section class="lp-card lift lp-journey-card lp-reveal" data-region="employer-journey" style="--lp-d:2">
-  <div class="lp-card-head">
-    <h2 class="lp-journey-title">{{strings.journey}}</h2>
-    {{#hasprimary}}
-      <a class="lp-link" href="{{primarycourse.url}}">{{strings.opentrack}} →</a>
-    {{/hasprimary}}
-  </div>
-  <p class="lp-muted lp-sm">{{strings.journeyhelp}}</p>
-  <div class="lp-journey{{#journey.compact}} compact{{/journey.compact}}" data-lp-journey>
-    <div class="lp-journey-in">
-      <svg viewBox="0 0 1000 {{journey.view_h}}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{{strings.journey}}">
-        <path d="{{journey.path_d}}" fill="none" stroke="var(--lp-blue-soft)" stroke-width="14" stroke-linecap="round"/>
-        <path class="lp-journey-progress" d="{{journey.path_d}}" fill="none" stroke="var(--lp-blue)" stroke-width="14" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" data-to="{{journey.dash_offset}}"/>
-        <path d="{{journey.path_d}}" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="2 14" stroke-linecap="round" opacity=".7"/>
-        {{#journey.gates}}
-          <g class="lp-jn {{status}}" transform="translate({{cx}},{{cy}})">
-            <title>{{name}}</title>
-            <circle r="{{ring_r}}" class="ring"/>
-            <circle r="{{core_r}}" class="core"/>
-            <text y="{{mark_y}}" text-anchor="middle">{{mark}}</text>
-            <text class="lb" y="{{label_y}}" text-anchor="middle">{{short}}</text>
-          </g>
-        {{/journey.gates}}
-      </svg>
-      {{#bot_url}}
-        <img class="lp-jbot" src="{{bot_url}}" alt="" style="left:{{journey.bot_left}};top:{{journey.bot_top}}">
-      {{/bot_url}}
+      {{/show_hero_ring}}
     </div>
   </div>
+</section>
+
+{{! —— 2. Course sections journey —— }}
+{{#journey.has_gates}}
+<section class="lp-card lift lp-journey-card lp-home-block lp-reveal" data-region="employer-journey" id="employer-journey" style="--lp-d:1">
+  <div class="lp-card-head lp-card-head-stack">
+    <div>
+      <h3 class="lp-journey-title">{{strings.sections}}</h3>
+      <p class="lp-card-sub">{{strings.sectionshelpshort}}</p>
+    </div>
+    {{#hasprimary}}
+      <a class="lp-link" href="{{primarycourse.detail_url}}">{{strings.viewdetails}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+    {{/hasprimary}}
+  </div>
+  {{> local_launchpad/fellowship_journey}}
+  {{#has_gate_legend}}
+    <ul class="lp-journey-legend" aria-label="{{strings.sections}}">
+      {{#gate_legend}}
+        <li class="lp-journey-legend-item is-{{step}}">
+          <span class="lp-journey-legend-ico" aria-hidden="true">
+            <iconify-icon icon="hugeicons:{{legend_icon}}" width="16" height="16"></iconify-icon>
+          </span>
+          <div class="lp-journey-legend-text">
+            <b>{{name}}</b>
+            {{#is_current}}
+              <span class="lp-pill-current">{{strings.currentsectionbadge}}</span>
+            {{/is_current}}
+            {{#has_activity_meta}}
+              <span class="lp-muted lp-xs">{{activity_meta}}</span>
+            {{/has_activity_meta}}
+          </div>
+        </li>
+      {{/gate_legend}}
+    </ul>
+  {{/has_gate_legend}}
 </section>
 {{/journey.has_gates}}
 
-{{#hasgates}}
-<section class="lp-card lift lp-reveal" data-region="employer-sections" style="--lp-d:3">
-  <div class="lp-card-head">
-    <h3>{{strings.sections}}</h3>
+{{! —— 3. Current section activities —— }}
+{{#has_scoped_activities}}
+<section class="lp-card lift lp-home-block lp-reveal" data-region="employer-scoped" id="employer-scoped" style="--lp-d:2">
+  <div class="lp-card-head lp-card-head-stack">
+    <div>
+      <h3>{{scoped_section_name}}</h3>
+      <p class="lp-card-sub">{{scoped_section_help}}</p>
+    </div>
     {{#hasprimary}}
-      <a class="lp-link" href="{{primarycourse.url}}">{{strings.opencourse}} →</a>
+      <a class="lp-link" href="{{primarycourse.detail_url}}">{{strings.viewdetails}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
     {{/hasprimary}}
   </div>
-  <p class="lp-muted lp-sm">{{strings.sectionshelp}}</p>
-  <ul class="lp-emp-gates">
-    {{#gates}}
-      <li class="{{#locked}}is-locked{{/locked}}{{^locked}}is-open{{/locked}}">
-        {{#hasurl}}
-          <a class="lp-emp-gate" href="{{url}}">
-            <span class="lp-emp-gate-n" aria-hidden="true">{{index}}</span>
-            <span class="lp-emp-gate-name">{{name}}</span>
-            <span class="lp-chip {{chiptype}}">{{chip}}</span>
-          </a>
-        {{/hasurl}}
-        {{^hasurl}}
-          <div class="lp-emp-gate" aria-disabled="true">
-            <span class="lp-emp-gate-n" aria-hidden="true">{{index}}</span>
-            <span class="lp-emp-gate-name">{{name}}</span>
-            <span class="lp-chip {{chiptype}}">{{chip}}</span>
-          </div>
-        {{/hasurl}}
+  <ul class="lp-act-rows">
+    {{#scoped_activities}}
+      <li>
+        <a class="lp-act-row" href="{{url}}">
+          <span class="lp-act-ico tone-{{tone}}" aria-hidden="true">
+            <iconify-icon icon="hugeicons:{{icon}}" width="20" height="20"></iconify-icon>
+          </span>
+          <span class="lp-act-row-main">
+            <b>{{name}}</b>
+            {{#meta}}<span class="lp-muted lp-sm">{{meta}}</span>{{/meta}}
+          </span>
+          <span class="lp-act-row-status {{statustone}}">{{status_label}}</span>
+          <iconify-icon class="lp-act-chev" icon="hugeicons:arrow-right-01" width="18" height="18" aria-hidden="true"></iconify-icon>
+        </a>
       </li>
-    {{/gates}}
+    {{/scoped_activities}}
   </ul>
 </section>
-{{/hasgates}}
+{{/has_scoped_activities}}
 
-<div class="lp-grid-2 lp-reveal" data-region="employer-workspace" style="--lp-d:4">
-  <section class="lp-card lift">
-    <div class="lp-card-head">
-      <h3>{{strings.activities}}</h3>
-      {{#hasprimary}}
-        <a class="lp-link" href="{{primarycourse.url}}">{{strings.opencourse}} →</a>
-      {{/hasprimary}}
+{{! —— 4. Icon KPI cards —— }}
+{{#has_stats}}
+<div class="lp-stat-cards lp-reveal" role="list" style="--lp-d:3">
+  {{#stat_cards}}
+    <a class="lp-stat-card tone-{{tone}}" role="listitem" href="{{url}}">
+      <span class="lp-stat-card-ico" aria-hidden="true">
+        <iconify-icon icon="hugeicons:{{icon}}" width="20" height="20"></iconify-icon>
+      </span>
+      <span class="lp-stat-card-copy">
+        <b class="{{#is_text}}is-text{{/is_text}}">{{value}}</b>
+        <span>{{label}}</span>
+      </span>
+      <iconify-icon class="lp-stat-card-chev" icon="hugeicons:arrow-right-01" width="18" height="18" aria-hidden="true"></iconify-icon>
+    </a>
+  {{/stat_cards}}
+</div>
+{{/has_stats}}
+
+{{! —— 5. Badges + featured course —— }}
+<div class="lp-grid-2 lp-home-bottom lp-reveal" style="--lp-d:4">
+  {{#badges_enabled}}
+  <section class="lp-card lift lp-home-block" data-region="employer-badges">
+    <div class="lp-card-head lp-card-head-stack">
+      <div>
+        <h3>{{strings.recentbadges}}</h3>
+        <p class="lp-card-sub">{{strings.badgeshelpshort}}</p>
+      </div>
+      <a class="lp-link" href="{{urls.badges}}">{{strings.badgesall}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
     </div>
-    <p class="lp-muted lp-sm">{{strings.activitieshelp}}</p>
-    {{#activitytotal}}
-      <div class="lp-progress-block">
-        <div class="lp-progress-meta">
-          <b>{{activitypct}}%</b>
-          <span class="lp-muted">{{activitydone}} / {{activitytotal}}</span>
-        </div>
-        <div class="lp-bar" aria-hidden="true"><i style="width:{{activitypct}}%"></i></div>
+    {{#has_recent_badges}}
+      <div class="lp-recent-badges">
+        {{#recent_badges}}
+          <a class="lp-bdg on lp-bdg-recent" href="{{url}}">
+            <span class="lp-bi" aria-hidden="true">
+              <img src="{{imageurl}}" alt="" width="40" height="40">
+            </span>
+            <b>{{name}}</b>
+            <small>{{detail}}</small>
+          </a>
+        {{/recent_badges}}
       </div>
-    {{/activitytotal}}
-    {{#hasactivities}}
-      <ul class="lp-act-list">
-        {{#activities}}
-          <li class="lp-act{{#complete}} is-done{{/complete}}">
-            <span class="lp-chk{{#complete}} on{{/complete}}" aria-hidden="true">{{#complete}}✓{{/complete}}</span>
-            <div class="lp-act-meta">
-              <span class="lp-act-k">{{modname}}</span>
-              <a class="lp-act-t" href="{{url}}">{{name}}</a>
-            </div>
-          </li>
-        {{/activities}}
-      </ul>
-    {{/hasactivities}}
-    {{^hasactivities}}
-      <p class="lp-muted">{{strings.noactivities}}</p>
-    {{/hasactivities}}
+    {{/has_recent_badges}}
+    {{^has_recent_badges}}
+      <div class="lp-badge-empty" role="status">
+        <span class="lp-badge-empty-ico" aria-hidden="true">
+          <iconify-icon icon="hugeicons:champion" width="28" height="28"></iconify-icon>
+        </span>
+        <p>{{strings.badgesempty}}</p>
+        <p class="lp-xs lp-muted">{{strings.badgesemptyhint}}</p>
+      </div>
+    {{/has_recent_badges}}
   </section>
+  {{/badges_enabled}}
 
-  <div class="lp-stack-lg">
-    <section class="lp-card lift" id="assigned">
-      <div class="lp-card-head">
-        <h3>{{strings.assigned}}</h3>
+  {{#hasmycourse}}
+  <section class="lp-card lift lp-home-block" data-region="employer-course-list">
+    <div class="lp-card-head lp-card-head-stack">
+      <div>
+        <h3>{{strings.yourcourses}}</h3>
+        <p class="lp-card-sub">{{strings.yourcourseshelp}}</p>
       </div>
-      <p class="lp-muted lp-sm">{{strings.tip}}</p>
-      <ul class="lp-course-list">
-        {{#courses}}
-          <li>
-            <a class="lp-course-main" href="{{url}}">
-              <span class="lp-course-badge">{{badge}}</span>
-              <b>{{name}}</b>
-              <span class="lp-muted">{{progresslabel}}</span>
-              {{#hasprogress}}
-                <span class="lp-bar lp-bar-thin" aria-hidden="true"><i style="width:{{progress}}%"></i></span>
-              {{/hasprogress}}
+      <a class="lp-link" href="{{urls.mycourses}}">{{strings.seeallcourses}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+    </div>
+    {{#mycourse}}
+      <article class="lp-home-course">
+        <a class="lp-home-course-media" href="{{detail_url}}" aria-hidden="true" tabindex="-1">
+          <span>{{media_label}}</span>
+        </a>
+        <div class="lp-home-course-body">
+          <h4><a href="{{detail_url}}">{{name}}</a></h4>
+          <div class="lp-home-course-meta">
+            <span class="lp-muted">{{#hasprogress}}{{progress_display}} · {{/hasprogress}}{{status}}</span>
+            <a class="lp-home-course-open" href="{{detail_url}}" title="{{cta_label}}">
+              <span class="lp-dot-ok" aria-hidden="true"></span>
+              {{cta_label}}
             </a>
-            <a class="lp-link-sm" href="{{url}}">{{strings.opencourse}}</a>
-          </li>
-        {{/courses}}
-      </ul>
-    </section>
-
-    <section class="lp-card lift soft">
-      <div class="lp-card-head">
-        <h3>{{strings.corelinks}}</h3>
-      </div>
-      <p class="lp-muted lp-sm">{{strings.corehelp}}</p>
-      <div class="lp-core-links lp-core-links-grid">
-        <a class="lp-btn lp-btn-light" href="{{urls.mydashboard}}">{{strings.linkdashboard}}</a>
-        <a class="lp-btn lp-btn-light" href="{{#hasprimary}}{{urls.coursegrades}}{{/hasprimary}}{{^hasprimary}}{{urls.grades}}{{/hasprimary}}">{{strings.linkgrades}}</a>
-        <a class="lp-btn lp-btn-light" href="{{urls.calendar}}">{{strings.linkcalendar}}</a>
-        <a class="lp-btn lp-btn-light" href="{{urls.messages}}">{{strings.linkmessages}}</a>
-      </div>
-    </section>
-  </div>
+          </div>
+          <a class="lp-btn lp-btn-solid lp-home-course-cta" href="{{continue_url}}">{{cta_label}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+        </div>
+      </article>
+    {{/mycourse}}
+  </section>
+  {{/hasmycourse}}
 </div>

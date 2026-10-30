@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version metadata for local_launchpad (structure CLI, personas, Fellowship UI, landing).
+ * Version metadata for local_launchpad (personas, Fellowship + Employer shells, landing).
  *
  * @package    local_launchpad
  * @copyright  2026 IntelliVerse-X
@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_launchpad';
-$plugin->version   = 2026102914;
+$plugin->version   = 2026103044;
 $plugin->requires  = 2025092600;
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.2.8';
+$plugin->release   = '1.2.43';

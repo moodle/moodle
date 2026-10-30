@@ -29,12 +29,14 @@ use core\hook\output\before_standard_top_of_body_html_generation;
 final class hook_callbacks {
 
     /**
-     * Redirect Emp/Mentor off /my/ onto persona home before headers flush.
+     * Redirect Emp / Mentor / Fellow off /my/ onto persona home before headers flush.
      *
      * @param before_http_headers $hook
      */
     public static function before_http_headers(before_http_headers $hook): void {
         persona_home::maybe_redirect_from_my();
+        // Employer learners: stock mod/page|url|resource → LaunchPad activity shell.
+        activity_portal::maybe_redirect_from_mod();
     }
 
     /**

@@ -147,4 +147,5 @@
             orbitSay.classList.add('is-hide');
         });
     }
+
 })();

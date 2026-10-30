@@ -1,43 +1,33 @@
 {{!
     @template local_launchpad/employer_empty
 
-    Empty employer home — polished empty state + Moodle tools (no invented journey).
+    Empty employer home — one focused panel when no Moodle enrolments are assigned.
 }}
-<div class="lp-empty lp-reveal" role="status" data-region="employer-empty" style="--lp-d:0">
-  <div class="lp-empty-mark" aria-hidden="true">EM</div>
-  <h2>{{empty.title}}</h2>
-  <p>{{empty.body}}</p>
-  <div class="lp-empty-actions">
-    <a class="lp-btn lp-btn-primary" href="{{urls.calendar}}">{{strings.linkcalendar}}</a>
-    <a class="lp-btn lp-btn-light" href="{{urls.messages}}">{{strings.linkmessages}}</a>
-    <a class="lp-btn lp-btn-light" href="{{urls.profile}}">{{strings.linkprofile}}</a>
-  </div>
-</div>
+<section class="lp-empty-shell lp-reveal" data-region="employer-empty" style="--lp-d:0" role="status">
+  <div class="lp-empty">
+    <div class="lp-empty-mark" aria-hidden="true">
+      <iconify-icon icon="hugeicons:book-open-01" width="26" height="26"></iconify-icon>
+    </div>
+    <h2>{{empty.title}}</h2>
+    <p>{{empty.body}}</p>
 
-{{#hastiles}}
-<ul class="lp-tiles lp-reveal" aria-label="{{strings.overview}}" style="--lp-d:1">
-  {{#tiles}}
-    <li class="lp-tile" data-icon="{{icon}}">
-      <span class="lp-tile-ico" aria-hidden="true"></span>
-      <div class="lp-tile-text">
-        <span class="lp-tile-label">{{label}}</span>
-        <b class="lp-tile-value">{{value}}</b>
-        <span class="lp-tile-sub">{{sub}}</span>
-      </div>
-    </li>
-  {{/tiles}}
-</ul>
-{{/hastiles}}
-
-<section class="lp-card lift soft lp-reveal" style="--lp-d:2">
-  <div class="lp-card-head">
-    <h3>{{strings.corelinks}}</h3>
-  </div>
-  <p class="lp-muted lp-sm">{{strings.corehelp}}</p>
-  <div class="lp-core-links lp-core-links-grid">
-    <a class="lp-btn lp-btn-light" href="{{urls.mydashboard}}">{{strings.linkdashboard}}</a>
-    <a class="lp-btn lp-btn-light" href="{{urls.grades}}">{{strings.linkgrades}}</a>
-    <a class="lp-btn lp-btn-light" href="{{urls.calendar}}">{{strings.linkcalendar}}</a>
-    <a class="lp-btn lp-btn-light" href="{{urls.messages}}">{{strings.linkmessages}}</a>
+    <div class="lp-empty-tools" aria-label="{{strings.corelinks}}">
+      <a class="lp-empty-tool" href="{{urls.calendar}}">
+        <iconify-icon icon="hugeicons:calendar-03" width="18" height="18" aria-hidden="true"></iconify-icon>
+        <span>{{strings.linkcalendar}}</span>
+      </a>
+      <a class="lp-empty-tool" href="{{urls.messages}}">
+        <iconify-icon icon="hugeicons:message-01" width="18" height="18" aria-hidden="true"></iconify-icon>
+        <span>{{strings.linkmessages}}</span>
+      </a>
+      <a class="lp-empty-tool" href="{{urls.notifications}}">
+        <iconify-icon icon="hugeicons:notification-01" width="18" height="18" aria-hidden="true"></iconify-icon>
+        <span>{{strings.notifications}}</span>
+      </a>
+      <a class="lp-empty-tool" href="{{urls.profile}}">
+        <iconify-icon icon="hugeicons:user" width="18" height="18" aria-hidden="true"></iconify-icon>
+        <span>{{strings.linkprofile}}</span>
+      </a>
+    </div>
   </div>
 </section>

@@ -1,0 +1,157 @@
+{{!
+    @template local_launchpad/employer_course_detail
+
+    Portal course page — sections, progress, activities in LaunchPad UI.
+    Activity links use Moodle mod URLs (quiz/assign engines); overview stays here.
+}}
+{{^hasdetail}}
+  <div class="lp-empty" role="status">
+    <h2>{{strings.coursenotfound}}</h2>
+    <p class="lp-muted">{{strings.coursenotfoundhelp}}</p>
+    <a class="lp-btn lp-btn-solid" href="{{urls.mycourses}}">{{strings.mycourses}}</a>
+  </div>
+{{/hasdetail}}
+{{#hasdetail}}
+  <div class="lp-course-detail lp-reveal" data-region="employer-course-detail" style="--lp-d:0">
+    <nav class="lp-crumbs" aria-label="Breadcrumb">
+      <a href="{{urls.home}}">{{strings.navhome}}</a>
+      <span aria-hidden="true">/</span>
+      <a href="{{urls.mycourses}}">{{strings.mycourses}}</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{detail.name}}</span>
+    </nav>
+
+    {{#multi_course}}
+      <div class="lp-course-switch" role="navigation" aria-label="{{strings.mycourses}}">
+        {{#course_switch}}
+          <a class="lp-chip{{#selected}} is-on{{/selected}}" href="{{url}}">{{fullname}}</a>
+        {{/course_switch}}
+      </div>
+    {{/multi_course}}
+
+    <section class="lp-course-hero">
+      <div class="lp-course-hero-main">
+        <div class="lp-mycourse-chips">
+          {{#detail.badge}}<span class="lp-chip warn">{{detail.badge}}</span>{{/detail.badge}}
+          {{#detail.status}}<span class="lp-chip {{detail.statustype}}">{{detail.status}}</span>{{/detail.status}}
+        </div>
+        <h2 class="lp-course-hero-title">{{detail.name}}</h2>
+        {{#hasnext}}
+          <p class="lp-course-hero-next">
+            <span class="lp-muted">{{strings.nextprefix}}</span>
+            <a class="lp-link" href="{{nextactivity.url}}">{{nextactivity.name}}</a>
+          </p>
+        {{/hasnext}}
+        <div class="lp-course-hero-actions">
+          {{#hasnext}}
+            <a class="lp-btn lp-btn-solid" href="{{nextactivity.url}}">
+              {{strings.continuebtn}}
+              <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon>
+            </a>
+          {{/hasnext}}
+          {{#has_first_section}}
+            <a class="lp-btn lp-btn-light" href="#{{first_section_anchor}}">{{strings.phasesheading}}</a>
+          {{/has_first_section}}
+        </div>
+      </div>
+      {{#hasprogress}}
+        <div class="lp-course-hero-ring" aria-label="{{activitypct}}%">
+          <b>{{activitypct}}%</b>
+          <span>{{activitydone}} / {{activitytotal}}</span>
+        </div>
+      {{/hasprogress}}
+    </section>
+
+    {{#journey.has_gates}}
+      <section class="lp-card lift lp-journey-card">
+        <div class="lp-card-head">
+          <h3>{{strings.sections}}</h3>
+        </div>
+        {{> local_launchpad/fellowship_journey}}
+      </section>
+    {{/journey.has_gates}}
+
+    <section class="lp-course-outline" aria-label="{{strings.phasesheading}}">
+      <div class="lp-phases-head">
+        <h3>{{strings.phasesheading}}</h3>
+        <p class="lp-phases-lead">{{strings.phaseshelp}}</p>
+      </div>
+      {{#has_course_phases}}
+        <ol class="lp-outline">
+          {{#course_phases}}
+            <li class="lp-outline-step{{#is_current}} is-current{{/is_current}}{{^released}} is-locked{{/released}}">
+              <div class="lp-outline-rail" aria-hidden="true">
+                <span class="lp-outline-dot">{{index}}</span>
+              </div>
+              <details class="lp-phase-acc{{^released}} is-off{{/released}}" id="{{anchor}}"{{#is_open}} open{{/is_open}}>
+                <summary>
+                  <span class="lp-phase-ico tone-{{icon_tone}}" aria-hidden="true">
+                    <iconify-icon icon="hugeicons:{{icon}}" width="20" height="20"></iconify-icon>
+                  </span>
+                  <div class="lp-phase-sum">
+                    <h3>{{name}}</h3>
+                    <span class="lp-sm lp-muted">{{blurb}}</span>
+                  </div>
+                  <span class="lp-chip {{chip}}{{#show_lock}} has-ico{{/show_lock}}">
+                    {{#show_lock}}
+                      <iconify-icon icon="hugeicons:square-lock-02" width="12" height="12" aria-hidden="true"></iconify-icon>
+                    {{/show_lock}}
+                    {{status}}
+                  </span>
+                  <iconify-icon class="lp-phase-chev" icon="hugeicons:arrow-up-01" width="18" height="18" aria-hidden="true"></iconify-icon>
+                </summary>
+                <div class="lp-phase-body">
+                  {{#released}}
+                    {{#has_activities}}
+                      <ul class="lp-act-cards">
+                        {{#activities}}
+                          <li>
+                            <a class="lp-act-card{{#complete}} is-done{{/complete}}" href="{{url}}">
+                              <span class="lp-act-k tone-{{tone}}">{{modname}}</span>
+                              <span class="lp-act-card-row">
+                                <span class="lp-act-ico tone-{{tone}}" aria-hidden="true">
+                                  <iconify-icon icon="hugeicons:{{icon}}" width="18" height="18"></iconify-icon>
+                                </span>
+                                <span class="lp-act-card-main">
+                                  <b>{{name}}</b>
+                                  {{#has_meta_items}}
+                                    <span class="lp-act-meta-row">
+                                      {{#meta_items}}
+                                        <span>
+                                          <iconify-icon icon="hugeicons:{{icon}}" width="14" height="14" aria-hidden="true"></iconify-icon>
+                                          {{label}}
+                                        </span>
+                                      {{/meta_items}}
+                                    </span>
+                                  {{/has_meta_items}}
+                                </span>
+                                <span class="lp-chip {{statustone}}">{{status_label}}</span>
+                                <iconify-icon class="lp-act-chev" icon="hugeicons:arrow-right-01" width="18" height="18" aria-hidden="true"></iconify-icon>
+                              </span>
+                            </a>
+                          </li>
+                        {{/activities}}
+                      </ul>
+                    {{/has_activities}}
+                    {{^has_activities}}
+                      <p class="lp-sm lp-muted">{{strings.noactivities}}</p>
+                    {{/has_activities}}
+                  {{/released}}
+                  {{^released}}
+                    <p class="lp-sm lp-muted">{{locked_note}}</p>
+                  {{/released}}
+                </div>
+              </details>
+            </li>
+          {{/course_phases}}
+        </ol>
+      {{/has_course_phases}}
+      {{^has_course_phases}}
+        <div class="lp-empty" role="status">
+          <h2>{{strings.noactivities}}</h2>
+          <a class="lp-btn lp-btn-solid" href="{{urls.mycourses}}">{{strings.mycourses}}</a>
+        </div>
+      {{/has_course_phases}}
+    </section>
+  </div>
+{{/hasdetail}}

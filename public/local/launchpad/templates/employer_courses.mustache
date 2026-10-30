@@ -1,0 +1,17 @@
+{{!
+    @template local_launchpad/employer_courses
+
+    My Courses — portal-first list. Cards open employee.php?view=course&id=
+}}
+{{^hascourses}}
+  {{> local_launchpad/employer_empty }}
+{{/hascourses}}
+{{#hascourses}}
+  <div class="lp-courses-page lp-reveal" data-region="employer-courses" style="--lp-d:0">
+    <div class="lp-courses-grid">
+      {{#coursecards}}
+        {{> local_launchpad/employer_course_card }}
+      {{/coursecards}}
+    </div>
+  </div>
+{{/hascourses}}

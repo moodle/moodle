@@ -71,4 +71,46 @@ final class persona_home_test extends \basic_testcase {
         $this->assertSame('/local/launchpad/employee.php', persona_home::EMPLOYEE_PATH);
         $this->assertSame('/local/launchpad/fellow.php', persona_home::FELLOW_PATH);
     }
+
+    public function test_is_persona_shell_path(): void {
+        $this->assertTrue(persona_home::is_persona_shell_path('/local/launchpad/fellow.php'));
+        $this->assertTrue(persona_home::is_persona_shell_path('/local/launchpad/employee.php'));
+        $this->assertTrue(persona_home::is_persona_shell_path('/local/launchpad/mentor.php'));
+        $this->assertFalse(persona_home::is_persona_shell_path('/course/view.php'));
+        $this->assertFalse(persona_home::is_persona_shell_path('/my/index.php'));
+    }
+
+    public function test_should_override_includes_my_index_php(): void {
+        global $CFG;
+        $www = rtrim((string) $CFG->wwwroot, '/');
+        $this->assertTrue(persona_home::should_override_default_home($www . '/my/index.php'));
+        $this->assertTrue(persona_home::should_override_default_home('/my/index.php'));
+    }
+
+    public function test_should_rewrite_wantsurl_wrong_shell_without_user_home(): void {
+        // Invalid user → no persona home → never rewrite non-default URLs.
+        $this->assertFalse(persona_home::should_rewrite_wantsurl(0, '/local/launchpad/fellow.php'));
+        $this->assertTrue(persona_home::should_rewrite_wantsurl(0, '/my/'));
+        $this->assertTrue(persona_home::should_rewrite_wantsurl(0, null));
+    }
+
+    public function test_should_honor_noredirect_policy(): void {
+        // Admins / no persona home may keep stock /my/.
+        $this->assertTrue(persona_home::should_honor_noredirect(null));
+
+        // Employees always use Employer portal — noredirect cannot bypass.
+        $employeehome = new \moodle_url(persona_home::EMPLOYEE_PATH);
+        $this->assertFalse(persona_home::should_honor_noredirect($employeehome));
+        $this->assertFalse(persona_home::should_honor_noredirect(
+            new \moodle_url('/local/launchpad/employee.php')
+        ));
+
+        // Fellows / mentors may still opt into stock /my/ via noredirect.
+        $this->assertTrue(persona_home::should_honor_noredirect(
+            new \moodle_url(persona_home::FELLOW_PATH)
+        ));
+        $this->assertTrue(persona_home::should_honor_noredirect(
+            new \moodle_url(persona_home::MENTOR_PATH)
+        ));
+    }
 }

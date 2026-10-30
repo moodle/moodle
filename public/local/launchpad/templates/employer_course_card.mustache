@@ -1,0 +1,41 @@
+{{!
+    @template local_launchpad/employer_course_card
+
+    Course card — opens portal course page (detail_url / continue_url).
+}}
+<article class="lp-mycourse">
+  <a class="lp-mycourse-media" href="{{detail_url}}" aria-hidden="true" tabindex="-1">
+    <span class="lp-mycourse-media-label">{{media_label}}</span>
+  </a>
+  <div class="lp-mycourse-body">
+    <div class="lp-mycourse-chips">
+      {{#badge}}<span class="lp-chip warn">{{badge}}</span>{{/badge}}
+      <span class="lp-chip {{statustype}}">{{status}}</span>
+    </div>
+    <h4 class="lp-mycourse-title">
+      <a href="{{detail_url}}">{{name}}</a>
+    </h4>
+    {{#hassummary}}
+      <p class="lp-mycourse-summary">{{summary}}</p>
+    {{/hassummary}}
+    {{#hasnextline}}
+      <p class="lp-mycourse-next">{{nextline}}</p>
+    {{/hasnextline}}
+    <div class="lp-mycourse-progress">
+      <div class="lp-mycourse-progress-meta">
+        {{#hasprogress}}<b>{{progress_display}}</b>{{/hasprogress}}
+        {{^hasprogress}}<b class="lp-muted">{{status}}</b>{{/hasprogress}}
+        <span class="lp-muted lp-xs">{{progress_hint}}</span>
+      </div>
+      {{#hasprogress}}
+        <div class="lp-mycourse-bar" aria-hidden="true"><i style="width:{{progress}}%"></i></div>
+      {{/hasprogress}}
+      {{^hasprogress}}
+        <div class="lp-mycourse-bar is-empty" aria-hidden="true"><i style="width:0%"></i></div>
+      {{/hasprogress}}
+    </div>
+    <div class="lp-mycourse-actions">
+      <a class="lp-btn lp-btn-solid lp-mycourse-cta" href="{{continue_url}}">{{cta_label}} <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon></a>
+    </div>
+  </div>
+</article>

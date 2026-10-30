@@ -1,0 +1,129 @@
+{{!
+    @template local_launchpad/employer_activity
+
+    Figma activity card — badges, split title, back CTA, content / coming-soon + art.
+}}
+{{#activity}}
+  <div class="lp-activity-page lp-reveal" data-region="employer-activity" style="--lp-d:0">
+    <nav class="lp-crumbs" aria-label="Breadcrumb">
+      <a href="{{urls.home}}">{{strings.navhome}}</a>
+      <span aria-hidden="true">/</span>
+      <a href="{{urls.mycourses}}">{{strings.mycourses}}</a>
+      <span aria-hidden="true">/</span>
+      <a href="{{courseurl}}">{{coursename}}</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{{title_main}}</span>
+    </nav>
+
+    <article class="lp-activity-hero">
+      <div class="lp-activity-hero-copy">
+        <div class="lp-activity-badges">
+          <span class="lp-activity-badge is-type">
+            <iconify-icon icon="hugeicons:{{mod_icon}}" width="14" height="14" aria-hidden="true"></iconify-icon>
+            {{modname}}
+          </span>
+          <span class="lp-activity-badge is-status is-{{statustone}}">
+            <iconify-icon icon="hugeicons:clock-01" width="14" height="14" aria-hidden="true"></iconify-icon>
+            {{status}}
+          </span>
+        </div>
+
+        <h2 class="lp-activity-title">{{title_main}}</h2>
+        {{#hastitlesub}}
+          <p class="lp-activity-sub">{{title_sub}}</p>
+        {{/hastitlesub}}
+
+        <div class="lp-activity-head-actions">
+          <a class="lp-btn lp-btn-light lp-activity-back" href="{{courseurl}}">
+            <iconify-icon icon="hugeicons:arrow-left-02" width="16" height="16" aria-hidden="true"></iconify-icon>
+            {{strings.backtocourse}}
+          </a>
+          {{#needsengine}}
+            <a class="lp-btn lp-btn-solid" href="{{moodleurl}}">
+              {{strings.openactivity}}
+              <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon>
+            </a>
+          {{/needsengine}}
+        </div>
+
+        {{#hasintro}}
+          <div class="lp-activity-intro">{{{introhtml}}}</div>
+        {{/hasintro}}
+
+        {{#isinportal}}
+          {{#hasbody}}
+            <div class="lp-activity-body">{{{bodyhtml}}}</div>
+          {{/hasbody}}
+
+          {{#isplaceholder}}
+            <div class="lp-activity-callout" role="status">
+              <span class="lp-activity-callout-ico" aria-hidden="true">
+                <iconify-icon icon="hugeicons:file-01" width="20" height="20"></iconify-icon>
+              </span>
+              <div class="lp-activity-callout-text">
+                <b>{{strings.contentcomingsoon}}</b>
+                {{#hascallout}}
+                  <p>{{callouttext}}</p>
+                {{/hascallout}}
+                {{^hascallout}}
+                  <p>{{strings.activityempty}}</p>
+                {{/hascallout}}
+              </div>
+            </div>
+          {{/isplaceholder}}
+
+          {{#hasexternal}}
+            <div class="lp-activity-external">
+              <a class="lp-btn lp-btn-solid" href="{{externalurl}}" target="_blank" rel="noopener noreferrer">
+                {{strings.openlink}}
+                <iconify-icon icon="hugeicons:link-square-02" width="16" height="16" aria-hidden="true"></iconify-icon>
+              </a>
+              <p class="lp-muted lp-sm">{{externalurl}}</p>
+            </div>
+          {{/hasexternal}}
+
+          {{#hasfiles}}
+            <ul class="lp-activity-files">
+              {{#files}}
+                <li>
+                  <a class="lp-activity-file" href="{{url}}">
+                    <iconify-icon icon="hugeicons:file-01" width="18" height="18" aria-hidden="true"></iconify-icon>
+                    <span>{{filename}}</span>
+                    <span class="lp-muted lp-sm">{{size}}</span>
+                  </a>
+                </li>
+              {{/files}}
+            </ul>
+          {{/hasfiles}}
+        {{/isinportal}}
+
+        {{#needsengine}}
+          <div class="lp-activity-callout" role="status">
+            <span class="lp-activity-callout-ico" aria-hidden="true">
+              <iconify-icon icon="hugeicons:{{mod_icon}}" width="20" height="20"></iconify-icon>
+            </span>
+            <div class="lp-activity-callout-text">
+              <b>{{strings.openactivity}}</b>
+              <p>{{strings.activityenginehelp}}</p>
+              <a class="lp-btn lp-btn-solid" href="{{moodleurl}}">
+                {{strings.openactivity}}
+                <iconify-icon icon="hugeicons:arrow-right-02" width="16" height="16" aria-hidden="true"></iconify-icon>
+              </a>
+            </div>
+          </div>
+        {{/needsengine}}
+      </div>
+
+      <aside class="lp-activity-art" aria-hidden="true">
+        <img
+          class="lp-activity-art-img"
+          src="{{assets}}/employer-activity-art.jpg"
+          alt=""
+          width="640"
+          height="480"
+          decoding="async"
+        >
+      </aside>
+    </article>
+  </div>
+{{/activity}}
