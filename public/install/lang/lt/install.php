@@ -55,9 +55,15 @@ $string['pathshead'] = 'Patvirtinti kelius';
 $string['pathsrodataroot'] = 'Į šakninį duomenų katalogą negalima įrašyti.';
 $string['pathsroparentdataroot'] = 'Į pirminį katalogą ({$a->parent}) negalima įrašyti. Diegimo programa negali sukurti katalogo ({$a->dataroot}).';
 $string['pathssubadmindir'] = 'Labai mažai žiniatinklio pagrindinių kompiuterių naudoja /admin kaip specialų URL, kad galėtumėte pasiekti valdymo skydą ar pan. Deja, dėl to kyla konfliktas su „Moodle“ administratoriaus puslapių standartine vieta. Tai galite ištaisyti, jei diegdami pervardysite administratoriaus katalogą ir tą naują pavadinimą įdėsite čia. Pavyzdžiui, <em>moodleadmin</em>. Taip bus ištaisyti administratoriaus saitai „Moodle“.';
-$string['pathssubdataroot'] = 'Reikalinga vieta, kur „Moodle“ galėtų saugoti įkeltus failus. Iš šio katalogo turi galėti skaityti IR Į JĮ  ĮRAŠYTI žiniatinklio serverio naudotojas (paprastai „nobody“ arba „apache“), bet jis neturi būti tiesiogiai pasiekiamas per žiniatinklį. Diegimo programa bandys jį sukurti, jei jo dar nėra.';
-$string['pathssubdirroot'] = 'Visas „Moodle“ diegimo katalogo kelias.';
-$string['pathssubwwwroot'] = 'Visas žiniatinklio adresas, kur bus galima pasiekti „Moodle“. „Moodle“ negalima pasiekti naudojant kelis adresus. Jei jūsų svetainė turi kelis viešuosius adresus, turite nustatyti nuolatinį peradresavimą iš jų visų, išskyrus šį vieną. Jei svetainę galima pasiekti tiek iš intraneto, tiek iš interneto, čia naudokite viešąjį adresą ir nustatykite DNS, kad intraneto naudotojai taip pat galėtų naudoti viešąjį adresą. Jei adresas klaidingas, naršyklėje pakeiskite URL, kad pakartotinai paleidus diegti būtų naudojama kita reikšmė.';
+$string['pathssubdataroot'] = '<p>Katalogas, kuriame „Moodle“ saugos visą naudotojų įkeltų failų turinį.</p>
+<p>Iš šio katalogo turi galėti skaityti ir į jį rašyti žiniatinklio serverio naudotojas (paprastai „www-data“, „nobody“ arba „apache“).</p>
+<p>Jis neturi būti tiesiogiai pasiekiamas per žiniatinklį.</p>
+<p>Jei katalogo dar nėra, diegimo programa bandys jį sukurti.</p>';
+$string['pathssubdirroot'] = '<p>Visas „Moodle“ diegimo katalogo kelias.</p>';
+$string['pathssubwwwroot'] = '<p>Visas adresas, kuriuo bus pasiekiama „Moodle“, t. y. adresas, kurį naudotojai įves naršyklės adreso eilutėje, norėdami pasiekti „Moodle“.</p>
+<p>„Moodle“ negalima pasiekti naudojant kelis adresus. Jei jūsų svetainė pasiekiama keliais adresais, pasirinkite paprasčiausią ir nustatykite nuolatinį peradresavimą iš kiekvieno kito adreso.</p>
+<p>Jei svetainę galima pasiekti tiek iš interneto, tiek iš vidinio tinklo (kartais vadinamo intranetu), čia naudokite viešąjį adresą.</p>
+<p>Jei dabartinis adresas neteisingas, pakeiskite URL naršyklės adreso eilutėje ir paleiskite diegimą iš naujo.</p>';
 $string['pathsunsecuredataroot'] = 'Šakninio duomenų katalogo kelias nesaugus';
 $string['pathswrongadmindir'] = 'Nėra administratoriaus katalogo';
 $string['phpextension'] = '{$a} PHP plėtinys';
