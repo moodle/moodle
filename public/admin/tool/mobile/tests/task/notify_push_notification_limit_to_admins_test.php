@@ -26,20 +26,54 @@ namespace tool_mobile\task;
 #[\PHPUnit\Framework\Attributes\CoversClass(\tool_mobile\task\notify_push_notification_limit_to_admins::class)]
 final class notify_push_notification_limit_to_admins_test extends \advanced_testcase {
     /**
-     * Test that no notification is sent when there is no stats entry for this month.
+     * Data provider for {@see self::test_execute_logs_no_notification_information_for_current_month()}.
+     *
+     * Covers the dates where the original modify('-1 month') calculation overflowed into the
+     * current month (the 29th to 31st of a month whose predecessor has fewer days), plus the
+     * year boundary cases: the same month in the previous year and January with the previous
+     * December must not be mistaken for the current month.
+     *
+     * @return array
      */
-    public function test_execute_logs_no_notification_information_for_current_month(): void {
+    public static function execute_logs_no_notification_information_for_current_month_provider(): array {
+        return [
+            'March 29' => ['2026-03-29 12:00:00', 2026, 2],
+            'March 31' => ['2026-03-31 12:00:00', 2026, 2],
+            'May 31' => ['2026-05-31 12:00:00', 2026, 4],
+            'July 31' => ['2026-07-31 12:00:00', 2026, 6],
+            'October 31' => ['2026-10-31 12:00:00', 2026, 9],
+            'December 31' => ['2026-12-31 12:00:00', 2026, 11],
+            'Same month last year' => ['2026-11-15 12:00:00', 2025, 11],
+            'January, previous December' => ['2027-01-15 12:00:00', 2026, 12],
+        ];
+    }
+
+    /**
+     * Test that no notification is sent when there is no stats entry for this month.
+     *
+     * @param string $datetime The datetime to freeze the clock at.
+     * @param int $year The year of the seeded monthly statistics, which must not match the current month.
+     * @param int $month The month of the seeded monthly statistics, which must not match the current month.
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('execute_logs_no_notification_information_for_current_month_provider')]
+    public function test_execute_logs_no_notification_information_for_current_month(
+        string $datetime,
+        int $year,
+        int $month,
+    ): void {
         global $CFG;
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
-        $clock = $this->mock_clock_with_frozen();
+        $this->mock_clock_with_frozen_datetime(
+            new \DateTimeImmutable($datetime, \core_date::get_server_timezone_object()),
+        );
         $CFG->enablemobilewebservice = 1;
 
         $this->seed_subscription_cache_with_monthly_data([
             [
-                'year' => (int) $clock->now()->modify('-1 month')->format('Y'),
-                'month' => (int) $clock->now()->modify('-1 month')->format('n'),
+                'year' => $year,
+                'month' => $month,
                 'limitreachedtime' => 1234567890,
             ],
         ]);
@@ -207,11 +241,9 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
      * Test that only the current month statistics are considered.
      */
     public function test_get_current_month_notification_stats_ignores_other_months(): void {
-        $clock = $this->mock_clock_with_frozen();
-        $currentyear = (int) date('Y', $clock->time());
-        $currentmonth = (int) date('n', $clock->time());
-        $previousmonth = $currentmonth === 1 ? 12 : $currentmonth - 1;
-        $previousyear = $currentmonth === 1 ? $currentyear - 1 : $currentyear;
+        $clock = $this->mock_clock_with_frozen_datetime(
+            new \DateTimeImmutable('2026-11-15 12:00:00', \core_date::get_server_timezone_object()),
+        );
 
         $stats = notify_push_notification_limit_to_admins::get_current_month_notification_stats(
             [
@@ -219,13 +251,13 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
                     'notifications' => [
                         'monthly' => [
                             [
-                                'year' => $previousyear,
-                                'month' => $previousmonth,
+                                'year' => 2026,
+                                'month' => 10,
                                 'limitreachedtime' => 111,
                             ],
                             [
-                                'year' => $currentyear,
-                                'month' => $currentmonth,
+                                'year' => 2026,
+                                'month' => 11,
                                 'limitreachedtime' => 222,
                                 'activedevices' => 60,
                             ],
@@ -238,7 +270,7 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
 
         $this->assertNotNull($stats);
         $this->assertSame(222, $stats['limitreachedtime']);
-        $this->assertSame($currentmonth, $stats['month']);
+        $this->assertSame(11, $stats['month']);
     }
 
     /**
