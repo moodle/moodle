@@ -1642,10 +1642,10 @@ EOF;
             'core/deprecated' => '@moodle/lms/core/deprecated:default',
             'core/fetch' => '@moodle/lms/core/fetch:default',
             'core/log' => '@moodle/lms/core/log:default',
-            'core/localstorage' => '@moodle/lms/core/Storage:localStore',
+            'core/localstorage' => '@moodle/lms/core/storage:localStore',
             'core/pending' => '@moodle/lms/core/pending:default',
-            'core/sessionstorage' => '@moodle/lms/core/Storage:sessionStore',
-            'core/storagewrapper' => '@moodle/lms/core/Storage:default',
+            'core/sessionstorage' => '@moodle/lms/core/storage:sessionStore',
+            'core/storagewrapper' => '@moodle/lms/core/storage:default',
             'core/url' => '@moodle/lms/core/url',
             'core/utils' => '@moodle/lms/core/utils',
 

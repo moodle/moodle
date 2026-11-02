@@ -17,7 +17,7 @@ import {
     fetchMany,
 } from '@moodle/lms/core/ajax';
 import config from './config';
-import {localStore} from './Storage';
+import {localStore} from './storage';
 
 /* eslint-disable no-restricted-properties */
 

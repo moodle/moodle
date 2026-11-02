@@ -20,7 +20,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Storage, {type StorageInterface} from '@moodle/lms/core/Storage';
+import Storage, {type StorageInterface} from '@moodle/lms/core/storage';
 
 declare const M: {
     cfg: {

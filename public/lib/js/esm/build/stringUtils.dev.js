@@ -4,7 +4,7 @@ import {
   fetchMany
 } from "@moodle/lms/core/ajax";
 import config from "./config";
-import { localStore } from "./Storage";
+import { localStore } from "./storage";
 const promiseCache = /* @__PURE__ */ new Map();
 const stringPromiseCache = /* @__PURE__ */ new Map();
 const getCacheKey = /* @__PURE__ */ __name((key, component, lang) => `core_str/${key}/${component}/${lang}`, "getCacheKey");

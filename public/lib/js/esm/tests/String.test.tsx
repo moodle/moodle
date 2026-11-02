@@ -24,7 +24,7 @@ import {render, screen, act} from '@testing-library/react';
 import String from '@moodle/lms/core/String';
 import {getString, getStrings, getRequestedStrings, cacheStrings} from '@moodle/lms/core/stringUtils';
 import * as Ajax from '@moodle/lms/core/ajax';
-import {localStore} from '@moodle/lms/core/Storage';
+import {localStore} from '@moodle/lms/core/storage';
 
 describe('@moodle/lms/core/String', () => {
     describe('getString', () => {
