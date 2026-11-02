@@ -128,20 +128,47 @@ class qformat_blackboard_six_base extends qformat_based_on_xml {
         preg_match_all('|<img[^>]+src="([^"]*)"|i', $text, $out); // Find all src refs.
         $filepaths = array();
         foreach ($out[1] as $path) {
-            $fullpath = $this->filebase . '/' . $path;
-
-            if (is_readable($fullpath) && !in_array($path, $filepaths)) {
-                $dirpath = dirname($path);
-                $filename = basename($path);
-                $newfilename = $this->store_file_for_text_field($data, $this->filebase, $dirpath, $filename);
-                $text = preg_replace("|{$path}|", "@@PLUGINFILE@@/" . $newfilename, $text);
-                $filepaths[] = $path;
+            if ($path === '' || in_array($path, $filepaths)) {
+                continue;
+            }
+            if (!$this->is_path_inside_filebase($path)) {
+                continue;
             }
 
+            $dirpath = dirname($path);
+            $filename = basename($path);
+            $newfilename = $this->store_file_for_text_field($data, $this->filebase, $dirpath, $filename);
+            $text = str_replace($path, "@@PLUGINFILE@@/" . $newfilename, $text);
+            $filepaths[] = $path;
         }
         $data['text'] = $text;
         $data['format'] = FORMAT_HTML;
         return $data;
+    }
+
+    /**
+     * Check that a file referenced from imported content resolves to a readable
+     * regular file inside the import's file base directory.
+     *
+     * Prevents path traversal (e.g. "../../config.php" or absolute paths) from
+     * copying arbitrary server files into the user's draft area.
+     *
+     * @param string $path path relative to the file base, as found in the imported content
+     * @return bool true if the file is safe to import
+     */
+    protected function is_path_inside_filebase(string $path): bool {
+        if ($this->filebase === '' || strpos($path, "\0") !== false) {
+            return false;
+        }
+        $base = realpath($this->filebase);
+        if ($base === false || !is_dir($base)) {
+            return false;
+        }
+        $fullpath = realpath($this->filebase . '/' . $path);
+        if ($fullpath === false || !is_file($fullpath) || !is_readable($fullpath)) {
+            return false;
+        }
+        return strpos($fullpath, rtrim($base, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR) === 0;
     }
 
     /**
