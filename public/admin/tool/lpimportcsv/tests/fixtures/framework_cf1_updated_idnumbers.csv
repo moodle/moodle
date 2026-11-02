@@ -1,0 +1,6 @@
+Parent id number,Id number,Shortname,Description,Description format,Scale values,Scale configuration,Rule type (optional),Rule outcome (optional),Rule config (optional),Cross referenced competency id numbers,Exported id (optional),Is framework,Taxonomy
+,CF2,CF1,<p>CF1 description</p>,1,"Beginner,Intermediate,Expert","[{""scaleid"":""1""},{""id"":2,""scaledefault"":1,""proficient"":1},{""id"":3,""proficient"":1}]",,,,,,1,"level,competency,indicator,outcome"
+,CF2-L1,Level 1 competency,<p>Level 1 competency description</p>,1,,,core_competency\competency_rule_all,2,null,,1,,
+CF2-L1,CF2-L2,Level 2 competency,<p>Level 2 competency description</p>,1,"Emerging,Developing,Proficient","[{""scaleid"":""2""},{""id"":2,""scaledefault"":1,""proficient"":1},{""id"":3,""proficient"":1}]",,0,null,,2,,
+CF2-L2,CF2-L3,Level 3 competency,<p>Level 3 competency description</p>,1,,,,0,null,CF2-RC,3,,
+CF2-L2,CF2-RC,Related competency,<p>Related competency description</p>,1,,,,0,null,CF2-L3,4,,
