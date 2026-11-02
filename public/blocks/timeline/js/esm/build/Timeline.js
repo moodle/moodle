@@ -2,7 +2,7 @@ import{useState as i,useCallback as a}from"react";import b from"@moodle/lms/bloc
  * Root Timeline block React component.
  *
  * Mounted automatically via data-react-component="@moodle/lms/block_timeline/Timeline"
- * by core/react_autoinit.
+ * by core/reactAutoinit.
  *
  * @module     block_timeline/Timeline
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

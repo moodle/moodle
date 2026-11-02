@@ -76,7 +76,7 @@ export default function EditModeSwitch({id, context, pageurl, checked, label}: E
         // node, so this is a no-op if the eager call already bound the very same node.
         //
         // Wrapped in Pending so Behat's JS-ready check waits for this second bind too, rather than
-        // considering the page ready the instant react_autoinit's own mount-tracking Pending
+        // considering the page ready the instant reactAutoinit's own mount-tracking Pending
         // resolves (which happens before this effect even runs).
         const pending = new Pending('core/EditModeSwitch:init');
         requireAsync<EditSwitchModule>('core/edit_switch').then((editSwitch) => {

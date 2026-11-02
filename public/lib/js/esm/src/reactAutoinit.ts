@@ -29,7 +29,7 @@
  *   ></div>
  * ```
  *
- * @module     core/react_autoinit
+ * @module     core/reactAutoinit
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -72,7 +72,7 @@ const parseProps = (el: Element): Record<string, any> => {
     try {
         return JSON.parse(raw);
     } catch (e) {
-        window.console.error("[react_autoinit] invalid JSON", raw, e);
+        window.console.error("[reactAutoinit] invalid JSON", raw, e);
         return {};
     }
 };
@@ -94,7 +94,7 @@ const resolveComponent = async(componentName: string): Promise<any> => {
 
     if (!componentName.startsWith("@moodle/lms/")) {
         window.console.error(
-            "[react_autoinit] Invalid component format, expected @moodle/lms/<component>/<path>:",
+            "[reactAutoinit] Invalid component format, expected @moodle/lms/<component>/<path>:",
             componentName
         );
         return null;
@@ -103,13 +103,13 @@ const resolveComponent = async(componentName: string): Promise<any> => {
     try {
         if (profilingEnabled) {
             window.console.log(
-                `[react_autoinit] Loading: ${componentName}`
+                `[reactAutoinit] Loading: ${componentName}`
             );
         }
         const module = await import(componentName);
         return module;
     } catch (e) {
-        window.console.error(`[react_autoinit] Failed to import: ${componentName}`, e);
+        window.console.error(`[reactAutoinit] Failed to import: ${componentName}`, e);
         return null;
     }
 };
@@ -157,14 +157,14 @@ const mountOne = async(el: Element) => {
         const mod = await resolveComponent(componentName);
 
         if (!mod) {
-            window.console.warn("[react_autoinit] Component not found:", componentName);
+            window.console.warn("[reactAutoinit] Component not found:", componentName);
             return;
         }
 
         const Component = mod.default;
 
         if (!Component) {
-            window.console.warn("[react_autoinit] Module has no default export:", componentName);
+            window.console.warn("[reactAutoinit] Module has no default export:", componentName);
             return;
         }
 
@@ -174,11 +174,11 @@ const mountOne = async(el: Element) => {
 
         if (profilingEnabled) {
             window.console.log(
-                `[react_autoinit] Mounted via default: ${componentName}`
+                `[reactAutoinit] Mounted via default: ${componentName}`
             );
         }
     } catch (e) {
-        window.console.error("[react_autoinit] Mount failed:", componentName, e);
+        window.console.error("[reactAutoinit] Mount failed:", componentName, e);
     } finally {
         delete (el as HTMLElement).dataset[MOUNTING_FLAG];
         pendingPromise.resolve();
@@ -197,10 +197,10 @@ const unmountOne = (el: Element) => {
             unmount();
             if (profilingEnabled) {
                 const componentName = el.getAttribute("data-react-component");
-                window.console.log(`[react_autoinit] Unmounted: ${componentName}`);
+                window.console.log(`[reactAutoinit] Unmounted: ${componentName}`);
             }
         } catch (e) {
-            window.console.error("[react_autoinit] Error unmounting:", e);
+            window.console.error("[reactAutoinit] Error unmounting:", e);
         }
         reactUnmountMap.delete(el);
     }
@@ -217,7 +217,7 @@ const scanAndMount = (root: Element | Document) => {
     const elements = root.querySelectorAll(SELECTOR);
     if (profilingEnabled && elements.length > 0) {
         window.console.log(
-            `[react_autoinit] Found ${elements.length} component(s) to mount`
+            `[reactAutoinit] Found ${elements.length} component(s) to mount`
         );
     }
 
@@ -238,7 +238,7 @@ const handleAddedNode = (node: Node) => {
 
     if (node.matches?.(SELECTOR)) {
         if (profilingEnabled) {
-            window.console.log("[react_autoinit] New component detected");
+            window.console.log("[reactAutoinit] New component detected");
         }
         mountOne(node);
     }
@@ -291,12 +291,12 @@ let observer: MutationObserver | null = null;
 const init = async() => {
     await domReady();
     if (profilingEnabled) {
-        window.console.log("[react_autoinit] Initializing (profiling enabled)...");
+        window.console.log("[reactAutoinit] Initializing (profiling enabled)...");
     }
     if (!observer) {
         observer = installObserver();
         if (profilingEnabled) {
-            window.console.log("[react_autoinit] MutationObserver active");
+            window.console.log("[reactAutoinit] MutationObserver active");
         }
     }
     scanAndMount(document);

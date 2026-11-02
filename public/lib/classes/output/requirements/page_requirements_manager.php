@@ -1131,7 +1131,7 @@ class page_requirements_manager {
     public function react_mustache_autoinit(): string {
         return html_writer::tag(
             tagname: 'script',
-            contents: 'import "@moodle/lms/core/react_autoinit";',
+            contents: 'import "@moodle/lms/core/reactAutoinit";',
             attributes: [
                 'type' => 'module',
             ],
