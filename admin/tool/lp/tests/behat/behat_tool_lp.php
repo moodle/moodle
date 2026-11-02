@@ -58,7 +58,8 @@ class behat_tool_lp extends behat_base {
      * @param string $competencyname
      */
     public function select_of_the_competency_tree($competencyname) {
-        $xpathtarget = "//li[@role='tree-item']//span[contains(.,'" . $competencyname . "')]";
+        // Competencies with children are rendered as groups, so match those as well as leaf items.
+        $xpathtarget = "//li[@role='tree-item' or @role='group']/span[contains(.,'" . $competencyname . "')]";
 
         $this->execute('behat_general::i_click_on', [$xpathtarget, 'xpath_element']);
     }
