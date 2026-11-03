@@ -106,22 +106,9 @@ function core_h5p_pluginfile($course, $cm, $context, string $filearea, array $ar
 
             $itemid = 0;
 
-            // Exports aren't tied to the original package's context;
-            // extract the content id embedded in the filename to check access.
-            $exportfilename = (string) end($args);
-            if (!preg_match('/(\d+)\.h5p$/', $exportfilename, $matches)) {
-                return false;
-            }
-            $h5pid = (int) $matches[1];
-            $h5precord = $DB->get_record('h5p', ['id' => $h5pid]);
-            if (!$h5precord || !\core_h5p\api::can_access_content($h5pid, $h5precord)) {
-                return false;
-            }
-
-            // The export file must only be served while the "Allow download" option is enabled for this content.
-            $core = (new \core_h5p\factory())->get_core();
-            $displayoptions = $core->getDisplayOptionsForView($h5precord->displayoptions, $h5pid);
-            if (empty($displayoptions[\core_h5p\core::DISPLAY_OPTION_DOWNLOAD])) {
+            // Exports aren't tied to the original package's context; the content id is embedded in the filename
+            // and is used to check access against the original package.
+            if (!\core_h5p\api::can_access_export((string) end($args))) {
                 return false;
             }
             break;
