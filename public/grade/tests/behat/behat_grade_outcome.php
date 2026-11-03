@@ -33,6 +33,10 @@ class behat_grade_outcome extends behat_base {
      *   | Has mimetype  | text/plain  |
      *   | Contains text | some string |
      *
+     * Do not use this step in new tests. The core steps in {@see behat_download} handle buttons as well as links,
+     * so use 'following "Export" should download a file that:' or
+     * 'following "Export" "button" should download a file that:' instead. This step is deprecated from Moodle 6.0.
+     *
      * @Then following :buttontext button should download an outcome file that:
      * @Then following :linktext link should download an outcome file that:
      *
