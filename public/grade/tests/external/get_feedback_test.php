@@ -168,4 +168,98 @@ final class get_feedback_test extends \core_external\tests\externallib_testcase 
             ]
         ];
     }
+
+    /**
+     * Test get_feedback group and enrolment access in a separate groups course.
+     *
+     * @param string $caller The user calling the service: teacher, editingteacher or student.
+     * @param string $target The user whose feedback is requested: student1, student2 or notenrolled.
+     * @param string|null $expectederror The expected exception error code, or null if access is allowed.
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_feedback_group_access_provider')]
+    public function test_get_feedback_group_access(string $caller, string $target, ?string $expectederror): void {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        $course = $generator->create_course(['groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1]);
+        $group1 = $generator->create_group(['courseid' => $course->id]);
+        $group2 = $generator->create_group(['courseid' => $course->id]);
+
+        $users = [
+            'teacher' => $generator->create_and_enrol($course, 'teacher'),
+            'editingteacher' => $generator->create_and_enrol($course, 'editingteacher'),
+            'student1' => $generator->create_and_enrol($course, 'student',
+                ['firstname' => 'Student', 'lastname' => '1', 'email' => 'student1@example.com']),
+            'student2' => $generator->create_and_enrol($course, 'student',
+                ['firstname' => 'Student', 'lastname' => '2', 'email' => 'student2@example.com']),
+            'notenrolled' => $generator->create_user(),
+        ];
+        $generator->create_group_member(['userid' => $users['teacher']->id, 'groupid' => $group1->id]);
+        $generator->create_group_member(['userid' => $users['student1']->id, 'groupid' => $group1->id]);
+        $generator->create_group_member(['userid' => $users['student2']->id, 'groupid' => $group2->id]);
+
+        $gradeitem = $generator->create_grade_item(['itemname' => 'Feedback test item', 'courseid' => $course->id]);
+        foreach (['student1', 'student2', 'notenrolled'] as $username) {
+            $generator->create_grade_grade([
+                'itemid' => $gradeitem->id,
+                'userid' => $users[$username]->id,
+                'feedback' => "Feedback for {$username}",
+            ]);
+        }
+
+        $this->setUser($users[$caller]);
+        $targetuser = $users[$target];
+
+        if ($expectederror !== null) {
+            try {
+                get_feedback::execute($course->id, $targetuser->id, $gradeitem->id);
+                $this->fail("Expected '{$expectederror}' exception was not thrown");
+            } catch (\moodle_exception $e) {
+                $this->assertEquals($expectederror, $e->errorcode);
+            }
+            return;
+        }
+
+        $feedbackdata = get_feedback::execute($course->id, $targetuser->id, $gradeitem->id);
+        $this->assertEquals("Feedback for {$target}", $feedbackdata['feedbacktext']);
+        $this->assertEquals('Feedback test item', $feedbackdata['title']);
+        $this->assertEquals(fullname($targetuser), $feedbackdata['fullname']);
+        $this->assertEquals($targetuser->email, $feedbackdata['additionalfield']);
+    }
+
+    /**
+     * Data provider for test_get_feedback_group_access().
+     *
+     * @return array
+     */
+    public static function get_feedback_group_access_provider(): array {
+        return [
+            'Non-editing teacher cannot access a student outside their group' => [
+                'caller' => 'teacher',
+                'target' => 'student2',
+                'expectederror' => 'cannotaccessgroup',
+            ],
+            'Non-editing teacher can access a student within their group' => [
+                'caller' => 'teacher',
+                'target' => 'student1',
+                'expectederror' => null,
+            ],
+            'Non-editing teacher cannot access a user not enrolled in the course' => [
+                'caller' => 'teacher',
+                'target' => 'notenrolled',
+                'expectederror' => 'usernotincourse',
+            ],
+            'Student cannot access another student' => [
+                'caller' => 'student1',
+                'target' => 'student2',
+                'expectederror' => 'nopermissions',
+            ],
+            'Editing teacher can access a student in any group' => [
+                'caller' => 'editingteacher',
+                'target' => 'student2',
+                'expectederror' => null,
+            ],
+        ];
+    }
 }
