@@ -103,5 +103,12 @@ function xmldb_enrol_database_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024100702, 'enrol', 'database');
     }
 
+    if ($oldversion < 2024100703) {
+        // Remove the dbsybasequoting setting since all queries now use parameterized statements.
+        unset_config('dbsybasequoting', 'enrol_database');
+
+        upgrade_plugin_savepoint(true, 2024100703, 'enrol', 'database');
+    }
+
     return true;
 }
