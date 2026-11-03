@@ -32,8 +32,6 @@ $string['dbname_desc'] = 'Leave empty if using a DSN name in database host.';
 $string['dbpass'] = 'Database password';
 $string['dbsetupsql'] = 'Database setup command';
 $string['dbsetupsql_desc'] = 'SQL command for special database setup, often used to setup communication encoding - example for MySQL and PostgreSQL: <em>SET NAMES \'utf8\'</em>';
-$string['dbsybasequoting'] = 'Use sybase quotes';
-$string['dbsybasequoting_desc'] = 'Sybase style single quote escaping - needed for MS SQL and some other databases. Do not use for MySQL!';
 $string['dbtype'] = 'Database driver';
 $string['dbtype_desc'] = 'ADOdb database driver name, type of the external database engine.';
 $string['dbuser'] = 'Database user';
@@ -79,3 +77,7 @@ $string['remoteuserfield_desc'] = 'The name of the field in the remote table tha
 $string['templatecourse'] = 'New course template';
 $string['templatecourse_desc'] = 'Optional: auto-created courses can copy their settings from a template course. Type here the shortname of the template course.';
 $string['privacy:metadata'] = 'The External database enrolment plugin does not store any personal data.';
+
+// Deprecated since Moodle 6.0.
+$string['dbsybasequoting'] = 'Use sybase quotes';
+$string['dbsybasequoting_desc'] = 'Sybase style single quote escaping - needed for MS SQL and some other databases. Do not use for MySQL!';
