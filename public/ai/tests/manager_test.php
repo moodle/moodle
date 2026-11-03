@@ -22,6 +22,10 @@ use core_ai\aiactions\summarise_text;
 use core_ai\aiactions\explain_text;
 use core_ai\aiactions\responses\response_generate_image;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/ai_test_trait.php');
+
 /**
  * Test ai subsystem manager methods.
  *
@@ -33,6 +37,8 @@ use core_ai\aiactions\responses\response_generate_image;
 #[\PHPUnit\Framework\Attributes\CoversMethod(\core_ai\placement::class, 'is_available_in_context')]
 #[\PHPUnit\Framework\Attributes\CoversMethod(\core_ai\placement::class, 'get_actions_available')]
 final class manager_test extends \advanced_testcase {
+    use ai_test_trait;
+
     /**
      * Test the default placement context API.
      */
@@ -1015,6 +1021,22 @@ final class manager_test extends \advanced_testcase {
         // Should now be unavailable.
         $result = $manager->is_action_available($action);
         $this->assertFalse($result);
+    }
+
+    /**
+     * Test is_action_available does not initialise the theme and output.
+     *
+     * It runs on back-end requests too, for example when an activity is created.
+     */
+    public function test_is_action_available_does_not_initialise_output(): void {
+        global $PAGE;
+        $this->resetAfterTest();
+
+        $this->create_ai_provider(['generate_text'], \aiprovider_openai\provider::class);
+        $manager = \core\di::get(manager::class);
+
+        $this->assertTrue($manager->is_action_available(generate_text::class));
+        $this->assertNull($PAGE->get_where_theme_was_initialised());
     }
 
     /**
