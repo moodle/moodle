@@ -262,17 +262,12 @@ img.icon {
 // the few emitted as an <img> so that JavaScript can swap the src, need inverting. The activity icons above set
 // their own filter, which is more specific and so is not affected.
 //
-// The /i/ namespace is a mixed one, so it is listed icon by icon rather than whole: inverting a coloured icon would
-// change its hue. The group mode icons are drawn in gray 900 and have no Font Awesome equivalent, so they arrive as
-// an <img> and would otherwise stay black on a dark page.
+// The /i/ namespace is a mixed one, so inverting it whole would change the hue of its coloured icons.
 img.icon {
     @include dark-mode {
         &[src*="/t/"],
         &[src*="/e/"],
-        &[src*="/a/"],
-        &[src*="/i/groupn"],
-        &[src*="/i/groups"],
-        &[src*="/i/groupv"] {
+        &[src*="/a/"] {
             filter: invert(1);
         }
     }

@@ -1,0 +1,10 @@
+issueNumber: MDL-89321
+notes:
+  core:
+    - message: >-
+        The group mode icons now have a Font Awesome mapping. The
+        `core:i/groupn`, `core:i/groups` and `core:i/groupv` icons were
+        previously unmapped and rendered as their pix images, and now render as
+        `fa-users-slash`, `fa-users-between-lines` and `fa-users`. The
+        `i/groups` SVG fallback has been updated to match its new glyph.
+      type: changed

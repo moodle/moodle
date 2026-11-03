@@ -33426,7 +33426,7 @@ img.icon {
   --activityinteractivecontent: #af775f;
 }
 
-[data-bs-theme=dark] img.icon[src*="/t/"], [data-bs-theme=dark] img.icon[src*="/e/"], [data-bs-theme=dark] img.icon[src*="/a/"], [data-bs-theme=dark] img.icon[src*="/i/groupn"], [data-bs-theme=dark] img.icon[src*="/i/groups"], [data-bs-theme=dark] img.icon[src*="/i/groupv"] {
+[data-bs-theme=dark] img.icon[src*="/t/"], [data-bs-theme=dark] img.icon[src*="/e/"], [data-bs-theme=dark] img.icon[src*="/a/"] {
   filter: invert(1);
 }
 
