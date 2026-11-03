@@ -10,7 +10,7 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 function redirect(url) {
-  window.location.assign(url);
+  globalThis.location.assign(url);
 }
 __name(redirect, "redirect");
 export {

@@ -10,12 +10,15 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import { createElement, Profiler } from "react";
+import {
+  createElement,
+  Profiler
+} from "react";
 import { createRoot } from "react-dom/client";
-import { isProfilerEnabled, onRenderCallback } from "@moodle/lms/core/profiler";
+import { getComponentId, isProfilerEnabled, onRenderCallback } from "@moodle/lms/core/profiler";
 const rootUnmountMap = /* @__PURE__ */ new WeakMap();
 function mountReactApp(container, Component, props, options = {}) {
-  const componentId = options.id || Component.displayName || Component.name || "ReactApp";
+  const componentId = getComponentId(Component, options.id, "ReactApp");
   let node = createElement(Component, props);
   if (isProfilerEnabled()) {
     node = createElement(

@@ -13,49 +13,49 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
  */
+import { getGlobalAbortSignal } from "./abort";
 import config from "@moodle/lms/core/config";
 import Pending from "@moodle/lms/core/pending";
 import log from "@moodle/lms/core/log";
 import { redirect } from "@moodle/lms/core/location";
 import { relativeUrl } from "@moodle/lms/core/url";
-import { getGlobalAbortSignal } from "./abort";
-function isMoodleAjaxError(err) {
-  return typeof err === "object" && err !== null && "message" in err && "errorcode" in err;
+function isMoodleAjaxError(error) {
+  return typeof error === "object" && error !== null && "message" in error && "errorcode" in error;
 }
 __name(isMoodleAjaxError, "isMoodleAjaxError");
 const MAX_URL_LENGTH = 2e3;
-let unloading = false;
+let isUnloading = false;
 if (typeof window !== "undefined") {
   window.addEventListener("beforeunload", () => {
-    unloading = true;
+    isUnloading = true;
   });
 }
 function buildRequest(requestData, options) {
   const { loginrequired, nosessionupdate, cachekey } = options;
   const methodInfo = requestData.map((r) => r.methodname);
-  const requestInfo = methodInfo.length <= 5 ? methodInfo.sort().join() : `${methodInfo.length}-method-calls`;
+  const requestInfo = methodInfo.length <= 5 ? methodInfo.sort().join(",") : `${methodInfo.length}-method-calls`;
   const ajaxRequestData = JSON.stringify(requestData);
   let script;
   let url;
   let method = "POST";
-  if (!loginrequired) {
+  if (loginrequired) {
+    script = "service.php";
+    url = `${config.wwwroot}/lib/ajax/${script}?sesskey=${config.sesskey}&info=${requestInfo}`;
+  } else {
     script = "service-nologin.php";
     url = `${config.wwwroot}/lib/ajax/${script}?info=${requestInfo}`;
-    if (cachekey) {
+    if (cachekey !== null) {
       url += `&cachekey=${cachekey}`;
       method = "GET";
     }
-  } else {
-    script = "service.php";
-    url = `${config.wwwroot}/lib/ajax/${script}?sesskey=${config.sesskey}&info=${requestInfo}`;
   }
   if (nosessionupdate) {
     url += "&nosessionupdate=true";
   }
   const headers = {
     "Content-Type": "application/json",
-    "Accept": "application/json",
-    "pageparent": config.traceId || ""
+    Accept: "application/json",
+    pageparent: config.traceId ?? ""
   };
   let body;
   if (method === "POST") {
@@ -75,7 +75,7 @@ function buildRequest(requestData, options) {
     credentials: "same-origin",
     signal: getGlobalAbortSignal()
   };
-  if (body) {
+  if (body !== void 0) {
     init.body = body;
   }
   return { url, init };
@@ -90,18 +90,17 @@ function processResponse(responses, resolvers, nosessionupdate) {
   }
   const items = responses;
   let exception = null;
-  for (let i = 0; i < resolvers.length; i++) {
-    const response = items[i];
-    if (typeof response === "undefined") {
+  for (const [index, resolver] of resolvers.entries()) {
+    const response = items[index];
+    if (response === void 0) {
       exception = new Error("missing response");
       break;
     }
-    if (response.error === false) {
-      resolvers[i].resolve(response.data);
-    } else {
-      exception = response.exception || new Error("Unknown error");
+    if (response.error !== false) {
+      exception = response.exception ?? new Error("Unknown error");
       break;
     }
+    resolver.resolve(response.data);
   }
   if (exception !== null) {
     if (isMoodleAjaxError(exception) && exception.errorcode === "servicerequireslogin" && !nosessionupdate) {
@@ -125,15 +124,15 @@ function performFetch(requests, options = {}) {
     loginrequired,
     nosessionupdate,
     timeout,
-    cachekey: cachekey && Number(cachekey) > 0 ? Number(cachekey) : null
+    cachekey: cachekey !== null && cachekey > 0 ? cachekey : null
   };
-  const requestData = requests.map((req, index) => ({
+  const requestData = requests.map((request, index) => ({
     index,
-    methodname: req.methodname,
-    args: req.args
+    methodname: request.methodname,
+    args: request.args
   }));
   const resolvers = [];
-  const promises = requests.map(() => {
+  const promises = requests.map(async () => {
     let outerResolve;
     let outerReject;
     const promise = new Promise((resolve, reject) => {
@@ -148,14 +147,17 @@ function performFetch(requests, options = {}) {
   let controller;
   let timeoutId;
   if (timeout > 0) {
-    controller = new AbortController();
-    init.signal = controller.signal;
-    timeoutId = setTimeout(() => controller.abort(), timeout);
+    const timeoutController = new AbortController();
+    controller = timeoutController;
+    init.signal = timeoutController.signal;
+    timeoutId = setTimeout(() => {
+      timeoutController.abort();
+    }, timeout);
     getGlobalAbortSignal().addEventListener("abort", () => {
       controller.abort();
     });
   }
-  fetch(url, init).then((response) => {
+  fetch(url, init).then(async (response) => {
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
@@ -164,7 +166,7 @@ function performFetch(requests, options = {}) {
     processResponse(data, resolvers, nosessionupdate);
     return data;
   }).catch((error) => {
-    if (unloading) {
+    if (isUnloading) {
       log.error("Page unloaded.");
       log.error(error);
     } else {
@@ -181,11 +183,11 @@ function performFetch(requests, options = {}) {
   return promises;
 }
 __name(performFetch, "performFetch");
-function fetchOne(request, options = {}) {
+async function fetchOne(request, options = {}) {
   return performFetch([request], options)[0];
 }
 __name(fetchOne, "fetchOne");
-function fetchMany(requests, options = {}) {
+async function fetchMany(requests, options = {}) {
   return Promise.all(performFetch(requests, options));
 }
 __name(fetchMany, "fetchMany");

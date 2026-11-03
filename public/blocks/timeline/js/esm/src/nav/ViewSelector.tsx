@@ -25,26 +25,25 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import String from '@moodle/lms/core/String';
 import type {OrderName} from '../common/types';
 import {useAriaLabels} from '../common/useAriaLabels';
 import {useComposedLabel} from '../common/useComposedLabel';
+import String from '@moodle/lms/core/String';
 
-
-interface ViewOption {
+type ViewOption = {
     name: OrderName;
     labelKey: string;
-}
+};
 
 const VIEW_OPTIONS: ViewOption[] = [
     {name: 'sortbydates', labelKey: 'sortbydates'},
     {name: 'sortbycourses', labelKey: 'sortbycourses'},
 ];
 
-interface ViewSelectorProps {
+type ViewSelectorProps = {
     activeOrder: OrderName;
     onChange: (order: OrderName) => void;
-}
+};
 
 /**
  * Renders the sort-by-dates / sort-by-courses toggle dropdown, matching the legacy template.
@@ -55,56 +54,54 @@ interface ViewSelectorProps {
 export default function ViewSelector({activeOrder, onChange}: ViewSelectorProps) {
     const menuId = 'menusortby';
 
-    const {buttonLabel: menuLabel, itemLabels} = useAriaLabels(
-        'ariaviewselector', 'ariaviewselectoroption', VIEW_OPTIONS
-    );
+    const {buttonLabel: menuLabel, itemLabels} = useAriaLabels('ariaviewselector', 'ariaviewselectoroption', VIEW_OPTIONS);
 
     const activeOption = VIEW_OPTIONS.find(o => o.name === activeOrder) ?? VIEW_OPTIONS[0];
 
     const toggleLabel = useComposedLabel('ariaviewselectorbutton', activeOption.labelKey);
 
     return (
-        <div data-region="view-selector" className="dropdown mb-1">
+        <div data-region='view-selector' className='dropdown mb-1'>
             <button
-                type="button"
-                className="btn btn-outline-secondary dropdown-toggle icon-no-margin"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
+                type='button'
+                className='btn btn-outline-secondary dropdown-toggle icon-no-margin'
+                data-bs-toggle='dropdown'
+                aria-haspopup='true'
                 // Bootstrap's dropdown JS flips this to "true" on open and owns it from then
                 // on. The literal never changes between renders, so React's reconciler leaves
                 // the attribute alone and will not reset it while the menu is open.
-                aria-expanded="false"
+                aria-expanded='false'
                 aria-label={toggleLabel}
                 aria-controls={menuId}
                 title={menuLabel}
             >
-                <span data-active-item-text="">
-                    <String identifier={activeOption.labelKey} component="block_timeline">{''}</String>
+                <span data-active-item-text=''>
+                    <String identifier={activeOption.labelKey} component='block_timeline'>{''}</String>
                 </span>
             </button>
 
             <div
                 id={menuId}
-                role="menu"
+                role='menu'
                 aria-label={menuLabel}
-                className="dropdown-menu dropdown-menu-end"
-                data-show-active-item=""
+                className='dropdown-menu dropdown-menu-end'
+                data-show-active-item=''
             >
                 {VIEW_OPTIONS.map(option => (
                     <a
                         key={option.name}
                         className={`dropdown-item${activeOrder === option.name ? ' active dropdown-item-active' : ''}`}
-                        href="#"
+                        href='#'
                         data-filtername={option.name}
                         aria-current={activeOrder === option.name ? 'true' : undefined}
                         aria-label={itemLabels[option.name]}
-                        role="menuitem"
-                        onClick={(e) => {
-                            e.preventDefault();
+                        role='menuitem'
+                        onClick={event => {
+                            event.preventDefault();
                             onChange(option.name);
                         }}
                     >
-                        <String identifier={option.labelKey} component="block_timeline">{''}</String>
+                        <String identifier={option.labelKey} component='block_timeline'>{''}</String>
                     </a>
                 ))}
             </div>

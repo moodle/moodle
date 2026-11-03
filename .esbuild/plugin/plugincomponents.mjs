@@ -26,8 +26,8 @@
  * Exports:
  *   buildPluginComponents()            Glob for every js/esm/src tree across
  *                                      core and plugins, compile all in parallel.
- *   watchComponents(onRebuild)         Start esbuild's native watch mode so the
- *                                      compiler rebuilds affected files on save.
+ *   watchComponents(beforeBuild)       Watch the source trees and rebuild on save,
+ *                                      running beforeBuild as a gate first.
  *
  * @copyright  2026 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -36,9 +36,11 @@
 import esbuild from "esbuild";
 import { glob } from "glob";
 import chalk from "chalk";
+import chokidar from "chokidar";
 import path from "path";
 import fs from "fs";
 import fsPromises from "fs/promises";
+import crypto from "crypto";
 import { getOwningComponentDirectory } from "../../.grunt/components.js";
 
 const projectRoot = process.cwd();
@@ -370,10 +372,9 @@ const getDevelopmentBuild = (entryPoints, buildConfig, watchReporter) => {
 // metafile: true populates result.metafile.outputs so we know which files were written.
 // On a rebuild only the affected outputs appear, so it effectively names the changed file.
 /** @type {import('esbuild').Plugin} */
-const getWatchReporter = (onRebuild) => ({
+const getWatchReporter = () => ({
     name: 'watch-reporter',
     setup(build) {
-        let isInitial = true;
         let startTime = 0;
 
         build.onStart(() => {
@@ -394,18 +395,6 @@ const getWatchReporter = (onRebuild) => ({
             const outputs = Object.keys(result.metafile?.outputs ?? {});
 
             console.log(chalk.green(`[${now}] ✓ ${outputs.length} ${buildType} component(s) built`) + chalk.dim(` · ${elapsed}s`));
-
-            if (isInitial) {
-                isInitial = false;
-            } else if (onRebuild) {
-                // entryPoint is the source file (relative to projectRoot) that triggered
-                // this rebuild. Pass it to the caller so they can run follow-up tasks
-                // (e.g. linting) without this module needing to know about them.
-                const srcFiles = Object.values(result.metafile?.outputs ?? {})
-                    .map(output => output.entryPoint)
-                    .filter(/** @param {string|undefined} f */ f => !!f);
-                onRebuild(/** @type {string[]} */(srcFiles));
-            }
         });
     },
 });
@@ -417,12 +406,13 @@ const getWatchReporter = (onRebuild) => ({
  * esbuild can reuse its internal graph between rebuilds instead of starting
  * from scratch on every file change.
  *
- * @param {((srcFiles: string[]) => void) | undefined} [onRebuild] Called with the rebuilt entry source
- *        files (relative to project root) after each non-initial successful rebuild. Use this to run
- *        follow-up tasks such as linting without coupling them to this module.
- * @returns {Promise<import('esbuild').BuildContext|null>} The active context, or null if no source files exist.
+ * @param {() => Promise<{text: string}[]>} beforeBuild Runs before every build, including the first.
+ *        Returning any messages skips that build, so nothing is written from sources that do not pass.
+ *        Use this to gate on checks such as linting without coupling them to this module.
+ * @returns {Promise<(() => Promise<void>)|null>} Call the returned function to stop watching and release
+ *        the build contexts, or null if no source files exist.
  */
-export async function watchComponents(onRebuild) {
+export async function watchComponents(beforeBuild) {
     const entryPoints = glob.sync("**/js/esm/src/**/*.{ts,tsx}", {
         cwd: projectRoot,
         absolute: true,
@@ -442,18 +432,168 @@ export async function watchComponents(onRebuild) {
         productionContext,
         developmentContext,
     ] = await Promise.all([
-        getProductionBuild(entryPoints, buildConfig, getWatchReporter(onRebuild)),
-        // Do not pass a callback for dev builds - we only need to perform the callbacks once.
+        getProductionBuild(entryPoints, buildConfig, getWatchReporter()),
         getDevelopmentBuild(entryPoints, buildConfig, getWatchReporter()),
     ]);
 
-    await Promise.all([
-        productionContext.watch(),
-        developmentContext.watch(),
-    ]);
+    // Run the caller's check first and only rebuild when it passes.
+    //
+    // esbuild is deliberately never asked to run a build that would fail: its watch
+    // mode reconciles the files it manages against the output of each build, so a
+    // failed one removes every artefact it had written. Gating here instead leaves
+    // the previous bundles untouched.
+    let isRunning = false;
+    let isQueued = false;
 
-    return [
-        productionContext,
-        developmentContext,
-    ];
+    /** Files seen since the last run started, so the run can say what triggered it. */
+    const changedFiles = new Set();
+
+    /** Content hash of each source as of the last run, to tell a real edit from a rewrite. */
+    const lastHashes = new Map();
+
+    /**
+     * Hash a source file, or the empty string if it has gone.
+     *
+     * @param {string} file Path relative to the project root.
+     * @returns {string} The content hash.
+     */
+    const hashOf = (file) => {
+        try {
+            return crypto.createHash('sha1').update(fs.readFileSync(path.join(projectRoot, file))).digest('hex');
+        } catch {
+            return '';
+        }
+    };
+
+    /**
+     * Narrow the reported files to those whose content actually differs.
+     *
+     * Editors and language servers rewrite files without changing them: a save with
+     * no edits, a formatter that finds nothing to fix, an atomic save that replaces
+     * the file with identical bytes. Each lands as a filesystem event. Comparing
+     * content means only a real edit costs a lint and a rebuild.
+     *
+     * @param {string[]} files The files reported by the watcher.
+     * @returns {string[]} Those whose content changed since the last run.
+     */
+    const withRealChanges = (files) => files.filter(file => {
+        const hash = hashOf(file);
+        if (lastHashes.get(file) === hash) {
+            return false;
+        }
+
+        lastHashes.set(file, hash);
+        return true;
+    });
+
+    /**
+     * Announce what a run is about to check.
+     *
+     * The check takes a second or two and is silent when it passes, so without this
+     * a save looks like nothing happened at all.
+     *
+     * @param {string[]} files The files that triggered this run; empty on the first build.
+     */
+    const announce = (files) => {
+        const trigger = files.length === 0
+            ? 'Checking sources before the first build'
+            : `${files.length === 1 ? files[0] : `${files.length} files`} changed, checking`;
+
+        console.log(chalk.cyan(`[${new Date().toLocaleTimeString()}] ⟳ ${trigger}...`));
+    };
+
+    const buildIfPermitted = async() => {
+        if (isRunning) {
+            // A change arrived mid-check. Coalesce it into one follow-up run.
+            isQueued = true;
+            return;
+        }
+
+        isRunning = true;
+
+        try {
+            const reported = [...changedFiles].sort();
+            changedFiles.clear();
+
+            const files = withRealChanges(reported);
+            if (reported.length > 0 && files.length === 0) {
+                // Something rewrote the files without changing them. Nothing to rebuild.
+                return;
+            }
+
+            announce(files);
+
+            let errors;
+            try {
+                errors = await beforeBuild();
+            } catch (error) {
+                // The check itself failed, as when XO crashes. The catch below is for build failures only.
+                console.error(error);
+                errors = [{text: error.message}];
+            }
+
+            if (errors.length === 0) {
+                await Promise.all([
+                    productionContext.rebuild(),
+                    developmentContext.rebuild(),
+                ]);
+            } else {
+                console.error(chalk.red(
+                    `[${new Date().toLocaleTimeString()}] ✗ Build skipped, the sources did not pass the check`
+                ));
+            }
+        } catch {
+            // The reporter plugin has already printed the build failure.
+        } finally {
+            isRunning = false;
+
+            if (isQueued) {
+                isQueued = false;
+                await buildIfPermitted();
+            }
+        }
+    };
+
+    await buildIfPermitted();
+
+    for (const entry of entryPoints) {
+        const file = path.relative(projectRoot, entry);
+        lastHashes.set(file, hashOf(file));
+    }
+
+    // Watch the source roots rather than the whole tree, so writes to build/ cannot
+    // retrigger the loop.
+    const sourceRoots = [...new Set(
+        entryPoints.map(entry => `${entry.split(`${path.sep}js${path.sep}esm${path.sep}src${path.sep}`)[0]}` +
+            `${path.sep}js${path.sep}esm${path.sep}src`)
+    )];
+
+    // chokidar rather than a recursive fs.watch: on Linux the latter stops reporting a
+    // file once an editor saves it by renaming a temporary file over it, as PhpStorm does.
+    let debounce;
+    const watcher = chokidar.watch(sourceRoots, {ignoreInitial: true}).on('all', (eventName, file) => {
+        if (!/\.tsx?$/.test(file)) {
+            return;
+        }
+
+        // The full path, so an unexpected writer (an editor autosave, a formatter)
+        // can be told apart from the file you meant to change.
+        changedFiles.add(path.relative(projectRoot, file));
+
+        // Editors emit several events per save; collapse them into one run.
+        clearTimeout(debounce);
+        debounce = setTimeout(() => {
+            void buildIfPermitted();
+        }, 100);
+    });
+
+    return async() => {
+        clearTimeout(debounce);
+        await watcher.close();
+
+        await Promise.all([
+            productionContext.dispose(),
+            developmentContext.dispose(),
+        ]);
+    };
 }

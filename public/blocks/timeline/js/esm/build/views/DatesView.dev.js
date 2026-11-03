@@ -8,12 +8,16 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import { useState, useEffect, useCallback } from "react";
-import String from "@moodle/lms/core/String";
-import { getString } from "@moodle/lms/core/stringUtils";
 import { Button } from "@moodlehq/design-system";
 import { getTimelineEvents, getFormattedDays, getFormattedEventDateTimes } from "../repository";
+import {
+  computeTimeRange,
+  groupByDay,
+  filterEvents
+} from "../common/utils";
 import EventListItem from "@moodle/lms/block_timeline/views/EventListItem";
-import { computeTimeRange, groupByDay, filterEvents } from "../common/utils";
+import { getString } from "@moodle/lms/core/stringUtils";
+import String from "@moodle/lms/core/String";
 const MORE_LOAD_LIMIT = 10;
 function DatesView({
   midnight,
@@ -32,7 +36,7 @@ function DatesView({
   const [loadingMore, setLoadingMore] = useState(false);
   const [moreActivitiesLabel, setMoreActivitiesLabel] = useState("");
   useEffect(() => {
-    getString("moreactivities", "block_timeline").then(setMoreActivitiesLabel);
+    void getString("moreactivities", "block_timeline").then(setMoreActivitiesLabel);
   }, []);
   const { starttime, endtime } = computeTimeRange(midnight, offsets);
   const load = useCallback(async (aftereventid, append, isCancelled = () => false) => {
@@ -41,30 +45,30 @@ function DatesView({
       timesortto: endtime,
       aftereventid,
       limitnum: (append ? MORE_LOAD_LIMIT : limit) + 1,
-      searchvalue: searchvalue || null
+      searchvalue: searchvalue === "" ? null : searchvalue
     });
-    const dayMap = await getFormattedDays(result.events.map((e) => e.timeusermidnight));
-    const dateTimeMap = await getFormattedEventDateTimes(result.events.map((e) => e.timesort));
-    const events = result.events.map((e) => ({
-      ...e,
-      formattedday: dayMap.get(e.timeusermidnight) ?? "",
-      formatteddatetime: dateTimeMap.get(e.timesort) ?? ""
+    const dayMap = await getFormattedDays(result.events.map((event) => event.timeusermidnight));
+    const dateTimeMap = await getFormattedEventDateTimes(result.events.map((event) => event.timesort));
+    const events = result.events.map((event) => ({
+      ...event,
+      formattedday: dayMap.get(event.timeusermidnight) ?? "",
+      formatteddatetime: dateTimeMap.get(event.timesort) ?? ""
     }));
-    let filtered = filterEvents(events, midnight, offsets.filteroverdue);
+    const filtered = filterEvents(events, midnight, offsets.filteroverdue);
     const loadedAll = filtered.length <= (append ? MORE_LOAD_LIMIT : limit);
     if (!loadedAll) {
       filtered.pop();
     }
-    const newDays = groupByDay(filtered);
     if (isCancelled()) {
       return;
     }
+    const newDays = groupByDay(filtered);
     if (append) {
-      setDays((prev) => {
+      setDays((previous) => {
         if (newDays.length === 0) {
-          return prev;
+          return previous;
         }
-        const merged = [...prev];
+        const merged = [...previous];
         if (merged.length > 0 && newDays.length > 0 && merged[merged.length - 1].dayTimestamp === newDays[0].dayTimestamp) {
           merged[merged.length - 1] = {
             ...merged[merged.length - 1],
@@ -87,7 +91,7 @@ function DatesView({
     setLoading(true);
     setDays([]);
     setLastId(0);
-    load(0, false, () => cancelled).finally(() => {
+    void load(0, false, () => cancelled).finally(() => {
       if (!cancelled) {
         setLoading(false);
       }
@@ -96,11 +100,6 @@ function DatesView({
       cancelled = true;
     };
   }, [load]);
-  const handleShowMore = /* @__PURE__ */ __name(async () => {
-    setLoadingMore(true);
-    await load(lastId, true);
-    setLoadingMore(false);
-  }, "handleShowMore");
   if (loading || searchPending) {
     return null;
   }
@@ -130,51 +129,56 @@ function DatesView({
     return /* @__PURE__ */ jsxDEV("div", { className: "text-xs-center text-center mt-3", "data-region": "no-events-empty-message", children: [
       /* @__PURE__ */ jsxDEV("img", { src: noeventsurl, className: "timeline-empty-icon", alt: "" }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 183,
+        lineNumber: 184,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "noevents", component: "block_timeline", children: "" }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 185,
+        lineNumber: 186,
         columnNumber: 21
       }, this) }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 184,
+        lineNumber: 185,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-      lineNumber: 182,
+      lineNumber: 183,
       columnNumber: 13
     }, this);
   }
+  const handleShowMore = /* @__PURE__ */ __name(async () => {
+    setLoadingMore(true);
+    await load(lastId, true);
+    setLoadingMore(false);
+  }, "handleShowMore");
   return /* @__PURE__ */ jsxDEV("div", { "data-region": "timeline-view-dates", children: [
     /* @__PURE__ */ jsxDEV("div", { className: "pb-2", "data-region": "event-list-wrapper", children: days.map((day) => /* @__PURE__ */ jsxDEV("div", { children: [
       /* @__PURE__ */ jsxDEV("div", { className: "mt-3", "data-region": "event-list-content-date", "data-timestamp": day.dayTimestamp, children: /* @__PURE__ */ jsxDEV("h4", { className: "h6 d-inline fw-bold", children: day.events[0].formattedday }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 197,
+        lineNumber: 204,
         columnNumber: 29
       }, this) }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 196,
+        lineNumber: 203,
         columnNumber: 25
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "list-group list-group-flush", children: day.events.map((event) => /* @__PURE__ */ jsxDEV(EventListItem, { event }, event.id, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 203,
+        lineNumber: 210,
         columnNumber: 33
       }, this)) }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 201,
+        lineNumber: 208,
         columnNumber: 25
       }, this)
     ] }, day.dayTimestamp, true, {
       fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-      lineNumber: 195,
+      lineNumber: 202,
       columnNumber: 21
     }, this)) }, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-      lineNumber: 193,
+      lineNumber: 200,
       columnNumber: 13
     }, this),
     hasMore && /* @__PURE__ */ jsxDEV("div", { className: "pt-1 pb-2 ps-2", "data-region": "more-events-button-container", children: /* @__PURE__ */ jsxDEV(
@@ -188,7 +192,7 @@ function DatesView({
         label: moreActivitiesLabel,
         endIcon: loadingMore ? /* @__PURE__ */ jsxDEV("i", { className: "spinner-border spinner-border-sm ms-1", role: "status", "aria-hidden": "true" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-          lineNumber: 220,
+          lineNumber: 227,
           columnNumber: 31
         }, this) : void 0
       },
@@ -196,18 +200,18 @@ function DatesView({
       false,
       {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-        lineNumber: 212,
+        lineNumber: 219,
         columnNumber: 21
       },
       this
     ) }, void 0, false, {
       fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-      lineNumber: 211,
+      lineNumber: 218,
       columnNumber: 17
     }, this)
   ] }, void 0, true, {
     fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
-    lineNumber: 192,
+    lineNumber: 199,
     columnNumber: 9
   }, this);
 }

@@ -74,6 +74,10 @@ describe('Storage', () => {
             const hash2 = Storage.hashString('world');
             expect(hash1).not.toBe(hash2);
         });
+
+        it('wraps to a 32-bit integer, so existing key prefixes stay the same', () => {
+            expect(Storage.hashString('https://moodle.example.com')).toBe(-1017806386);
+        });
     });
 
     describe('when jsrev is -1 (developer mode)', () => {

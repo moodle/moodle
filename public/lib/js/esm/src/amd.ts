@@ -28,9 +28,11 @@
  * @param moduleId The AMD module identifier, e.g. `'core/ajax'`.
  * @returns A Promise that resolves to the loaded module.
  */
-export function requireAsync<T = unknown>(moduleId: string): Promise<T> {
+export async function requireAsync<T = unknown>(moduleId: string): Promise<T> {
     return new Promise<T>((resolve, reject) => {
-        requirejs([moduleId], (mod: unknown) => resolve(mod as T), reject);
+        requirejs([moduleId], (loadedModule: unknown) => {
+            resolve(loadedModule as T);
+        }, reject);
     });
 }
 
@@ -40,8 +42,10 @@ export function requireAsync<T = unknown>(moduleId: string): Promise<T> {
  * @param moduleIds An array of AMD module identifiers.
  * @returns A Promise that resolves to an array of loaded modules in the same order.
  */
-export function requireManyAsync(moduleIds: string[]): Promise<unknown[]> {
+export async function requireManyAsync(moduleIds: string[]): Promise<unknown[]> {
     return new Promise<unknown[]>((resolve, reject) => {
-        requirejs(moduleIds, (...modules: unknown[]) => resolve(modules), reject);
+        requirejs(moduleIds, (...modules: unknown[]) => {
+            resolve(modules);
+        }, reject);
     });
 }

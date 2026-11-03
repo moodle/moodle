@@ -16,7 +16,7 @@ function EditModeSwitch({ id, context, pageurl, checked, label }) {
   useEffect(() => {
     let cancelled = false;
     const pending = new Pending("core/EditModeSwitch:init");
-    requireAsync("core/edit_switch").then((editSwitch) => {
+    void requireAsync("core/edit_switch").then((editSwitch) => {
       if (!cancelled) {
         editSwitch.init(id);
       }
@@ -44,7 +44,7 @@ function EditModeSwitch({ id, context, pageurl, checked, label }) {
     false,
     {
       fileName: "public/lib/js/esm/src/EditModeSwitch.tsx",
-      lineNumber: 98,
+      lineNumber: 99,
       columnNumber: 9
     },
     this

@@ -149,6 +149,20 @@ describe('@moodle/lms/core/fetch', () => {
             expect(req.headers.get('pageparent')).toBe('test-trace-id');
         });
 
+        it('sends an empty pageparent header when telemetry is not set up', async() => {
+            const {traceId} = (globalThis as any).M.cfg;
+            (globalThis as any).M.cfg.traceId = null;
+
+            try {
+                await Fetch.request('mod_example', 'get_items');
+            } finally {
+                (globalThis as any).M.cfg.traceId = traceId;
+            }
+
+            const req = mockFetch.mock.calls[0][0];
+            expect(req.headers.get('pageparent')).toBe('');
+        });
+
         it('merges custom headers with defaults', async() => {
             await Fetch.request('mod_example', 'get_items', {
                 headers: {'X-Custom': 'value'},

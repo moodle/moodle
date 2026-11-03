@@ -64,6 +64,12 @@ describe('ActivityIcon', () => {
         expect(iconOf(container)).toBe('file-unknown');
     });
 
+    it('falls back to file-unknown when the event has no course module', () => {
+        // The calendar exporter sends modulename as null for an event without a course module.
+        const {container} = render(<ActivityIcon modulename={null} iconurl="/x.svg" />);
+        expect(iconOf(container)).toBe('file-unknown');
+    });
+
     it('falls back to file-unknown when modulename is the literal string "undefined"', () => {
         const {container} = render(<ActivityIcon modulename="undefined" iconurl="/x.svg" />);
         expect(iconOf(container)).toBe('file-unknown');

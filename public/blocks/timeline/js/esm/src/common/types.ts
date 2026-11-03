@@ -21,17 +21,17 @@
  */
 
 /** Icon data as returned by core_calendar event_icon_exporter. */
-export interface CalendarEventIcon {
+export type CalendarEventIcon = {
     key: string;
     component: string;
     alttext: string;
     iconurl: string;
     iconclass: string;
     purpose: string;
-}
+};
 
 /** A calendar action event as returned by the timeline web services. */
-export interface CalendarEvent {
+export type CalendarEvent = {
     id: number;
     name: string;
     timesort: number;
@@ -42,7 +42,8 @@ export interface CalendarEvent {
     overdue: boolean;
     eventtype: string;
     url: string;
-    modulename: string;
+    // Null for an event without a course module.
+    modulename: string | null;
     activityname?: string;
     activitystr?: string;
     purpose?: string;
@@ -60,21 +61,21 @@ export interface CalendarEvent {
         actionable: boolean;
         showitemcount: boolean;
     };
-}
+};
 
 /** A course as returned by core_course_get_enrolled_courses_by_timeline_classification. */
-export interface Course {
+export type Course = {
     id: number;
     fullname: string;
     shortname: string;
     viewurl: string;
     courseimage: string;
-}
+};
 
 /** A course zipped together with its action events for the courses view. */
-export interface CourseWithEvents extends Course {
+export type CourseWithEvents = {
     events: CalendarEvent[];
-}
+} & Course;
 
 /** Day filter option names matching the PHP constants in lib.php. */
 export type FilterName =
@@ -89,7 +90,7 @@ export type FilterName =
 export type OrderName = 'sortbydates' | 'sortbycourses';
 
 /** Props seeded from PHP into data-react-props. */
-export interface TimelineProps {
+export type TimelineProps = {
     midnight: number;
     filter: FilterName;
     order: OrderName;
@@ -97,11 +98,11 @@ export interface TimelineProps {
     nocoursesurl: string;
     noeventsurl: string;
     hasenrolledcourses: boolean;
-}
+};
 
 /** Offset/limit values derived from the active filter. */
-export interface FilterOffsets {
+export type FilterOffsets = {
     daysoffset: number;
     dayslimit: number | null;
     filteroverdue: boolean;
-}
+};

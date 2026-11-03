@@ -21,8 +21,34 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {createElement, Profiler} from "react";
-import type {ComponentType, ProfilerOnRenderCallback} from "react";
+import {
+    createElement,
+    Profiler,
+    type ComponentType,
+    type ProfilerOnRenderCallback,
+} from 'react';
+
+declare global {
+    // Moodle injects M on every page; it is absent under Jest, hence the optional chain below.
+    var M: {cfg?: {jsrev?: number}} | undefined;
+}
+
+/**
+ * Resolve the name a component is profiled under.
+ *
+ * @param component The component being named.
+ * @param preferred An explicitly supplied name, if there is one.
+ * @param fallback The name to use when the component is anonymous.
+ * @returns The first name that has text, or the fallback.
+ */
+export const getComponentId = <P>(
+    component: ComponentType<P>,
+    preferred: string | undefined,
+    fallback: string,
+): string => {
+    const candidates = [preferred, component.displayName, component.name];
+    return candidates.find(candidate => candidate !== undefined && candidate !== '') ?? fallback;
+};
 
 /**
  * Returns whether the React Profiler should be active.
@@ -33,9 +59,7 @@ import type {ComponentType, ProfilerOnRenderCallback} from "react";
  *
  * @returns `true` when developer mode is active and profiling is enabled.
  */
-export const isProfilerEnabled = (): boolean => {
-    return (window as any).M?.cfg?.jsrev === -1;
-};
+export const isProfilerEnabled = (): boolean => globalThis.M?.cfg?.jsrev === -1;
 
 /**
  * React Profiler `onRender` callback that logs render timings to the console.
@@ -52,45 +76,41 @@ export const isProfilerEnabled = (): boolean => {
  * @param startTime When React began rendering this update (ms).
  * @param commitTime When React committed this update (ms).
  */
+/* eslint-disable max-params -- React fixes the onRender signature at six arguments. */
 export const onRenderCallback: ProfilerOnRenderCallback = (
     id,
     phase,
     actualDuration,
     baseDuration,
     startTime,
-    commitTime
+    commitTime,
 ) => {
     if (!isProfilerEnabled()) {
         return;
     }
 
-    window.console.groupCollapsed(`[${phase}] ${id} - ${actualDuration.toFixed(2)}ms`);
+    console.groupCollapsed(`[${phase}] ${id} - ${actualDuration.toFixed(2)}ms`);
 
-    window.console.table({
+    console.table({
         Component: id,
         Phase: phase,
-        "Duration (ms)": actualDuration.toFixed(2),
-        "Base Duration (ms)": baseDuration.toFixed(2),
-        "Start Time": startTime.toFixed(2),
-        "Commit Time": commitTime.toFixed(2),
+        'Duration (ms)': actualDuration.toFixed(2),
+        'Base Duration (ms)': baseDuration.toFixed(2),
+        'Start Time': startTime.toFixed(2),
+        'Commit Time': commitTime.toFixed(2),
     });
 
     if (actualDuration > 16) {
-        window.console.warn(
-            `Slow render: ${actualDuration.toFixed(2)}ms (target: <16ms for 60fps)`
-        );
+        console.warn(`Slow render: ${actualDuration.toFixed(2)}ms (target: <16ms for 60fps)`);
     }
 
     if (actualDuration > 50) {
-        window.console.error(
-            `Very slow render: ${actualDuration.toFixed(
-                2
-            )}ms - Consider optimization!`
-        );
+        console.error(`Very slow render: ${actualDuration.toFixed(2)}ms - Consider optimization!`);
     }
 
-    window.console.groupEnd();
+    console.groupEnd();
 };
+/* eslint-enable max-params */
 
 /**
  * Returns the profiler `onRender` callback when profiling is enabled.
@@ -99,11 +119,9 @@ export const onRenderCallback: ProfilerOnRenderCallback = (
  * `<Profiler>` prop — returns `undefined` in production so the prop can be
  * spread without needing a separate conditional.
  *
- * @returns {@link onRenderCallback} when profiling is active, `undefined` otherwise.
+ * @returns when profiling is active, `undefined` otherwise.
  */
-export const getProfilerCallback = (): ProfilerOnRenderCallback | undefined => {
-    return isProfilerEnabled() ? onRenderCallback : undefined;
-};
+export const getProfilerCallback = (): ProfilerOnRenderCallback | undefined => isProfilerEnabled() ? onRenderCallback : undefined;
 
 /**
  * Wraps a component with a React `<Profiler>` in developer mode.
@@ -125,25 +143,24 @@ export const getProfilerCallback = (): ProfilerOnRenderCallback | undefined => {
  *
  * @param Component The React component to wrap.
  * @param id Optional profiler ID. Falls back to `Component.displayName`,
- *   `Component.name`, or `"Component"` in that order.
+ * `Component.name`, or `"Component"` in that order.
  * @returns The profiler-wrapped component in dev mode, or the original component in production.
  */
-export function withProfiler<P extends object>(
+export function withProfiler<P extends Record<string, unknown>>(
     Component: ComponentType<P>,
-    id?: string
+    id?: string,
 ): ComponentType<P> {
     if (!isProfilerEnabled()) {
         return Component;
     }
 
-    const componentId =
-        id || Component.displayName || Component.name || "Component";
+    const componentId = getComponentId(Component, id, 'Component');
 
     const ProfiledComponent = (props: P) =>
         createElement(
             Profiler,
             {id: componentId, onRender: onRenderCallback},
-            createElement(Component, props)
+            createElement(Component, props),
         );
 
     ProfiledComponent.displayName = `withProfiler(${componentId})`;

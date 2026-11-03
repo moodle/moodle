@@ -23,15 +23,15 @@
  */
 
 import {useState, useEffect} from 'react';
-import {getString} from '@moodle/lms/core/stringUtils';
 import {Badge} from '@moodlehq/design-system';
-import {ActivityIcon} from '@moodle/lms/block_timeline/views/ActivityIcon';
 import type {CalendarEvent} from '../common/types';
+import {getString} from '@moodle/lms/core/stringUtils';
+import {ActivityIcon} from '@moodle/lms/block_timeline/views/ActivityIcon';
 
-interface EventListItemProps {
+type EventListItemProps = {
     event: CalendarEvent;
     courseview?: boolean;
-}
+};
 
 /**
  * Renders a single timeline event item, matching event-list-item.mustache.
@@ -44,14 +44,14 @@ export default function EventListItem({event, courseview = false}: EventListItem
     const [ariaLabel, setAriaLabel] = useState('');
 
     useEffect(() => {
-        getString('overdue', 'block_timeline').then(setOverdueLabel);
+        void getString('overdue', 'block_timeline').then(setOverdueLabel);
     }, []);
 
     useEffect(() => {
-        getString('ariaeventlistitem', 'block_timeline', {
-            name:   event.activityname ?? '',
+        void getString('ariaeventlistitem', 'block_timeline', {
+            name: event.activityname ?? '',
             course: event.course.fullnamedisplay,
-            date:   event.formatteddatetime,
+            date: event.formatteddatetime,
         }).then(setAriaLabel);
     }, [event.activityname, event.course.fullnamedisplay, event.formatteddatetime]);
 
@@ -61,18 +61,18 @@ export default function EventListItem({event, courseview = false}: EventListItem
         hour12: false,
     });
 
-    const purposeClass = event.purpose ? ` ${event.purpose}` : '';
+    const purposeClass = event.purpose === undefined || event.purpose === '' ? '' : ` ${event.purpose}`;
     const iconContainerClass =
         `small courseicon align-self-center mx-2 mb-1 mb-sm-0 text-nowrap activityiconcontainer${purposeClass}`;
 
     return (
         <div
-            className="list-group-item timeline-event-list-item flex-column pt-2 pb-0 border-0 px-0"
-            data-region="event-list-item"
+            className='list-group-item timeline-event-list-item flex-column pt-2 pb-0 border-0 px-0'
+            data-region='event-list-item'
         >
-            <div className="d-flex flex-wrap pb-1">
-                <div className="d-flex me-auto pb-1 mw-100 timeline-name">
-                    <small className="text-end text-nowrap align-self-center">{time}</small>
+            <div className='d-flex flex-wrap pb-1'>
+                <div className='d-flex me-auto pb-1 mw-100 timeline-name'>
+                    <small className='text-end text-nowrap align-self-center'>{time}</small>
 
                     {event.icon && (
                         <div className={iconContainerClass}>
@@ -80,20 +80,20 @@ export default function EventListItem({event, courseview = false}: EventListItem
                         </div>
                     )}
 
-                    <div className="event-name-container flex-grow-1 line-height-4 nowrap text-truncate">
-                        <div className="d-flex">
-                            <h5 className="h6 event-name mb-0 pb-1 text-truncate">
-                                <a href={event.url} title={event.name} aria-label={ariaLabel || undefined}>
+                    <div className='event-name-container flex-grow-1 line-height-4 nowrap text-truncate'>
+                        <div className='d-flex'>
+                            <h5 className='h6 event-name mb-0 pb-1 text-truncate'>
+                                <a href={event.url} title={event.name} aria-label={ariaLabel === '' ? undefined : ariaLabel}>
                                     {event.activityname}
                                 </a>
                                 {event.overdue && (
-                                    <Badge variant="danger" pill label={overdueLabel} className="ms-1" />
+                                    <Badge variant='danger' pill label={overdueLabel} className='ms-1' />
                                 )}
                             </h5>
                         </div>
-                        <small className="mb-0">
+                        <small className='mb-0'>
                             {event.activitystr}
-                            {!courseview && event.course?.fullnamedisplay && (
+                            {!courseview && (event.course?.fullnamedisplay ?? '') !== '' && (
                                 <> &middot; {event.course.fullnamedisplay}</>
                             )}
                         </small>
@@ -101,24 +101,24 @@ export default function EventListItem({event, courseview = false}: EventListItem
                 </div>
 
                 {event.action?.actionable && (
-                    <div className="d-flex timeline-action-button">
-                        <h5 className="h6 event-action">
+                    <div className='d-flex timeline-action-button'>
+                        <h5 className='h6 event-action'>
                             <a
-                                className="list-group-item-action btn btn-outline-secondary btn-sm text-nowrap"
+                                className='list-group-item-action btn btn-outline-secondary btn-sm text-nowrap'
                                 href={event.action.url}
                                 aria-label={event.action.name}
                                 title={event.action.name}
                             >
                                 {event.action.name}
                                 {event.action.showitemcount && (
-                                    <Badge variant="secondary" label={String(event.action.itemcount)} />
+                                    <Badge variant='secondary' label={String(event.action.itemcount)} />
                                 )}
                             </a>
                         </h5>
                     </div>
                 )}
             </div>
-            <div className="pt-2 border-bottom"></div>
+            <div className='pt-2 border-bottom'></div>
         </div>
     );
 }

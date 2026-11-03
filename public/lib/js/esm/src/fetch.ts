@@ -33,15 +33,15 @@
  * });
  */
 
+import {getGlobalAbortSignal} from './abort';
 import config from '@moodle/lms/core/config';
 import Pending from '@moodle/lms/core/pending';
-import {getGlobalAbortSignal} from './abort';
 
 /** The body types accepted by write-method requests. */
-type RequestBody = string | object | FormData;
+type RequestBody = string | Record<string, unknown> | FormData;
 
 /** Options for {@link Fetch.request}. */
-interface RequestOptions {
+type RequestOptions = {
     /** Any cache key to use for the request. */
     cachekey?: number | null;
     /** Additional headers to merge with the defaults. */
@@ -52,43 +52,43 @@ interface RequestOptions {
     body?: RequestBody | null;
     /** The HTTP method to use. */
     method?: string;
-}
+};
 
 /** Options for read-only convenience methods (GET / HEAD). */
-interface ReadRequestOptions {
+type ReadRequestOptions = {
     /** Any cache key to use for the request. */
     cachekey?: number | null;
     /** Additional headers to merge with the defaults. */
     headers?: Record<string, string>;
     /** Query-string parameters to append to the URL. */
     params?: Record<string, string>;
-}
+};
 
 /** Options for write convenience methods (POST / PUT / PATCH). */
-interface WriteRequestOptions {
+type WriteRequestOptions = {
     /** Additional headers to merge with the defaults. */
     headers?: Record<string, string>;
     /** The request body. */
     body: RequestBody;
-}
+};
 
 /** Options for the DELETE convenience method. */
-interface DeleteRequestOptions {
+type DeleteRequestOptions = {
     /** Additional headers to merge with the defaults. */
     headers?: Record<string, string>;
     /** Query-string parameters to append to the URL. */
     params?: Record<string, string>;
     /** An optional request body. */
     body?: RequestBody | null;
-}
+};
 
 /**
  * A wrapper around a {@link Request} that pairs it with a {@link Promise}
  * which is resolved or rejected when the response arrives.
  */
 class RequestWrapper {
-    #request: Request;
-    #promise: Promise<Response>;
+    readonly #request: Request;
+    readonly #promise: Promise<Response>;
     #resolve!: (value: Response) => void;
     #reject!: (reason: string) => void;
 
@@ -120,13 +120,14 @@ class RequestWrapper {
 /**
  * A class to handle requests to the Moodle REST API.
  */
+/* eslint-disable-next-line @typescript-eslint/no-extraneous-class -- REST API namespace holding private static helpers. */
 export default class Fetch {
     /**
      * Make a single request to the Moodle API.
      *
      * @param component The frankenstyle component name.
-     * @param action    The component action to perform.
-     * @param options   Request options (params, body, method, headers, cachekey).
+     * @param action The component action to perform.
+     * @param options Request options (params, body, method, headers, cachekey).
      * @returns A promise that resolves to the {@link Response}.
      */
     static async request(
@@ -144,7 +145,9 @@ export default class Fetch {
         const requestWrapper = Fetch.#getRequest(
             Fetch.#normaliseComponent(component),
             action,
-            {headers, params, method, body, cachekey},
+            {
+                headers, params, method, body, cachekey,
+            },
         );
         const result = await fetch(requestWrapper.request);
 
@@ -158,25 +161,27 @@ export default class Fetch {
      * Perform a GET request.
      *
      * @param component The frankenstyle component name.
-     * @param action    The component action to perform.
-     * @param options   Optional query-string parameters.
+     * @param action The component action to perform.
+     * @param options Optional query-string parameters.
      */
-    static performGet(
+    static async performGet(
         component: string,
         action: string,
         {cachekey = null, headers = {}, params = {}}: ReadRequestOptions = {},
     ): Promise<Response> {
-        return this.request(component, action, {cachekey, headers, params, method: 'GET'});
+        return this.request(component, action, {
+            cachekey, headers, params, method: 'GET',
+        });
     }
 
     /**
      * Perform a HEAD request.
      *
      * @param component The frankenstyle component name.
-     * @param action    The component action to perform.
-     * @param options   Optional query-string parameters.
+     * @param action The component action to perform.
+     * @param options Optional query-string parameters.
      */
-    static performHead(
+    static async performHead(
         component: string,
         action: string,
         {headers = {}, params = {}}: ReadRequestOptions = {},
@@ -188,10 +193,10 @@ export default class Fetch {
      * Perform a POST request.
      *
      * @param component The frankenstyle component name.
-     * @param action    The component action to perform.
-     * @param options   The request body and optional headers.
+     * @param action The component action to perform.
+     * @param options The request body and optional headers.
      */
-    static performPost(
+    static async performPost(
         component: string,
         action: string,
         {headers = {}, body}: WriteRequestOptions,
@@ -203,10 +208,10 @@ export default class Fetch {
      * Perform a PUT request.
      *
      * @param component The frankenstyle component name.
-     * @param action    The component action to perform.
-     * @param options   The request body and optional headers.
+     * @param action The component action to perform.
+     * @param options The request body and optional headers.
      */
-    static performPut(
+    static async performPut(
         component: string,
         action: string,
         {headers = {}, body}: WriteRequestOptions,
@@ -218,10 +223,10 @@ export default class Fetch {
      * Perform a PATCH request.
      *
      * @param component The frankenstyle component name.
-     * @param action    The component action to perform.
-     * @param options   The request body and optional headers.
+     * @param action The component action to perform.
+     * @param options The request body and optional headers.
      */
-    static performPatch(
+    static async performPatch(
         component: string,
         action: string,
         {headers = {}, body}: WriteRequestOptions,
@@ -233,30 +238,32 @@ export default class Fetch {
      * Perform a DELETE request.
      *
      * @param component The frankenstyle component name.
-     * @param action    The component action to perform.
-     * @param options   Optional query-string parameters and/or body.
+     * @param action The component action to perform.
+     * @param options Optional query-string parameters and/or body.
      */
-    static performDelete(
+    static async performDelete(
         component: string,
         action: string,
         {headers = {}, params = {}, body = null}: DeleteRequestOptions = {},
     ): Promise<Response> {
-        return this.request(component, action, {headers, body, params, method: 'DELETE'});
+        return this.request(component, action, {
+            headers, body, params, method: 'DELETE',
+        });
     }
 
     /**
      * Normalise a component name by stripping the `core_` prefix.
      */
     static #normaliseComponent(component: string): string {
-        return component.replace(/^core_/, '');
+        return component.replace(/^core_/u, '');
     }
 
     /**
      * Build a {@link RequestWrapper} for a given API call.
      *
      * @param component The normalised component name.
-     * @param endpoint  The endpoint within the component.
-     * @param options   Request options.
+     * @param endpoint The endpoint within the component.
+     * @param options Request options.
      * @returns A new {@link RequestWrapper}.
      */
     static #getRequest(
@@ -271,9 +278,10 @@ export default class Fetch {
         }: RequestOptions,
     ): RequestWrapper {
         const urlParts: string[] = ['rest', 'v2'];
-        if (cachekey && cachekey > 1) {
+        if (cachekey !== null && cachekey > 1) {
             urlParts.push(`cachekey:${cachekey}`);
         }
+
         urlParts.push(component, endpoint);
 
         const url = new URL(`${config.apibase}/${urlParts.join('/').replaceAll('//', '/')}`);
@@ -281,18 +289,18 @@ export default class Fetch {
             method,
             headers: {
                 ...headers,
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'Content-Type': 'application/json',
-                'pageparent': config.traceId || '',
+                pageparent: config.traceId ?? '',
             },
             signal: getGlobalAbortSignal(),
         };
 
-        Object.entries(params).forEach(([key, value]) => {
+        for (const [key, value] of Object.entries(params)) {
             url.searchParams.append(key, value);
-        });
+        }
 
-        if (body) {
+        if (body !== null) {
             if (body instanceof FormData) {
                 options.body = body;
             } else if (typeof body === 'object') {

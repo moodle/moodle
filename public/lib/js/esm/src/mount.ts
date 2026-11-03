@@ -24,11 +24,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {createElement, Profiler} from "react";
-import {createRoot} from "react-dom/client";
-import type {ComponentType} from "react";
-
-import {isProfilerEnabled, onRenderCallback} from "@moodle/lms/core/profiler";
+import {
+    createElement,
+    Profiler,
+    type ComponentType,
+    type ReactNode,
+} from 'react';
+import {createRoot} from 'react-dom/client';
+import {getComponentId, isProfilerEnabled, onRenderCallback} from '@moodle/lms/core/profiler';
 
 /**
  * Options for mounting a React component.
@@ -39,10 +42,10 @@ type MountOptions = {
 };
 
 /** A function that unmounts a previously mounted React root. */
-type UnmountFn = () => void;
+type UnmountFunction = () => void;
 
 /** Tracks the unmount function for each mounted container so callers can tear down roots cleanly. */
-const rootUnmountMap = new WeakMap<Element, UnmountFn>();
+const rootUnmountMap = new WeakMap<Element, UnmountFunction>();
 
 /**
  * Mounts a React component to a container with optional profiling support.
@@ -57,21 +60,20 @@ const rootUnmountMap = new WeakMap<Element, UnmountFn>();
  * @param options Optional mount configuration.
  * @returns A function that, when called, unmounts the React root from the container.
  */
-export function mountReactApp<P extends object>(
+export function mountReactApp<P extends Record<string, unknown>>(
     container: Element,
     Component: ComponentType<P>,
     props: P,
-    options: MountOptions = {}
+    options: MountOptions = {},
 ): () => void {
-    const componentId =
-        options.id || Component.displayName || Component.name || "ReactApp";
+    const componentId = getComponentId(Component, options.id, 'ReactApp');
 
-    let node: any = createElement(Component, props);
+    let node: ReactNode = createElement(Component, props);
     if (isProfilerEnabled()) {
         node = createElement(
             Profiler,
             {id: componentId, onRender: onRenderCallback},
-            node
+            node,
         );
     }
 

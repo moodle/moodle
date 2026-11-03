@@ -22,16 +22,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {useRef, useState, useCallback, useEffect, useId} from 'react';
+import {
+    useRef,
+    useState,
+    useCallback,
+    useEffect,
+    useId,
+} from 'react';
 import {getString} from '@moodle/lms/core/stringUtils';
 
 const DEBOUNCE_MS = 1000;
 
-interface SearchProps {
+type SearchProps = {
     onSearch: (value: string) => void;
     /** Called with true immediately on keystroke, false when the debounce resolves. */
     onSearching?: (pending: boolean) => void;
-}
+};
 
 /**
  * Debounced search input matching the core/search_input_auto template structure.
@@ -40,7 +46,7 @@ interface SearchProps {
  * reactively rather than toggled via d-none.
  */
 export default function Search({onSearch, onSearching}: SearchProps) {
-    const uid = useId().replace(/:/g, '');
+    const uid = useId().replaceAll(':', '');
     const inputId = `searchinput-${uid}`;
     const labelId = `searchinput-label-${uid}`;
     const formId = `searchform-auto-${uid}`;
@@ -48,27 +54,28 @@ export default function Search({onSearch, onSearching}: SearchProps) {
     const [value, setValue] = useState('');
     const [label, setLabel] = useState('');
     const [clearLabel, setClearLabel] = useState('');
-    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
+    const timerReference = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const inputReference = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        getString('searchevents', 'block_timeline').then(setLabel);
-        getString('clearsearch', 'core').then(setClearLabel);
+        void getString('searchevents', 'block_timeline').then(setLabel);
+        void getString('clearsearch', 'core').then(setClearLabel);
     }, []);
 
     /**
      * Debounces the search input so onSearch fires DEBOUNCE_MS after the user stops typing.
      *
-     * @param e change event from the search input field.
+     * @param event change event from the search input field.
      */
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const next = e.target.value;
+    const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        const next = event.target.value;
         setValue(next);
         onSearching?.(true);
-        if (timerRef.current) {
-            clearTimeout(timerRef.current);
+        if (timerReference.current) {
+            clearTimeout(timerReference.current);
         }
-        timerRef.current = setTimeout(() => {
+
+        timerReference.current = setTimeout(() => {
             onSearching?.(false);
             onSearch(next);
         }, DEBOUNCE_MS);
@@ -76,45 +83,46 @@ export default function Search({onSearch, onSearching}: SearchProps) {
 
     const handleClear = useCallback(() => {
         setValue('');
-        if (timerRef.current) {
-            clearTimeout(timerRef.current);
+        if (timerReference.current) {
+            clearTimeout(timerReference.current);
         }
+
         onSearching?.(false);
         onSearch('');
         // The clear button unmounts as soon as it's clicked (rendered only while value is
         // non-empty), which would otherwise drop focus to <body> for keyboard/AT users.
-        inputRef.current?.focus();
+        inputReference.current?.focus();
     }, [onSearch, onSearching]);
 
     return (
-        <div className="w-100">
-            <div id={formId} className="d-flex flex-wrap align-items-center simplesearchform">
-                <div className="input-group searchbar w-100" role="search" aria-labelledby={labelId}>
+        <div className='w-100'>
+            <div id={formId} className='d-flex flex-wrap align-items-center simplesearchform'>
+                <div className='input-group searchbar w-100' role='search' aria-labelledby={labelId}>
                     <label htmlFor={inputId} id={labelId}>
-                        <span className="visually-hidden">{label}</span>
+                        <span className='visually-hidden'>{label}</span>
                     </label>
                     <input
-                        ref={inputRef}
-                        type="text"
-                        data-region="input"
-                        data-action="search"
+                        ref={inputReference}
+                        type='text'
+                        data-region='input'
+                        data-action='search'
                         id={inputId}
-                        className="form-control withclear rounded"
+                        className='form-control withclear rounded'
                         placeholder={label}
-                        name="search"
+                        name='search'
                         value={value}
-                        autoComplete="off"
+                        autoComplete='off'
                         onChange={handleChange}
                     />
-                    {value && (
+                    {value !== '' && (
                         <button
-                            className="btn btn-clear"
-                            data-action="clearsearch"
-                            type="button"
+                            className='btn btn-clear'
+                            data-action='clearsearch'
+                            type='button'
                             onClick={handleClear}
                         >
-                            <i className="icon fa fa-xmark fa-fw" aria-hidden="true"></i>
-                            <span className="visually-hidden">{clearLabel}</span>
+                            <i className='icon fa fa-xmark fa-fw' aria-hidden='true'></i>
+                            <span className='visually-hidden'>{clearLabel}</span>
                         </button>
                     )}
                 </div>

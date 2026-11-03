@@ -54,12 +54,11 @@ let defaultLevel: LogLevel = levels.WARN;
  */
 function resolveLevel(level: LogLevel | LogLevelName): LogLevel {
     if (typeof level === 'string') {
-        const upper = level.toUpperCase() as LogLevelName;
-        if (upper in levels) {
-            return levels[upper];
-        }
-        return levels.WARN;
+        // The cast is a guess at the caller's intent, so the lookup can still miss.
+        const resolved: LogLevel | undefined = levels[level.toUpperCase() as LogLevelName];
+        return resolved ?? levels.WARN;
     }
+
     return level;
 }
 
@@ -67,8 +66,8 @@ function resolveLevel(level: LogLevel | LogLevelName): LogLevel {
  * Format a message with an optional source prefix.
  */
 function formatMessage(message: unknown, source?: string): string {
-    const msg = String(message);
-    return source ? `${source}: ${msg}` : msg;
+    const text = String(message);
+    return source === undefined || source === '' ? text : `${source}: ${text}`;
 }
 
 /**
@@ -78,9 +77,9 @@ function logAtLevel(level: LogLevel, message: unknown, source?: string): void {
     if (level < currentLevel) {
         return;
     }
-    const method = consoleMethods[level];
-    if (method) {
-        // eslint-disable-next-line no-console
+
+    const method: (typeof consoleMethods)[number] | undefined = consoleMethods[level];
+    if (method !== undefined) {
         console[method](formatMessage(message, source));
     }
 }
@@ -134,8 +133,8 @@ function disableAll(): void {
  *
  * @param config An object with an optional `level` property.
  */
-function setConfig(config: { level?: LogLevel | LogLevelName }): void {
-    if (typeof config.level !== 'undefined') {
+function setConfig(config: {level?: LogLevel | LogLevelName}): void {
+    if (config.level !== undefined) {
         setLevel(config.level);
     }
 }

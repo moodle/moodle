@@ -21,18 +21,22 @@
  */
 
 import {useState, useEffect, useCallback} from 'react';
-import String from '@moodle/lms/core/String';
-import {getString} from '@moodle/lms/core/stringUtils';
 import {Button} from '@moodlehq/design-system';
 import {getTimelineEvents, getFormattedDays, getFormattedEventDateTimes} from '../repository';
-import EventListItem from '@moodle/lms/block_timeline/views/EventListItem';
-import {computeTimeRange, groupByDay, filterEvents} from '../common/utils';
-import type {DayGroup} from '../common/utils';
+import {
+    computeTimeRange,
+    groupByDay,
+    filterEvents,
+    type DayGroup,
+} from '../common/utils';
 import type {FilterOffsets} from '../common/types';
+import EventListItem from '@moodle/lms/block_timeline/views/EventListItem';
+import {getString} from '@moodle/lms/core/stringUtils';
+import String from '@moodle/lms/core/String';
 
 const MORE_LOAD_LIMIT = 10;
 
-interface DatesViewProps {
+type DatesViewProps = {
     midnight: number;
     offsets: FilterOffsets;
     searchvalue: string;
@@ -43,7 +47,7 @@ interface DatesViewProps {
     limit: number;
     /** True while the search debounce is pending — suppresses stale results until it resolves. */
     searchPending?: boolean;
-}
+};
 
 /**
  * Renders timeline events sorted by date with lazy-load pagination.
@@ -66,7 +70,7 @@ export default function DatesView({
     const [moreActivitiesLabel, setMoreActivitiesLabel] = useState('');
 
     useEffect(() => {
-        getString('moreactivities', 'block_timeline').then(setMoreActivitiesLabel);
+        void getString('moreactivities', 'block_timeline').then(setMoreActivitiesLabel);
     }, []);
 
     const {starttime, endtime} = computeTimeRange(midnight, offsets);
@@ -77,50 +81,51 @@ export default function DatesView({
      * @param aftereventid id to page from; 0 for the first load.
      * @param append true to append to the existing days (Show more), false to replace them.
      * @param isCancelled checked right before committing state, so a request superseded by
-     *                     a newer one (e.g. the effect re-firing on a filter change before
-     *                     this call resolves) doesn't overwrite it with stale results.
+     * a newer one (e.g. the effect re-firing on a filter change before
+     * this call resolves) doesn't overwrite it with stale results.
      */
-    const load = useCallback(async(aftereventid: number, append: boolean, isCancelled: () => boolean = () => false) => {
+    const load = useCallback(async (aftereventid: number, append: boolean, isCancelled: () => boolean = () => false) => {
         const result = await getTimelineEvents({
             timesortfrom: starttime,
-            timesortto:   endtime,
+            timesortto: endtime,
             aftereventid,
-            limitnum:     (append ? MORE_LOAD_LIMIT : limit) + 1,
-            searchvalue:  searchvalue || null,
+            limitnum: (append ? MORE_LOAD_LIMIT : limit) + 1,
+            searchvalue: searchvalue === '' ? null : searchvalue,
         });
 
-        const dayMap = await getFormattedDays(result.events.map(e => e.timeusermidnight));
-        const dateTimeMap = await getFormattedEventDateTimes(result.events.map(e => e.timesort));
-        const events = result.events.map(e => ({
-            ...e,
-            formattedday:     dayMap.get(e.timeusermidnight) ?? '',
-            formatteddatetime: dateTimeMap.get(e.timesort) ?? '',
+        const dayMap = await getFormattedDays(result.events.map(event => event.timeusermidnight));
+        const dateTimeMap = await getFormattedEventDateTimes(result.events.map(event => event.timesort));
+        const events = result.events.map(event => ({
+            ...event,
+            formattedday: dayMap.get(event.timeusermidnight) ?? '',
+            formatteddatetime: dateTimeMap.get(event.timesort) ?? '',
         }));
 
-        let filtered = filterEvents(events, midnight, offsets.filteroverdue);
+        const filtered = filterEvents(events, midnight, offsets.filteroverdue);
 
         const loadedAll = filtered.length <= (append ? MORE_LOAD_LIMIT : limit);
         if (!loadedAll) {
             filtered.pop();
         }
 
-        const newDays = groupByDay(filtered);
-
         if (isCancelled()) {
             return;
         }
 
+        const newDays = groupByDay(filtered);
+
         if (append) {
-            setDays(prev => {
+            setDays(previous => {
                 if (newDays.length === 0) {
-                    return prev;
+                    return previous;
                 }
+
                 // Merge first new day into last existing day if same timestamp.
-                const merged = [...prev];
+                const merged = [...previous];
                 if (
-                    merged.length > 0 &&
-                    newDays.length > 0 &&
-                    merged[merged.length - 1].dayTimestamp === newDays[0].dayTimestamp
+                    merged.length > 0
+                    && newDays.length > 0
+                    && merged[merged.length - 1].dayTimestamp === newDays[0].dayTimestamp
                 ) {
                     merged[merged.length - 1] = {
                         ...merged[merged.length - 1],
@@ -128,6 +133,7 @@ export default function DatesView({
                     };
                     return [...merged, ...newDays.slice(1)];
                 }
+
                 return [...merged, ...newDays];
             });
         } else {
@@ -146,7 +152,7 @@ export default function DatesView({
         setLoading(true);
         setDays([]);
         setLastId(0);
-        load(0, false, () => cancelled).finally(() => {
+        void load(0, false, () => cancelled).finally(() => {
             if (!cancelled) {
                 setLoading(false);
             }
@@ -157,12 +163,6 @@ export default function DatesView({
         };
     }, [load]);
 
-    const handleShowMore = async() => {
-        setLoadingMore(true);
-        await load(lastId, true);
-        setLoadingMore(false);
-    };
-
     if (loading || searchPending) {
         return null;
     }
@@ -170,35 +170,42 @@ export default function DatesView({
     if (days.length === 0) {
         if (!hasenrolledcourses) {
             return (
-                <div className="text-xs-center text-center mt-3" data-region="no-courses-empty-message">
-                    <img src={nocoursesurl} className="timeline-empty-icon" alt="" />
-                    <p className="text-muted mt-1">
-                        <String identifier="nocoursesinprogress" component="block_timeline">{''}</String>
+                <div className='text-xs-center text-center mt-3' data-region='no-courses-empty-message'>
+                    <img src={nocoursesurl} className='timeline-empty-icon' alt='' />
+                    <p className='text-muted mt-1'>
+                        <String identifier='nocoursesinprogress' component='block_timeline'>{''}</String>
                     </p>
                 </div>
             );
         }
+
         return (
-            <div className="text-xs-center text-center mt-3" data-region="no-events-empty-message">
-                <img src={noeventsurl} className="timeline-empty-icon" alt="" />
-                <p className="text-muted mt-1">
-                    <String identifier="noevents" component="block_timeline">{''}</String>
+            <div className='text-xs-center text-center mt-3' data-region='no-events-empty-message'>
+                <img src={noeventsurl} className='timeline-empty-icon' alt='' />
+                <p className='text-muted mt-1'>
+                    <String identifier='noevents' component='block_timeline'>{''}</String>
                 </p>
             </div>
         );
     }
 
+    const handleShowMore = async () => {
+        setLoadingMore(true);
+        await load(lastId, true);
+        setLoadingMore(false);
+    };
+
     return (
-        <div data-region="timeline-view-dates">
-            <div className="pb-2" data-region="event-list-wrapper">
+        <div data-region='timeline-view-dates'>
+            <div className='pb-2' data-region='event-list-wrapper'>
                 {days.map(day => (
                     <div key={day.dayTimestamp}>
-                        <div className="mt-3" data-region="event-list-content-date" data-timestamp={day.dayTimestamp}>
-                            <h4 className="h6 d-inline fw-bold">
+                        <div className='mt-3' data-region='event-list-content-date' data-timestamp={day.dayTimestamp}>
+                            <h4 className='h6 d-inline fw-bold'>
                                 {day.events[0].formattedday}
                             </h4>
                         </div>
-                        <div className="list-group list-group-flush">
+                        <div className='list-group list-group-flush'>
                             {day.events.map(event => (
                                 <EventListItem key={event.id} event={event} />
                             ))}
@@ -208,16 +215,16 @@ export default function DatesView({
             </div>
 
             {hasMore && (
-                <div className="pt-1 pb-2 ps-2" data-region="more-events-button-container">
+                <div className='pt-1 pb-2 ps-2' data-region='more-events-button-container'>
                     <Button
-                        variant="secondary"
-                        size="lg"
+                        variant='secondary'
+                        size='lg'
                         onClick={handleShowMore}
                         disabled={loadingMore}
-                        data-action="more-events"
+                        data-action='more-events'
                         label={moreActivitiesLabel}
                         endIcon={loadingMore
-                            ? <i className="spinner-border spinner-border-sm ms-1" role="status" aria-hidden="true" />
+                            ? <i className='spinner-border spinner-border-sm ms-1' role='status' aria-hidden='true' />
                             : undefined}
                     />
                 </div>

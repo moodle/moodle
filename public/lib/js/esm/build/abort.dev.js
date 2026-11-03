@@ -6,14 +6,12 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  * @copyright  Andrew Lyons <andrew@nicols.co.uk>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-const getGlobalAbortSignal = /* @__PURE__ */ __name(() => {
-  return window.globalAbortController.signal;
-}, "getGlobalAbortSignal");
+const getGlobalAbortSignal = /* @__PURE__ */ __name(() => globalThis.globalAbortController.signal, "getGlobalAbortSignal");
 const abortGlobalFetches = /* @__PURE__ */ __name(() => {
-  window.globalAbortController?.abort();
+  globalThis.globalAbortController?.abort();
 }, "abortGlobalFetches");
 const resetGlobalAbortController = /* @__PURE__ */ __name(() => {
-  window.globalAbortController = new AbortController();
+  globalThis.globalAbortController = new AbortController();
 }, "resetGlobalAbortController");
 resetGlobalAbortController();
 var abort_default = getGlobalAbortSignal;

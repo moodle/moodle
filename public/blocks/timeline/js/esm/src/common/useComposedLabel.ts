@@ -40,7 +40,7 @@ import {getString} from '@moodle/lms/core/stringUtils';
 export function useComposedLabel(
     labelKey: string,
     activeLabelKey: string,
-    activeLabelComponent = 'block_timeline'
+    activeLabelComponent = 'block_timeline',
 ) {
     const [label, setLabel] = useState('');
 
@@ -49,12 +49,13 @@ export function useComposedLabel(
         // longer for the current option rather than letting it overwrite a newer one.
         let current = true;
 
-        getString(activeLabelKey, activeLabelComponent)
-            .then(activeLabel => getString(labelKey, 'block_timeline', activeLabel))
+        void getString(activeLabelKey, activeLabelComponent)
+            .then(async activeLabel => getString(labelKey, 'block_timeline', activeLabel))
             .then(composed => {
                 if (current) {
                     setLabel(composed);
                 }
+
                 return composed;
             });
 

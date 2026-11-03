@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+const {lintTypescript, createResidentLinter} = require('./xo');
+
 module.exports = grunt => {
     /**
      * Register ESM task — build or watch ESM components.
@@ -30,35 +32,32 @@ module.exports = grunt => {
      * Modes:
      *   grunt esm          — production build
      *   grunt esm:dev      — deprecated (behaves like grunt esm)
-     *   grunt esm:watch    — esbuild native watch (incremental context)
+     *   grunt esm:watch    — lint, then rebuild on save (incremental context)
      *
-     * Note: esm:watch uses esbuild's own context.watch() and is intentionally
-     * separate from grunt-contrib-watch. This keeps esbuild's incremental build
-     * graph alive between rebuilds rather than starting from scratch on each change.
+     * Pass --skip-lint to build without running XO first.
+     *
+     * Note: esm:watch drives its own loop — a change is reported, the sources are
+     * linted, and only then is the esbuild context rebuilt. It stays separate from
+     * grunt-contrib-watch so esbuild's incremental build graph is reused between
+     * rebuilds rather than starting from scratch on each change.
      */
     grunt.registerTask('esm', 'Build all ESM components', function(mode) {
         const done = this.async();
         const isWatch = mode === 'watch';
 
+        const skipLint = !!grunt.option('skip-lint');
+
         if (mode === 'dev') {
             grunt.log.warn('esm:dev is deprecated. Output is always production-mode. Use "grunt esm" instead.');
         }
 
-        if (isWatch) {
-            const path = require('path');
-            const {spawn} = require('child_process');
+        if (skipLint) {
+            grunt.log.warn('Linting skipped (--skip-lint). Run "grunt xo" before committing.');
+        }
 
-            // Run ESLint on the rebuilt source files in check-only mode (no --fix)
-            // to avoid writing changes that would re-trigger esbuild.
-            const eslintBin = path.join(grunt.moodleEnv.gruntFilePath, 'node_modules', '.bin', 'eslint');
-            const onRebuild = (srcFiles) => {
-                if (srcFiles.length === 0) {
-                    return;
-                }
-                const absSrcFiles = srcFiles.map(f => path.join(grunt.moodleEnv.gruntFilePath, f));
-                spawn(eslintBin, absSrcFiles, {stdio: 'inherit'})
-                    .on('error', err => grunt.log.error(`ESLint: ${err.message}`));
-            };
+        if (isWatch) {
+            // Lint before each rebuild.
+            const beforeBuild = skipLint ? async() => [] : createResidentLinter(grunt);
 
             (async() => {
                 try {
@@ -67,9 +66,9 @@ module.exports = grunt => {
 
                     generateAliases();
 
-                    const [productionContext, developmentContext] = await watchComponents(onRebuild);
+                    const stopWatching = await watchComponents(beforeBuild);
 
-                    if (!productionContext || !developmentContext) {
+                    if (!stopWatching) {
                         grunt.log.warn('No ESM source files found. Nothing to watch.');
                         done();
                         return;
@@ -80,8 +79,7 @@ module.exports = grunt => {
                     // Keep the process alive until the user interrupts. done() is intentionally
                     // not called here — grunt's async mechanism holds the process open.
                     process.on('SIGINT', async() => {
-                        await productionContext.dispose();
-                        await developmentContext.dispose();
+                        await stopWatching();
                         done();
                     });
                 } catch (err) {
@@ -102,6 +100,12 @@ module.exports = grunt => {
                 const {applyDefaultSwizzleSafety} = await import('../../scripts/lib/swizzle/index.mjs');
 
                 generateAliases();
+
+                // Lint before building.
+                if (!skipLint) {
+                    await lintTypescript(grunt);
+                }
+
                 await buildPluginComponents();
 
                 const defaulted = applyDefaultSwizzleSafety(grunt.moodleEnv.gruntFilePath);

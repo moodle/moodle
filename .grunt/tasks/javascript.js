@@ -49,6 +49,9 @@ module.exports = grunt => {
     // Load ESLint.
     require('./eslint')(grunt);
 
+    // Load XO, which lints the TypeScript sources.
+    require('./xo')(grunt);
+
     // Load jsconfig.
     require('./jsconfig')(grunt);
 

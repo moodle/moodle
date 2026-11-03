@@ -36,6 +36,14 @@ describe('@moodle/lms/core/stringUtils', () => {
         await expect(getString('greeting', 'core')).resolves.toBe('Hello World');
     });
 
+    it('treats a null component as core, as untyped AMD callers pass it', async() => {
+        mockString('greeting', 'core', 'Hello World');
+
+        await expect(getStrings([
+            {key: 'greeting', component: null},
+        ])).resolves.toEqual(['Hello World']);
+    });
+
     it('resolves a batch of strings', async() => {
         mockString('yes', 'core', 'Yes');
         mockString('no', 'core', 'No');

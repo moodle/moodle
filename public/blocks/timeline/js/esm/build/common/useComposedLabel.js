@@ -1,4 +1,4 @@
-import{useState as o,useEffect as l}from"react";import{getString as u}from"@moodle/lms/core/stringUtils";/**
+import{useState as f,useEffect as l}from"react";import{getString as s}from"@moodle/lms/core/stringUtils";/**
  * Accessible name for a dropdown toggle that shows its current selection.
  *
  * The name has to contain the visible selection so that it can be spoken by voice control
@@ -9,4 +9,4 @@ import{useState as o,useEffect as l}from"react";import{getString as u}from"@mood
  *
  * @module     block_timeline/common/useComposedLabel
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */function c(r,e,n="block_timeline"){const[s,f]=o("");return l(()=>{let i=!0;return u(e,n).then(t=>u(r,"block_timeline",t)).then(t=>(i&&f(t),t)),()=>{i=!1}},[r,e,n]),s}export{c as useComposedLabel};
+ */function g(r,e,n="block_timeline"){const[u,o]=f("");return l(()=>{let i=!0;return s(e,n).then(async t=>s(r,"block_timeline",t)).then(t=>(i&&o(t),t)),()=>{i=!1}},[r,e,n]),u}export{g as useComposedLabel};

@@ -118,6 +118,11 @@ describe('core/utils', () => {
             expect(getNormalisedComponent('core')).toBe('core');
         });
 
+        it('returns core for null and undefined, which untyped AMD callers pass', () => {
+            expect(getNormalisedComponent(null)).toBe('core');
+            expect(getNormalisedComponent(undefined)).toBe('core');
+        });
+
         it('returns non-core component names unchanged', () => {
             expect(getNormalisedComponent('mod_forum')).toBe('mod_forum');
         });
