@@ -2180,11 +2180,21 @@ class behat_course extends behat_base {
      * @Given /^I open the activity chooser$/
      */
     public function i_open_the_activity_chooser() {
-        // Open the "Activity or resource and Subsection" dropdown first.
-        $this->execute('behat_general::i_click_on',
-                ['//button[@data-action="open-addingcontent"]', 'xpath_element']);
-        $this->execute('behat_general::i_click_on',
-            ['//button[@data-action="open-chooser"]', 'xpath_element']);
+        // Only the always visible divider is clickable, the ones between activities are shown on hover only.
+        $region = '[data-region="always-visible-add-content"]';
+        $page = $this->getSession()->getPage();
+
+        // The dropdown is only rendered when there are extra action links (for example, subsections).
+        if ($page->find('css', "{$region} button[data-action=\"open-addingcontent\"]")) {
+            $this->execute('behat_general::i_click_on', [
+                "{$region} button[data-action=\"open-addingcontent\"]",
+                'css_element',
+            ]);
+            $chooserselector = "{$region} .dropdown-menu.show button[data-action=\"open-chooser\"]";
+        } else {
+            $chooserselector = "{$region} button[data-action=\"open-chooser\"]";
+        }
+        $this->execute('behat_general::i_click_on', [$chooserselector, 'css_element']);
 
         $node = $this->get_selected_node('xpath_element', '//div[@data-region="modules"]');
         $this->ensure_node_is_visible($node);
