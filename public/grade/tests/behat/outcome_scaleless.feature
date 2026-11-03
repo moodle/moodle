@@ -58,7 +58,7 @@ Feature: Outcomes reports handle outcomes without scales
     Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "More > Learning outcomes" in the course gradebook
     When I click on "Manage learning outcomes" "button"
-    Then following "Export" link should download an outcome file that:
+    Then following "Export" should download a file that:
       | Contains text | Outcome with scale    |
       | Contains text | Outcome without scale |
       | Contains text | Test Scale 1          |
