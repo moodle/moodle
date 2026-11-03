@@ -1,4 +1,4 @@
-import{useEffect as r,useState as s}from"react";import{ActivityIcon as l}from"@moodlehq/design-system";import{jsx as u}from"react/jsx-runtime";/**
+import{useEffect as s,useState as l}from"react";import{ActivityIcon as r}from"@moodlehq/design-system";import{jsx as u}from"react/jsx-runtime";/**
  * The icon of a course activity card, rendered with the design system ActivityIcon.
  *
  * Mounted from core_courseformat/local/content/cm/cmicon, which keeps a server-rendered
@@ -8,4 +8,4 @@ import{useEffect as r,useState as s}from"react";import{ActivityIcon as l}from"@m
  * @module     core_course/ActivityIcon
  * @copyright  2026 Moodle Pty Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */const o="(max-width: 575.98px)",m=()=>{const[i,n]=s(()=>window.matchMedia(o).matches);return r(()=>{const e=window.matchMedia(o),t=c=>n(c.matches);return n(e.matches),e.addEventListener("change",t),()=>e.removeEventListener("change",t)},[]),i};function d({icon:i,alt:n="",container:e="default",size:t="md",mobileSize:c=t}){const a=m();return u(l,{icon:i,alt:n,container:e,size:a?c:t})}export{d as default};
+ */const o="(max-width: 575.98px)",m=()=>{const[i,n]=l(()=>globalThis.matchMedia(o).matches);return s(()=>{const t=globalThis.matchMedia(o),e=c=>{n(c.matches)};return n(t.matches),t.addEventListener("change",e),()=>{t.removeEventListener("change",e)}},[]),i};function d({icon:i,alt:n="",container:t="default",size:e="md",mobileSize:c=e}){const a=m();return u(r,{icon:i,alt:n,container:t,size:a?c:e})}export{d as default};

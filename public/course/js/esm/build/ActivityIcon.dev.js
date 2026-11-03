@@ -16,13 +16,17 @@ import { useEffect, useState } from "react";
 import { ActivityIcon as DSActivityIcon } from "@moodlehq/design-system";
 const smallScreenQuery = "(max-width: 575.98px)";
 const useSmallScreen = /* @__PURE__ */ __name(() => {
-  const [isSmall, setIsSmall] = useState(() => window.matchMedia(smallScreenQuery).matches);
+  const [isSmall, setIsSmall] = useState(() => globalThis.matchMedia(smallScreenQuery).matches);
   useEffect(() => {
-    const query = window.matchMedia(smallScreenQuery);
-    const update = /* @__PURE__ */ __name((event) => setIsSmall(event.matches), "update");
+    const query = globalThis.matchMedia(smallScreenQuery);
+    const update = /* @__PURE__ */ __name((event) => {
+      setIsSmall(event.matches);
+    }, "update");
     setIsSmall(query.matches);
     query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
+    return () => {
+      query.removeEventListener("change", update);
+    };
   }, []);
   return isSmall;
 }, "useSmallScreen");
@@ -36,7 +40,7 @@ function ActivityIcon({
   const isSmallScreen = useSmallScreen();
   return /* @__PURE__ */ jsxDEV(DSActivityIcon, { icon, alt, container, size: isSmallScreen ? mobileSize : size }, void 0, false, {
     fileName: "public/course/js/esm/src/ActivityIcon.tsx",
-    lineNumber: 78,
+    lineNumber: 83,
     columnNumber: 12
   }, this);
 }

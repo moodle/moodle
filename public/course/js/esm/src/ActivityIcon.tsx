@@ -31,7 +31,7 @@ import {ActivityIcon as DSActivityIcon} from '@moodlehq/design-system';
 // Matches the small screens of the course card layout (media-breakpoint-down(sm) in theme_boost course.scss).
 const smallScreenQuery = '(max-width: 575.98px)';
 
-export interface ActivityIconProps {
+export type ActivityIconProps = {
     /** The design system icon name, resolved by core_courseformat\output\local\content\cm\cmicon. */
     icon: string;
     /** The accessible text of the icon. Empty when the icon is decorative. */
@@ -42,7 +42,7 @@ export interface ActivityIconProps {
     size?: 'sm' | 'md' | 'lg' | 'xl';
     /** The size of the icon on small screens. Defaults to the size. */
     mobileSize?: 'sm' | 'md' | 'lg' | 'xl';
-}
+};
 
 /**
  * Whether the screen is small, following changes of the window size.
@@ -50,13 +50,18 @@ export interface ActivityIconProps {
  * @returns True on small screens.
  */
 const useSmallScreen = (): boolean => {
-    const [isSmall, setIsSmall] = useState(() => window.matchMedia(smallScreenQuery).matches);
+    const [isSmall, setIsSmall] = useState(() => globalThis.matchMedia(smallScreenQuery).matches);
     useEffect(() => {
-        const query = window.matchMedia(smallScreenQuery);
-        const update = (event: MediaQueryListEvent) => setIsSmall(event.matches);
+        const query = globalThis.matchMedia(smallScreenQuery);
+        const update = (event: MediaQueryListEvent) => {
+            setIsSmall(event.matches);
+        };
+
         setIsSmall(query.matches);
         query.addEventListener('change', update);
-        return () => query.removeEventListener('change', update);
+        return () => {
+            query.removeEventListener('change', update);
+        };
     }, []);
     return isSmall;
 };
