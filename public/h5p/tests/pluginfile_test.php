@@ -107,13 +107,12 @@ final class pluginfile_test extends \advanced_testcase {
     }
 
     /**
-     * EXPORT_FILEAREA must reject invalid filenames, deny via api::can_access_content(), and honor the
-     * "Allow download" display option.
+     * EXPORT_FILEAREA must reject invalid filenames and deny access via api::can_access_export().
      */
     public function test_export_filearea_pluginfile_access(): void {
         $this->resetAfterTest();
 
-        $fixture = $this->create_h5p_fixture(['export' => 0]);
+        $fixture = $this->create_h5p_fixture();
         $filename = 'my-export-' . $fixture['h5pid'] . '.h5p';
 
         // Invalid filenames are rejected before any DB lookup or access check.
@@ -128,18 +127,18 @@ final class pluginfile_test extends \advanced_testcase {
             ['dontdie' => true]
         ));
 
-        // The enrolled student passes the access check but downloads are disabled for this content.
+        // So are filenames pointing to a content id which doesn't exist.
         $this->assertFalse(\core_h5p_pluginfile(
             $fixture['course'],
             $fixture['forum'],
             $fixture['syscontext'],
             file_storage::EXPORT_FILEAREA,
-            [$filename],
+            ['my-export-' . ($fixture['h5pid'] + 1000) . '.h5p'],
             false,
             ['dontdie' => true]
         ));
 
-        // A user not enrolled in the course must be denied by api::can_access_content(), same as CONTENT_FILEAREA.
+        // A user not enrolled in the course must be denied by api::can_access_export(), same as CONTENT_FILEAREA.
         $this->setUser($fixture['otheruser']);
         $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage(get_string('redirecterrordetected', 'error'));
