@@ -22,11 +22,14 @@
     Example context (json):
     {
         "extraclasses": "mt-3",
+        "dataregion": "add-content-divider",
         "content": "<button class=\"btn btn-primary\">Add section</button>"
     }
 }}
 
-<div class="divider bulk-hidden d-flex justify-content-center align-items-center {{$extraclasses}}{{extraclasses}}{{/extraclasses}}">
+<div class="divider bulk-hidden d-flex justify-content-center align-items-center {{$extraclasses}}{{extraclasses}}{{/extraclasses}}"
+    {{#dataregion}}data-region="{{.}}"{{/dataregion}}
+>
     <hr>
     <div class="divider-content px-3">
         {{$content}}{{{content}}}{{/content}}

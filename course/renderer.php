@@ -236,6 +236,7 @@ class core_course_renderer extends plugin_renderer_base {
             [
                 'content' => $this->render($activitychooserbutton),
                 'extraclasses' => 'always-visible my-3',
+                'dataregion' => 'always-visible-add-content',
             ]
         );
     }

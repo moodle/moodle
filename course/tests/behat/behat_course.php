@@ -2157,8 +2157,11 @@ class behat_course extends behat_base {
      * @Given /^I open the activity chooser$/
      */
     public function i_open_the_activity_chooser() {
-        $this->execute('behat_general::i_click_on',
-            array('//button[@data-action="open-chooser"]', 'xpath_element'));
+        // Only the always visible divider is clickable, the ones between activities are shown on hover only.
+        $this->execute('behat_general::i_click_on', [
+            '[data-region="always-visible-add-content"] button[data-action="open-chooser"]',
+            'css_element',
+        ]);
 
         $node = $this->get_selected_node('xpath_element', '//div[@data-region="modules"]');
         $this->ensure_node_is_visible($node);
