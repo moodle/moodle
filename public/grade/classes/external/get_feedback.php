@@ -84,8 +84,17 @@ class get_feedback extends external_api {
             throw new invalid_parameter_exception('Course ID and item ID mismatch');
         }
 
-        $grade = $gradeitem->get_grade($params['userid'], false);
-        $user = \core_user::get_user($params['userid']);
+        $user = \core_user::get_user($params['userid'], '*', MUST_EXIST);
+        if (!is_enrolled($context, $user)) {
+            throw new \moodle_exception('usernotincourse', 'error');
+        }
+
+        $course = get_course($params['courseid']);
+        if (!groups_user_groups_visible($course, $user->id)) {
+            throw new \moodle_exception('cannotaccessgroup', 'core_grades');
+        }
+
+        $grade = $gradeitem->get_grade($user->id, false);
         $extrafields = \core_user\fields::get_identity_fields($context);
 
         return [
