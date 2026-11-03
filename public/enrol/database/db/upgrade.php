@@ -106,5 +106,12 @@ function xmldb_enrol_database_upgrade($oldversion) {
     // Automatically generated Moodle v5.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2025100601) {
+        // Remove the dbsybasequoting setting since all queries now use parameterized statements.
+        unset_config('dbsybasequoting', 'enrol_database');
+
+        upgrade_plugin_savepoint(true, 2025100601, 'enrol', 'database');
+    }
+
     return true;
 }

@@ -72,7 +72,6 @@ final class sync_test extends \advanced_testcase {
             case 'mysql':
                 set_config('dbtype', 'mysqli', 'enrol_database');
                 set_config('dbsetupsql', "SET NAMES 'UTF-8'", 'enrol_database');
-                set_config('dbsybasequoting', '0', 'enrol_database');
                 if (!empty($CFG->dboptions['dbsocket'])) {
                     $dbsocket = $CFG->dboptions['dbsocket'];
                     if ((strpos($dbsocket, '/') === false and strpos($dbsocket, '\\') === false)) {
@@ -89,7 +88,6 @@ final class sync_test extends \advanced_testcase {
                     $setupsql .= "; SET search_path = '".$CFG->dboptions['dbschema']."'";
                 }
                 set_config('dbsetupsql', $setupsql, 'enrol_database');
-                set_config('dbsybasequoting', '0', 'enrol_database');
                 if (!empty($CFG->dboptions['dbsocket']) and ($CFG->dbhost === 'localhost' or $CFG->dbhost === '127.0.0.1')) {
                     if (strpos($CFG->dboptions['dbsocket'], '/') !== false) {
                         $socket = $CFG->dboptions['dbsocket'];
@@ -105,7 +103,6 @@ final class sync_test extends \advanced_testcase {
 
             case 'mssql':
                 set_config('dbtype', 'mssqlnative', 'enrol_database');
-                set_config('dbsybasequoting', '1', 'enrol_database');
 
                 // The native sqlsrv driver uses a comma as separator between host and port.
                 $dbhost = $CFG->dbhost;
@@ -935,6 +932,242 @@ final class sync_test extends \advanced_testcase {
 
         // Course should not be synced to prevent setting up incorrect dates.
         $this->assertFalse($DB->record_exists('course', ['shortname' => $course13['shortname']]));
+
+        $this->cleanup_enrol_database();
+    }
+
+    /**
+     * Condition values must be bound as parameters, never interpolated into the statement,
+     * using the placeholder syntax of the external database driver.
+     *
+     * @param string $driver ADOdb driver to build the statement for.
+     * @param string $first expected placeholder for the first condition.
+     * @param string $second expected placeholder for the second condition.     *
+     * @covers \enrol_database_plugin::db_get_sql
+     * @dataProvider db_get_sql_placeholder_provider
+     */
+    public function test_db_get_sql_parameterises_conditions(string $driver, string $first, string $second): void {
+        global $CFG;
+        require_once($CFG->libdir . '/adodb/adodb.inc.php');
+
+        $this->resetAfterTest();
+
+        if ($driver === 'oci8') {
+            // ADODB_oci8 cannot be instantiated without the oci8 extension, so mirror its named placeholders.
+            // phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+            $extdb = new class extends \ADOConnection {
+                /**
+                 * Mirror the oci8 driver's named placeholder syntax.
+                 *
+                 * @param string $name placeholder name.
+                 * @param string $type ignored, kept to match the parent signature.
+                 * @return string
+                 */
+                public function Param($name, $type = 'C') {
+                    return ':' . $name;
+                }
+            };
+            // phpcs:enable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+        } else {
+            $extdb = ADONewConnection($driver);
+        }
+
+        $plugin = enrol_get_plugin('database');
+        $method = new \ReflectionMethod($plugin, 'db_get_sql');
+
+        $payload = "courseid1\\' OR 1=1 -- ";
+        $conditions = ['courseid' => $payload, 'userid' => 'userid1'];
+        $result = $method->invoke($plugin, $extdb, 'extenrols', $conditions, ['roleid']);
+        $this->assertIsArray($result, 'db_get_sql() must return the statement and its parameters.');
+        [$sql, $params] = $result;
+
+        // The value must not reach the statement at all, escaped or otherwise.
+        $this->assertStringContainsString("courseid = {$first} AND userid = {$second}", $sql);
+        $this->assertStringNotContainsString('OR 1=1', $sql);
+        $this->assertStringNotContainsString("'", $sql);
+        $this->assertSame(['p0' => $payload, 'p1' => 'userid1'], $params);
+
+        // Placeholder numbering restarts for every statement.
+        [$sql] = $method->invoke($plugin, $extdb, 'extenrols', $conditions, ['roleid']);
+        $this->assertStringContainsString("courseid = {$first} AND userid = {$second}", $sql);
+
+        // No conditions means no WHERE clause and no parameters.
+        [$sql, $params] = $method->invoke($plugin, $extdb, 'extenrols', [], ['userid'], true);
+        $this->assertStringNotContainsString('WHERE', $sql);
+        $this->assertSame([], $params);
+    }
+
+    /**
+     * Data provider for {@see test_db_get_sql_parameterises_conditions}.
+     *
+     * @return array
+     */
+    public static function db_get_sql_placeholder_provider(): array {
+        return [
+            'MySQL' => [
+                'driver' => 'mysqli',
+                'first' => '?',
+                'second' => '?',
+            ],
+            'PostgreSQL' => [
+                'driver' => 'postgres',
+                'first' => '$1',
+                'second' => '$2',
+            ],
+            'MSSQL' => [
+                'driver' => 'mssqlnative',
+                'first' => '?',
+                'second' => '?',
+            ],
+            'Oracle oci8' => [
+                'driver' => 'oci8',
+                'first' => ':p0',
+                'second' => ':p1',
+            ],
+        ];
+    }
+
+    /**
+     * A course mapping containing a quote must be matched as data, not executed as SQL.
+     *
+     * The breakout this guards against is only reachable on MySQL/MariaDB, where a backslash
+     * escapes the quote that follows it. PostgreSQL (standard_conforming_strings) and MSSQL
+     * read the pre-fix doubled quote as data, so on those engines this passes either way.
+     *
+     * @covers \enrol_database_plugin::sync_enrolments
+     * @covers \enrol_database_plugin::db_get_sql
+     */
+    public function test_sync_enrolments_with_quoted_course_mapping(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+        $this->init_enrol_database();
+        $this->reset_enrol_database();
+
+        $plugin = enrol_get_plugin('database');
+        $plugin->set_config('localcoursefield', 'idnumber');
+        $plugin->set_config('localuserfield', 'idnumber');
+        $plugin->set_config('localrolefield', 'shortname');
+        $plugin->set_config('defaultrole', self::$roles['student']->id);
+        $plugin->set_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL);
+
+        $trace = new \null_progress_trace();
+
+        // The backslash ahead of the quote is what breaks out of the literal on MySQL.
+        $mapping = "courseid1\\' OR 1=1 -- ";
+        $DB->set_field('course', 'idnumber', $mapping, ['id' => self::$courses[1]->id]);
+
+        // One enrolment for the renamed course, one belonging to an unrelated course.
+        $DB->insert_record(
+            'enrol_database_test_enrols',
+            ['userid' => 'userid1', 'courseid' => $mapping, 'roleid' => 'student'],
+        );
+        $DB->insert_record(
+            'enrol_database_test_enrols',
+            ['userid' => 'userid5', 'courseid' => 'courseid2', 'roleid' => 'student'],
+        );
+
+        $plugin->sync_enrolments($trace);
+
+        // The quoted mapping matches its own record.
+        $this->assertIsEnrolled(1, 1, ENROL_USER_ACTIVE, 'student');
+        // It must not pull in the unrelated course's enrolment.
+        $this->assertIsNotEnrolled(5, 1);
+        $this->assertIsEnrolled(5, 2, ENROL_USER_ACTIVE, 'student');
+
+        $this->cleanup_enrol_database();
+    }
+
+    /**
+     * Mappings holding characters that are significant to SQL must round-trip as plain data.
+     *
+     * @covers \enrol_database_plugin::sync_enrolments
+     * @covers \enrol_database_plugin::db_get_sql
+     */
+    public function test_sync_enrolments_with_special_character_mappings(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+        $this->init_enrol_database();
+        $this->reset_enrol_database();
+
+        $plugin = enrol_get_plugin('database');
+        $plugin->set_config('localcoursefield', 'idnumber');
+        $plugin->set_config('localuserfield', 'idnumber');
+        $plugin->set_config('localrolefield', 'shortname');
+        $plugin->set_config('defaultrole', self::$roles['student']->id);
+        $plugin->set_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL);
+
+        $trace = new \null_progress_trace();
+
+        // A quote, and a Windows style path whose backslashes MySQL used to swallow.
+        $quoted = "O'Brien's course";
+        $backslashed = 'C:\\courses\\101';
+        $DB->set_field('course', 'idnumber', $quoted, ['id' => self::$courses[1]->id]);
+        $DB->set_field('course', 'idnumber', $backslashed, ['id' => self::$courses[2]->id]);
+
+        $DB->insert_record(
+            'enrol_database_test_enrols',
+            ['userid' => 'userid1', 'courseid' => $quoted, 'roleid' => 'student'],
+        );
+        $DB->insert_record(
+            'enrol_database_test_enrols',
+            ['userid' => 'userid2', 'courseid' => $backslashed, 'roleid' => 'student'],
+        );
+
+        $plugin->sync_enrolments($trace);
+
+        $this->assertIsEnrolled(1, 1, ENROL_USER_ACTIVE, 'student');
+        $this->assertIsEnrolled(2, 2, ENROL_USER_ACTIVE, 'student');
+
+        $this->cleanup_enrol_database();
+    }
+
+    /**
+     * A quoted user mapping must be treated as data by sync_user_enrolments(),
+     * not executed, to prevent it from fetching another user's enrolments.
+     *
+     * @covers \enrol_database_plugin::sync_user_enrolments
+     * @covers \enrol_database_plugin::db_get_sql
+     */
+    public function test_sync_user_enrolments_with_quoted_user_mapping(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+        $this->init_enrol_database();
+        $this->reset_enrol_database();
+
+        $plugin = enrol_get_plugin('database');
+        $plugin->set_config('localcoursefield', 'idnumber');
+        $plugin->set_config('localuserfield', 'idnumber');
+        $plugin->set_config('localrolefield', 'shortname');
+        $plugin->set_config('defaultrole', self::$roles['student']->id);
+
+        // A user whose idnumber (the mapped user field) is a breakout payload; the
+        // backslash ahead of the quote is what closes the literal on MySQL.
+        $payload = "userid1\\' OR 1=1 -- ";
+        $DB->set_field('user', 'idnumber', $payload, ['id' => self::$users[1]->id]);
+        $user = $DB->get_record('user', ['id' => self::$users[1]->id]);
+
+        // The attacker's own enrolment, plus one belonging to an unrelated user.
+        $DB->insert_record(
+            'enrol_database_test_enrols',
+            ['userid' => $payload, 'courseid' => 'courseid1', 'roleid' => 'student'],
+        );
+        $DB->insert_record(
+            'enrol_database_test_enrols',
+            ['userid' => 'userid2', 'courseid' => 'courseid2', 'roleid' => 'student'],
+        );
+
+        $plugin->sync_user_enrolments($user);
+
+        // The quoted mapping matches only its own record.
+        $this->assertIsEnrolled(1, 1, ENROL_USER_ACTIVE, 'student');
+        // It must not pull in the unrelated user's course.
+        $this->assertIsNotEnrolled(1, 2);
 
         $this->cleanup_enrol_database();
     }
