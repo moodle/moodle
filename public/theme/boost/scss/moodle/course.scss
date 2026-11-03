@@ -374,16 +374,15 @@ button.section-collapsemenu {
             "dates         dates         dates         dates         dates"
             "availability  availability  availability  availability  availability";
         @include media-breakpoint-down(sm) {
-            grid-template-columns: 1fr min-content min-content;
+            grid-template-columns: 1fr min-content min-content min-content;
             grid-template-areas:
-                "icon          visibility    actions"
-                "name          name          name"
-                "altcontent    altcontent    altcontent"
-                "afterlink     afterlink     afterlink"
-                "dates         dates         dates"
-                "groupmode     groupmode     groupmode"
-                "completion    completion    completion"
-                "availability  availability  availability";
+                "icon          groupmode     visibility    actions"
+                "name          name          name          name"
+                "altcontent    altcontent    altcontent    altcontent"
+                "afterlink     afterlink     afterlink     afterlink"
+                "dates         dates         dates         dates"
+                "availability  availability  availability  availability"
+                "completion    completion    completion    completion";
         }
         &:not(.noname-grid) .activity-badges {
             margin-inline-start: map-get($spacers, 2);
@@ -398,14 +397,13 @@ button.section-collapsemenu {
             "afterlink     afterlink        afterlink     afterlink"
             "availability  availability     availability  availability";
         @include media-breakpoint-down(sm) {
-            grid-template-columns: 1fr min-content;
+            grid-template-columns: 1fr min-content min-content;
             grid-template-areas:
-                "visibility    actions"
-                "altcontent    altcontent"
-                "groupmode     groupmode"
-                "afterlink     afterlink"
-                "completion    completion"
-                "availability  availability";
+                "visibility    groupmode     actions"
+                "altcontent    altcontent    altcontent"
+                "afterlink     afterlink     afterlink"
+                "availability  availability  availability"
+                "completion    completion    completion";
         }
     }
 
@@ -553,35 +551,44 @@ button.section-collapsemenu {
     .activity-groupmode-info {
         grid-area: groupmode;
         justify-self: end;
-        .groupmode-information {
-            height: $activity-controls-height;
-            width: $activity-controls-height;
-            @include border-radius();
-            .icon {
-                width: map-get($iconsizes, 3);
-                height: map-get($iconsizes, 3);
-            }
+        .groupmode-trigger .icon,
+        .groupmode-indicator .icon {
+            margin: 0;
         }
-        .groupmode-icon-info {
-            display: none;
+        .groupmode-trigger.mds-btn {
+            block-size: $activity-controls-height;
+            padding-block: 0;
+            white-space: nowrap;
         }
+
         @include media-breakpoint-down(sm) {
-            width: 100%;
-            margin-top: map-get($spacers, 2);
-            padding-top: map-get($spacers, 2);
-            border-top: $border-width solid $border-color;
-            .groupmode-information {
-                width: auto;
-                font-size: inherit;
-                padding: 0 map-get($spacers, 2);
+            .groupmode-trigger.mds-btn {
+                inline-size: $activity-controls-height;
+                justify-content: center;
+                padding-inline: 0;
             }
-            .groupmode-icon-info {
-                display: inline;
+
+            .groupmode-trigger.mds-btn .groupmode-icon,
+            .groupmode-trigger.mds-btn .groupmode-icon .icon {
+                display: inline-flex;
+                inline-size: auto;
             }
-            // Disable v-parent-focus behaviour on small devices to always show the groupmode button.
-            .v-parent-focus {
-                opacity: 1;
-                visibility: visible;
+            .groupmode-icon-info,
+            .mds-dropdown-trigger__chevron {
+                display: none;
+            }
+        }
+
+        .groupmode-indicator {
+            color: var(--mds-text-subtle);
+            .icon {
+                inline-size: $mds-icons-xs;
+                block-size: $mds-icons-xs;
+                font-size: $mds-icons-xs;
+            }
+            &:focus-visible {
+                outline: $mds-stroke-weight-md solid var(--mds-focus-default);
+                outline-offset: $mds-spacing-offset;
             }
         }
     }
@@ -1371,6 +1378,22 @@ body.editing#page-course-learningoutcomes .activity-item {
 .activity-visibility-menu {
     display: contents;
     // Keep the menu at the design system minimum width, wrapping long labels and descriptions.
+    > .mds-dropdown-item {
+        max-inline-size: 13.5625rem; /* 217px */
+        .mds-dropdown-item__label {
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+        }
+    }
+}
+
+.mds-dropdown-menu:has(> .groupmode-menu) {
+    z-index: $zindex-dropdown;
+}
+
+.groupmode-menu {
+    display: contents;
     > .mds-dropdown-item {
         max-inline-size: 13.5625rem; /* 217px */
         .mds-dropdown-item__label {

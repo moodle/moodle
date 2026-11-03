@@ -23,32 +23,49 @@
     {
         "activityname": "Course announcements",
         "groupicon": "i/groupv",
-        "groupalt": "Visible groups"
+        "groupalt": "Visible groups",
+        "triggerlabel": "Visible",
+        "accessiblename": "Group mode: Visible groups",
+        "reactprops": "{\"cmid\":42,\"value\":2,\"options\":[]}",
+        "dropwdown": {
+            "buttoncontent": "Visible groups",
+            "choices": {"hasoptions": true, "options": []}
+        }
     }
 }}
 {{#isInteractive}}
+    {{#react}}
+    {
+        "component": "@moodle/lms/core_course/local/cm/GroupModeDropdown",
+        "props": {{{reactprops}}}
+    }
     {{#dropwdown}}
         {{< core/local/dropdown/status}}
-            {{$ buttonclasses }}
-                {{#autohide}} v-parent-focus {{/autohide}}
-                groupmode-information btn btn-icon
-            {{/ buttonclasses }}
+            {{$ buttonclasses }}{{!
+                }}groupmode-information groupmode-trigger mds-btn btn btn-outline-secondary mds-btn--size-md mds-dropdown-trigger{{!
+            }}{{/ buttonclasses }}
             {{$ buttoncontent }}
+                <span class="visually-hidden">{{accessiblename}}</span>
                 {{{groupicon}}}
-                <span class="groupmode-icon-info">{{groupalt}}</span>
+                <span class="groupmode-icon-info" aria-hidden="true">{{triggerlabel}}</span>
+                <i class="mds-dropdown-trigger__chevron" aria-hidden="true"></i>
             {{/ buttoncontent }}
         {{/ core/local/dropdown/status}}
     {{/dropwdown}}
+    {{/react}}
 {{/isInteractive}}
 {{^isInteractive}}
     <div
-    data-region="groupmode-information"
-    data-activityname="{{activityname}}"
-    class="groupmode-information d-flex align-items-center justify-content-center icon-no-margin"
->
-    {{#groupicon}}{{{groupicon}}}{{/groupicon}}
-    {{#groupalt}}
-        <div class="groupmode-icon-info ms-1">{{groupalt}}</div>
-    {{/groupalt}}
-</div>
+        data-region="groupmode-information"
+        data-activityname="{{activityname}}"
+        class="groupmode-information d-flex align-items-center"
+    >
+        {{! Tooltip on a wrapper: aria-describedby stays off the indicator, and focusin still bubbles up to it. }}
+        <span class="d-inline-flex" data-bs-toggle="tooltip" data-bs-title="{{groupalt}}">
+            <span class="groupmode-indicator d-inline-flex align-items-center" tabindex="0">
+                <span class="d-inline-flex" aria-hidden="true">{{{groupicon}}}</span>
+                <span class="visually-hidden">{{accessiblename}}</span>
+            </span>
+        </span>
+    </div>
 {{/isInteractive}}

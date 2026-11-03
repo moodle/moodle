@@ -21,7 +21,7 @@ Feature: Verify activity group mode interface.
       | teacher1 | C1     | editingteacher |
 
   @javascript
-  Scenario: Teacher can see the group mode badges in both edit and no edit mode
+  Scenario: Teacher can see the group mode control on every activity card in edit mode
     Given the following "activities" exist:
       | activity | name              | intro                  | course | idnumber | section | groupmode |
       | forum    | Activity sample 1 | Test forum description | C1     | sample1  | 1       | 0         |
@@ -29,43 +29,31 @@ Feature: Verify activity group mode interface.
       | forum    | Activity sample 3 | Test forum description | C1     | sample3  | 1       | 2         |
     And I am on the "C1" "Course" page logged in as "teacher1"
     When I turn editing mode on
-    Then "Visible groups" "icon" should not exist in the "Activity sample 1" "activity"
-    And "Separate groups" "icon" should not exist in the "Activity sample 1" "activity"
-    And "Visible groups" "icon" should not exist in the "Activity sample 2" "activity"
-    And "Separate groups" "icon" should exist in the "Activity sample 2" "activity"
-    And "Visible groups" "icon" should exist in the "Activity sample 3" "activity"
-    And "Separate groups" "icon" should not exist in the "Activity sample 3" "activity"
-    And I turn editing mode off
-    And "Visible groups" "icon" should not exist in the "Activity sample 1" "activity"
-    And "Separate groups" "icon" should not exist in the "Activity sample 1" "activity"
-    And "Visible groups" "icon" should not exist in the "Activity sample 2" "activity"
-    And "Separate groups" "icon" should exist in the "Activity sample 2" "activity"
-    And "Visible groups" "icon" should exist in the "Activity sample 3" "activity"
-    And "Separate groups" "icon" should not exist in the "Activity sample 3" "activity"
+    Then "No groups" "button" should exist in the "Activity sample 1" "core_courseformat > Activity groupmode"
+    And "Separate" "button" should exist in the "Activity sample 2" "core_courseformat > Activity groupmode"
+    And "Visible" "button" should exist in the "Activity sample 3" "core_courseformat > Activity groupmode"
+    And "Separate" "button" should not exist in the "Activity sample 1" "core_courseformat > Activity groupmode"
+    And "Visible" "button" should not exist in the "Activity sample 1" "core_courseformat > Activity groupmode"
 
   @javascript
-  Scenario: Teacher can edit the group mode using the activity group mode badge
+  Scenario: Teacher can edit the group mode using the activity group mode control
     Given the following "activities" exist:
       | activity | name            | intro                  | course | idnumber | section | groupmode |
       | forum    | Activity sample | Test forum description | C1     | sample   | 1       | 1         |
     And I am on the "C1" "Course" page logged in as "teacher1"
     And I turn editing mode on
-    And I click on "Separate groups" "icon" in the "Activity sample" "core_courseformat > Activity groupmode"
-    And I click on "Visible groups" "link" in the "Activity sample" "core_courseformat > Activity groupmode"
-    And "Separate groups" "icon" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    And "Visible groups" "icon" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    When I click on "Visible groups" "icon" in the "Activity sample" "core_courseformat > Activity groupmode"
-    And I click on "Separate groups" "link" in the "Activity sample" "core_courseformat > Activity groupmode"
-    And "Visible groups" "icon" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    And "Separate groups" "icon" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    Then I click on "Separate groups" "icon" in the "Activity sample" "core_courseformat > Activity groupmode"
-    And I click on "No groups" "link" in the "Activity sample" "core_courseformat > Activity groupmode"
-    And "Separate groups" "icon" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    And "Visible groups" "icon" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    And I open "Activity sample" actions menu
-    And I click on "No groups" "icon" in the "Activity sample" "core_courseformat > Activity groupmode"
-    And I click on "Separate groups" "link" in the "Activity sample" "core_courseformat > Activity groupmode"
-    And "Separate groups" "icon" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    And I click on "Separate" "button" in the "Activity sample" "core_courseformat > Activity groupmode"
+    And I click on "Visible groups" "core_courseformat > Dropdown menu option"
+    And "Visible" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    When I click on "Visible" "button" in the "Activity sample" "core_courseformat > Activity groupmode"
+    And I click on "Separate groups" "core_courseformat > Dropdown menu option"
+    And "Separate" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    Then I click on "Separate" "button" in the "Activity sample" "core_courseformat > Activity groupmode"
+    And I click on "No groups" "core_courseformat > Dropdown menu option"
+    And "No groups" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    And I click on "No groups" "button" in the "Activity sample" "core_courseformat > Activity groupmode"
+    And I click on "Separate groups" "core_courseformat > Dropdown menu option"
+    And "Separate" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
 
   @javascript
   Scenario: Teacher can edit the group mode using the activity action menu
@@ -76,19 +64,16 @@ Feature: Verify activity group mode interface.
     And I turn editing mode on
     And I open "Activity sample" actions menu
     And I choose "Group mode > Visible groups" in the open action menu
-    And "Separate groups" "icon" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    And "Visible groups" "icon" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    And "Visible" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
     When I open "Activity sample" actions menu
     And I choose "Group mode > Separate groups" in the open action menu
-    And "Visible groups" "icon" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    And "Separate groups" "icon" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    And "Separate" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
     Then I open "Activity sample" actions menu
     And I choose "Group mode > No groups" in the open action menu
-    And "Separate groups" "icon" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    And "Visible groups" "icon" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    And "No groups" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
     And I open "Activity sample" actions menu
     And I choose "Group mode > Separate groups" in the open action menu
-    And "Separate groups" "icon" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    And "Separate" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
 
   @javascript
   Scenario: Teacher cannot see Group mode submenu for an activity when group mode has been forced
@@ -109,4 +94,5 @@ Feature: Verify activity group mode interface.
     And I turn editing mode on
     When I open "Activity sample" actions menu
     Then "Group mode" "link" should not exist in the "Activity sample" "activity"
-    And "Separate groups" "button" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    And "Separate" "button" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    And I should see "Group mode: Separate groups" in the "Activity sample" "core_courseformat > Activity groupmode indicator"
