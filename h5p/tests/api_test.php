@@ -578,6 +578,68 @@ final class api_test extends \advanced_testcase {
     }
 
     /**
+     * Test the behaviour of can_access_export().
+     *
+     * In particular, that the export is served to a user who can access the content even when downloads are
+     * disabled for it: see can_access_export() for why the display option is not an access control.
+     *
+     * @covers ::can_access_export
+     */
+    public function test_can_access_export(): void {
+        $this->resetAfterTest();
+
+        $factory = new factory();
+        // Downloads are disabled for this content, which must make no difference to the access check.
+        $config = (object)[
+            'frame' => 1,
+            'export' => 0,
+            'embed' => 0,
+            'copyright' => 0,
+        ];
+
+        // Create a course with a module and enrol a student in it.
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        $modcontext = \context_module::instance($forum->cmid) ?: null;
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $otheruser = $this->getDataGenerator()->create_user();
+
+        // The main library used by the fixture package must already exist in the system for save_h5p() to
+        // accept the package instead of rejecting it with a missing-library error.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
+        $generator->create_library_record('H5P.GreetingCard', 'GreetingCard', 1, 0);
+
+        $filename = 'greeting-card.h5p';
+        $path = self::get_fixture_path(__NAMESPACE__, $filename);
+        $originalfile = helper::create_fake_stored_file_from_path($path, (int) $student->id, $modcontext);
+        $h5pid = helper::save_h5p($factory, $originalfile, $config);
+
+        // Build the name of the export file the same way H5PExport does. Note the slug already ends with the
+        // content id, so the id appears twice: 'greeting-card-<id>-<id>.h5p'.
+        $content = $factory->get_core()->loadContent($h5pid);
+        $slug = $content['slug'] ? $content['slug'] . '-' : '';
+        $exportfilename = "{$slug}{$content['id']}.h5p";
+
+        // A user enrolled in the course can access the export, even with downloads disabled for this content.
+        $this->setUser($student);
+        $this->assertTrue(api::can_access_export($exportfilename));
+
+        // File names which don't resolve to an existing content are rejected. Each of these is the name above
+        // with one single thing wrong with it, so it can only be refused for that reason.
+        $this->assertFalse(api::can_access_export("{$slug}{$content['id']}.zip"));
+        $this->assertFalse(api::can_access_export('greeting-card.h5p'));
+        $this->assertFalse(api::can_access_export(''));
+        $this->assertFalse(api::can_access_export("{$slug}123456789.h5p"));
+
+        // A user who is not enrolled in the course cannot, even though the export file is physically stored in
+        // the (unrestricted) system context.
+        $this->setUser($otheruser);
+        $this->expectException(\moodle_exception::class);
+        api::can_access_export($exportfilename);
+    }
+
+    /**
      * Test the behaviour of can_edit_content().
      *
      * @covers ::can_edit_content

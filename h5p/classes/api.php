@@ -657,6 +657,31 @@ class api {
     }
 
     /**
+     * Whether the current user can access the export file (the repackaged .h5p) with a given file name.
+     *
+     * Exports are always stored in the system context, not the original package's, and the content id is
+     * embedded in the file name, so access is checked against the original package instead.
+     *
+     * Note the "Allow download" display option is deliberately not checked here: it only controls whether the
+     * H5P frame offers a Download button, it is not an access control. The export is a repackaging of the
+     * original .h5p file, which any user passing this check can already fetch from the file area it is stored
+     * in (mod_h5pactivity 'package' or contentbank 'public', for instance). Checking it here would also break
+     * offline playback in the Moodle app, and in any other client using core_h5p_get_trusted_h5p_file(),
+     * because \core_h5p\player::get_export_file() always builds the export URL for the content, regardless of
+     * its display options.
+     *
+     * @param string $filename The export file name, as built by H5PExport: '<slug>-<contentid>.h5p'.
+     * @return bool Whether the current user can access this export file.
+     */
+    public static function can_access_export(string $filename): bool {
+        if (!preg_match('/^(?:.*-)?(\d+)\.h5p\z/', $filename, $matches)) {
+            return false;
+        }
+
+        return self::can_access_content((int) $matches[1]);
+    }
+
+    /**
      * Get the pathnamehash from an H5P internal URL.
      *
      * @param  string $url H5P pluginfile URL poiting to an H5P file.
