@@ -1,0 +1,6 @@
+issueNumber: MDL-89230
+notes:
+  core:
+    - type: changed
+      message: >-
+        The `core/Storage` ESM module has been renamed to `core/storage` to follow the ESM naming conventions. ESM code importing `@moodle/lms/core/Storage` must import `@moodle/lms/core/storage` instead. AMD code using `core/localstorage`, `core/sessionstorage` or `core/storagewrapper` is not affected.

@@ -17,7 +17,7 @@
  * Helpers for mounting ESM/React components into the DOM from AMD code.
  *
  * Each helper creates the container `<div>` expected by the MutationObserver
- * auto-initialiser in `core/react_autoinit`:
+ * auto-initialiser in `core/reactAutoinit`:
  *
  * ```html
  * <div

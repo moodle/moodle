@@ -17,7 +17,7 @@
  * Wrap an instance of the browser's local or session storage to handle
  * cache expiry, key namespacing and other helpful things.
  *
- * @module     core/Storage
+ * @module     core/storage
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -203,7 +203,7 @@ const internalSessionStore = new Storage(sessionStorage);
  * New code should import the default export and use the instance methods directly.
  *
  * @example New ESM code - import the named export and use instance methods.
- * import {localStore} from '@moodle/lms/core/Storage';
+ * import {localStore} from '@moodle/lms/core/storage';
  * localStore.get('key');
  * localStore.set('key', 'value');
  *
@@ -235,7 +235,7 @@ export const localStore = {
  * New code should import the default export and use the instance methods directly.
  *
  * @example New ESM code - import the named export and use instance methods.
- * import {sessionStore} from '@moodle/lms/core/Storage';
+ * import {sessionStore} from '@moodle/lms/core/storage';
  * sessionStore.get('key');
  * sessionStore.set('key', 'value');
  *

@@ -1,8 +1,0 @@
-import r from"./config";/**
- * Wrap an instance of the browser's local or session storage to handle
- * cache expiry, key namespacing and other helpful things.
- *
- * @module     core/Storage
- * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */class s{static hashString(t){let e=0;for(let o=0;o<t.length;o++)e=(e<<5)-e+t.charCodeAt(o),e|=0;return e}#t;#r;#i;#e;#s;constructor(t){this.#t=t,this.#r=this.#o();const e=`${r.wwwroot}/${r.jsrev}`;this.#i=`${s.hashString(e)}/`,this.#e=`${s.hashString(r.wwwroot)}/jsrev`,this.#s=`${s.hashString(r.wwwroot)}/currentlogin`,this.#l()}#o(){if(r.jsrev===-1||this.#t===void 0)return!1;const t="test";try{return this.#t===null?!1:(this.#t.setItem(t,"1"),this.#t.removeItem(t),!0)}catch{return!1}}#n(t){return this.#i+t}#l(){if(!this.#r)return;const t=this.#t.getItem(this.#e);if(t===null?this.#t.setItem(this.#e,String(r.jsrev)):String(r.jsrev)!==t&&(this.#t.clear(),this.#t.setItem(this.#e,String(r.jsrev))),r.currentlogin!==null){const e=this.#t.getItem(this.#s);e!==null&&e!==String(r.currentlogin)&&(this.#t.clear(),this.#t.setItem(this.#e,String(r.jsrev))),this.#t.setItem(this.#s,String(r.currentlogin))}}get(t){return this.#r?this.#t.getItem(this.#n(t)):null}set(t,e){if(!this.#r)return!1;try{this.#t.setItem(this.#n(t),e)}catch{return!1}return!0}clean(){this.#t.clear()}}const i=new s(localStorage),n=new s(sessionStorage),h={get:i.get.bind(i),set:i.set.bind(i),default:i},a={get:n.get.bind(n),set:n.set.bind(n),default:n};var g=s;export{g as default,h as localStore,a as sessionStore};

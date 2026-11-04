@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 import config from "./config";
-import { localStore } from "./Storage";
+import { localStore } from "./storage";
 import {
   fetchMany
 } from "@moodle/lms/core/ajax";

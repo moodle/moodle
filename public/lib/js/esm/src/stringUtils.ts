@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import config from './config';
-import {localStore} from './Storage';
+import {localStore} from './storage';
 import {
     fetchMany,
 } from '@moodle/lms/core/ajax';

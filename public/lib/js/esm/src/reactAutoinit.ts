@@ -29,7 +29,7 @@
  *   ></div>
  * ```
  *
- * @module     core/react_autoinit
+ * @module     core/reactAutoinit
  * @copyright  Meirza <meirza.arson@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -89,7 +89,7 @@ const parseProps = (element: HTMLElement): ReactProps => {
 
         return parsed as ReactProps;
     } catch (error) {
-        console.error('[react_autoinit] invalid JSON', raw, error);
+        console.error('[reactAutoinit] invalid JSON', raw, error);
         return {};
     }
 };
@@ -107,7 +107,7 @@ const parseProps = (element: HTMLElement): ReactProps => {
 const resolveComponent = async (componentName: string): Promise<ComponentModule | undefined> => {
     if (!componentName.startsWith('@moodle/lms/')) {
         console.error(
-            '[react_autoinit] Invalid component format, expected @moodle/lms/<component>/<path>:',
+            '[reactAutoinit] Invalid component format, expected @moodle/lms/<component>/<path>:',
             componentName,
         );
         return undefined;
@@ -115,12 +115,12 @@ const resolveComponent = async (componentName: string): Promise<ComponentModule 
 
     try {
         if (isProfilingEnabled) {
-            console.log(`[react_autoinit] Loading: ${componentName}`);
+            console.log(`[reactAutoinit] Loading: ${componentName}`);
         }
 
         return await (import(componentName) as Promise<ComponentModule>);
     } catch (error) {
-        console.error(`[react_autoinit] Failed to import: ${componentName}`, error);
+        console.error(`[reactAutoinit] Failed to import: ${componentName}`, error);
         return undefined;
     }
 };
@@ -166,14 +166,14 @@ const mountOne = async (element: HTMLElement): Promise<void> => {
         const module = await resolveComponent(componentName);
 
         if (!module) {
-            console.warn('[react_autoinit] Component not found:', componentName);
+            console.warn('[reactAutoinit] Component not found:', componentName);
             return;
         }
 
         const component = module.default;
 
         if (!component) {
-            console.warn('[react_autoinit] Module has no default export:', componentName);
+            console.warn('[reactAutoinit] Module has no default export:', componentName);
             return;
         }
 
@@ -181,10 +181,10 @@ const mountOne = async (element: HTMLElement): Promise<void> => {
         element.dataset.reactMounted = '1';
 
         if (isProfilingEnabled) {
-            console.log(`[react_autoinit] Mounted via default: ${componentName}`);
+            console.log(`[reactAutoinit] Mounted via default: ${componentName}`);
         }
     } catch (error) {
-        console.error('[react_autoinit] Mount failed:', componentName, error);
+        console.error('[reactAutoinit] Mount failed:', componentName, error);
     } finally {
         delete element.dataset.reactMounting;
         pendingPromise.resolve();
@@ -204,10 +204,10 @@ const unmountOne = (element: HTMLElement): void => {
     try {
         unmount();
         if (isProfilingEnabled) {
-            console.log(`[react_autoinit] Unmounted: ${element.dataset.reactComponent}`);
+            console.log(`[reactAutoinit] Unmounted: ${element.dataset.reactComponent}`);
         }
     } catch (error) {
-        console.error('[react_autoinit] Error unmounting:', error);
+        console.error('[reactAutoinit] Error unmounting:', error);
     }
 
     reactUnmountMap.delete(element);
@@ -224,7 +224,7 @@ const unmountOne = (element: HTMLElement): void => {
 const scanAndMount = (root: Element | Document): void => {
     const elements = root.querySelectorAll<HTMLElement>(SELECTOR);
     if (isProfilingEnabled && elements.length > 0) {
-        console.log(`[react_autoinit] Found ${elements.length} component(s) to mount`);
+        console.log(`[reactAutoinit] Found ${elements.length} component(s) to mount`);
     }
 
     for (const element of elements) {
@@ -244,7 +244,7 @@ const handleAddedNode = (node: Node): void => {
 
     if (node.matches(SELECTOR)) {
         if (isProfilingEnabled) {
-            console.log('[react_autoinit] New component detected');
+            console.log('[reactAutoinit] New component detected');
         }
 
         void mountOne(node);
@@ -300,7 +300,7 @@ let observer: MutationObserver | null = null;
 const init = async (): Promise<void> => {
     await domReady();
     if (isProfilingEnabled) {
-        console.log('[react_autoinit] Initializing (profiling enabled)...');
+        console.log('[reactAutoinit] Initializing (profiling enabled)...');
     }
 
     if (observer === null) {
@@ -308,7 +308,7 @@ const init = async (): Promise<void> => {
     }
 
     if (isProfilingEnabled) {
-        console.log('[react_autoinit] MutationObserver active');
+        console.log('[reactAutoinit] MutationObserver active');
     }
 
     scanAndMount(document);
