@@ -68,6 +68,7 @@ if ($form->is_cancelled()) {
             $frameworksurl = new moodle_url('/admin/tool/lp/competencies.php', $urlparams);
             echo $OUTPUT->notification(get_string('competencyframeworkcreated', 'tool_lp'), 'notifysuccess');
             echo $OUTPUT->continue_button($frameworksurl);
+            echo $OUTPUT->footer();
             die();
         }
     } else {
