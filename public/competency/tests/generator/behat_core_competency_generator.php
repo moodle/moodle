@@ -39,7 +39,11 @@ class behat_core_competency_generator extends behat_generator_base {
                 'singular' => 'competency',
                 'datagenerator' => 'competency',
                 'required' => ['shortname', 'competencyframework'],
-                'switchids' => ['competencyframework' => 'competencyframeworkid'],
+                'switchids' => [
+                    'competencyframework' => 'competencyframeworkid',
+                    'parent' => 'parentid',
+                    'scale' => 'scaleid',
+                ],
             ],
             'course_competencies' => [
                 'singular' => 'course_competency',
@@ -162,6 +166,16 @@ class behat_core_competency_generator extends behat_generator_base {
         }
 
         return $id;
+    }
+
+    /**
+     * Get the parent competency id using an idnumber.
+     *
+     * @param string $idnumber
+     * @return int The parent competency id
+     */
+    protected function get_parent_id(string $idnumber): int {
+        return $this->get_competency_id($idnumber);
     }
 
     /**
