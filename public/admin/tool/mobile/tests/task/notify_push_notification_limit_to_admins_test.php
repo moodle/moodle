@@ -82,10 +82,11 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
      * Test that a message is sent to admins when the monthly limit has been reached.
      */
     public function test_execute_sends_notification_to_admins(): void {
-        global $CFG;
+        global $CFG, $SITE;
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
+        $SITE->fullname = 'Moodle & Learning';
         $clock = $this->mock_clock_with_frozen();
         $CFG->enablemobilewebservice = 1;
 
@@ -109,6 +110,21 @@ final class notify_push_notification_limit_to_admins_test extends \advanced_test
             $this->assertEquals('tool_mobile', $message->component);
             $this->assertEquals('pushlimitreached', $message->eventtype);
             $this->assertEquals(get_string('limitreachedpushnotifications', 'tool_mobile'), $message->subject);
+            $this->assertStringContainsString(
+                'You\'re receiving this notification because you\'re an administrator of Moodle & Learning.',
+                $message->fullmessage,
+            );
+            $this->assertStringContainsString(
+                'You&#039;re receiving this notification because you&#039;re an administrator of Moodle &amp; Learning.',
+                $message->fullmessagehtml,
+            );
+            $this->assertStringNotContainsString('&amp;amp;', $message->fullmessagehtml);
+            $docsurl = get_docs_url('Moodle_app_plans');
+            $this->assertStringContainsString('Moodle app plans documentation [' . $docsurl . ']', $message->fullmessage);
+            $this->assertStringContainsString($docsurl, $message->fullmessagehtml);
+            $this->assertStringContainsString('target="_blank"', $message->fullmessagehtml);
+            $this->assertStringContainsString(get_string('opensinnewwindow'), $message->fullmessagehtml);
+            $this->assertStringNotContainsString(get_string('opensinnewwindow'), $message->fullmessage);
             $this->assertStringContainsString(
                 'Your monthly device limit for push notifications has been reached',
                 $message->fullmessage

@@ -191,6 +191,16 @@ class notify_push_notification_limit_to_admins extends \core\task\scheduled_task
         \core\output\renderer_base $renderer,
         array $context
     ): string {
+        global $CFG;
+
+        require_once($CFG->libdir . '/html2text/lib.php');
+
+        // Keep each paragraph on a single line, and the link URLs next to their text.
+        $options = ['width' => 0, 'do_links' => 'inline'];
+        $context['messagegreeting'] = (new \core_html2text($context['messagegreeting'], $options))->getText();
+        // Drop the external link icon, it would be converted to italic markers.
+        $learnmoreplan = strip_tags($context['learnmoreplan'], ['a']);
+        $context['learnmoreplan'] = (new \core_html2text($learnmoreplan, $options))->getText();
         return $renderer->render_from_template('tool_mobile/push_notification_limit_message_textemail', $context);
     }
 
