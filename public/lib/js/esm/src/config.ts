@@ -110,4 +110,5 @@ export default config;
  * @returns `true` if JavaScript caching is enabled, or `false` if it is disabled.
  * @see M.cfg.jsrev
  */
-export const isJsCachingEnabled = config.jsrev !== -1;
+/* eslint-disable-next-line @typescript-eslint/naming-convention -- Released API name from 5.3. */
+export const isJSCachingEnabled = config.jsrev !== -1;
