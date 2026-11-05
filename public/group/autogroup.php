@@ -60,7 +60,9 @@ $preview = '';
 $error = '';
 
 /// Get applicable roles - used in menus etc later on
+// Only include roles that the current user is allowed to view in this context (or higher contexts).
 $rolenames = role_fix_names(get_profile_roles($context), $context, ROLENAME_BOTH, true);
+$rolenames = array_intersect_key($rolenames, get_viewable_roles($context));
 
 /// Create the form
 $editform = new autogroup_form(null, array('roles' => $rolenames));
