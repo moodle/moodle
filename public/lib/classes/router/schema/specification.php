@@ -17,7 +17,6 @@
 namespace core\router\schema;
 
 use coding_exception;
-use core\oauth2\server\repository\scope_repository;
 use core\router\response\invalid_parameter_response;
 use core\router\response\not_found_response;
 use core\router\route;
@@ -170,7 +169,7 @@ class specification implements
         $this->data->info->version = $CFG->version;
 
         // Add OAuth2 scopes to the security schemes.
-        $scopes = \core\di::get(scope_repository::class)->get_scope_map();
+        $scopes = \core\di::get(\core\router\scope\util::class)->get_scope_map();
 
         // Convert the scopes into a name => description list.
         $finalscopes = array_map(

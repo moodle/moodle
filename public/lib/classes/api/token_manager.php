@@ -20,7 +20,6 @@ use core\api\repository\api_token_repository;
 use core\clock;
 use core\di;
 use core\exception\moodle_exception;
-use core\oauth2\server\repository\scope_repository;
 
 /**
  * Mints personal access tokens, holding the policy the repository layer leaves open.
@@ -80,15 +79,15 @@ class token_manager {
      *
      * @param api_token_repository $repository The repository which persists tokens.
      * @param clock $clock The clock used to judge expiry dates.
-     * @param scope_repository $scoperepository The repository used to resolve available scopes.
+     * @param \core\router\scope\util $scopeutil Scope utility used to resolve available scopes.
      */
     public function __construct(
         /** @var api_token_repository The repository which persists tokens. */
         protected readonly api_token_repository $repository,
         /** @var clock The clock used to judge expiry dates. */
         protected readonly clock $clock,
-        /** @var scope_repository The repository used to resolve available scopes. */
-        protected readonly scope_repository $scoperepository,
+        /** @var \core\router\scope\util The repository used to resolve available scopes. */
+        protected readonly \core\router\scope\util $scopeutil,
     ) {
     }
 
@@ -153,7 +152,7 @@ class token_manager {
      * @return \League\OAuth2\Server\Entities\ScopeEntityInterface[]
      */
     public function get_available_scopes(): array {
-        return $this->scoperepository->get_all_scopes();
+        return $this->scopeutil->get_all_scopes();
     }
 
     /**

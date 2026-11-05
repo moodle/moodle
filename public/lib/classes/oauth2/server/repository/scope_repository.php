@@ -18,7 +18,7 @@ namespace core\oauth2\server\repository;
 
 use core\oauth2\server\entity\client_entity;
 use core\oauth2\server\entity\client_entity_interface;
-use core\router\scope\abstract_scope;
+use core\router\scope\scope_entity_interface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
@@ -33,9 +33,20 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class scope_repository implements ScopeRepositoryInterface {
+    /**
+     * Create an instance of the scope repository.
+     *
+     * @param \core\router\scope\util $scopeutil The scope utility instance.
+     */
+    public function __construct(
+        /** @var \core\router\scope\util The scope utility instance. */
+        private \core\router\scope\util $scopeutil,
+    ) {
+    }
+
     #[\Override]
-    public function getScopeEntityByIdentifier(string $identifier): ?ScopeEntityInterface {
-        $scopemap = $this->get_scope_map();
+    public function getScopeEntityByIdentifier(string $identifier): ?scope_entity_interface {
+        $scopemap = $this->scopeutil->get_scope_map();
 
         if (array_key_exists($identifier, $scopemap)) {
             $classname = $scopemap[$identifier];
@@ -127,13 +138,7 @@ class scope_repository implements ScopeRepositoryInterface {
      * @return ScopeEntityInterface[] The array of scope entities keyed by identifier.
      */
     public function get_all_scopes(): array {
-        $scopes = [];
-
-        foreach ($this->get_scope_map() as $identifier => $classname) {
-            $scopes[$identifier] = new $classname();
-        }
-
-        return $scopes;
+        return $this->scopeutil->get_all_scopes();
     }
 
     /**
@@ -142,48 +147,6 @@ class scope_repository implements ScopeRepositoryInterface {
      * @return array The map of scope identifiers to scope classes.
      */
     public function get_scope_map(): array {
-        // Look for a cached version of the scope map first.
-        $cache = \cache::make('core', 'oauth2_server');
-        $scopemapcache = $cache->get('scope_map');
-
-        if ($scopemapcache !== false) { // Use the cache if it exists.
-            return $scopemapcache;
-        }
-
-        $scopemap = [];
-
-        foreach (\core\component::get_component_names(true) as $componentname) {
-            $scopes = \core\component::get_component_classes_in_namespace(
-                $componentname,
-                'route\scope',
-            );
-            foreach (array_keys($scopes) as $classname) {
-                if (
-                    is_subclass_of($classname, abstract_scope::class) &&
-                    !$this->is_abstract_class($classname)
-                ) {
-                    try {
-                        $scopemap[$classname::get_identifier()] = $classname;
-                    } catch (\Throwable $e) {
-                        debugging("Skipping scope class '{$classname}' due to error: {$e->getMessage()}", DEBUG_DEVELOPER);
-                    }
-                }
-            }
-        }
-
-        $cache->set('scope_map', $scopemap);
-
-        return $scopemap;
-    }
-
-    /**
-     * Determine if a class is abstract.
-     *
-     * @param string $classname The class name
-     * @return bool
-     */
-    private function is_abstract_class(string $classname): bool {
-        $reflection = new \ReflectionClass($classname);
-        return $reflection->isAbstract();
+        return $this->scopeutil->get_scope_map();
     }
 }
