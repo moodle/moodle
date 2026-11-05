@@ -85,4 +85,44 @@ final class discussion_test extends \advanced_testcase {
         $this->assertSame('next', $buttons['navbuttons'][1]['type']);
         $this->assertStringEndsWith('d=' . $discussions[2]->id, $buttons['navbuttons'][1]['url']);
     }
+
+    /**
+     * The neighbour links HTML is still exported, and reuses the neighbours already looked up.
+     */
+    public function test_neighbour_links_html_reuses_cached_neighbours(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_and_enrol($course, 'student');
+        $forum = $generator->create_module('forum', ['course' => $course->id]);
+        $forumgenerator = $generator->get_plugin_generator('mod_forum');
+        $discussions = [];
+        foreach (range(1, 3) as $i) {
+            $discussions[] = $forumgenerator->create_discussion([
+                'course' => $course->id,
+                'forum' => $forum->id,
+                'userid' => $user->id,
+                'timemodified' => time() + $i,
+            ]);
+        }
+        $this->setUser($user);
+
+        $vaultfactory = container::get_vault_factory();
+        $forumentity = $vaultfactory->get_forum_vault()->get_from_id($forum->id);
+        $discussionentity = $vaultfactory->get_discussion_vault()->get_from_id($discussions[1]->id);
+        $renderer = container::get_renderer_factory()
+            ->get_discussion_renderer($forumentity, $discussionentity, FORUM_MODE_NESTED_V2);
+
+        $method = new \ReflectionMethod($renderer, 'get_neighbour_links_html');
+        $html = $method->invoke($renderer);
+        $this->assertStringContainsString('d=' . $discussions[0]->id, $html);
+        $this->assertStringContainsString('d=' . $discussions[2]->id, $html);
+
+        // A second call must not hit the database again.
+        $before = $DB->perf_get_reads();
+        $this->assertSame($html, $method->invoke($renderer));
+        $this->assertSame($before, $DB->perf_get_reads());
+    }
 }
