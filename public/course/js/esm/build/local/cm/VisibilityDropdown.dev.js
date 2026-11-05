@@ -8,16 +8,25 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @copyright  2026 Muhammad Arnaldo <muhammad.arnaldo@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore
+} from "react";
 import { Dropdown, DropdownItemSelect, DropdownTrigger } from "@moodlehq/design-system";
 import { requireAsync } from "@moodle/lms/core/amd";
 import Pending from "@moodle/lms/core/pending";
 const pendingFocus = /* @__PURE__ */ new Set();
 const useIconOnly = /* @__PURE__ */ __name(() => {
-  const mediaQueryList = useMemo(() => window.matchMedia("(max-width: 575.98px)"), []);
+  const mediaQueryList = useMemo(() => globalThis.matchMedia("(max-width: 575.98px)"), []);
   const subscribe = useCallback((onStoreChange) => {
     mediaQueryList.addEventListener("change", onStoreChange);
-    return () => mediaQueryList.removeEventListener("change", onStoreChange);
+    return () => {
+      mediaQueryList.removeEventListener("change", onStoreChange);
+    };
   }, [mediaQueryList]);
   return useSyncExternalStore(subscribe, () => mediaQueryList.matches);
 }, "useIconOnly");
@@ -25,9 +34,9 @@ function VisibilityDropdown({ cmid, value, options }) {
   const [open, setOpen] = useState(false);
   const iconOnly = useIconOnly();
   const [current, setCurrent] = useState(value);
-  const dropdownRef = useRef(null);
-  const itemRefs = useRef([]);
-  const getTrigger = /* @__PURE__ */ __name(() => dropdownRef.current?.querySelector(".activity-visibility-trigger"), "getTrigger");
+  const dropdownReference = useRef(null);
+  const itemReferences = useRef([]);
+  const getTrigger = /* @__PURE__ */ __name(() => dropdownReference.current?.querySelector(".activity-visibility-trigger"), "getTrigger");
   useEffect(() => {
     if (pendingFocus.delete(cmid)) {
       getTrigger()?.focus();
@@ -42,9 +51,11 @@ function VisibilityDropdown({ cmid, value, options }) {
       return void 0;
     }
     let frame = requestAnimationFrame(() => {
-      frame = requestAnimationFrame(() => itemRefs.current[selectedIndex]?.focus());
+      frame = requestAnimationFrame(() => itemReferences.current[selectedIndex]?.focus());
     });
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(frame);
+    };
   }, [open, options, current]);
   const closeMenu = /* @__PURE__ */ __name(() => {
     setOpen(false);
@@ -56,12 +67,12 @@ function VisibilityDropdown({ cmid, value, options }) {
       closeMenu();
       return;
     }
-    const items = itemRefs.current.filter((item) => item !== null);
-    const current2 = items.indexOf(document.activeElement);
+    const items = itemReferences.current.filter((item) => item !== null);
+    const index = items.indexOf(document.activeElement);
     let wrapTo = null;
-    if (event.key === "ArrowDown" && current2 === items.length - 1) {
+    if (event.key === "ArrowDown" && index === items.length - 1) {
       wrapTo = items[0];
-    } else if (event.key === "ArrowUp" && current2 === 0) {
+    } else if (event.key === "ArrowUp" && index === 0) {
       wrapTo = items[items.length - 1];
     }
     if (wrapTo) {
@@ -72,7 +83,7 @@ function VisibilityDropdown({ cmid, value, options }) {
   }, "handleKeyDown");
   const selectOption = /* @__PURE__ */ __name((option) => {
     closeMenu();
-    if (!option.mutation) {
+    if (option.mutation === "") {
       return;
     }
     const previous = current;
@@ -81,9 +92,7 @@ function VisibilityDropdown({ cmid, value, options }) {
       setCurrent(option.value);
     }
     const pending = new Pending(`core_course/VisibilityDropdown:${cmid}`);
-    requireAsync("core_courseformat/courseeditor").then((courseEditor) => {
-      return courseEditor.getCurrentCourseEditor().dispatch(option.mutation, [cmid]);
-    }).catch(() => {
+    requireAsync("core_courseformat/courseeditor").then(async (courseEditor) => courseEditor.getCurrentCourseEditor().dispatch(option.mutation, [cmid])).catch(() => {
       pendingFocus.delete(cmid);
       setCurrent(previous);
     }).finally(() => {
@@ -113,7 +122,7 @@ function VisibilityDropdown({ cmid, value, options }) {
         false,
         {
           fileName: "public/course/js/esm/src/local/cm/VisibilityDropdown.tsx",
-          lineNumber: 184,
+          lineNumber: 203,
           columnNumber: 17
         },
         this
@@ -123,16 +132,16 @@ function VisibilityDropdown({ cmid, value, options }) {
     false,
     {
       fileName: "public/course/js/esm/src/local/cm/VisibilityDropdown.tsx",
-      lineNumber: 174,
+      lineNumber: 193,
       columnNumber: 9
     },
     this
   );
-  return /* @__PURE__ */ jsxDEV(Dropdown, { ref: dropdownRef, trigger, open, onOpenChange: setOpen, placement: "bottom-end", children: /* @__PURE__ */ jsxDEV("div", { role: "none", className: "activity-visibility-menu", onKeyDown: handleKeyDown, children: options.map((option, index) => /* @__PURE__ */ jsxDEV(
+  return /* @__PURE__ */ jsxDEV(Dropdown, { ref: dropdownReference, trigger, open, onOpenChange: setOpen, placement: "bottom-end", children: /* @__PURE__ */ jsxDEV("div", { role: "none", className: "activity-visibility-menu", onKeyDown: handleKeyDown, children: options.map((option, index) => /* @__PURE__ */ jsxDEV(
     DropdownItemSelect,
     {
       ref: (element) => {
-        itemRefs.current[index] = element;
+        itemReferences.current[index] = element;
       },
       label: option.label,
       description: option.description,
@@ -148,29 +157,31 @@ function VisibilityDropdown({ cmid, value, options }) {
         false,
         {
           fileName: "public/course/js/esm/src/local/cm/VisibilityDropdown.tsx",
-          lineNumber: 206,
+          lineNumber: 225,
           columnNumber: 29
         },
         this
       ),
       "data-value": option.value,
-      onClick: () => selectOption(option)
+      onClick: () => {
+        selectOption(option);
+      }
     },
     option.value,
     false,
     {
       fileName: "public/course/js/esm/src/local/cm/VisibilityDropdown.tsx",
-      lineNumber: 197,
+      lineNumber: 216,
       columnNumber: 21
     },
     this
   )) }, void 0, false, {
     fileName: "public/course/js/esm/src/local/cm/VisibilityDropdown.tsx",
-    lineNumber: 195,
+    lineNumber: 214,
     columnNumber: 13
   }, this) }, void 0, false, {
     fileName: "public/course/js/esm/src/local/cm/VisibilityDropdown.tsx",
-    lineNumber: 194,
+    lineNumber: 213,
     columnNumber: 9
   }, this);
 }
