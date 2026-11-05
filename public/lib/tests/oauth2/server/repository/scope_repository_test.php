@@ -52,7 +52,7 @@ final class scope_repository_test extends \advanced_testcase {
             path: 'public/lib/tests/fixtures/fakeplugins/fake',
         );
 
-        $repository = new scope_repository();
+        $repository = \core\di::get(scope_repository::class);
         $scope = $repository->getScopeEntityByIdentifier($identifier);
 
         // The 'fake' plugin 'oauth2scope' contains with some invalid scopes that are expected to trigger debugging notices
@@ -174,7 +174,7 @@ final class scope_repository_test extends \advanced_testcase {
             $scopes[] = $scope;
         }
 
-        $repository = new scope_repository();
+        $repository = \core\di::get(scope_repository::class);
         $finalized = $repository->finalizeScopes($scopes, $granttype, $client, $useridentifier, $authcodeid);
 
         $finalizedidentifiers = array_map(function ($s) {
@@ -220,7 +220,7 @@ final class scope_repository_test extends \advanced_testcase {
             $requestedscopes[] = $scope;
         }
 
-        $repository = new scope_repository();
+        $repository = \core\di::get(scope_repository::class);
         $finalized = $repository->finalizeScopes(
             $requestedscopes,
             client_entity::GRANT_TYPE_CLIENT_CREDENTIALS,
@@ -323,34 +323,5 @@ final class scope_repository_test extends \advanced_testcase {
                 ['profile', 'email'],
             ],
         ];
-    }
-
-    /**
-     * Test get_all_scopes.
-     */
-    #[\PHPUnit\Framework\Attributes\RunInSeparateProcess]
-    public function test_get_all_scopes(): void {
-        $this->resetAfterTest();
-
-        // Inject the 'fake' plugin type that contains the test 'oauth2scope' plugin that registers test scopes.
-        $this->add_full_mocked_plugintype(
-            plugintype: 'fake',
-            path: 'public/lib/tests/fixtures/fakeplugins/fake',
-        );
-
-        $repository = new scope_repository();
-        $scopes = $repository->get_all_scopes();
-
-        $this->assertDebuggingCalled(
-            "Skipping scope class 'fake_oauth2scope\\route\\scope\\invalidresource\\invalid_scope' due to error: " .
-            "Coding error detected, it must be fixed by a programmer: The class " .
-            "fake_oauth2scope\\route\\scope\\invalidresource\\invalid_scope must have an #[identifier_attribute] attribute."
-        );
-
-        $this->assertNotEmpty($scopes);
-        // Verify that the 'test_scope' scope is present in the list.
-        $this->assertArrayHasKey('fake_oauth2scope:resource:read', $scopes);
-        // Verify that the 'invalid_scope' scope is not in the list.
-        $this->assertArrayNotHasKey('fake_oauth2scope:invalid:invalid_scope', $scopes);
     }
 }

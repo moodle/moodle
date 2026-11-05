@@ -18,7 +18,6 @@ namespace core\api;
 
 use core\api\repository\api_token_repository;
 use core\exception\moodle_exception;
-use core\oauth2\server\repository\scope_repository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -333,10 +332,11 @@ final class token_manager_test extends \advanced_testcase {
      */
     public function test_get_available_scopes(): void {
         $scopes = $this->get_manager()->get_available_scopes();
+        $scopeutil = \core\di::make(\core\router\scope\util::class);
 
         // Compared against the repository the manager delegates to, rather than a list written
         // here: a hard coded expectation would only assert that this test was updated too.
-        $this->assertSame(array_keys((new scope_repository())->get_all_scopes()), array_keys($scopes));
+        $this->assertSame(array_keys($scopeutil->get_all_scopes()), array_keys($scopes));
         $this->assertNotEmpty($scopes);
 
         foreach ($scopes as $identifier => $scope) {

@@ -1,0 +1,17 @@
+issueNumber: MDL-90494
+notes:
+  core:
+    - message: >
+        The following methods in the
+        `\core\oauth2\server\repository\scope_repository` class have been
+        deprecated and replaced:
+
+
+        | Method name | Replacement |
+
+        | ----------- | ----------- |
+
+        | `get_scope_map` | `\core\router\scope\util::get_scope_map()` |
+
+        | `get_all_scopes` | `\core\router\scope\util::get_all_scopes()` |
+      type: deprecated

@@ -16,7 +16,6 @@
 
 namespace core_admin\form\oauth2\server;
 
-use core\oauth2\server\repository\scope_repository;
 use core\output\html_writer;
 use moodleform;
 
@@ -85,12 +84,12 @@ abstract class base_client_form extends moodleform {
     /**
      * Create an instance of a client form.
      *
-     * @param scope_repository $scoperepository
+     * @param \core\router\scope\util $scopeutil
      * @param array $customdata
      */
     public function __construct(
-        /** @var scope_repository */
-        protected scope_repository $scoperepository,
+        /** @var \core\router\scope\util */
+        protected \core\router\scope\util $scopeutil,
         array $customdata = [],
     ) {
         parent::__construct(
@@ -295,7 +294,7 @@ abstract class base_client_form extends moodleform {
 
         // Colons are not usable in element names, so each becomes an underscore. Deriving the
         // name from the identifier rather than the position keeps it stable as scopes change.
-        foreach (array_keys($this->scoperepository->get_all_scopes()) as $identifier) {
+        foreach (array_keys($this->scopeutil->get_all_scopes()) as $identifier) {
             $elements[self::SCOPE_ELEMENT_PREFIX . str_replace(':', '_', $identifier)] = $identifier;
         }
 
@@ -308,7 +307,7 @@ abstract class base_client_form extends moodleform {
     protected function add_scope_fields(): void {
         global $OUTPUT;
 
-        $scopes = $this->scoperepository->get_all_scopes();
+        $scopes = $this->scopeutil->get_all_scopes();
 
         $mform = $this->_form;
 
