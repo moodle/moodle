@@ -78,12 +78,11 @@ class push_notification_limit_message implements \renderable, \templatable {
         } else {
             $subheading = get_string('missedadditionalusers', 'tool_mobile');
         }
-        $newwindowicon = $output->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ms-1']);
-        $learnmorelink = \html_writer::link(
-            get_docs_url('Moodle_app_plans'),
-            get_string('moodleappplansdocumentation', 'tool_mobile') . $newwindowicon,
-            ['target' => '_blank'],
-        );
+        $learnmorelink = [
+            'url' => get_docs_url('Moodle_app_plans'),
+            'target' => '_blank',
+            'icon' => $output->pix_icon('i/externallink', get_string('opensinnewwindow'), 'moodle', ['class' => 'ms-1']),
+        ];
 
         return [
             'heading' => get_string('limitreachedmonthly', 'tool_mobile'),
