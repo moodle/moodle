@@ -1188,7 +1188,7 @@ function get_real_size($size = 0) {
  */
 function is_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2024010400.00; // This should be the version where the breaking changes happen.
+    $lastmajordbchanges = 2026100500.00; // This should be the version where the breaking changes happen.
 
     $required = empty($CFG->version);
     $required = $required || (float)$CFG->version < $lastmajordbchanges;
