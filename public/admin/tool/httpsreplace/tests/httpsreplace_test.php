@@ -44,14 +44,14 @@ final class httpsreplace_test extends \advanced_testcase {
         $wwwroothttp = preg_replace('/^https:/', 'http:', $CFG->wwwroot);
         return [
             "Test image from another site should be replaced" => [
-                "content" => '<img src="' . self::getExternalTestFileUrl('/test.jpg', false) . '">',
+                "content" => '<img src="http://example.org/test.jpg">',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<img src="' . self::get_converted_http_link('/test.jpg') . '">',
+                "expectedcontent" => '<img src="https://example.org/test.jpg">',
             ],
             "Test object from another site should be replaced" => [
-                "content" => '<object data="' . self::getExternalTestFileUrl('/test.swf', false) . '">',
+                "content" => '<object data="http://example.org/test.swf">',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<object data="' . self::get_converted_http_link('/test.swf') . '">',
+                "expectedcontent" => '<object data="https://example.org/test.swf">',
             ],
             "Test image from a site with international name should be replaced" => [
                 "content" => '<img src="http://中国互联网络信息中心.中国/logosy/201706/W01.png">',
@@ -79,9 +79,9 @@ final class httpsreplace_test extends \advanced_testcase {
                 "expectedcontent" => '<img src="https://anothersite.com?param=http://asdf.com">',
             ],
             "Search for params should be case insensitive" => [
-                "content" => '<object DATA="' . self::getExternalTestFileUrl('/test.swf', false) . '">',
+                "content" => '<object DATA="http://example.org/test.swf">',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<object DATA="' . self::get_converted_http_link('/test.swf') . '">',
+                "expectedcontent" => '<object DATA="https://example.org/test.swf">',
             ],
             "URL should be case insensitive" => [
                 "content" => '<object data="HTTP://some.site/path?query">',
@@ -89,46 +89,28 @@ final class httpsreplace_test extends \advanced_testcase {
                 "expectedcontent" => '<object data="https://some.site/path?query">',
             ],
             "More params should not interfere" => [
-                "content" => '<img alt="A picture" src="' . self::getExternalTestFileUrl('/test.png', false) .
+                "content" => '<img alt="A picture" src="http://example.org/test.png' .
                     '" width="1”><p style="font-size: \'20px\'"></p>',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<img alt="A picture" src="' . self::get_converted_http_link('/test.png') .
+                "expectedcontent" => '<img alt="A picture" src="https://example.org/test.png' .
                     '" width="1”><p style="font-size: \'20px\'"></p>',
             ],
             "Broken URL should not be changed" => [
-                "content" => '<img src="broken.' . self::getExternalTestFileUrl('/test.png', false) . '">',
+                "content" => '<img src="broken.http://example.org/test.png">',
                 "outputregex" => '/^$/',
-                "expectedcontent" => '<img src="broken.' . self::getExternalTestFileUrl('/test.png', false) . '">',
+                "expectedcontent" => '<img src="broken.http://example.org/test.png">',
             ],
             "Link URL should not be changed" => [
-                "content" => '<a href="' . self::getExternalTestFileUrl('/test.png', false) . '">' .
-                    self::getExternalTestFileUrl('/test.png', false) . '</a>',
+                "content" => '<a href="http://example.org/test.png">http://example.org/test.png</a>',
                 "outputregex" => '/^$/',
-                "expectedcontent" => '<a href="' . self::getExternalTestFileUrl('/test.png', false) . '">' .
-                    self::getExternalTestFileUrl('/test.png', false) . '</a>',
+                "expectedcontent" => '<a href="http://example.org/test.png">http://example.org/test.png</a>',
             ],
             "Test image from another site should be replaced but link should not" => [
-                "content" => '<a href="' . self::getExternalTestFileUrl('/test.png', false) . '"><img src="' .
-                    self::getExternalTestFileUrl('/test.jpg', false) . '"></a>',
+                "content" => '<a href="http://example.org/test.png"><img src="http://example.org/test.jpg"></a>',
                 "outputregex" => '/UPDATE/',
-                "expectedcontent" => '<a href="' . self::getExternalTestFileUrl('/test.png', false) . '"><img src="' .
-                    self::get_converted_http_link('/test.jpg') . '"></a>',
+                "expectedcontent" => '<a href="http://example.org/test.png"><img src="https://example.org/test.jpg"></a>',
             ],
         ];
-    }
-
-    /**
-     * Convert the HTTP external test file URL to use HTTPS.
-     *
-     * Note: We *must not* use getExternalTestFileUrl with the True option
-     * here, becase it is reasonable to have only one of these set due to
-     * issues with SSL certificates.
-     *
-     * @param   string  $path Path to be rewritten
-     * @return  string
-     */
-    protected static function get_converted_http_link($path) {
-        return preg_replace('/^http:/', 'https:', self::getExternalTestFileUrl($path, false));
     }
 
     /**
@@ -165,10 +147,10 @@ final class httpsreplace_test extends \advanced_testcase {
         // Get the http url, since the default test wwwroot is https.
         $wwwrootdomain = 'www.example.com';
         $wwwroothttp = preg_replace('/^https:/', 'http:', $CFG->wwwroot);
-        $testdomain = self::get_converted_http_link('');
+        $testdomain = 'example.org';
         return [
             "Test image from an available site so shouldn't be reported" => [
-                "content" => '<img src="' . self::getExternalTestFileUrl('/test.jpg', false) . '">',
+                "content" => '<img src="http://example.org/test.jpg">',
                 "domain" => $testdomain,
                 "expectedcount" => 0,
             ],
