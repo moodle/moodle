@@ -827,6 +827,82 @@ describe('@moodle/lms/core/fetch', () => {
 
                 expect(mockFetch).toHaveBeenCalledTimes(1);
             });
+
+            it('executes 50ms after the first queued request without extending the deadline', async() => {
+                jest.useFakeTimers();
+                (globalThis as any).M.cfg.batchFetchRequests = true;
+                const batcher = new Fetch(50);
+                mockFetch.mockImplementation(async(req: MockRequest) => new MockResponse(
+                    buildBatchResponseBody('resp-boundary', getRequestIds(await req.text()).map(id => ({id}))),
+                    {headers: {'Content-Type': 'multipart/mixed;boundary=resp-boundary'}},
+                ));
+
+                const first = batcher.performGet('mod_example', 'first');
+                await jest.advanceTimersByTimeAsync(40);
+                const second = batcher.performGet('mod_example', 'second');
+
+                await jest.advanceTimersByTimeAsync(9);
+                expect(mockFetch).not.toHaveBeenCalled();
+
+                await jest.advanceTimersByTimeAsync(1);
+                expect(mockFetch).toHaveBeenCalledTimes(1);
+                const request = mockFetch.mock.calls[0][0];
+                expect(request.url).toBe('https://example.com/$batch');
+                expect(await request.text()).toContain('/mod_example/first');
+                expect(await request.text()).toContain('/mod_example/second');
+                await expect(first).resolves.toBeDefined();
+                await expect(second).resolves.toBeDefined();
+            });
+
+            it('automatically executes new requests while an earlier request is still in flight', async() => {
+                jest.useFakeTimers();
+                (globalThis as any).M.cfg.batchFetchRequests = true;
+                const batcher = new Fetch(50);
+                let resolveFirst!: (response: MockResponse) => void;
+                mockFetch.mockReturnValueOnce(new Promise<MockResponse>(resolve => {
+                    resolveFirst = resolve;
+                }));
+
+                const first = batcher.performGet('mod_example', 'first');
+                await jest.advanceTimersByTimeAsync(50);
+                expect(mockFetch).toHaveBeenCalledTimes(1);
+
+                const second = batcher.performGet('mod_example', 'second');
+                await jest.advanceTimersByTimeAsync(49);
+                expect(mockFetch).toHaveBeenCalledTimes(1);
+
+                await jest.advanceTimersByTimeAsync(1);
+                expect(mockFetch).toHaveBeenCalledTimes(2);
+                expect(mockFetch.mock.calls[1][0].url).toBe('https://example.com/rest/v2/mod_example/second');
+                await expect(second).resolves.toBeDefined();
+
+                resolveFirst(okResponse());
+                await expect(first).resolves.toBeDefined();
+            });
+
+            it('cancels the old timer on manual execution and gives the next request a full timeout', async() => {
+                jest.useFakeTimers();
+                (globalThis as any).M.cfg.batchFetchRequests = true;
+                const batcher = new Fetch(50);
+                const first = batcher.performGet('mod_example', 'first');
+
+                await jest.advanceTimersByTimeAsync(25);
+                await batcher.execute();
+                await expect(first).resolves.toBeDefined();
+                expect(mockFetch).toHaveBeenCalledTimes(1);
+
+                const second = batcher.performGet('mod_example', 'second');
+                await jest.advanceTimersByTimeAsync(25);
+                expect(mockFetch).toHaveBeenCalledTimes(1);
+
+                await jest.advanceTimersByTimeAsync(24);
+                expect(mockFetch).toHaveBeenCalledTimes(1);
+
+                await jest.advanceTimersByTimeAsync(1);
+                expect(mockFetch).toHaveBeenCalledTimes(2);
+                expect(mockFetch.mock.calls[1][0].url).toBe('https://example.com/rest/v2/mod_example/second');
+                await expect(second).resolves.toBeDefined();
+            });
         });
     });
 });
