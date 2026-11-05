@@ -100,6 +100,8 @@ class discussion {
     private $exportedpostsorter;
     /** @var callable $postprocessfortemplate Function to process exported posts before template rendering */
     private $postprocessfortemplate;
+    /** @var array|null $neighbours Previous/next discussion lookup result, see {@see self::get_neighbours()} */
+    private ?array $neighbours = null;
 
     /**
      * Constructor.
@@ -224,7 +226,6 @@ class discussion {
             $exporteddiscussion['navigationbuttons'] = $navbuttons;
         } else {
             $exporteddiscussion['navigationbuttons'] = false;
-            $exporteddiscussion['html']['neighbourlinks'] = $this->get_neighbour_links_html();
         }
 
         $capabilities = (array) $exporteddiscussion['capabilities'];
@@ -455,15 +456,21 @@ class discussion {
     }
 
     /**
-     * Get HTML to display the neighbour links.
+     * Get the previous and next discussions, looking them up only once per renderer instance.
      *
-     * @return string
+     * The lookup is expensive on large forums, so the result is cached.
+     *
+     * @return array An array with the 'prev' and 'next' keys, as returned by {@see forum_get_discussion_neighbours()}.
      */
-    private function get_neighbour_links_html(): string {
-        $forum = $this->forum;
-        $coursemodule = $forum->get_course_module_record();
-        $neighbours = forum_get_discussion_neighbours($coursemodule, $this->discussionrecord, $this->forumrecord);
-        return $this->renderer->neighbouring_discussion_navigation($neighbours['prev'], $neighbours['next']);
+    private function get_neighbours(): array {
+        if ($this->neighbours === null) {
+            $this->neighbours = forum_get_discussion_neighbours(
+                $this->forum->get_course_module_record(),
+                $this->discussionrecord,
+                $this->forumrecord,
+            );
+        }
+        return $this->neighbours;
     }
 
     /**
@@ -480,12 +487,9 @@ class discussion {
         if ($this->displaymode === FORUM_MODE_NESTED_V2) {
             return null;
         }
-        $forum = $this->forum;
-        $coursemodule = $forum->get_course_module_record();
-        $neighbours = forum_get_discussion_neighbours($coursemodule, $this->discussionrecord, $this->forumrecord);
 
         $buttons = [];
-        foreach ($neighbours as $key => $neighbour) {
+        foreach ($this->get_neighbours() as $key => $neighbour) {
             $button = [
                 'type' => $key,
                 'buttonicon' => $key === 'prev' ? 'i/previous' : 'i/next',
