@@ -53,8 +53,8 @@ final class plugin_checks_test extends \core\tests\plugin_checks_testcase {
         $xmldb->loadXMLStructure();
         $xmlcontents = $xmldb->getStructure()->xmlOutput();
         $this->assertXmlStringEqualsXmlString(
-            $rawcontents,
             $xmlcontents,
+            $rawcontents,
             "XMLDB structure does not match the install.xml file in $file",
         );
     }
