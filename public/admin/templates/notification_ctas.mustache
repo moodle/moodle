@@ -23,7 +23,7 @@
     * heading - string, the section heading
     * subtitle - string, the section subtitle
     * hasctas - bool, whether there is at least one card to display
-    * ctas - array of {key, logourl, logoheight, logopill, title, body, ticks, cta, caption, href, newwindow}
+    * ctas - array of {key, logourl, logoheight, title, body, ticks, cta, caption, href, newwindow}
 
     Each card's brand colours are keyed off its data-cta-key attribute in the theme, so that the dark
     colour mode can correct them. They are deliberately not part of this context.
@@ -38,7 +38,6 @@
                 "key": "marketplace",
                 "logourl": "https://example.com/logo.png",
                 "logoheight": 26,
-                "logopill": false,
                 "title": "Moodle Marketplace",
                 "body": "The new home for Moodle plugins and integrations.",
                 "ticks": [{"text": "1,500+ plugins, themes and integrations"}],
@@ -60,14 +59,7 @@
         {{#ctas}}
         <div class="admin-notification-cta" data-cta-key="{{key}}">
             <div class="admin-notification-cta-band">
-                {{#logopill}}
-                <span class="admin-notification-cta-logo-pill">
-                    <img src="{{logourl}}" alt="" class="admin-notification-cta-logo" style="height: {{logoheight}}px;">
-                </span>
-                {{/logopill}}
-                {{^logopill}}
                 <img src="{{logourl}}" alt="" class="admin-notification-cta-logo" style="height: {{logoheight}}px;">
-                {{/logopill}}
             </div>
             <div class="admin-notification-cta-body">
                 <h4>{{title}}</h4>

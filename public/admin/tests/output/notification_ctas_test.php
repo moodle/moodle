@@ -52,7 +52,6 @@ final class notification_ctas_test extends \advanced_testcase {
             $this->assertNotEmpty($cta->caption);
             $this->assertIsInt($cta->logoheight);
             $this->assertGreaterThan(0, $cta->logoheight);
-            $this->assertIsBool($cta->logopill);
         }
     }
 
@@ -167,10 +166,9 @@ final class notification_ctas_test extends \advanced_testcase {
     }
 
     /**
-     * Each card's logo size matches the reference design, and the Feedback card's orange
-     * logo sits inside a white "pill" so it stays legible against its orange band.
+     * Each card's logo size matches the reference design.
      */
-    public function test_logo_sizing_and_pill_match_reference_design(): void {
+    public function test_logo_sizing_matches_reference_design(): void {
         global $PAGE;
         $this->resetAfterTest();
 
@@ -185,11 +183,6 @@ final class notification_ctas_test extends \advanced_testcase {
         $this->assertSame(30, $bykey['moodlecloud']->logoheight);
         $this->assertSame(46, $bykey['partners']->logoheight);
         $this->assertSame(28, $bykey['feedback']->logoheight);
-
-        $this->assertFalse($bykey['marketplace']->logopill);
-        $this->assertFalse($bykey['moodlecloud']->logopill);
-        $this->assertFalse($bykey['partners']->logopill);
-        $this->assertTrue($bykey['feedback']->logopill);
     }
 
     /**

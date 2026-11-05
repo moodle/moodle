@@ -65,7 +65,6 @@ class notification_ctas implements renderable, templatable {
             $cta->key = $key;
             $cta->logourl = $output->image_url($definition['logo'], 'core')->out(false);
             $cta->logoheight = $definition['logoheight'];
-            $cta->logopill = $definition['logopill'];
             $cta->title = $definition['title'];
             $cta->body = $definition['body'];
             $cta->ticks = array_map(fn($tick) => (object) ['text' => $tick], $definition['ticks']);
@@ -104,7 +103,6 @@ class notification_ctas implements renderable, templatable {
             'marketplace' => [
                 'logo' => 'notification_cta_marketplace',
                 'logoheight' => 26,
-                'logopill' => false,
                 'title' => get_string('notificationctamarketplacetitle', 'admin'),
                 'body' => get_string('notificationctamarketplacebody', 'admin'),
                 'ticks' => [
@@ -120,7 +118,6 @@ class notification_ctas implements renderable, templatable {
             'moodlecloud' => [
                 'logo' => 'notification_cta_moodlecloud',
                 'logoheight' => 30,
-                'logopill' => false,
                 'title' => get_string('notificationctamoodlecloudtitle', 'admin'),
                 'body' => get_string('notificationctamoodlecloudbody', 'admin'),
                 'ticks' => [
@@ -136,7 +133,6 @@ class notification_ctas implements renderable, templatable {
             'partners' => [
                 'logo' => 'notification_cta_partners',
                 'logoheight' => 46,
-                'logopill' => false,
                 'title' => get_string('notificationctapartnerstitle', 'admin'),
                 'body' => get_string('notificationctapartnersbody', 'admin'),
                 'ticks' => [
@@ -150,9 +146,8 @@ class notification_ctas implements renderable, templatable {
                 'internal' => false,
             ],
             'feedback' => [
-                'logo' => 'moodlelogo',
+                'logo' => 'moodlelogo_reversed',
                 'logoheight' => 28,
-                'logopill' => true,
                 'title' => get_string('notificationctafeedbacktitle', 'admin'),
                 'body' => get_string('notificationctafeedbackbody', 'admin'),
                 'ticks' => [

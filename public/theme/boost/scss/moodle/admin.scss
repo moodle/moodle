@@ -712,14 +712,13 @@
  *   band         The header strip the brand logo sits on.
  *   button       The CTA button fill. Not always the band colour: the Partners and feedback bands are light,
  *                so their buttons are near black instead.
- *   button-hover The hover and active fill. Given rather than derived, because it does not move in one
- *                direction across the four cards: the two brand fills darken, and the two near black ones
- *                lighten, having no room left to darken.
+ *   button-hover The hover and active fill. Given as a lighter shade across all four cards,
+ *                as the dark button fills have no room to darken further.
  *   tick         The check icons in the card body.
  */
 $notification-cta-brands: (
-    "marketplace": (band: #570d82, button: #570d82, button-hover: #32064c, tick: #570d82),
-    "moodlecloud": (band: #194866, button: #194866, button-hover: #102f42, tick: #194866),
+    "marketplace": (band: #32064c, button: #32064c, button-hover: #4a0a70, tick: #32064c),
+    "moodlecloud": (band: #282828, button: #282828, button-hover: #545454, tick: #282828),
     "partners":    (band: #fedfc1, button: #282828, button-hover: #545454, tick: #194866),
     "feedback":    (band: #f98012, button: #282828, button-hover: #545454, tick: shade-color(#f98012, 12%)),
 ) !default;
@@ -728,7 +727,7 @@ $notification-cta-brands: (
 .admin-notification-ctas {
     margin-top: var(--mds-spacing-xl, 2rem);
     padding: var(--mds-spacing-xl, 2rem) 0;
-    background-color: var(--mds-bg-surface-subtle, #{$gray-100});
+    background-color: var(--#{$prefix}body-bg);
     border-top: 1px solid var(--mds-border-subtle, #{$gray-200});
 
     .admin-notification-ctas-heading {
@@ -804,15 +803,6 @@ $notification-cta-brands: (
             max-height: 100%;
         }
 
-        // $white rather than --mds-bg-surface-default: the pill exists to back the orange and dark grey ink of
-        // the Moodle logo against the orange band, so it has to stay light when the surface token goes dark.
-        .admin-notification-cta-logo-pill {
-            display: inline-flex;
-            padding: var(--mds-spacing-xs, .5rem) var(--mds-spacing-sm, .75rem);
-            background-color: $white;
-            border-radius: var(--mds-border-radius-sm, .375rem);
-        }
-
         .admin-notification-cta-body {
             display: flex;
             flex: 1;
@@ -829,7 +819,7 @@ $notification-cta-brands: (
 
             li {
                 display: flex;
-                align-items: center;
+                align-items: baseline;
                 gap: var(--mds-spacing-xxs, .25rem);
             }
 
