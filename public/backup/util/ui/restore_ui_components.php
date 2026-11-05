@@ -74,7 +74,7 @@ abstract class restore_search_base implements renderable {
     private $maxresults = null;
     /**
      * Indicates if we have more than maxresults found.
-     * @var boolean
+     * @var bool
      */
     private $hasmoreresults = false;
 
@@ -243,7 +243,7 @@ abstract class restore_search_base implements renderable {
 
     /**
      * Gets the context level associated with this components items
-     * @return CONTEXT_*
+     * @return int
      */
     abstract protected function get_itemcontextlevel();
 
@@ -338,7 +338,7 @@ class restore_course_search extends restore_search_base {
 
     /**
      * Gets the context level for the search result items.
-     * @return CONTEXT_|int
+     * @return int
      */
     protected function get_itemcontextlevel() {
         return CONTEXT_COURSE;
@@ -422,7 +422,7 @@ class restore_category_search extends restore_search_base  {
 
     /**
      * Returns the context level of the search results.
-     * @return CONTEXT_COURSECAT
+     * @return int
      */
     protected function get_itemcontextlevel() {
         return CONTEXT_COURSECAT;

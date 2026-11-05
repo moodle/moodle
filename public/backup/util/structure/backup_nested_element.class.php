@@ -144,7 +144,7 @@ class backup_nested_element extends base_nested_element implements processable {
      * @param int $level level of importance {@link backup::LOG_DEBUG} and other constants
      * @param mixed $a to be included in $message
      * @param int $depth of the message
-     * @param display $bool supporting translation via get_string() if true
+     * @param bool $display supporting translation via get_string() if true
      * @return void
      */
     protected function add_log($message, $level, $a = null, $depth = null, $display = false) {
@@ -193,7 +193,7 @@ class backup_nested_element extends base_nested_element implements processable {
     /**
      * Returns the results
      *
-     * @return associative array of results
+     * @return array associative array of results
      */
     public function get_results() {
         return $this->results;

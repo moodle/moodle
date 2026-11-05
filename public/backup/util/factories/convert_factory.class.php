@@ -33,9 +33,9 @@ abstract class convert_factory {
      * Instantinates the given converter operating on a given directory
      *
      * @throws coding_exception
-     * @param $name The converter name
-     * @param $tempdir The temp directory to operate on
-     * @param base_logger|null if the conversion should be logged, use this logger
+     * @param string $name The converter name
+     * @param string $tempdir The temp directory to operate on
+     * @param base_logger|null $logger if the conversion should be logged, use this logger
      * @return base_converter
      */
     public static function get_converter($name, $tempdir, $logger = null) {

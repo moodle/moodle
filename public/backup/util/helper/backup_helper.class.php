@@ -76,7 +76,7 @@ abstract class backup_helper {
          return rmdir($backupiddir);
      }
 
-     /**
+    /**
      * Given one fullpath to directory, delete its contents recursively
      * Copied originally from somewhere in the net.
      * TODO: Modernise this
@@ -85,7 +85,7 @@ abstract class backup_helper {
      * progress reports.
      *
      * @param string $dir Directory to delete
-     * @param string $excludedir Exclude this directory
+     * @param string $excludeddir Exclude this directory
      * @param \core\progress\base $progress Optional progress reporting object
      */
     public static function delete_dir_contents($dir, $excludeddir='', ?\core\progress\base $progress = null) {

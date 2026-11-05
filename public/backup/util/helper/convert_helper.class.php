@@ -128,7 +128,7 @@ abstract class convert_helper {
      * Detects if the given folder contains an unpacked moodle2 backup
      *
      * @param string $tempdir the name of the backup directory
-     * @return boolean true if moodle2 format detected, false otherwise
+     * @return bool true if moodle2 format detected, false otherwise
      */
     public static function detect_moodle2_format($tempdir) {
         $dirpath = make_backup_temp_directory($tempdir, false);
@@ -161,7 +161,7 @@ abstract class convert_helper {
      *
      * @param string $tempdir The directory to convert
      * @param string $format The current format, if already detected
-     * @param base_logger|null if the conversion should be logged, use this logger
+     * @param base_logger|null $logger if the conversion should be logged, use this logger
      * @throws convert_helper_exception
      * @return bool false if unable to find the conversion path, true otherwise
      */

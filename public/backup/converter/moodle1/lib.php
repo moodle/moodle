@@ -207,7 +207,7 @@ class moodle1_converter extends base_converter {
      * Helper method used by {@link self::register_handler()}
      *
      * @param convert_path $pelement path element
-     * @param array of convert_path instances
+     * @param array $elements array of convert_path instances
      * @return bool true if grouped parent was found, false otherwise
      */
     protected function grouped_parent_exists($pelement, $elements) {
@@ -1094,7 +1094,7 @@ class convert_path {
      * as we actually validate the code, not the user data. And the code is supposed to be
      * correct.
      *
-     * @param string @name the element given name
+     * @param string $name the element given name
      * @throws convert_path_exception
      * @return void
      */

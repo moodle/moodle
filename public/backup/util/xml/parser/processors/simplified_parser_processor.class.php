@@ -206,8 +206,8 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
      * This will trigger all the pending {@see notify_path_start} and
      * {@see notify_path_end} calls for one given path and action
      *
-     * @param string path the path to look for as limit
-     * @param string action the action to look for as limit
+     * @param string $path the path to look for as limit
+     * @param string $action the action to look for as limit
      */
     protected function process_pending_startend_notifications($path, $action) {
 

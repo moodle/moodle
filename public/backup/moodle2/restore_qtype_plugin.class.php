@@ -387,7 +387,7 @@ abstract class restore_qtype_plugin extends restore_plugin {
      * Do any re-coding necessary in the student response.
      * @param int $questionid the new id of the question
      * @param int $sequencenumber of the step within the qusetion attempt.
-     * @param array the response data from the backup.
+     * @param array $response the response data from the backup.
      * @return array the recoded response.
      */
     public function recode_response($questionid, $sequencenumber, array $response) {

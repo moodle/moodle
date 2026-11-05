@@ -29,7 +29,7 @@
  */
 abstract class base_optigroup extends base_nested_element {
 
-    /** @var boolean flag indicating if multiple branches can be processed (true) or no (false) */
+    /** @var bool flag indicating if multiple branches can be processed (true) or no (false) */
     private $multiple;
 
     /**

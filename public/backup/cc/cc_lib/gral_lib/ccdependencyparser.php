@@ -23,7 +23,7 @@ require_once('pathutils.php');
  * Older version better suited for PHP < 5.2
  * @deprecated
  * @param mixed $url
- * @return boolean
+ * @return bool
  */
 function is_url_deprecated($url) {
     if (
@@ -42,7 +42,7 @@ function is_url_deprecated($url) {
  *
  * validates URL
  * @param string $url
- * @return boolean
+ * @return bool
  */
 function is_url($url) {
     $result = filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED) !== false;

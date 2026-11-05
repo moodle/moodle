@@ -277,7 +277,7 @@ abstract class restore_controller_dbops extends restore_dbops {
      *
      * @param restore_controller $controller
      * @param array $settings a map from admin config names to setting names (Config name => Setting name)
-     * @param boolean $uselocks whether "locked" admin settings should be honoured
+     * @param bool $uselocks whether "locked" admin settings should be honoured
      */
     private static function apply_admin_config_defaults(restore_controller $controller, array $settings, $uselocks) {
         $plan = $controller->get_plan();

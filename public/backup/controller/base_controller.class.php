@@ -39,7 +39,7 @@ abstract class base_controller extends backup implements loggable {
     /**
      * Holds the relevant destination information for course copy operations.
      *
-     * @var \stdClass.
+     * @var \stdClass
      */
     protected $copy;
 

@@ -156,7 +156,7 @@ class restore_questions_parser_processor extends grouped_parser_processor {
      * If there is no restore class, null is returned.
      *
      * @param string $qtype The question type name (no qtype_ prefix)
-     * @return ?restore_qtype_plugin
+     * @return restore_qtype_plugin|null
      */
     protected static function get_qtype_restore(string $qtype): ?restore_qtype_plugin {
         global $CFG;
@@ -177,8 +177,8 @@ class restore_questions_parser_processor extends grouped_parser_processor {
      * Given a data structure containing the data for a question, reduce it to a flat array and return a sha1 hash of the data.
      *
      * @param stdClass $questiondata An array containing all the data for a question, including hints and qtype plugin data.
-     * @param ?backup_xml_transformer $transformer If provided, run the backup transformer process on all text fields. This ensures
-     *     that values from the database are compared like-for-like with encoded values from the backup.
+     * @param backup_xml_transformer|null $transformer If provided, run the backup transformer process on all text fields.
+     *     This ensures that values from the database are compared like-for-like with encoded values from the backup.
      * @return string A sha1 hash of all question data, normalised and concatenated together.
      */
     public static function generate_question_identity_hash(

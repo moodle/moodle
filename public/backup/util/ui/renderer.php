@@ -598,7 +598,9 @@ class core_backup_renderer extends plugin_renderer_base {
      *
      * @param int $statuscode The status code of the backup.
      * @param string $backupid The backup record id.
-     * @return string|boolean $status The status indicator for the operation.
+     * @param string|null $restoreid The restore record id.
+     * @param string $operation The operation type, e.g. 'backup', 'restore' or 'copy'.
+     * @return string|bool $status The status indicator for the operation.
      */
     public function get_status_display($statuscode, $backupid, $restoreid=null, $operation='backup') {
         if ($statuscode == backup::STATUS_AWAITING

@@ -53,8 +53,8 @@ class backup_optigroup_element extends backup_nested_element {
      *
      * @param string $name of the element
      * @param array $final_elements this element will handle (optional, defaults to null)
-     * @param string $condition_param param (path) we are using as source for comparing (optional, defaults to null)
-     * @param string $condition_value   value we are comparing to (optional, defaults to null)
+     * @param string $conditionparam param (path) we are using as source for comparing (optional, defaults to null)
+     * @param string $conditionvalue   value we are comparing to (optional, defaults to null)
      */
     public function __construct($name, $final_elements = null, $conditionparam = null, $conditionvalue = null) {
         parent::__construct($name, null, $final_elements);
