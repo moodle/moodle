@@ -18,7 +18,6 @@ namespace core\api\form;
 
 use core\api\repository\api_token_repository;
 use core\api\token_manager;
-use core\oauth2\server\repository\scope_repository;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
@@ -39,11 +38,9 @@ final class create_token_test extends \advanced_testcase {
      * @return array{0: create_token, 1: token_manager}
      */
     private function get_form(): array {
-        $manager = new token_manager(
-            new api_token_repository(),
-            $this->mock_clock_with_frozen(self::NOW),
-            new scope_repository(),
-        );
+        $manager = \core\di::make(token_manager::class, [
+            'clock' => $this->mock_clock_with_frozen(self::NOW),
+        ]);
 
         return [new create_token(null, ['manager' => $manager]), $manager];
     }
