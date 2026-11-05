@@ -175,6 +175,27 @@ Feature: Automatic creation of groups
     And I press "Preview"
     And I should not see "Suspended Student 11"
 
+  Scenario: Do not display roles that are not visible to the user in group members role select
+    Given I log out
+    And the following "roles" exist:
+      | name              | shortname       | description       | archetype |
+      | Super secret role | supersecretrole | Super secret role |           |
+      | Visible role      | visiblerole     | Visible role      |           |
+    And the following "system role assigns" exist:
+      | user     | role            |
+      | student1 | supersecretrole |
+      | student2 | visiblerole     |
+    And I log in as "admin"
+    And I navigate to "Users > Permissions > Define roles" in site administration
+    And I click on "Edit" "link" in the "Teacher" "table_row"
+    And I set the field "Allow role to view" to "Course creator,Teacher,Non-editing teacher,Student,Visible role"
+    And I press "Save changes"
+    And I log in as "teacher1"
+    And I am on the "Course 1" "groups" page
+    When I press "Auto-create groups"
+    Then I should not see "Super secret role" in the "Select members with role" "select"
+    But I should see "Visible role" in the "Select members with role" "select"
+
   @javascript
   Scenario: Auto-create groups with group messaging
     Given I set the following fields to these values:
