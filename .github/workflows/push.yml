@@ -126,6 +126,8 @@ jobs:
       - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
         uses: actions/checkout@v6
 
+      - uses: ramsey/composer-install@v4
+
       - name: Setting up PHPUnit
         env:
           dbtype: ${{ matrix.db }}
