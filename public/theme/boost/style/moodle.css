@@ -36043,51 +36043,73 @@ body:not(.jsenabled) .course-section-header [data-for=section_title] .inplaceedi
 }
 
 /* Bulk editing */
+html:has(> body.bulkenabled) {
+  scroll-padding-bottom: calc(4rem + 0.5rem);
+}
+
 .bulkenabled .activity-name-area .inplaceeditable .quickediticon {
-  display: none;
+  visibility: hidden !important;
 }
 .bulkenabled .bulk-hidden {
   display: none !important;
 }
-.bulkenabled .section {
-  margin-left: 1rem;
+.bulkenabled .divider:has(> .divider-content) {
+  visibility: hidden;
 }
-.bulkenabled .section:not(:first-child) {
-  margin-top: 1.5rem;
+.bulkenabled .divider:has(> .divider-content) * {
+  visibility: hidden !important;
 }
-.bulkenabled .activity.subsection .section {
-  margin-left: 0rem;
+.bulkenabled .bulkselect .form-check-input {
+  margin: 0;
 }
-.bulkenabled .activity {
-  margin-top: 0.5rem;
-  margin-left: 2rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--bs-gray-200);
+.bulkenabled .bulkselect .form-check-input:not(:disabled) {
+  cursor: pointer;
 }
-.bulkenabled .activity:first-child {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
+.bulkenabled .bulkselect .form-check-input:disabled {
+  pointer-events: auto;
+  cursor: not-allowed;
+}
+.bulkenabled .activity-item {
+  cursor: pointer;
 }
 .bulkenabled .activity-item:focus-within:not(:has(.delegated-section)):not(:has(.inplaceeditingon)) {
   outline: 0.125rem solid var(--mds-border-interactive-primary-default);
 }
-.bulkenabled .activity-item .bulkselect {
-  float: left;
-  margin-left: calc(-1.25rem - 1.75rem);
+.bulkenabled .activity-item:has(> .bulkselect .form-check-input:disabled) {
+  cursor: auto;
+}
+.bulkenabled .activity-item:has(> .bulkselect) {
+  position: relative;
+}
+.bulkenabled .activity-item:has(> .bulkselect) > .bulkselect {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  display: flex;
+  align-items: center;
+  height: 1.75rem;
+}
+.bulkenabled .activity-item:has(> .bulkselect) > .activity-grid .activity-icon,
+.bulkenabled .activity-item:has(> .bulkselect) > .activity-grid.noname-grid .activity-badges {
+  padding-left: calc(1em + 0.5rem);
+}
+.bulkenabled .activity-item:has(> .bulkselect) > .activity-grid .activity-icon {
+  min-height: 1.75rem;
+}
+.bulkenabled .activity-item:has(> .bulkselect) > .activity-grid.noname-grid {
+  grid-template-rows: minmax(1.75rem, auto);
+}
+.bulkenabled .activity-item:has(.delegated-section) {
+  cursor: auto;
 }
 .bulkenabled .activity-item:has(.delegated-section):hover {
   outline: none !important;
   box-shadow: none !important;
 }
 .bulkenabled .course-section-header .bulkselect {
-  left: -2.75rem;
-  position: relative;
-  width: 0;
-}
-@media (max-width: 767.98px) {
-  .bulkenabled .course-content {
-    margin-left: 2rem;
-  }
+  display: flex;
+  align-items: center;
+  margin-right: 0.5rem;
 }
 .bulkenabled .sticky-footer-content.bulkactions .btn {
   --bs-btn-disabled-border-color: transparent;

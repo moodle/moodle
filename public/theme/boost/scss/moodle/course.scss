@@ -893,56 +893,87 @@ button.section-collapsemenu {
 
 /* Bulk editing */
 
+// Keyboard focus scrolls content above the bulk actions footer instead of behind it.
+html:has(> body.bulkenabled) {
+    scroll-padding-bottom: calc(#{$stickyfooter-height} + #{$mds-spacing-xs});
+}
+
 .bulkenabled {
     .activity-name-area .inplaceeditable .quickediticon {
-        display: none;
+        // Keep the pencil's space and prevent hover or focus from revealing it.
+        visibility: hidden !important; // stylelint-disable-line declaration-no-important
     }
     .bulk-hidden {
         display: none !important; // stylelint-disable-line declaration-no-important
     }
-    .section {
-        margin-left: map-get($spacers, 3);
-        &:not(:first-child) {
-            margin-top: map-get($spacers, 4);
+    // Dividers keep their space, so nothing on the page moves when bulk editing starts.
+    // This includes the ones rendered outside the course content, like in the social activities block.
+    .divider:has(> .divider-content) {
+        visibility: hidden;
+        // Override the rules that reveal the divider buttons on focus or hover.
+        * {
+            visibility: hidden !important; // stylelint-disable-line declaration-no-important
         }
     }
-    .activity.subsection .section {
-        margin-left: $mds-spacing-none;
-    }
-    .activity {
-        margin-top: map-get($spacers, 2);
-        margin-left: 2rem;
-        padding-top: map-get($spacers, 2);
-        border-top: $divider-width solid $divider-color;
-        &:first-child {
-            margin-top: $mds-spacing-xs;
-            padding-top: $mds-spacing-xs;
+    .bulkselect .form-check-input {
+        margin: 0;
+        &:not(:disabled) {
+            cursor: pointer;
+        }
+        // Bootstrap drops pointer events on disabled checks, which would hide the not-allowed cursor.
+        &:disabled {
+            pointer-events: auto;
+            cursor: not-allowed;
         }
     }
     .activity-item {
+        // The card is the selection target, not a drag source.
+        cursor: pointer;
         // Keep the card outline when its title receives focus in bulk mode.
         &:focus-within:not(:has(.delegated-section)):not(:has(.inplaceeditingon)) {
             outline: $mds-stroke-weight-md solid var(--mds-border-interactive-primary-default);
         }
-        .bulkselect {
-            float: left;
-            margin-left: calc(-#{$activity-item-padding} - 1.75rem);
+        // A card that cannot be selected now, like an activity while sections are selected.
+        &:has(> .bulkselect .form-check-input:disabled) {
+            cursor: auto;
+        }
+        &:has(> .bulkselect) {
+            position: relative;
+            // The checkbox takes the leading slot of the top row, before the activity icon.
+            > .bulkselect {
+                position: absolute;
+                top: $activity-item-padding;
+                left: $activity-item-padding;
+                display: flex;
+                align-items: center;
+                height: $activity-controls-height;
+            }
+            > .activity-grid .activity-icon,
+            > .activity-grid.noname-grid .activity-badges {
+                padding-left: calc(#{$form-check-input-width} + #{$mds-spacing-xs});
+            }
+            // The top row keeps the height of the controls hidden in bulk mode.
+            > .activity-grid .activity-icon {
+                min-height: $activity-controls-height;
+            }
+            > .activity-grid.noname-grid {
+                grid-template-rows: minmax($activity-controls-height, auto);
+            }
         }
         // Delegated sections are not available for bulk editing.
-        &:has(.delegated-section):hover {
-            outline: none !important; // stylelint-disable-line declaration-no-important
-            box-shadow: none !important; // stylelint-disable-line declaration-no-important
+        &:has(.delegated-section) {
+            cursor: auto;
+            &:hover {
+                outline: none !important; // stylelint-disable-line declaration-no-important
+                box-shadow: none !important; // stylelint-disable-line declaration-no-important
+            }
         }
     }
     .course-section-header .bulkselect {
-        left: -2.75rem;
-        position: relative;
-        width: 0;
-    }
-    @include media-breakpoint-down(md) {
-        .course-content {
-            margin-left: 2rem;
-        }
+        // Centre the checkbox on the section toggler.
+        display: flex;
+        align-items: center;
+        margin-right: $mds-spacing-xs;
     }
     .sticky-footer-content.bulkactions {
         .btn {

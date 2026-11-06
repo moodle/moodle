@@ -69,6 +69,30 @@ class behat_courseformat extends behat_base {
     }
 
     /**
+     * Checks the partial selection state of the bulk select all checkbox.
+     *
+     * @Then the bulk select all checkbox should be partially checked
+     * @Then the bulk select all checkbox should :not be partially checked
+     * @param string|null $not Whether the checkbox should not be partially checked.
+     * @throws ExpectationException
+     */
+    public function the_bulk_select_all_checkbox_should_be_partially_checked(?string $not = null): void {
+        $this->require_javascript();
+        $checkbox = $this->get_selected_node('css_element', '[data-for="selectall"]');
+        $xpath = json_encode($checkbox->getXpath());
+        // Indeterminate is a DOM property and cannot be read as an HTML attribute.
+        $ispartial = $this->evaluate_script("return document.evaluate(
+            {$xpath}, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
+        ).singleNodeValue.indeterminate;");
+        if ($ispartial !== empty($not)) {
+            throw new ExpectationException(
+                'The bulk select all checkbox should ' . ($not ? 'not ' : '') . 'be partially checked',
+                $this->getSession(),
+            );
+        }
+    }
+
+    /**
      * Checks that the course linear navigation is visible.
      *
      * @Then /^the course linear navigation should be visible$/

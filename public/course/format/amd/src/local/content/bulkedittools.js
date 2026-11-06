@@ -169,6 +169,8 @@ export default class Component extends BaseComponent {
         setTimeout(
             () => {
                 selectall.checked = checkAllBulkSelected(this.reactive);
+                // A partial selection is reported as mixed to assistive technologies.
+                selectall.indeterminate = !selectall.checked && bulk.selection.length > 0;
                 pending.resolve();
             },
             100
