@@ -55,6 +55,5 @@ class string_xml_database_importer extends xml_database_importer {
         if (!xml_parse($parser, $this->data, true)) {
             throw new dbtransfer_exception('malformedxmlexception');
         }
-        xml_parser_free($parser);
     }
 }

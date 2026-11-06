@@ -614,8 +614,6 @@ class client extends \oauth2_client {
                 $img = @imagecreatefromstring($user->picture);
                 if (empty($img)) {
                     unset($user->picture);
-                } else {
-                    imagedestroy($img);
                 }
             }
         }

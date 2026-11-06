@@ -59,7 +59,6 @@ class file_xml_database_importer extends xml_database_importer {
                 throw new dbtransfer_exception('malformedxmlexception');
             }
         }
-        xml_parser_free($parser);
         fclose($file);
     }
 }

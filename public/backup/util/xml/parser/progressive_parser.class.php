@@ -159,7 +159,6 @@ class progressive_parser {
         } else {
             $this->parse($this->contents, true);
         }
-        xml_parser_free($this->xml_parser);
         $this->xml_parser = null;
     }
 

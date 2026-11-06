@@ -927,8 +927,6 @@ class xml2Array {
             xml_get_current_line_number($this->resparser)));
         }
 
-        xml_parser_free($this->resparser);
-
         return $this->arroutput;
     }
 

@@ -68,7 +68,6 @@ function file_mime_type ($file, $default_type = 'application/octet-stream'){
         if ( is_string($fres) && !empty($fres) ) {
             $ftype = $fres;
         }
-        @finfo_close($finfo);
     }
     return $ftype;
 }

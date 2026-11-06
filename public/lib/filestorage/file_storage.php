@@ -1786,7 +1786,6 @@ class file_storage {
                 // weird
                 throw new file_exception('storedfileproblem', 'Can not resize image');
             }
-            imagedestroy($img);
             $img = $newimg;
 
         } else if ($hasalpha) {
@@ -1795,12 +1794,8 @@ class file_storage {
                 // Weird.
                 throw new file_exception('storedfileproblem', 'Can not copy image');
             }
-            imagedestroy($img);
             $img = $newimg;
 
-        } else {
-            // No particular processing needed for the original image.
-            imagedestroy($newimg);
         }
 
         ob_start();
@@ -1841,7 +1836,6 @@ class file_storage {
 
         $content = ob_get_contents();
         ob_end_clean();
-        imagedestroy($img);
 
         if (!$content) {
             throw new file_exception('storedfileproblem', 'Can not convert image');

@@ -226,7 +226,6 @@ class behat_util extends \core\test\testing_util {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
         $statuscode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
 
         if ($statuscode !== 200 || empty($result) || (!$result = json_decode($result, true))) {
 

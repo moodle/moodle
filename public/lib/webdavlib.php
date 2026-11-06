@@ -671,8 +671,6 @@ class webdav_client {
                                 xml_get_current_line_number($this->_parser)));
                         }
 
-                        // Free resources
-                        xml_parser_free($this->_parser);
                         // add status code to array
                         $this->_lock[$this->_parserid]['status'] = 200;
                         return $this->_lock[$this->_parserid];
@@ -770,8 +768,6 @@ class webdav_client {
 
                         print "<br>";
 
-                        // Free resources
-                        xml_parser_free($this->_parser);
                         $this->_delete[$this->_parserid]['status'] = $response['status']['status-code'];
                         return $this->_delete[$this->_parserid];
 
@@ -930,12 +926,11 @@ class webdav_client {
                             xml_get_current_line_number($this->_parser)
                         );
 
-                        xml_parser_free($this->_parser);
+                        $this->_parser = null;
                         debugging($errormessage, DEBUG_DEVELOPER);
                         return false;
                     }
 
-                    xml_parser_free($this->_parser);
                     $arr = $this->_ls[$this->_parserid];
                     // Return empty array instead of false for no results to maintain consistent API behavior.
                     if (!is_array($arr)) {
@@ -1029,8 +1024,6 @@ EOD;
                                 xml_get_current_line_number($this->_parser)));
                         }
 
-                        // Free resources
-                        xml_parser_free($this->_parser);
                         $arr = $this->_ls[$this->_parserid];
                         return $arr;
                     } else {
@@ -1669,7 +1662,7 @@ EOD;
 
         // following code maybe helps to improve socket behaviour ... more testing needed
         // disabled at the moment ...
-        // socket_set_timeout($this->sock,1 );
+        // stream_set_timeout($this->sock, 1);
         // $socket_state = socket_get_status($this->sock);
 
         // read stream one byte by another until http header ends
@@ -1780,13 +1773,13 @@ EOD;
         default:
             // just get the data until foef appears...
             $this->_error_log('reading until feof...' . $header);
-            socket_set_timeout($this->sock, 0, 0);
+            stream_set_timeout($this->sock, 0, 0);
             while (!feof($this->sock)) {
                 $chunk = fread($this->sock, 4096);
                 self::update_file_or_buffer($chunk, $fp, $buffer);
             }
             // renew the socket timeout...does it do something ???? Is it needed. More debugging needed...
-            socket_set_timeout($this->sock, $this->_socket_timeout, 0);
+            stream_set_timeout($this->sock, $this->_socket_timeout, 0);
         }
 
         $this->_header = $header;

@@ -183,11 +183,9 @@ class xml_parser {
                     xml_get_current_line_number($parser),
                     xml_get_current_column_number($parser),
                 );
-                xml_parser_free($parser);
                 throw $exception;
             }
         }
-        xml_parser_free($parser); // Deletes the parser.
         if (empty($this->xml)) { // XML file is invalid or empty, return false.
             return false;
         }
