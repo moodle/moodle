@@ -108,4 +108,41 @@ class setup {
 
         return false;
     }
+
+    /**
+     * Set up the global $PAGE object.
+     */
+    public static function setup_page(): void {
+        global $CFG, $PAGE;
+
+        // Create the $PAGE global - this marks the PAGE and OUTPUT fully initialised, this MUST be done at the end of setup!
+        if (!empty($CFG->moodlepageclass)) {
+            if (!empty($CFG->moodlepageclassfile)) {
+                require_once($CFG->moodlepageclassfile);
+            }
+            $classname = $CFG->moodlepageclass;
+        } else {
+            $classname = 'moodle_page';
+        }
+        $PAGE = new $classname();
+        unset($classname);
+    }
+
+    /**
+     * Reset the global $OUTPUT object.
+     */
+    public static function setup_output(): void {
+        // Put $OUTPUT in place, so errors can be displayed.
+        $GLOBALS['OUTPUT'] = new \core\output\bootstrap_renderer();
+    }
+
+    /**
+     * Reset the global $COURSE object.
+     */
+    public static function setup_course_global(): void {
+        global $SITE;
+
+        // Set the 'default' course - this will usually get reset later in require_login() etc.
+        $GLOBALS['COURSE'] = clone($SITE);
+    }
 }

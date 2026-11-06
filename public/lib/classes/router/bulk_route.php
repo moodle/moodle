@@ -93,10 +93,13 @@ class bulk_route {
             return $response->withStatus(400);
         }
 
-        foreach ($requests as $request) {
+        foreach ($requests as $childrequest) {
+            // Ensure that we clean up before handling each sub-request.
+            $this->reset_environment();
+
             // Pass each sub-request through the Router.
-            $requestresponse = $this->router->handle_request($request);
-            $requestresponse = $requestresponse->withHeader('Content-ID', $request->getHeaderLine('Content-ID'));
+            $requestresponse = $this->router->handle_request($childrequest);
+            $requestresponse = $requestresponse->withHeader('Content-ID', $childrequest->getHeaderLine('Content-ID'));
 
             // Write the response to the body of the combined response.
             // Note: The response is written within an application/http and may have its own headers and status.
@@ -121,6 +124,15 @@ class bulk_route {
 
         $response->getBody()->write("--{$responseboundary}--");
         return $response;
+    }
+
+    /**
+     * Reset the environment between pages.
+     */
+    protected function reset_environment(): void {
+        \core\setup::setup_page();
+        \core\setup::setup_output();
+        \core\setup::setup_course_global();
     }
 
     /**

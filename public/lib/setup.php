@@ -650,7 +650,7 @@ raise_memory_limit(MEMORY_STANDARD);
 init_performance_info();
 
 // Put $OUTPUT in place, so errors can be displayed.
-$OUTPUT = new bootstrap_renderer();
+\core\setup::setup_output();
 
 // Set handler for uncaught exceptions - equivalent to throw new \moodle_exception() call.
 if (!PHPUNIT_TEST or PHPUNIT_UTIL) {
@@ -855,8 +855,10 @@ try {
         throw $e;
     }
 }
-// And the 'default' course - this will usually get reset later in require_login() etc.
-$COURSE = clone($SITE);
+
+// Configure the global course.
+\core\setup::setup_course_global();
+
 // Id of the frontpage course.
 define('SITEID', $SITE->id);
 
@@ -1037,18 +1039,8 @@ if (empty($CFG->lang)) {
 // it is definitely too late to call this first in require_login()!
 moodle_setlocale();
 
-// Create the $PAGE global - this marks the PAGE and OUTPUT fully initialised, this MUST be done at the end of setup!
-if (!empty($CFG->moodlepageclass)) {
-    if (!empty($CFG->moodlepageclassfile)) {
-        require_once($CFG->moodlepageclassfile);
-    }
-    $classname = $CFG->moodlepageclass;
-} else {
-    $classname = 'moodle_page';
-}
-$PAGE = new $classname();
-unset($classname);
-
+// Setup the global $PAGE object.
+\core\setup::setup_page();
 
 if (!empty($CFG->debugvalidators) and !empty($CFG->guestloginbutton)) {
     if ($CFG->theme == 'standard') {    // Temporary measure to help with XHTML validation
