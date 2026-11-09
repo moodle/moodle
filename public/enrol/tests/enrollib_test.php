@@ -38,6 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(\enrol_get_course_users::class)]
 #[\PHPUnit\Framework\Attributes\CoversFunction('enrol_check_plugins')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('enrol_course_delete')]
 #[\PHPUnit\Framework\Attributes\CoversFunction('enrol_selfenrol_available')]
 #[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_plugin::class, 'validate_enrol_plugin_data')]
 #[\PHPUnit\Framework\Attributes\CoversMethod(\enrol_plugin::class, 'update_enrol_plugin_data')]
@@ -388,6 +389,92 @@ final class enrollib_test extends advanced_testcase {
         // Check existence of the self enrolment instance in the course.
         $selfinstance = (bool) $DB->count_records('enrol', ['enrol' => 'self', 'courseid' => $course->id]);
         $this->assertEquals($expected['Self course enrolment instance exists'], $selfinstance);
+    }
+
+    /**
+     * Test enrol_course_delete() when there is an enrolment from a disabled plugin.
+     *
+     * enrol_get_plugins() omits disabled plugins, so there is nothing to
+     * ask about un-enrolment and the enrolment must be remain unmodified.
+     */
+    public function test_enrol_course_delete_with_disabled_plugin(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Make sure the self plugin is enabled so we can create an instance.
+        $this->assertArrayHasKey('self', enrol_get_plugins(true));
+
+        // Create users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $editingteacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+
+        $manual = enrol_get_plugin('manual');
+        $manualinstance = $DB->get_record(
+            'enrol',
+            ['courseid' => $course->id, 'enrol' => 'manual'],
+            '*',
+            MUST_EXIST
+        );
+        // Enrol user1 as a student, and the teacher who may un-enrol anyone.
+        $manual->enrol_user($manualinstance, $user1->id, $studentrole->id);
+        $manual->enrol_user($manualinstance, $teacher->id, $editingteacherrole->id);
+
+        $self = enrol_get_plugin('self');
+        $selfinstance = $DB->get_record(
+            'enrol',
+            ['courseid' => $course->id, 'enrol' => 'self'],
+            '*',
+            MUST_EXIST
+        );
+        $self->update_status($selfinstance, ENROL_INSTANCE_ENABLED);
+        // Enrol user2 as a student via self.
+        $self->enrol_user($selfinstance, $user2->id, $studentrole->id);
+
+        // Disable self, leaving its instance orphaned in the course.
+        enrol::enable_plugin('self', false);
+        $this->assertArrayNotHasKey('self', enrol_get_plugins(true));
+        $this->assertTrue($DB->record_exists('enrol', ['id' => $selfinstance->id]));
+
+        // Delete the enrolments the teacher may remove.
+        enrol_course_delete($course, $teacher->id);
+
+        // Manual is enabled and allows un-enrolment, so its data is removed.
+        $this->assertFalse($DB->record_exists('enrol', ['id' => $manualinstance->id]));
+        $this->assertFalse($DB->record_exists(
+            'user_enrolments',
+            ['enrolid' => $manualinstance->id, 'userid' => $user1->id]
+        ));
+        $this->assertFalse($DB->record_exists(
+            'role_assignments',
+            ['roleid' => $studentrole->id, 'userid' => $user1->id, 'contextid' => $coursecontext->id]
+        ));
+        $this->assertFalse($DB->record_exists(
+            'user_enrolments',
+            ['enrolid' => $manualinstance->id, 'userid' => $teacher->id]
+        ));
+        $this->assertFalse($DB->record_exists(
+            'role_assignments',
+            ['roleid' => $editingteacherrole->id, 'userid' => $teacher->id, 'contextid' => $coursecontext->id]
+        ));
+
+        // The self plugin is disabled, so its data remains unmodified.
+        $this->assertTrue($DB->record_exists('enrol', ['id' => $selfinstance->id]));
+        $this->assertTrue($DB->record_exists(
+            'user_enrolments',
+            ['enrolid' => $selfinstance->id, 'userid' => $user2->id]
+        ));
+        $this->assertTrue($DB->record_exists(
+            'role_assignments',
+            ['roleid' => $studentrole->id, 'userid' => $user2->id, 'contextid' => $coursecontext->id]
+        ));
     }
 
     /**
