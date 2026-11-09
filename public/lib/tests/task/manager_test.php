@@ -647,8 +647,6 @@ final class manager_test extends \advanced_testcase {
     /**
      * Test that adhoc_task_delayed() marks a task as failed once it has exhausted its
      * last available attempt.
-     *
-     * @covers \core\task\manager::adhoc_task_delayed
      */
     public function test_adhoc_task_delayed_marks_failed_when_attempts_exhausted(): void {
         global $DB;
