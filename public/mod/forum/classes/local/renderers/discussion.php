@@ -226,6 +226,7 @@ class discussion {
             $exporteddiscussion['navigationbuttons'] = $navbuttons;
         } else {
             $exporteddiscussion['navigationbuttons'] = false;
+            $exporteddiscussion['html']['neighbourlinks'] = $this->get_neighbour_links_html();
         }
 
         $capabilities = (array) $exporteddiscussion['capabilities'];
@@ -453,6 +454,16 @@ class discussion {
         return array_map(function($notification) {
             return $notification->export_for_template($this->renderer);
         }, $notifications);
+    }
+
+    /**
+     * Get HTML to display the neighbour links.
+     *
+     * @return string
+     */
+    private function get_neighbour_links_html(): string {
+        $neighbours = $this->get_neighbours();
+        return $this->renderer->neighbouring_discussion_navigation($neighbours['prev'], $neighbours['next']);
     }
 
     /**
