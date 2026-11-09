@@ -1248,7 +1248,7 @@ class core_enrol_external extends external_api {
         $mform = new enrol_user_enrolment_form(null, $customformdata, 'post', '', null, true, $data);
 
         if ($validateddata = $mform->get_data()) {
-            if (!empty($validateddata->duration) && $validateddata->timeend == 0) {
+            if (!empty($validateddata->timestart) && !empty($validateddata->duration) && $validateddata->timeend == 0) {
                 $validateddata->timeend = $validateddata->timestart + $validateddata->duration;
             }
             require_once($CFG->dirroot . '/enrol/locallib.php');
