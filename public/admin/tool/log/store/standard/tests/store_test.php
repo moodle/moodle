@@ -28,6 +28,7 @@ require_once(__DIR__ . '/fixtures/restore_hack.php');
  * @copyright  2014 Petr Skoda {@link http://skodak.org/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\PHPUnit\Framework\Attributes\CoversFunction('require_logout')]
 final class store_test extends \advanced_testcase {
     /**
      * @var bool Determine if we disabled the GC, so it can be re-enabled in tearDown.
@@ -36,8 +37,6 @@ final class store_test extends \advanced_testcase {
 
     /**
      * Test that logging out while logged in as another user records the real user.
-     *
-     * @covers ::require_logout
      */
     public function test_logout_event_records_realuserid(): void {
         global $DB, $USER;
@@ -69,8 +68,6 @@ final class store_test extends \advanced_testcase {
 
     /**
      * A failure in a logout observer must not leave the user logged in.
-     *
-     * @covers ::require_logout
      */
     public function test_logout_terminates_session_when_observer_throws_error(): void {
         global $USER;

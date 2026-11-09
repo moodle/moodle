@@ -29,6 +29,7 @@ namespace core;
 #[\PHPUnit\Framework\Attributes\CoversMethod(\core_user::class, 'get_profile_url')]
 #[\PHPUnit\Framework\Attributes\CoversMethod(\core_user::class, 'get_profile_picture')]
 #[\PHPUnit\Framework\Attributes\CoversMethod(\core_user::class, 'get_initials')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\core_user::class, 'update_user')]
 final class user_test extends \advanced_testcase {
 
     /**
@@ -1067,8 +1068,6 @@ final class user_test extends \advanced_testcase {
 
     /**
      * Test that any outstanding forgot-password tokens are invalidated when a user's email address changes.
-     *
-     * @covers \core_user::update_user
      */
     public function test_update_user_invalidates_password_reset_tokens_on_email_change(): void {
         global $DB;

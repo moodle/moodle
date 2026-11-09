@@ -29,6 +29,9 @@ use availability_date\condition;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\PHPUnit\Framework\Attributes\CoversClass(\core_completion\progress::class)]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\completion_info::class, 'delete_course_completion_data')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\completion_info::class, 'delete_all_completion_data')]
+#[\PHPUnit\Framework\Attributes\CoversMethod(\completion_info::class, 'delete_all_state')]
 final class progress_test extends \advanced_testcase {
 
     /**
@@ -619,10 +622,10 @@ final class progress_test extends \advanced_testcase {
      * Tests the performance and correctness of the fast path and per-request cache
      * used when calculating course progress percentage.
      *
-     * @dataProvider get_course_progress_percentage_perf_regression_provider
      * @param \Closure $restrict Applies a restriction to a cmid that forces the slow path.
      * @param \Closure $unrestrict Reverses whatever $restrict did.
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_course_progress_percentage_perf_regression_provider')]
     public function test_get_course_progress_percentage_perf_regression(\Closure $restrict, \Closure $unrestrict): void {
         global $DB;
 
@@ -694,8 +697,6 @@ final class progress_test extends \advanced_testcase {
     /**
      * Tests that the per-request course progress cache is purged when completion
      * criteria are unlocked via completion_info::delete_course_completion_data().
-     *
-     * @covers \completion_info::delete_course_completion_data
      */
     public function test_course_progress_cache_invalidated_by_delete_course_completion_data(): void {
         global $DB;
@@ -727,8 +728,6 @@ final class progress_test extends \advanced_testcase {
     /**
      * Tests that the per-request course progress cache is purged when a course is
      * reset via completion_info::delete_all_completion_data().
-     *
-     * @covers \completion_info::delete_all_completion_data
      */
     public function test_course_progress_cache_invalidated_by_delete_all_completion_data(): void {
         global $DB;
@@ -759,8 +758,6 @@ final class progress_test extends \advanced_testcase {
     /**
      * Tests that the per-request course progress cache is purged when an activity
      * is deleted via completion_info::delete_all_state().
-     *
-     * @covers \completion_info::delete_all_state
      */
     public function test_course_progress_cache_invalidated_by_delete_all_state(): void {
         global $DB;
