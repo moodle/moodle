@@ -1,4 +1,4 @@
-name: Core
+name: Core CI
 
 on:
   push:
@@ -126,6 +126,8 @@ jobs:
       - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
         uses: actions/checkout@v6
 
+      - uses: ramsey/composer-install@v4
+
       - name: Setting up PHPUnit
         env:
           dbtype: ${{ matrix.db }}
@@ -140,7 +142,7 @@ jobs:
         env:
           dbtype: ${{ matrix.db }}
           phpunit_options: ${{ secrets.phpunit_options }}
-        run: vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}
+        run: vendor/bin/phpunit --display-phpunit-deprecations $phpunit_options ${{ inputs.phpunit_extra_options }}
 
       - name: Git status
         run: git status

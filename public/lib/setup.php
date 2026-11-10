@@ -623,6 +623,7 @@ if (defined('ABORT_AFTER_CONFIG')) {
     }
 }
 
+// Note: Changes to the following inclusions must be mirrored in `/public/r.php` and `/.rector/bootstrap.php`.
 require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first.
 
 // Load up standard libraries.

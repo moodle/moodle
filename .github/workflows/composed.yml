@@ -98,9 +98,9 @@ jobs:
           mkdir -p testsite/data/phpunitdata
 
       - name: Install the Moodle test site
-        working-directory: testsite
-        run: |
-          composer install --no-interaction
+        uses: ramsey/composer-install@v4
+        with:
+          working-directory: testsite
 
       - name: Setting up PHPUnit
         working-directory: testsite
