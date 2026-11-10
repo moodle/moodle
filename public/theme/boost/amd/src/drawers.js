@@ -562,10 +562,9 @@ export default class Drawers {
         getBackdrop().then(backdrop => {
             backdrop.hide();
 
-            if (isSmall()) {
-                const pageWrapper = document.getElementById('page');
-                pageWrapper.style.overflow = 'visible';
-            }
+            // Always unlock the page, the screen size may have changed since the drawer was opened.
+            const pageWrapper = document.getElementById('page');
+            pageWrapper.style.overflow = 'visible';
             return backdrop;
         })
         .catch(() => {
