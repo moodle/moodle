@@ -68,7 +68,7 @@ final class scanner_test extends \advanced_testcase {
             ->getMock();
         // Initiate mock scanning with configuration setting to use commandline.
         $configmap = array(array('runningmethod', 'commandline'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Configure scan_file_execute_commandline and scan_file_execute_socket
         // method stubs to behave as if no virus has been found (SCAN_RESULT_OK).
@@ -84,14 +84,14 @@ final class scanner_test extends \advanced_testcase {
 
         // Initiate mock scanning with configuration setting to use unixsocket.
         $configmap = array(array('runningmethod', 'unixsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning.
         $this->assertEquals(0, $antivirus->scan_file($this->tempfile, ''));
 
         // Initiate mock scanning with configuration setting to use tcpsocket.
         $configmap = array(array('runningmethod', 'tcpsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning.
         $this->assertEquals(0, $antivirus->scan_file($this->tempfile, ''));
@@ -109,7 +109,7 @@ final class scanner_test extends \advanced_testcase {
             ->getMock();
         // Initiate mock scanning with configuration setting to use commandline.
         $configmap = array(array('runningmethod', 'commandline'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Configure scan_file_execute_commandline and scan_file_execute_socket
         // method stubs to behave as if virus has been found (SCAN_RESULT_FOUND).
@@ -125,14 +125,14 @@ final class scanner_test extends \advanced_testcase {
 
         // Initiate mock scanning with configuration setting to use unixsocket.
         $configmap = array(array('runningmethod', 'unixsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning.
         $this->assertEquals(1, $antivirus->scan_file($this->tempfile, ''));
 
         // Initiate mock scanning with configuration setting to use tcpsocket.
         $configmap = array(array('runningmethod', 'tcpsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning.
         $this->assertEquals(1, $antivirus->scan_file($this->tempfile, ''));
@@ -162,7 +162,7 @@ final class scanner_test extends \advanced_testcase {
         // Initiate mock scanning with configuration setting to do nothing on
         // scanning error and using commandline.
         $configmap = array(array('clamfailureonupload', 'donothing'), array('runningmethod', 'commandline'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning.
         $this->assertFileExists($this->tempfile);
@@ -171,7 +171,7 @@ final class scanner_test extends \advanced_testcase {
         // Initiate mock scanning with configuration setting to do nothing on
         // scanning error and using unixsocket.
         $configmap = array(array('clamfailureonupload', 'donothing'), array('runningmethod', 'unixsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning.
         $this->assertEquals(2, $antivirus->scan_file($this->tempfile, ''));
@@ -179,7 +179,7 @@ final class scanner_test extends \advanced_testcase {
         // Initiate mock scanning with configuration setting to do nothing on
         // scanning error and using tcpsocket.
         $configmap = array(array('clamfailureonupload', 'donothing'), array('runningmethod', 'tcpsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning.
         $this->assertEquals(2, $antivirus->scan_file($this->tempfile, ''));
@@ -209,7 +209,7 @@ final class scanner_test extends \advanced_testcase {
         // Initiate mock scanning with configuration setting to act like virus on
         // scanning error and using commandline.
         $configmap = array(array('clamfailureonupload', 'actlikevirus'), array('runningmethod', 'commandline'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning, we expect SCAN_RESULT_FOUND since configuration
         // require us to act like virus.
@@ -219,7 +219,7 @@ final class scanner_test extends \advanced_testcase {
         // Initiate mock scanning with configuration setting to act like virus on
         // scanning error and using unixsocket.
         $configmap = array(array('clamfailureonupload', 'actlikevirus'), array('runningmethod', 'unixsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning, we expect SCAN_RESULT_FOUND since configuration
         // require us to act like virus.
@@ -228,7 +228,7 @@ final class scanner_test extends \advanced_testcase {
         // Initiate mock scanning with configuration setting to act like virus on
         // scanning error and using tcpsocket.
         $configmap = array(array('clamfailureonupload', 'actlikevirus'), array('runningmethod', 'tcpsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning, we expect SCAN_RESULT_FOUND since configuration
         // require us to act like virus.
@@ -257,7 +257,7 @@ final class scanner_test extends \advanced_testcase {
         // Initiate mock scanning with configuration setting to act like virus on
         // scanning error and using commandline.
         $configmap = array(array('clamfailureonupload', 'tryagain'), array('runningmethod', 'commandline'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Run mock scanning.
         $this->assertFileExists($this->tempfile);
@@ -278,7 +278,7 @@ final class scanner_test extends \advanced_testcase {
             ->getMock();
         // Initiate mock scanning with configuration setting to use unixsocket.
         $configmap = array(array('runningmethod', 'unixsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Configure scan_data_execute_socket method stubs to behave as if
         // no virus has been found (SCAN_RESULT_OK).
@@ -292,7 +292,7 @@ final class scanner_test extends \advanced_testcase {
 
         // Re-initiate mock scanning with configuration setting to use tcpsocket.
         $configmap = array(array('runningmethod', 'tcpsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Set expectation that message_admins is NOT called.
         $antivirus->expects($this->never())->method('message_admins');
@@ -312,7 +312,7 @@ final class scanner_test extends \advanced_testcase {
             ->getMock();
         // Initiate mock scanning with configuration setting to use unixsocket.
         $configmap = array(array('runningmethod', 'unixsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Configure scan_data_execute_socket method stubs to behave as if
         // no virus has been found (SCAN_RESULT_FOUND).
@@ -326,7 +326,7 @@ final class scanner_test extends \advanced_testcase {
 
         // Re-initiate mock scanning with configuration setting to use tcpsocket.
         $configmap = array(array('runningmethod', 'tcpsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Set expectation that message_admins is NOT called.
         $antivirus->expects($this->never())->method('message_admins');
@@ -348,7 +348,7 @@ final class scanner_test extends \advanced_testcase {
         // Initiate mock scanning with configuration setting to do nothing on
         // scanning error and using unixsocket.
         $configmap = array(array('clamfailureonupload', 'donothing'), array('runningmethod', 'unixsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Configure scan_data_execute_socket method stubs to behave as if
         // there is a scanning error (SCAN_RESULT_ERROR).
@@ -364,7 +364,7 @@ final class scanner_test extends \advanced_testcase {
         // Re-initiate mock scanning with configuration setting to do nothing on
         // scanning error and using tcsocket.
         $configmap = array(array('clamfailureonupload', 'donothing'), array('runningmethod', 'tcpsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Set expectation that message_admins is called.
         $antivirus->expects($this->atLeastOnce())->method('message_admins')->with($this->equalTo('someerror'));
@@ -387,7 +387,7 @@ final class scanner_test extends \advanced_testcase {
         // Initiate mock scanning with configuration setting to act like virus on
         // scanning error and using unixsocket.
         $configmap = array(array('clamfailureonupload', 'actlikevirus'), array('runningmethod', 'unixsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Configure scan_data_execute_socket method stubs to behave as if
         // there is a scanning error (SCAN_RESULT_ERROR).
@@ -404,7 +404,7 @@ final class scanner_test extends \advanced_testcase {
         // Re-initiate mock scanning with configuration setting to act like virus on
         // scanning error and using tcpsocket.
         $configmap = array(array('clamfailureonupload', 'actlikevirus'), array('runningmethod', 'tcpsocket'));
-        $antivirus->method('get_config')->will($this->returnValueMap($configmap));
+        $antivirus->method('get_config')->willReturnMap($configmap);
 
         // Set expectation that message_admins is called.
         $antivirus->expects($this->atLeastOnce())->method('message_admins')->with($this->equalTo('someerror'));

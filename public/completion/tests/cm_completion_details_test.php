@@ -88,14 +88,14 @@ final class cm_completion_details_test extends advanced_testcase {
         // Mock the return of the magic getter method when fetching the cm_info object's customdata and instance values.
         $mockcminfo->expects($this->any())
             ->method('__get')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['completion', $completion],
                 ['instance', 1],
                 ['modname', $modname],
                 ['completionview', $completionoptions['completionview'] ?? COMPLETION_VIEW_NOT_REQUIRED],
                 ['completiongradeitemnumber', $completionoptions['completionusegrade'] ?? null],
                 ['completionpassgrade', $completionoptions['completionpassgrade'] ?? null],
-            ]));
+            ]);
 
         return new cm_completion_details($this->completioninfo, $mockcminfo, 2);
     }

@@ -166,7 +166,7 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->never())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $c->update_state($cm);
 
         // Enable forum plugin type for the rest of the test method.
@@ -186,10 +186,10 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('get_data')
-            ->will($this->returnValue($current));
+            ->willReturn($current);
         $c->update_state($cm, COMPLETION_COMPLETE);
 
         // Enabled, but current state is a specific one and new state is just
@@ -199,10 +199,10 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('get_data')
-            ->will($this->returnValue($current));
+            ->willReturn($current);
         $c->update_state($cm, COMPLETION_COMPLETE);
 
         // Manual, change state (no change).
@@ -212,10 +212,10 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('get_data')
-            ->will($this->returnValue($current));
+            ->willReturn($current);
         $c->update_state($cm, COMPLETION_COMPLETE);
 
         // Manual, change state (change).
@@ -223,10 +223,10 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('get_data')
-            ->will($this->returnValue($current));
+            ->willReturn($current);
         $changed = clone($current);
         $changed->timemodified = time();
         $changed->completionstate = COMPLETION_INCOMPLETE;
@@ -244,13 +244,13 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('get_data')
-            ->will($this->returnValue($current));
+            ->willReturn($current);
         $c->expects($this->once())
             ->method('internal_get_state')
-            ->will($this->returnValue(COMPLETION_COMPLETE_PASS));
+            ->willReturn(COMPLETION_COMPLETE_PASS);
         $changed = clone($current);
         $changed->timemodified = time();
         $changed->completionstate = COMPLETION_COMPLETE_PASS;
@@ -269,10 +269,10 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->exactly(2))
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->exactly(1)) // Pretend the user has the required capability for overriding completion statuses.
             ->method('user_can_override_completion')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $getinvocations = $this->exactly(2);
         $c->expects($getinvocations)
             ->method('get_data')
@@ -329,14 +329,14 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once()) // Pretend the user has the required capability for overriding completion statuses.
             ->method('user_can_override_completion')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('get_data')
             ->with($cm, false, 100)
-            ->will($this->returnValue($current));
+            ->willReturn($current);
         $changed = clone($current);
         $changed->timemodified = time();
         $changed->completionstate = COMPLETION_COMPLETE;
@@ -355,14 +355,14 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->Once()) // Pretend the user has the required capability for overriding completion statuses.
             ->method('user_can_override_completion')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('get_data')
             ->with($cm, false, 100)
-            ->will($this->returnValue($current));
+            ->willReturn($current);
         $changed = clone($current);
         $changed->timemodified = time();
         $changed->completionstate = COMPLETION_INCOMPLETE;
@@ -619,7 +619,7 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $c->set_module_viewed($cm);
 
         // Now it's enabled, we expect it to get data. If data already has
@@ -628,11 +628,11 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('get_data')
             ->with($cm, 0)
-            ->will($this->returnValue((object)array('viewed' => COMPLETION_VIEWED)));
+            ->willReturn((object)['viewed' => COMPLETION_VIEWED]);
         $c->set_module_viewed($cm);
 
         // OK finally one that hasn't been viewed, now it should set it viewed
@@ -641,11 +641,11 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('get_data')
             ->with($cm, false, 1337)
-            ->will($this->returnValue((object)array('viewed' => COMPLETION_NOT_VIEWED)));
+            ->willReturn((object)['viewed' => COMPLETION_NOT_VIEWED]);
         $c->expects($this->once())
             ->method('internal_set_data')
             ->with($cm, (object)array('viewed' => COMPLETION_VIEWED));
@@ -665,7 +665,7 @@ final class completionlib_test extends advanced_testcase {
         /** @var $DB PHPUnit_Framework_MockObject_MockObject */
         $DB->expects($this->once())
             ->method('get_field_sql')
-            ->will($this->returnValue(666));
+            ->willReturn(666);
 
         $c = new completion_info($course);
         $this->assertCompletionEquals(666, $c->count_user_data($cm));
@@ -684,7 +684,7 @@ final class completionlib_test extends advanced_testcase {
         $DB->expects($this->once())
             ->method('delete_records')
             ->with('course_modules_completion', array('coursemoduleid' => 42))
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->delete_all_state($cm);
     }
 
@@ -702,9 +702,10 @@ final class completionlib_test extends advanced_testcase {
         /** @var $DB PHPUnit_Framework_MockObject_MockObject */
         $DB->expects($this->once())
             ->method('get_recordset')
-            ->will($this->returnValue(
-                new core_completionlib_fake_recordset(array((object)array('id' => 1, 'userid' => 100),
-                    (object)array('id' => 2, 'userid' => 101)))));
+            ->willReturn(
+                new core_completionlib_fake_recordset([(object)['id' => 1, 'userid' => 100],
+                (object)['id' => 2, 'userid' => 101]])
+            );
 
         $c->expects($this->once())
             ->method('delete_all_state')
@@ -712,9 +713,9 @@ final class completionlib_test extends advanced_testcase {
 
         $c->expects($this->once())
             ->method('get_tracked_users')
-            ->will($this->returnValue(array(
-            (object)array('id' => 100, 'firstname' => 'Woot', 'lastname' => 'Plugh'),
-            (object)array('id' => 201, 'firstname' => 'Vroom', 'lastname' => 'Xyzzy'))));
+            ->willReturn([
+            (object)['id' => 100, 'firstname' => 'Woot', 'lastname' => 'Plugh'],
+            (object)['id' => 201, 'firstname' => 'Vroom', 'lastname' => 'Xyzzy']]);
 
         $updateinvocations = $this->exactly(3);
         $c->expects($updateinvocations)
@@ -1161,18 +1162,18 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('get_tracked_users')
             ->with(false,  array(),  0,  '',  '',  '',  null)
-            ->will($this->returnValue(array(
-                (object)array('id' => 100, 'firstname' => 'Woot', 'lastname' => 'Plugh'),
-                (object)array('id' => 201, 'firstname' => 'Vroom', 'lastname' => 'Xyzzy'))));
+            ->willReturn([
+                (object)['id' => 100, 'firstname' => 'Woot', 'lastname' => 'Plugh'],
+                (object)['id' => 201, 'firstname' => 'Vroom', 'lastname' => 'Xyzzy']]);
         $DB->expects($this->once())
             ->method('get_in_or_equal')
             ->with(array(100, 201))
-            ->will($this->returnValue(array(' IN (100, 201)', array())));
+            ->willReturn([' IN (100, 201)', []]);
         $progress1 = (object)array('userid' => 100, 'coursemoduleid' => 13);
         $progress2 = (object)array('userid' => 201, 'coursemoduleid' => 14);
         $DB->expects($this->once())
             ->method('get_recordset_sql')
-            ->will($this->returnValue(new core_completionlib_fake_recordset(array($progress1, $progress2))));
+            ->willReturn(new core_completionlib_fake_recordset([$progress1, $progress2]));
 
         $this->assertCompletionEquals(array(
                 100 => (object)array('id' => 100, 'firstname' => 'Woot', 'lastname' => 'Plugh',
@@ -1204,7 +1205,7 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('get_tracked_users')
             ->with(true,  3,  0,  '',  '',  '',  null)
-            ->will($this->returnValue($tracked));
+            ->willReturn($tracked);
         $inorequalsinvocations = $this->exactly(2);
         $DB->expects($inorequalsinvocations)
             ->method('get_in_or_equal')
@@ -1264,7 +1265,7 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $c->inform_grade_changed($cm, $item, $grade, false);
 
         // Enabled but still no grade completion required,  should still do nothing.
@@ -1272,7 +1273,7 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->inform_grade_changed($cm, $item, $grade, false);
 
         // Enabled and completion required but item number is wrong,  does nothing.
@@ -1281,7 +1282,7 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->inform_grade_changed($cm, $item, $grade, false);
 
         // Enabled and completion required and item number right. It is supposed
@@ -1293,11 +1294,11 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('update_state')
             ->with($cm, COMPLETION_COMPLETE_PASS, 31337)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->inform_grade_changed($cm, $item, $grade, false);
 
         // Same as above but marked deleted. It is supposed to call update_state
@@ -1308,11 +1309,11 @@ final class completionlib_test extends advanced_testcase {
         $c->expects($this->once())
             ->method('is_enabled')
             ->with($cm)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->expects($this->once())
             ->method('update_state')
             ->with($cm, COMPLETION_INCOMPLETE, 31337)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $c->inform_grade_changed($cm, $item, $grade, true);
     }
 

@@ -56,7 +56,7 @@ final class manager_test extends \advanced_testcase {
             ->getMock();
         $mock->expects($this->any())
             ->method('get_component_list')
-            ->will($this->returnValue($componentnames));
+            ->willReturn($componentnames);
         return $mock;
     }
 

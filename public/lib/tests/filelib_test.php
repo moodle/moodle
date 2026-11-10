@@ -298,10 +298,10 @@ final class filelib_test extends \advanced_testcase {
         $mockhelper = $this->getMockBuilder('\core\files\curl_security_helper')->getMock();
 
         // Make the mock return a different string.
-        $mockhelper->expects($this->any())->method('get_blocked_url_string')->will($this->returnValue('You shall not pass'));
+        $mockhelper->expects($this->any())->method('get_blocked_url_string')->willReturn('You shall not pass');
 
         // And make the mock security helper block all URLs. This helper instance doesn't care about config.
-        $mockhelper->expects($this->any())->method('url_is_blocked')->will($this->returnValue(true));
+        $mockhelper->expects($this->any())->method('url_is_blocked')->willReturn(true);
 
         $curl = new \curl(['securityhelper' => $mockhelper]);
         $contents = $curl->get($testhtml);

@@ -118,7 +118,7 @@ final class client_test extends advanced_testcase {
         $mock = $mockbuilder->getMock();
         $mock->expects($this->once())
             ->method('get_userinfo_mapping')
-            ->will($this->returnValue($mapping));
+            ->willReturn($mapping);
         $this->assertSame($expected, $method->invoke($mock, (object) $dataset));
     }
 }
