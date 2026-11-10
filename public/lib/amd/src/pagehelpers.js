@@ -22,14 +22,14 @@
  */
 
 /**
- * Maximum sizes for breakpoints. This needs to correspond with Bootstrap
+ * Minimum widths for breakpoints. This needs to correspond with Bootstrap
  * Breakpoints
  *
  * @private
  */
 const Sizes = {
     small: 576,
-    medium: 991,
+    medium: 992,
     large: 1400
 };
 
@@ -55,6 +55,18 @@ const Classes = {
 const isVisible = (element) => element.offsetParent !== null || getComputedStyle(element).position === 'fixed';
 
 /**
+ * Check if the viewport is at least the given width.
+ *
+ * A media query is used instead of the body width so the result matches the stylesheet breakpoints,
+ * which include the vertical scrollbar width.
+ *
+ * @param {number} width the minimum width in pixels.
+ * @returns {boolean}
+ * @private
+ */
+const isViewportAtLeast = (width) => window.matchMedia(`(min-width: ${width}px)`).matches;
+
+/**
  * Check if the current page is a Behat site.
  * @returns {boolean} true if the current page is a Behat site.
  */
@@ -74,31 +86,28 @@ export const getCurrentWidth = () => {
 /**
  * Check if the user uses an extra small size browser.
  *
- * @returns {boolean} true if the body is smaller than sizes.small max size.
+ * @returns {boolean} true if the viewport is smaller than sizes.small.
  */
 export const isExtraSmall = () => {
-    const browserWidth = getCurrentWidth();
-    return browserWidth < Sizes.small;
+    return !isViewportAtLeast(Sizes.small);
 };
 
 /**
  * Check if the user uses a small size browser.
  *
- * @returns {boolean} true if the body is smaller than sizes.medium max size.
+ * @returns {boolean} true if the viewport is smaller than sizes.medium.
  */
 export const isSmall = () => {
-    const browserWidth = getCurrentWidth();
-    return browserWidth < Sizes.medium;
+    return !isViewportAtLeast(Sizes.medium);
 };
 
 /**
  * Check if the user uses a large size browser.
  *
- * @returns {boolean} true if the body is smaller than sizes.large max size.
+ * @returns {boolean} true if the viewport is at least sizes.large.
  */
 export const isLarge = () => {
-    const browserWidth = getCurrentWidth();
-    return browserWidth >= Sizes.large;
+    return isViewportAtLeast(Sizes.large);
 };
 
 /**
