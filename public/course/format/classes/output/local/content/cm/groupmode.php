@@ -75,11 +75,13 @@ class groupmode implements named_templatable, renderable {
             return null;
         }
         $usecomponents = $this->format->supports_components();
-        if ($this->format->show_editor() && $usecomponents && !$this->mod->coursegroupmodeforce) {
+        $editing = $this->format->show_editor();
+        if ($editing && $usecomponents && !$this->mod->coursegroupmodeforce) {
             return $this->build_editor_data($output);
         }
-        // If the group mode is not editable, the no groups badge is not displayed.
-        if ($this->mod->effectivegroupmode === NOGROUPS) {
+        $groupmode = (int) $this->mod->effectivegroupmode;
+        // No groups is only indicated while editing a course that forces the group mode.
+        if ($groupmode === NOGROUPS && !($editing && $this->mod->coursegroupmodeforce)) {
             return null;
         }
         return $this->build_static_data($output);
@@ -94,21 +96,22 @@ class groupmode implements named_templatable, renderable {
         switch ($this->mod->effectivegroupmode) {
             case SEPARATEGROUPS:
                 $groupalt = get_string('groupsseparate', 'group');
-                $groupicon = $this->get_action_icon('cmSeparateGroups', $groupalt);
+                $groupicon = $this->get_action_icon('cmSeparateGroups');
                 break;
             case VISIBLEGROUPS:
                 $groupalt = get_string('groupsvisible', 'group');
-                $groupicon = $this->get_action_icon('cmVisibleGroups', $groupalt);
+                $groupicon = $this->get_action_icon('cmVisibleGroups');
                 break;
             case NOGROUPS:
             default:
                 $groupalt = get_string('groupsnone', 'group');
-                $groupicon = $this->get_action_icon('cmNoGroups', $groupalt);
+                $groupicon = $this->get_action_icon('cmNoGroups');
                 break;
         }
         $data = (object) [
             'groupicon' => $output->render($groupicon),
             'groupalt' => $groupalt,
+            'accessiblename' => get_string('groupmodewithname', 'group', $groupalt),
             'isInteractive' => false,
         ];
         return $data;
@@ -122,8 +125,41 @@ class groupmode implements named_templatable, renderable {
     protected function build_editor_data(\renderer_base $output): stdClass {
         $choice = $this->get_choice_list();
         $result = $this->get_dropdown_data($output, $choice);
-        $result->autohide = ($this->mod->effectivegroupmode === NOGROUPS);
+
+        $result->reactprops = json_encode(
+            $this->get_react_props($output, $choice),
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+        );
+
         return $result;
+    }
+
+    /**
+     * Get the props for the group mode dropdown React component.
+     * @param \renderer_base $output
+     * @param choicelist $choice the choice list
+     * @return array
+     */
+    protected function get_react_props(\renderer_base $output, choicelist $choice): array {
+        $options = [];
+        foreach ($choice->export_for_template($output)['options'] as $option) {
+            $extras = $choice->get_option_extras($option['value']);
+            $mutation = $extras['data-action'] ?? '';
+            $options[] = [
+                'value' => (int) $option['value'],
+                'label' => $option['name'],
+                'triggerlabel' => $this->get_short_label((int) $option['value']),
+                'accessiblename' => get_string('groupmodewithname', 'group', $option['name']),
+                'description' => $option['description'] ?? '',
+                'icon' => $output->render($this->get_action_icon($mutation)),
+                'mutation' => $mutation,
+            ];
+        }
+        return [
+            'cmid' => (int) $this->mod->id,
+            'value' => (int) $this->mod->effectivegroupmode,
+            'options' => $options,
+        ];
     }
 
     /**
@@ -145,6 +181,8 @@ class groupmode implements named_templatable, renderable {
             'isInteractive' => true,
             'groupicon' => $buttondata->groupicon,
             'groupalt' => $buttondata->groupalt,
+            'triggerlabel' => $this->get_short_label((int) $this->mod->effectivegroupmode),
+            'accessiblename' => $buttondata->accessiblename,
             'dropwdown' => $dropdown->export_for_template($output),
         ];
     }
@@ -204,17 +242,30 @@ class groupmode implements named_templatable, renderable {
     }
 
     /**
+     * Get the short label the control shows beside the icon.
+     * @param int $groupmode the group mode
+     * @return string
+     */
+    protected function get_short_label(int $groupmode): string {
+        $labels = [
+            NOGROUPS => 'groupsnone',
+            SEPARATEGROUPS => 'groupsseparateshort',
+            VISIBLEGROUPS => 'groupsvisibleshort',
+        ];
+        return get_string($labels[$groupmode], 'group');
+    }
+
+    /**
      * Get the group mode icon.
      * @param string $groupmode the group mode
-     * @param string $groupalt the alt text
      * @return pix_icon
      */
-    protected function get_action_icon(string $groupmode, string $groupalt = ''): pix_icon {
+    protected function get_action_icon(string $groupmode): pix_icon {
         $icons = [
             'cmNoGroups' => 'i/groupn',
             'cmSeparateGroups' => 'i/groups',
             'cmVisibleGroups' => 'i/groupv',
         ];
-        return new pix_icon($icons[$groupmode], $groupalt);
+        return new pix_icon($icons[$groupmode], '');
     }
 }

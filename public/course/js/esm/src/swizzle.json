@@ -11,6 +11,10 @@
     "eject": "risky",
     "wrap": "safe"
   },
+  "local/cm/GroupModeDropdown": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
   "local/cm/VisibilityDropdown": {
     "eject": "risky",
     "wrap": "risky"

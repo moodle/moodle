@@ -124,6 +124,7 @@ $string['groupmode_help'] = '* No groups
 The group mode set at course level is the default mode for all activities. If the group mode is forced at course level, it can\'t be changed in an activity.';
 $string['groupmodeforce'] = 'Force group mode';
 $string['groupmodeforce_help'] = 'The group mode is enforced for all activities and can\'t be changed in an activity.';
+$string['groupmodewithname'] = 'Group mode: {$a}';
 $string['groupmy'] = 'My group';
 $string['groupname'] = 'Group name';
 $string['groupnameexists'] = 'The group name \'{$a}\' already exists in this course, please choose another one.';
@@ -137,7 +138,9 @@ $string['groupsnone'] = 'No groups';
 $string['groupsonly'] = 'Groups only';
 $string['groupspreview'] = 'Groups preview';
 $string['groupsseparate'] = 'Separate groups';
+$string['groupsseparateshort'] = 'Separate';
 $string['groupsvisible'] = 'Visible groups';
+$string['groupsvisibleshort'] = 'Visible';
 $string['grouptemplate'] = 'Group @';
 $string['importgroups'] = 'Import groups';
 $string['importgroups_help'] = 'Groups may be imported via text file. The format of the file should be as follows:

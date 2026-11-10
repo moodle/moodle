@@ -1,0 +1,10 @@
+issueNumber: MDL-89321
+notes:
+  core_courseformat:
+    - message: >-
+        The `core_courseformat\output\local\content\cm\groupmode` now exports
+        the group mode dropdown for all values, including No groups, instead of
+        hiding it behind a card hover. The dropdown is rendered by the new
+        `core_course/local/cm/GroupModeDropdown` React component. The context
+        replaces `autohide` with `accessiblename` and `reactprops`.
+      type: changed

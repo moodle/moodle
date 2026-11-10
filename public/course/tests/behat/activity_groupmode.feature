@@ -18,19 +18,16 @@ Feature: Activities group mode icons behavior in course page
       | assign   | Separate groups assignment | Assignment with groupmode = 1 | C1     | assign1  | 1         |
     And I log in as "teacher1"
     When I am on "Course 1" course homepage with editing mode <editmode>
-    Then "Separate groups" "icon" should not exist in the "No groups forum" "activity"
-    And "Visible groups" "icon" should not exist in the "No groups forum" "activity"
-    And "Separate groups" "icon" should not exist in the "Visible groups database" "activity"
-    And "Visible groups" "icon" should exist in the "Visible groups database" "activity"
-    And "Separate groups" "icon" should exist in the "Separate groups assignment" "activity"
-    And "Visible groups" "icon" should not exist in the "Separate groups assignment" "activity"
+    Then "No groups forum" "core_courseformat > Activity groupmode" <nogroups>
+    And "Visible groups database" "core_courseformat > Activity groupmode" should exist
+    And "Separate groups assignment" "core_courseformat > Activity groupmode" should exist
 
     Examples:
-      | editmode | courseformat |
-      | off      | topics       |
-      | on       | topics       |
-      | off      | weeks        |
-      | on       | weeks        |
+      | courseformat | editmode | nogroups         |
+      | topics       | on       | should exist     |
+      | topics       | off      | should not exist |
+      | weeks        | on       | should exist     |
+      | weeks        | off      | should not exist |
 
   Scenario Outline: Students should not see group mode icons in both view and edit mode
     Given the following "users" exist:
@@ -48,19 +45,16 @@ Feature: Activities group mode icons behavior in course page
       | data     | Visible groups database    | Database with groupmode = 2   | C1     | data1    | 2         |
       | assign   | Separate groups assignment | Assignment with groupmode = 1 | C1     | assign1  | 1         |
     When I am on the "C1" "Course" page logged in as "student1"
-    Then "Separate groups" "icon" should not exist in the "No groups forum" "activity"
-    And "Visible groups" "icon" should not exist in the "No groups forum" "activity"
-    And "Separate groups" "icon" should not exist in the "Visible groups database" "activity"
-    And "Visible groups" "icon" should not exist in the "Visible groups database" "activity"
-    And "Separate groups" "icon" should not exist in the "Separate groups assignment" "activity"
-    And "Visible groups" "icon" should not exist in the "Separate groups assignment" "activity"
-    # Giving moodle/course:manageactivities capability would let them see the icons.
+    Then "No groups forum" "core_courseformat > Activity groupmode" should not exist
+    And "Visible groups database" "core_courseformat > Activity groupmode" should not exist
+    And "Separate groups assignment" "core_courseformat > Activity groupmode" should not exist
+    # Giving moodle/course:manageactivities capability would let them see the indicators.
     And the following "role capability" exists:
       | role                           | student |
       | moodle/course:manageactivities | allow   |
     And I am on the "C1" "Course" page
-    And "Visible groups" "icon" should exist in the "Visible groups database" "activity"
-    And "Separate groups" "icon" should exist in the "Separate groups assignment" "activity"
+    And I should see "Group mode: Visible groups" in the "Visible groups database" "core_courseformat > Activity groupmode indicator"
+    And I should see "Group mode: Separate groups" in the "Separate groups assignment" "core_courseformat > Activity groupmode indicator"
 
     Examples:
       | courseformat |
@@ -84,12 +78,13 @@ Feature: Activities group mode icons behavior in course page
       | page     | Separate groups page | Page with groupmode = 1 | C1     | page1    | 1         |
     And I log in as "teacher1"
     When I am on "Course 1" course homepage with editing mode on
-    Then "Separate groups" "icon" should not exist in the "No groups page" "activity"
-    And "Visible groups" "icon" should not exist in the "No groups page" "activity"
-    And "Separate groups" "icon" should not exist in the "Visible groups page" "activity"
-    And "Visible groups" "icon" should not exist in the "Visible groups page" "activity"
-    And "Separate groups" "icon" should not exist in the "Separate groups page" "activity"
-    And "Visible groups" "icon" should not exist in the "Separate groups page" "activity"
+    Then "No groups page" "core_courseformat > Activity groupmode" should not exist
+    And "Visible groups page" "core_courseformat > Activity groupmode" should not exist
+    And "Separate groups page" "core_courseformat > Activity groupmode" should not exist
+    And I am on "Course 1" course homepage with editing mode off
+    And "No groups page" "core_courseformat > Activity groupmode" should not exist
+    And "Visible groups page" "core_courseformat > Activity groupmode" should not exist
+    And "Separate groups page" "core_courseformat > Activity groupmode" should not exist
 
     Examples:
       | courseformat |
@@ -114,25 +109,22 @@ Feature: Activities group mode icons behavior in course page
       | page     | No groups page             | Doesn't support groupmode     | C1     | page     | 1         |
     And I log in as "teacher1"
     When I am on "Course 1" course homepage with editing mode on
-    Then "Separate groups" "icon" <separate> in the "No groups forum" "activity"
-    And "Visible groups" "icon" <visible> in the "No groups forum" "activity"
-    And "Separate groups" "icon" <separate> in the "Visible groups database" "activity"
-    And "Visible groups" "icon" <visible> in the "Visible groups database" "activity"
-    And "Separate groups" "icon" <separate> in the "Separate groups assignment" "activity"
-    And "Visible groups" "icon" <visible> in the "Separate groups assignment" "activity"
-    And "Separate groups" "icon" should not exist in the "No groups page" "activity"
-    And "Visible groups" "icon" should not exist in the "No groups page" "activity"
+    Then I should see "Group mode: <forcedname>" in the "No groups forum" "core_courseformat > Activity groupmode indicator"
+    And I should see "Group mode: <forcedname>" in the "Visible groups database" "core_courseformat > Activity groupmode indicator"
+    And I should see "Group mode: <forcedname>" in the "Separate groups assignment" "core_courseformat > Activity groupmode indicator"
+    And "<shortname>" "button" should not exist in the "Separate groups assignment" "core_courseformat > Activity groupmode"
+    And "No groups page" "core_courseformat > Activity groupmode" should not exist
 
     Examples:
-      | courseformat | groupmode | separate         | visible          |
-      | topics       | 0         | should not exist | should not exist |
-      | topics       | 1         | should exist     | should not exist |
-      | topics       | 2         | should not exist | should exist     |
-      | weeks        | 0         | should not exist | should not exist |
-      | weeks        | 1         | should exist     | should not exist |
-      | weeks        | 2         | should not exist | should exist     |
+      | courseformat | groupmode | forcedname      | shortname |
+      | topics       | 0         | No groups       | No groups |
+      | topics       | 1         | Separate groups | Separate  |
+      | topics       | 2         | Visible groups  | Visible   |
+      | weeks        | 0         | No groups       | No groups |
+      | weeks        | 1         | Separate groups | Separate  |
+      | weeks        | 2         | Visible groups  | Visible   |
 
-  Scenario Outline: Group mode icon in the course page in small devices
+  Scenario Outline: The group mode control is reachable at every viewport width
     Given the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
@@ -150,11 +142,18 @@ Feature: Activities group mode icons behavior in course page
       | page     | Page       | Doesn't support groupmode     | C1     | page     | 1         |
     And I log in as "teacher1"
     When I am on "Course 1" course homepage with editing mode on
-    And I should not see "Separate groups"
-    And I should not see "Visible groups"
+    Then "No groups" "button" in the "Forum" "core_courseformat > Activity groupmode" should be visible
+    And "Separate" "button" in the "Assignment" "core_courseformat > Activity groupmode" should be visible
+    And "Visible" "button" in the "Database" "core_courseformat > Activity groupmode" should be visible
+    And I change viewport size to "800x1024"
+    And "No groups" "button" in the "Forum" "core_courseformat > Activity groupmode" should be visible
+    And "Separate" "button" in the "Assignment" "core_courseformat > Activity groupmode" should be visible
+    And "Visible" "button" in the "Database" "core_courseformat > Activity groupmode" should be visible
     And I change viewport size to "480x800"
-    And I should see "Separate groups"
-    And I should see "Visible groups"
+    And "No groups" "button" in the "Forum" "core_courseformat > Activity groupmode" should be visible
+    And "Separate" "button" in the "Assignment" "core_courseformat > Activity groupmode" should be visible
+    And "Visible" "button" in the "Database" "core_courseformat > Activity groupmode" should be visible
+    And "Page" "core_courseformat > Activity groupmode" should not exist
 
     Examples:
       | courseformat |
