@@ -145,7 +145,7 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
             ->getMock();
         $mocklaunch->expects($this->any())
             ->method('getLaunchData')
-            ->will($this->returnCallback(
+            ->willReturnCallback(
                 function()
                 use ($resource, $mockuser, $resourcelinkid, $migrationclaiminfo, $ags, $nrps, $customparams, $aud) {
                     // This simulates the data in the jwt['body'] of a real resource link launch.
@@ -246,13 +246,13 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
                     }
                     return $data;
                 }
-            ));
+            );
 
         $mocklaunch->expects($this->any())
             ->method('getLaunchId')
-            ->will($this->returnCallback(function() {
+            ->willReturnCallback(function () {
                 return uniqid('lti1p3_launch_', true);
-            }));
+            });
 
         return $mocklaunch;
     }

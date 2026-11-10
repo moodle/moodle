@@ -59,7 +59,7 @@ final class user_favourite_service_test extends \advanced_testcase {
             ->getMock();
         $mockrepo->expects($this->any())
             ->method('add')
-            ->will($this->returnCallback(function(favourite $favourite) use (&$mockstore) {
+            ->willReturnCallback(function (favourite $favourite) use (&$mockstore) {
                 // Mock implementation of repository->add(), where an array is used instead of the DB.
                 // Duplicates are confirmed via the unique key, and exceptions thrown just like a real repo.
                 $key = $favourite->userid . $favourite->component . $favourite->itemtype . $favourite->itemid
@@ -76,11 +76,11 @@ final class user_favourite_service_test extends \advanced_testcase {
                 $favourite->id = $index;
                 $mockstore[$index] = $favourite;
                 return $mockstore[$index];
-            })
+            }
         );
         $mockrepo->expects($this->any())
             ->method('find_by')
-            ->will($this->returnCallback(function(array $criteria, int $limitfrom = 0, int $limitnum = 0) use (&$mockstore) {
+            ->willReturnCallback(function (array $criteria, int $limitfrom = 0, int $limitnum = 0) use (&$mockstore) {
                 // Check for single value key pair vs multiple.
                 $multipleconditions = [];
                 foreach ($criteria as $key => $value) {
@@ -112,11 +112,11 @@ final class user_favourite_service_test extends \advanced_testcase {
                 }
                 // Otherwise, just return the full set.
                 return $returns;
-            })
+            }
         );
         $mockrepo->expects($this->any())
             ->method('find_favourite')
-            ->will($this->returnCallback(function(int $userid, string $comp, string $type, int $id, int $ctxid) use (&$mockstore) {
+            ->willReturnCallback(function (int $userid, string $comp, string $type, int $id, int $ctxid) use (&$mockstore) {
                 // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
                 $crit = ['userid' => $userid, 'component' => $comp, 'itemtype' => $type, 'itemid' => $id, 'contextid' => $ctxid];
                 foreach ($mockstore as $fakerow) {
@@ -126,23 +126,23 @@ final class user_favourite_service_test extends \advanced_testcase {
                     }
                 }
                 throw new \dml_missing_record_exception("Item not found");
-            })
+            }
         );
         $mockrepo->expects($this->any())
             ->method('find')
-            ->will($this->returnCallback(function(int $id) use (&$mockstore) {
+            ->willReturnCallback(function (int $id) use (&$mockstore) {
                 return $mockstore[$id];
-            })
+            }
         );
         $mockrepo->expects($this->any())
             ->method('exists')
-            ->will($this->returnCallback(function(int $id) use (&$mockstore) {
+            ->willReturnCallback(function (int $id) use (&$mockstore) {
                 return array_key_exists($id, $mockstore);
-            })
+            }
         );
         $mockrepo->expects($this->any())
             ->method('count_by')
-            ->will($this->returnCallback(function(array $criteria) use (&$mockstore) {
+            ->willReturnCallback(function (array $criteria) use (&$mockstore) {
                 $count = 0;
                 // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
                 foreach ($mockstore as $index => $mockrow) {
@@ -152,21 +152,21 @@ final class user_favourite_service_test extends \advanced_testcase {
                     }
                 }
                 return $count;
-            })
+            }
         );
         $mockrepo->expects($this->any())
             ->method('delete')
-            ->will($this->returnCallback(function(int $id) use (&$mockstore) {
+            ->willReturnCallback(function (int $id) use (&$mockstore) {
                 foreach ($mockstore as $mockrow) {
                     if ($mockrow->id == $id) {
                         unset($mockstore[$id]);
                     }
                 }
-            })
+            }
         );
         $mockrepo->expects($this->any())
             ->method('exists_by')
-            ->will($this->returnCallback(function(array $criteria) use (&$mockstore) {
+            ->willReturnCallback(function (array $criteria) use (&$mockstore) {
                 // Check the mockstore for all objects with properties matching the key => val pairs in $criteria.
                 foreach ($mockstore as $index => $mockrow) {
                     $mockrowarr = (array)$mockrow;
@@ -175,7 +175,7 @@ final class user_favourite_service_test extends \advanced_testcase {
                     }
                 }
                 return false;
-            })
+            }
         );
         return $mockrepo;
     }

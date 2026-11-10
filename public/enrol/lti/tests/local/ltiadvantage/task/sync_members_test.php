@@ -131,13 +131,13 @@ final class sync_members_test extends \lti_advantage_testcase {
             ->getMock();
         $mocktask->expects($this->any())
             ->method('get_context_level_members')
-            ->will($this->returnCallback(function() {
+            ->willReturnCallback(function () {
                 return false;
-            }));
+            });
         $expectedcount = !empty($resourcelinks) ? count($resourcelinks) : 1;
         $mocktask->expects($this->exactly($expectedcount))
             ->method('get_resource_link_level_members')
-            ->will($this->returnCallback(function ($nrpsinfo, $serviceconnector, $registration, $reslink) use ($resourcelinks) {
+            ->willReturnCallback(function ($nrpsinfo, $serviceconnector, $registration, $reslink) use ($resourcelinks) {
                 if ($resourcelinks) {
                     foreach ($resourcelinks as $rl) {
                         if ($reslink->get_resourcelinkid() === $rl[0]->get_resourcelinkid()) {
@@ -147,7 +147,7 @@ final class sync_members_test extends \lti_advantage_testcase {
                 } else {
                     return self::get_mock_members_with_ids(range(1, 2));
                 }
-            }));
+            });
         return $mocktask;
     }
 
@@ -162,15 +162,15 @@ final class sync_members_test extends \lti_advantage_testcase {
             ->getMock();
         $mocktask->expects($this->any())
             ->method('get_resource_link_level_members')
-            ->will($this->returnCallback(function() {
+            ->willReturnCallback(function () {
                 // An exception is what the service code will throw if the resource link level service isn't available.
                 throw new \Exception();
-            }));
+            });
         $mocktask->expects($this->any())
             ->method('get_context_level_members')
-            ->will($this->returnCallback(function() {
+            ->willReturnCallback(function () {
                 return self::get_mock_members_with_ids(range(1, 3), null, true, true, false);
-            }));;
+            });
         return $mocktask;
     }
 
@@ -188,14 +188,14 @@ final class sync_members_test extends \lti_advantage_testcase {
             ->getMock();
         $mocktask->expects($this->any())
             ->method('get_context_level_members')
-            ->will($this->returnCallback(function() {
+            ->willReturnCallback(function () {
                 return false;
-            }));
+            });
         $mocktask->expects($this->any())
             ->method('get_resource_link_level_members')
-            ->will($this->returnCallback(function () use ($users) {
+            ->willReturnCallback(function () use ($users) {
                 return $users;
-            }));
+            });
         return $mocktask;
     }
 
