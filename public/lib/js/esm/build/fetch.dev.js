@@ -430,7 +430,7 @@ class Fetch {
     method = "GET",
     id = null
   }) {
-    if (cachekey !== null && cachekey > 1) {
+    if (cachekey !== null && cachekey > 1 && !config.batchApiAssetRequests) {
       if (id !== null) {
         throw new Error("A request ID cannot be specified for a request which bypasses the batcher.");
       }
