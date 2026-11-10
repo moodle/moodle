@@ -335,11 +335,12 @@ export default class Loader {
             // cache as a dependency of an earlier template.
             if (this.hasTemplateInCache(searchKey)) {
                 // We've seen this template so immediately resolve the existing promise.
-                return Promise.resolve(this.getTemplateFromCache(searchKey));
+                templateDeferred.resolve(this.getTemplateFromCache(searchKey));
+                return templateDeferred.promise();
             } else {
                 // We haven't seen this template yet so we need to request it from
                 // the server.
-                return batcher.performGet(
+                batcher.performGet(
                     'core',
                     `/templates/${theme}:${config.language}/${component}/${name}`,
                     {
@@ -390,7 +391,11 @@ export default class Loader {
                     return null;
                 })
                 .then((source) => templateDeferred.resolve(source))
-                .catch((error) => templateDeferred.reject(error));
+                .catch((error) => {
+                    templateDeferred.reject(error);
+                });
+
+                return templateDeferred.promise();
             }
         });
 
