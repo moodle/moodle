@@ -75,6 +75,9 @@ class visibility implements named_templatable, renderable {
      * @return stdClass|null data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): ?stdClass {
+        if (!$this->show_visibility()) {
+            return null;
+        }
         if (!$this->format->show_activity_editor_options($this->mod)) {
             return null;
         }
@@ -82,10 +85,6 @@ class visibility implements named_templatable, renderable {
         // In rare legacy cases, the section could be stealth (orphaned) but they are not editable.
         if ($editing && has_capability('moodle/course:activityvisibility', $this->mod->context)) {
             return $this->build_editor_data($output);
-        }
-        // While editing, the static indicator shows every state, so a teacher who cannot change it can still read it.
-        if (!$editing && !$this->show_visibility()) {
-            return null;
         }
         return $this->build_static_data($output);
     }
@@ -95,7 +94,9 @@ class visibility implements named_templatable, renderable {
      * @return bool
      */
     protected function show_visibility(): bool {
-        return !$this->mod->visible || $this->mod->is_stealth();
+        return $this->format->show_editor()
+            || !$this->mod->visible
+            || $this->mod->is_stealth();
     }
 
     /**

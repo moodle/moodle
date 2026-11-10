@@ -4,8 +4,10 @@ notes:
     - message: >-
         In edit mode, `core_courseformat\output\local\content\cm\visibility` now
         exports the visibility dropdown for every activity when the user can
-        change its visibility, without calling `show_visibility()`. That method
-        now only controls the static indicator outside edit mode. The dropdown
+        change its visibility, or a static indicator otherwise. Course formats
+        can continue to suppress this output by overriding `show_visibility()`
+        to return false. Outside edit mode, the default implementation only
+        displays an indicator for hidden or stealth activities. The dropdown
         is rendered by the new `core_course/local/cm/VisibilityDropdown` React
         component, and the `core_courseformat/local/content/cm/visibility`
         template uses the new `reactprops`, `state`, `icon`, `label`,

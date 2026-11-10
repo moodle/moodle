@@ -105,6 +105,67 @@ final class visibility_test extends \advanced_testcase {
     }
 
     /**
+     * Test that course formats can suppress the visibility output in every mode.
+     *
+     * @param bool $editing whether edit mode is enabled
+     * @param bool $canchangevisibility whether the user can change activity visibility
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('visibility_override_provider')]
+    public function test_visibility_override(bool $editing, bool $canchangevisibility): void {
+        global $PAGE, $USER;
+
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+        $assign = $this->getDataGenerator()->create_module('assign', ['course' => $course->id, 'section' => 1]);
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
+        if (!$canchangevisibility) {
+            $context = \context_course::instance($course->id);
+            $roleid = $this->getDataGenerator()->create_role();
+            assign_capability('moodle/course:activityvisibility', CAP_PROHIBIT, $roleid, $context);
+            $this->getDataGenerator()->role_assign($roleid, $teacher->id, $context);
+        }
+
+        $this->setUser($teacher);
+        $USER->editing = $editing ? 1 : 0;
+        $PAGE = new \moodle_page();
+        $PAGE->set_course($course);
+
+        $format = course_get_format($course);
+        $modinfo = $format->get_modinfo();
+        $cm = $modinfo->get_cm($assign->cmid);
+        $section = $modinfo->get_section_info($cm->sectionnum);
+        $this->assertSame($editing, $format->show_editor());
+        $this->assertSame($canchangevisibility, has_capability('moodle/course:activityvisibility', $cm->context));
+        $this->assertTrue($format->show_activity_editor_options($cm));
+
+        // Simulate a course format which provides its own visibility controls elsewhere.
+        $visibility = $this->getMockBuilder(visibility::class)
+            ->setConstructorArgs([$format, $section, $cm])
+            ->onlyMethods(['show_visibility'])
+            ->getMock();
+        $visibility->expects($this->once())
+            ->method('show_visibility')
+            ->willReturn(false);
+
+        $this->assertNull($visibility->export_for_template($PAGE->get_renderer('core')));
+    }
+
+    /**
+     * Scenarios for a course format overriding show_visibility().
+     *
+     * @return array
+     */
+    public static function visibility_override_provider(): array {
+        return [
+            'Edit mode, with visibility capability' => [true, true],
+            'Edit mode, without visibility capability' => [true, false],
+            'View mode, with visibility capability' => [false, true],
+            'View mode, without visibility capability' => [false, false],
+        ];
+    }
+
+    /**
      * Test the React props of the interactive dropdown.
      */
     public function test_react_props(): void {
