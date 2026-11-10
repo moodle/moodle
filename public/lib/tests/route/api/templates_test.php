@@ -45,6 +45,10 @@ final class templates_test extends route_testcase {
         array $requiredtemplates,
         array $requiredstrings,
     ): void {
+        $logfile = make_request_directory() . '/deprecated-api-route.log';
+        $previouserrorlog = ini_get('error_log');
+        ini_set('error_log', $logfile);
+
         $this->add_class_routes_to_route_loader(\core\route\api\templates::class);
         $response = $this->process_api_request('GET', "/templates/{$path}");
 
@@ -52,10 +56,11 @@ final class templates_test extends route_testcase {
         $payload = $this->decode_response($response, true);
 
         $this->assert_payload_contains($payload, $requiredtemplates, $requiredstrings);
+        ini_set('error_log', $previouserrorlog);
     }
 
     /**
-     * Data propvider for template tests.
+     * Data provider for template tests.
      *
      * @return array
      */
@@ -116,8 +121,14 @@ final class templates_test extends route_testcase {
     }
 
     public function test_template_missing(): void {
+        $logfile = make_request_directory() . '/deprecated-api-route.log';
+        $previouserrorlog = ini_get('error_log');
+        ini_set('error_log', $logfile);
+
         $this->add_class_routes_to_route_loader(\core\route\api\templates::class);
         $response = $this->process_api_request('GET', '/templates/boost/core/missing');
+
+        ini_set('error_log', $previouserrorlog);
 
         $this->assert_not_found_response($response);
     }
