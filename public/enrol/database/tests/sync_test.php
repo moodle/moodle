@@ -973,12 +973,12 @@ final class sync_test extends \advanced_testcase {
         }
 
         $plugin = enrol_get_plugin('database');
-        $method = new \ReflectionMethod($plugin, 'db_get_sql');
+        $method = new \ReflectionMethod($plugin, 'db_get_query');
 
         $payload = "courseid1\\' OR 1=1 -- ";
         $conditions = ['courseid' => $payload, 'userid' => 'userid1'];
         $result = $method->invoke($plugin, $extdb, 'extenrols', $conditions, ['roleid']);
-        $this->assertIsArray($result, 'db_get_sql() must return the statement and its parameters.');
+        $this->assertIsArray($result, 'db_get_query() must return the statement and its parameters.');
         [$sql, $params] = $result;
 
         // The value must not reach the statement at all, escaped or otherwise.
@@ -998,11 +998,11 @@ final class sync_test extends \advanced_testcase {
     }
 
     /**
-     * Data provider for {@see test_db_get_sql_parameterises_conditions}.
+     * Data provider for {@see test_db_get_query_parameterises_conditions}.
      *
      * @return array
      */
-    public static function db_get_sql_placeholder_provider(): array {
+    public static function db_get_query_placeholder_provider(): array {
         return [
             'MySQL' => [
                 'driver' => 'mysqli',
