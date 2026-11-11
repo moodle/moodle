@@ -45,7 +45,8 @@ $string['dmlexceptiononinstall'] = '<p>Įvyko duomenų bazės klaida [{$a->error
 $string['downloadedfilecheckfailed'] = 'Nepavyko patikrinti atsisiųsto failo';
 $string['invalidmd5'] = 'Kintamojo patikra nepavyko – bandykite dar kartą';
 $string['missingrequiredfield'] = 'Trūksta būtino lauko';
-$string['remotedownloaderror'] = 'Nepavyko į serverį atsisiųsti komponento, patikrinkite tarpinio serverio parametrus, labai rekomenduojama naudoti PHP cURL plėtinį.<br /><br />Turite rankiniu būdu atsisiųsti <a href="{$a->url}">{$a->url}</a> failą, nukopijuoti jį į {$a->dest} serveryje ir ten jį išskleisti.';
+$string['remotedownloaderror'] = '<p>Nepavyko į serverį atsisiųsti komponento. Patikrinkite tarpinio serverio parametrus; labai rekomenduojama naudoti PHP cURL plėtinį.</p>
+<p>Turite rankiniu būdu atsisiųsti <a href="{$a->url}">{$a->url}</a> failą, nukopijuoti jį į „{$a->dest}“ serveryje ir ten jį išskleisti.</p>';
 $string['wrongdestpath'] = 'Neteisingas paskirties kelias';
 $string['wrongsourcebase'] = 'Neteisingas šaltinio URL pagrindas';
 $string['wrongzipfilename'] = 'Neteisingas ZIP failo vardas';
