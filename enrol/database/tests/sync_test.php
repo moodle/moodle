@@ -1008,28 +1008,22 @@ final class sync_test extends \advanced_testcase {
      * @return array
      */
     public static function db_get_query_placeholder_provider(): array {
-        return [
-            'MySQL' => [
-                'driver' => 'mysqli',
-                'first' => '?',
-                'second' => '?',
-            ],
-            'PostgreSQL' => [
-                'driver' => 'postgres',
-                'first' => '$1',
-                'second' => '$2',
-            ],
-            'MSSQL' => [
-                'driver' => 'mssqlnative',
-                'first' => '?',
-                'second' => '?',
-            ],
-            'Oracle oci8' => [
-                'driver' => 'oci8',
-                'first' => ':p0',
-                'second' => ':p1',
-            ],
+        // Each driver needs its PHP extension to instantiate; oci8 is mocked so it is always available.
+        $drivers = [
+            'MySQL' => ['driver' => 'mysqli', 'first' => '?', 'second' => '?', 'extension' => 'mysqli'],
+            'PostgreSQL' => ['driver' => 'postgres', 'first' => '$1', 'second' => '$2', 'extension' => 'pgsql'],
+            'MSSQL' => ['driver' => 'mssqlnative', 'first' => '?', 'second' => '?', 'extension' => 'sqlsrv'],
+            'Oracle oci8' => ['driver' => 'oci8', 'first' => ':p0', 'second' => ':p1', 'extension' => null],
         ];
+
+        $cases = [];
+        foreach ($drivers as $name => ['extension' => $extension, 'driver' => $driver, 'first' => $first, 'second' => $second]) {
+            if ($extension !== null && !extension_loaded($extension)) {
+                continue;
+            }
+            $cases[$name] = ['driver' => $driver, 'first' => $first, 'second' => $second];
+        }
+        return $cases;
     }
 
     /**
