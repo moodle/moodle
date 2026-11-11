@@ -36,7 +36,7 @@ function ViewSelector({ activeOrder, onChange }) {
         "aria-label": toggleLabel,
         "aria-controls": menuId,
         title: menuLabel,
-        children: /* @__PURE__ */ jsxDEV("span", { "data-active-item-text": "", children: /* @__PURE__ */ jsxDEV(String, { identifier: activeOption.labelKey, component: "block_timeline", children: "" }, void 0, false, {
+        children: /* @__PURE__ */ jsxDEV("span", { "data-active-item-text": "", children: /* @__PURE__ */ jsxDEV(String, { identifier: activeOption.labelKey, component: "block_timeline" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/nav/ViewSelector.tsx",
           lineNumber: 79,
           columnNumber: 21
@@ -76,7 +76,7 @@ function ViewSelector({ activeOrder, onChange }) {
               event.preventDefault();
               onChange(option.name);
             },
-            children: /* @__PURE__ */ jsxDEV(String, { identifier: option.labelKey, component: "block_timeline", children: "" }, void 0, false, {
+            children: /* @__PURE__ */ jsxDEV(String, { identifier: option.labelKey, component: "block_timeline" }, void 0, false, {
               fileName: "public/blocks/timeline/js/esm/src/nav/ViewSelector.tsx",
               lineNumber: 104,
               columnNumber: 25

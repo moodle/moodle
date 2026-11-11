@@ -231,7 +231,7 @@ export default function CoursesView({
                 <div className='text-xs-center text-center mt-3' data-region='no-events-empty-message'>
                     <img src={noeventsurl} className='timeline-empty-icon' alt='' />
                     <p className='text-muted mt-1'>
-                        <String identifier='noevents' component='block_timeline'>{''}</String>
+                        <String identifier='noevents' component='block_timeline' />
                     </p>
                 </div>
             );
@@ -241,7 +241,7 @@ export default function CoursesView({
             <div className='text-xs-center text-center mt-3' data-region='no-courses-empty-message'>
                 <img src={nocoursesurl} className='timeline-empty-icon' alt='' />
                 <p className='text-muted mt-1'>
-                    <String identifier='nocoursesinprogress' component='block_timeline'>{''}</String>
+                    <String identifier='nocoursesinprogress' component='block_timeline' />
                 </p>
             </div>
         );
@@ -365,7 +365,7 @@ export default function CoursesView({
                                                     <String
                                                         identifier='noevents'
                                                         component='block_timeline'
-                                                    >{''}</String>
+                                                    />
                                                 </p>
                                             </div>
                                         )
