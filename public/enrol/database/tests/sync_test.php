@@ -944,7 +944,7 @@ final class sync_test extends \advanced_testcase {
      * @param string $first expected placeholder for the first condition.
      * @param string $second expected placeholder for the second condition.     *
      * @covers \enrol_database_plugin::db_get_sql
-     * @dataProvider db_get_sql_placeholder_provider
+     * @dataProvider db_get_query_placeholder_provider
      */
     public function test_db_get_sql_parameterises_conditions(string $driver, string $first, string $second): void {
         global $CFG;
