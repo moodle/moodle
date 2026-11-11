@@ -12,6 +12,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- The behat steps `following "..." should download a file that:` and `following "..." in the "..." "..." should download a file that:` now accept an optional selector type, so a download can be triggered from any element, not just a link. For example: `following "Export as Moodle XML" "button" in the "#bulkactionsui-container" "css_element" should download a file that:`. Anything that submits a form is supported, and the form data is sent with the request as the browser would send it.
+
+  For more information see [MDL-86636](https://tracker.moodle.org/browse/MDL-86636)
 - Added `theme_build_editor_css_for_themes()` to `lib/outputlib.php` to build and cache the editor content CSS for themes without changing the theme revisions. The editor content CSS is now cached in the `core/postprocessedcss` cache, using the new `theme_config::get_editor_css_cache_key()`, `theme_config::get_editor_css_cached_content()` and `theme_config::set_editor_css_content_cache()` methods.
 
   For more information see [MDL-90110](https://tracker.moodle.org/browse/MDL-90110)
@@ -23,6 +26,23 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - update_state() now accepts COMPLETION_COMPLETE_PASS when overriding, and a later automatic call (e.g. a grade change) recomputes the complete/complete-pass substate for an overridden activity instead of leaving it frozen.
 
   For more information see [MDL-87084](https://tracker.moodle.org/browse/MDL-87084)
+
+### enrol_database
+
+#### Deprecated
+
+- The protected `db_get_sql()` method of `enrol_database_plugin` has been deprecated in favour of the new protected `db_get_query()` method. It takes the external database `ADOConnection` as its first parameter and returns an array of `[$sql, $params]`, so condition values are bound by the driver instead of being escaped and concatenated into the statement. The placeholders are generated with the connection's `Param()` method, so each ADOdb driver (including Oracle `oci8`) gets the syntax it binds natively. The plugin itself no longer calls `db_get_sql()`.
+
+  For more information see [MDL-90353](https://tracker.moodle.org/browse/MDL-90353)
+- The `db_addslashes()` method of `enrol_database_plugin` has been deprecated, because external database queries now use parameterised statements instead.
+
+  For more information see [MDL-90353](https://tracker.moodle.org/browse/MDL-90353)
+
+#### Removed
+
+- The `dbsybasequoting` admin setting has been removed, since it was only ever used by the now-deprecated `db_addslashes()` method. Any stored value is deleted on upgrade.
+
+  For more information see [MDL-90353](https://tracker.moodle.org/browse/MDL-90353)
 
 ## 5.2.4
 
