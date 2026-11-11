@@ -7,6 +7,15 @@
 - A new Behat step `I drop file "<path>" on "<element>" "<selectortype>"` has been added to `behat_general`. It dispatches a real HTML5 `DragEvent` sequence with a populated `DataTransfer`, allowing scenarios to exercise drop zones backed by `dndupload.js` and similar HTML5 file-drop code paths. The legacy `behat_general::i_drag_and_i_drop_it_in` simulates pointer events via jQuery-UI and cannot trigger HTML5 file drops.
 
   For more information see [MDL-76512](https://tracker.moodle.org/browse/MDL-76512)
+- Add support for deprecation of API routes
+
+  For more information see [MDL-82652](https://tracker.moodle.org/browse/MDL-82652)
+- The behat steps `following "..." should download a file that:` and `following "..." in the "..." "..." should download a file that:` now accept an optional selector type, so a download can be triggered from any element, not just a link. For example: `following "Export as Moodle XML" "button" in the "#bulkactionsui-container" "css_element" should download a file that:`. Anything that submits a form is supported, and the form data is sent with the request as the browser would send it.
+
+  For more information see [MDL-86636](https://tracker.moodle.org/browse/MDL-86636)
+- The `core/inplace_editable` trigger can now also be activated with the Space key, and moving the focus away from the editor (for example with Tab) no longer returns the focus to the trigger.
+
+  For more information see [MDL-87832](https://tracker.moodle.org/browse/MDL-87832)
 - A new `\core\hook\output\before_help_icon_rendered` hook is dispatched when a help icon is rendered. Callbacks can modify the template context (e.g. the popover `text`), add HTML before or after the icon using `add_before_icon()` and `add_after_icon()`, or replace the whole help icon output using `set_replacement()`.
 
   For more information see [MDL-88319](https://tracker.moodle.org/browse/MDL-88319)
@@ -16,9 +25,31 @@
 
 ### Changed
 
+- Help buttons are no longer matched by the `icon` Behat named selector, because the icon no longer carries a `title` attribute, nor by the `button` selector, because a help button is named after the thing it offers help for and would otherwise answer to that thing's name. A new `help_icon` named selector locates them by their accessible name, for example `I click on "Help with Choose licence" "help_icon"`. Behat tests that locate a help button with the `icon` or `button` selector must use the `help_icon` selector instead.
+
+  For more information see [MDL-63567](https://tracker.moodle.org/browse/MDL-63567)
+- The `core/help_icon` template now renders a `<button>` element instead of an `<a role="button">`, and the help button is named by an `aria-label` carrying the specific "Help with <name>" text rather than a generic "Help". Callers that build the template context by hand rather than through `help_icon::export_for_template()` should supply an `alt` value so that the name says what the help is for; those that do not fall back to a generic name. The icon inside it no longer carries `alt` or `title` attributes, so it is not announced separately and no longer shows a hover tooltip. Code that targets the help button as a link, such as `querySelector('a')` over rendered help icon markup, or CSS matching `a.help-icon`, must target the `.help-icon` element itself instead.
+
+  For more information see [MDL-63567](https://tracker.moodle.org/browse/MDL-63567)
 - Admin settings now dispatch the `core\hook\admin_setting_notification` hook when rendering each setting row. Plugins can implement a listener for this hook to add custom `\core\output\notification` messages (info, warning, success, or error).
 
   For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+- The following core icons are now mapped to `fa-pencil` instead of `fa-pen` in `\core\output\icon_system_fontawesome`: `core:b/document-edit`, `core:b/edit-copy`, `core:i/bulk_edit`, `core:i/edit`, `core:t/edit`, `core:t/editinline`, `core:t/editstring` and `core:t/passwordunmask-edit`. Themes or plugins that override these icons, or that target the `fa-pen` class in their styles or tests, should be updated accordingly.
+
+  For more information see [MDL-87832](https://tracker.moodle.org/browse/MDL-87832)
+- TypeScript sources under js/esm/src are now linted with XO. The linter runs before the bundles are built, so grunt esm and grunt js fail when it reports a problem in a plugin's TypeScript. Run grunt xo to lint on its own, or grunt xo --fix to apply the fixes XO can make automatically. Rules live in xo.config.mjs. JavaScript is unaffected and stays on ESLint.
+  For the rules and Moodle's overrides, see https://moodledev.io/general/development/policies/codingstyle/typescript
+
+  For more information see [MDL-87988](https://tracker.moodle.org/browse/MDL-87988)
+- The `core/Storage` ESM module has been renamed to `core/storage` to follow the ESM naming conventions. ESM code importing `@moodle/lms/core/Storage` must import `@moodle/lms/core/storage` instead. AMD code using `core/localstorage`, `core/sessionstorage` or `core/storagewrapper` is not affected.
+
+  For more information see [MDL-89230](https://tracker.moodle.org/browse/MDL-89230)
+- The eye icons now use the solid Font Awesome style site-wide. This affects the `core:i/hide`, `core:i/show`, `core:t/hide` and `core:t/show` mappings, and the `mod_scorm:browsed` mapping. The corresponding SVG fallbacks have also been updated. Themes and plugins using these icons inherit the new appearance unless they override them. Theme and plugin developers should review any icon overrides to keep them consistent with the solid style.
+
+  For more information see [MDL-89320](https://tracker.moodle.org/browse/MDL-89320)
+- The group mode icons now have a Font Awesome mapping. The `core:i/groupn`, `core:i/groups` and `core:i/groupv` icons were previously unmapped and rendered as their pix images, and now render as `fa-users-slash`, `fa-users-between-lines` and `fa-users`. The `i/groups` SVG fallback has been updated to match its new glyph.
+
+  For more information see [MDL-89321](https://tracker.moodle.org/browse/MDL-89321)
 
 ### Deprecated
 
@@ -28,12 +59,24 @@
 - The `override` and `warning` context variables of the `core_admin/setting` template are deprecated and are no longer rendered by core. Use the new `notifications` context variable instead. Theme and plugin overrides of this template should be updated; the old variables are still provided until their final deprecation.
 
   For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+- The following methods in the `\core\oauth2\server\repository\scope_repository` class have been deprecated and replaced:
+
+  | Method name | Replacement |
+  | ----------- | ----------- |
+  | `get_scope_map` | `\core\router\scope\util::get_scope_map()` |
+  | `get_all_scopes` | `\core\router\scope\util::get_all_scopes()` |
+
+  For more information see [MDL-90494](https://tracker.moodle.org/browse/MDL-90494)
 
 ### Removed
 
 - Remove the polyfills in `lib/polyfills`. These were primarily for IE support and can now go, as all browsers now support the features each of the polyfills provided.
 
   For more information see [MDL-76512](https://tracker.moodle.org/browse/MDL-76512)
+- The grunt eslint:react task has been removed. Use grunt xo instead.
+  For full documentation, see https://moodledev.io/general/development/policies/codingstyle/typescript
+
+  For more information see [MDL-87988](https://tracker.moodle.org/browse/MDL-87988)
 
 ## 5.3
 

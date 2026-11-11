@@ -1,5 +1,25 @@
 # core_courseformat (subsystem / plugintype) Upgrade notes
 
+## 6.0dev
+
+### Changed
+
+- When the activity name is editable (editing mode on and the user can manage activities), the `core_courseformat/local/content/cm/title` template no longer renders a link to the activity. The whole title is now the inplace editable trigger, so clicking it renames the activity instead of opening it. Behat scenarios that click an activity name on the course page with editing mode on should navigate with `I am on the "<activity name>" "<modname> activity" page` instead.
+
+  For more information see [MDL-87832](https://tracker.moodle.org/browse/MDL-87832)
+- The `core_courseformat/local/content/cm/cmicon` template now mounts the `core_course/ActivityIcon` React component, using the design system ActivityIcon, for activities that have an icon in the design system. The previous markup moved to the new `core_courseformat/local/content/cm/cmiconfallback` template, which is rendered inside the mount point until the component loads and on its own for the other activities. Theme overrides of `cmicon` keep the previous icon unless they render the mount point. The `cmicon` context now provides `reactprops`, and `showtooltip` was replaced by `showlabel`, which displays the activity type label to teachers while editing. The icon no longer has an `alt` or `title`, as the activity type is announced by the activity link.
+
+  For more information see [MDL-87840](https://tracker.moodle.org/browse/MDL-87840)
+- The icons of the activities that have an icon in the design system are now rendered by the design system. Themes that customise activity icons by replacing `pix_plugins/mod/<modname>/monologo.svg` or `pix_core/f/*.svg` will need to be updated to use their custom icons. Themes can wrap or eject the `core_course/ActivityIcon` component with the `swizzle` command to customise the icons. Activities with an icon of their own, for example a LTI tool, keep their server-rendered icon.
+
+  For more information see [MDL-87840](https://tracker.moodle.org/browse/MDL-87840)
+- In edit mode, `core_courseformat\output\local\content\cm\visibility` now exports the visibility dropdown for every activity when the user can change its visibility, or a static indicator otherwise. Course formats can continue to suppress this output by overriding `show_visibility()` to return false. Outside edit mode, the default implementation only displays an indicator for hidden or stealth activities. The dropdown is rendered by the new `core_course/local/cm/VisibilityDropdown` React component, and the `core_courseformat/local/content/cm/visibility` template uses the new `reactprops`, `state`, `icon`, `label`, `accessiblename` and `tooltip` context variables.
+
+  For more information see [MDL-89320](https://tracker.moodle.org/browse/MDL-89320)
+- The `core_courseformat\output\local\content\cm\groupmode` now exports the group mode dropdown for all values, including No groups, instead of hiding it behind a card hover. The dropdown is rendered by the new `core_course/local/cm/GroupModeDropdown` React component. The context replaces `autohide` with `accessiblename` and `reactprops`.
+
+  For more information see [MDL-89321](https://tracker.moodle.org/browse/MDL-89321)
+
 ## 5.3
 
 ### Added

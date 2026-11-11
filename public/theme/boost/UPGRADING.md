@@ -10,6 +10,9 @@
 
 ### Changed
 
+- The activity card grid areas were rearranged so the icon, the group mode, the completion and the actions share the first row, and the name moves to its own row. The new `$activity-controls-height` SCSS variable sets the height of those controls to 28px, down from 32px.
+
+  For more information see [MDL-87840](https://tracker.moodle.org/browse/MDL-87840)
 - The top navbar is now 64px tall instead of 60px. The `$navbar-height` SCSS variable and the `--navbar-height` custom property reflect the new value, so anything positioned from them follows automatically. Themes or plugins that hardcode the old 60px offset need updating.
 
   For more information see [MDL-89293](https://tracker.moodle.org/browse/MDL-89293)

@@ -15,6 +15,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - A new Behat step `I drop file "<path>" on "<element>" "<selectortype>"` has been added to `behat_general`. It dispatches a real HTML5 `DragEvent` sequence with a populated `DataTransfer`, allowing scenarios to exercise drop zones backed by `dndupload.js` and similar HTML5 file-drop code paths. The legacy `behat_general::i_drag_and_i_drop_it_in` simulates pointer events via jQuery-UI and cannot trigger HTML5 file drops.
 
   For more information see [MDL-76512](https://tracker.moodle.org/browse/MDL-76512)
+- Add support for deprecation of API routes
+
+  For more information see [MDL-82652](https://tracker.moodle.org/browse/MDL-82652)
+- The behat steps `following "..." should download a file that:` and `following "..." in the "..." "..." should download a file that:` now accept an optional selector type, so a download can be triggered from any element, not just a link. For example: `following "Export as Moodle XML" "button" in the "#bulkactionsui-container" "css_element" should download a file that:`. Anything that submits a form is supported, and the form data is sent with the request as the browser would send it.
+
+  For more information see [MDL-86636](https://tracker.moodle.org/browse/MDL-86636)
+- The `core/inplace_editable` trigger can now also be activated with the Space key, and moving the focus away from the editor (for example with Tab) no longer returns the focus to the trigger.
+
+  For more information see [MDL-87832](https://tracker.moodle.org/browse/MDL-87832)
 - A new `\core\hook\output\before_help_icon_rendered` hook is dispatched when a help icon is rendered. Callbacks can modify the template context (e.g. the popover `text`), add HTML before or after the icon using `add_before_icon()` and `add_after_icon()`, or replace the whole help icon output using `set_replacement()`.
 
   For more information see [MDL-88319](https://tracker.moodle.org/browse/MDL-88319)
@@ -24,9 +33,31 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Changed
 
+- Help buttons are no longer matched by the `icon` Behat named selector, because the icon no longer carries a `title` attribute, nor by the `button` selector, because a help button is named after the thing it offers help for and would otherwise answer to that thing's name. A new `help_icon` named selector locates them by their accessible name, for example `I click on "Help with Choose licence" "help_icon"`. Behat tests that locate a help button with the `icon` or `button` selector must use the `help_icon` selector instead.
+
+  For more information see [MDL-63567](https://tracker.moodle.org/browse/MDL-63567)
+- The `core/help_icon` template now renders a `<button>` element instead of an `<a role="button">`, and the help button is named by an `aria-label` carrying the specific "Help with <name>" text rather than a generic "Help". Callers that build the template context by hand rather than through `help_icon::export_for_template()` should supply an `alt` value so that the name says what the help is for; those that do not fall back to a generic name. The icon inside it no longer carries `alt` or `title` attributes, so it is not announced separately and no longer shows a hover tooltip. Code that targets the help button as a link, such as `querySelector('a')` over rendered help icon markup, or CSS matching `a.help-icon`, must target the `.help-icon` element itself instead.
+
+  For more information see [MDL-63567](https://tracker.moodle.org/browse/MDL-63567)
 - Admin settings now dispatch the `core\hook\admin_setting_notification` hook when rendering each setting row. Plugins can implement a listener for this hook to add custom `\core\output\notification` messages (info, warning, success, or error).
 
   For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+- The following core icons are now mapped to `fa-pencil` instead of `fa-pen` in `\core\output\icon_system_fontawesome`: `core:b/document-edit`, `core:b/edit-copy`, `core:i/bulk_edit`, `core:i/edit`, `core:t/edit`, `core:t/editinline`, `core:t/editstring` and `core:t/passwordunmask-edit`. Themes or plugins that override these icons, or that target the `fa-pen` class in their styles or tests, should be updated accordingly.
+
+  For more information see [MDL-87832](https://tracker.moodle.org/browse/MDL-87832)
+- TypeScript sources under js/esm/src are now linted with XO. The linter runs before the bundles are built, so grunt esm and grunt js fail when it reports a problem in a plugin's TypeScript. Run grunt xo to lint on its own, or grunt xo --fix to apply the fixes XO can make automatically. Rules live in xo.config.mjs. JavaScript is unaffected and stays on ESLint.
+  For the rules and Moodle's overrides, see https://moodledev.io/general/development/policies/codingstyle/typescript
+
+  For more information see [MDL-87988](https://tracker.moodle.org/browse/MDL-87988)
+- The `core/Storage` ESM module has been renamed to `core/storage` to follow the ESM naming conventions. ESM code importing `@moodle/lms/core/Storage` must import `@moodle/lms/core/storage` instead. AMD code using `core/localstorage`, `core/sessionstorage` or `core/storagewrapper` is not affected.
+
+  For more information see [MDL-89230](https://tracker.moodle.org/browse/MDL-89230)
+- The eye icons now use the solid Font Awesome style site-wide. This affects the `core:i/hide`, `core:i/show`, `core:t/hide` and `core:t/show` mappings, and the `mod_scorm:browsed` mapping. The corresponding SVG fallbacks have also been updated. Themes and plugins using these icons inherit the new appearance unless they override them. Theme and plugin developers should review any icon overrides to keep them consistent with the solid style.
+
+  For more information see [MDL-89320](https://tracker.moodle.org/browse/MDL-89320)
+- The group mode icons now have a Font Awesome mapping. The `core:i/groupn`, `core:i/groups` and `core:i/groupv` icons were previously unmapped and rendered as their pix images, and now render as `fa-users-slash`, `fa-users-between-lines` and `fa-users`. The `i/groups` SVG fallback has been updated to match its new glyph.
+
+  For more information see [MDL-89321](https://tracker.moodle.org/browse/MDL-89321)
 
 #### Deprecated
 
@@ -36,12 +67,24 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `override` and `warning` context variables of the `core_admin/setting` template are deprecated and are no longer rendered by core. Use the new `notifications` context variable instead. Theme and plugin overrides of this template should be updated; the old variables are still provided until their final deprecation.
 
   For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+- The following methods in the `\core\oauth2\server\repository\scope_repository` class have been deprecated and replaced:
+
+  | Method name | Replacement |
+  | ----------- | ----------- |
+  | `get_scope_map` | `\core\router\scope\util::get_scope_map()` |
+  | `get_all_scopes` | `\core\router\scope\util::get_all_scopes()` |
+
+  For more information see [MDL-90494](https://tracker.moodle.org/browse/MDL-90494)
 
 #### Removed
 
 - Remove the polyfills in `lib/polyfills`. These were primarily for IE support and can now go, as all browsers now support the features each of the polyfills provided.
 
   For more information see [MDL-76512](https://tracker.moodle.org/browse/MDL-76512)
+- The grunt eslint:react task has been removed. Use grunt xo instead.
+  For full documentation, see https://moodledev.io/general/development/policies/codingstyle/typescript
+
+  For more information see [MDL-87988](https://tracker.moodle.org/browse/MDL-87988)
 
 ### core_completion
 
@@ -65,6 +108,34 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-87838](https://tracker.moodle.org/browse/MDL-87838)
 
+### core_courseformat
+
+#### Changed
+
+- When the activity name is editable (editing mode on and the user can manage activities), the `core_courseformat/local/content/cm/title` template no longer renders a link to the activity. The whole title is now the inplace editable trigger, so clicking it renames the activity instead of opening it. Behat scenarios that click an activity name on the course page with editing mode on should navigate with `I am on the "<activity name>" "<modname> activity" page` instead.
+
+  For more information see [MDL-87832](https://tracker.moodle.org/browse/MDL-87832)
+- The `core_courseformat/local/content/cm/cmicon` template now mounts the `core_course/ActivityIcon` React component, using the design system ActivityIcon, for activities that have an icon in the design system. The previous markup moved to the new `core_courseformat/local/content/cm/cmiconfallback` template, which is rendered inside the mount point until the component loads and on its own for the other activities. Theme overrides of `cmicon` keep the previous icon unless they render the mount point. The `cmicon` context now provides `reactprops`, and `showtooltip` was replaced by `showlabel`, which displays the activity type label to teachers while editing. The icon no longer has an `alt` or `title`, as the activity type is announced by the activity link.
+
+  For more information see [MDL-87840](https://tracker.moodle.org/browse/MDL-87840)
+- The icons of the activities that have an icon in the design system are now rendered by the design system. Themes that customise activity icons by replacing `pix_plugins/mod/<modname>/monologo.svg` or `pix_core/f/*.svg` will need to be updated to use their custom icons. Themes can wrap or eject the `core_course/ActivityIcon` component with the `swizzle` command to customise the icons. Activities with an icon of their own, for example a LTI tool, keep their server-rendered icon.
+
+  For more information see [MDL-87840](https://tracker.moodle.org/browse/MDL-87840)
+- In edit mode, `core_courseformat\output\local\content\cm\visibility` now exports the visibility dropdown for every activity when the user can change its visibility, or a static indicator otherwise. Course formats can continue to suppress this output by overriding `show_visibility()` to return false. Outside edit mode, the default implementation only displays an indicator for hidden or stealth activities. The dropdown is rendered by the new `core_course/local/cm/VisibilityDropdown` React component, and the `core_courseformat/local/content/cm/visibility` template uses the new `reactprops`, `state`, `icon`, `label`, `accessiblename` and `tooltip` context variables.
+
+  For more information see [MDL-89320](https://tracker.moodle.org/browse/MDL-89320)
+- The `core_courseformat\output\local\content\cm\groupmode` now exports the group mode dropdown for all values, including No groups, instead of hiding it behind a card hover. The dropdown is rendered by the new `core_course/local/cm/GroupModeDropdown` React component. The context replaces `autohide` with `accessiblename` and `reactprops`.
+
+  For more information see [MDL-89321](https://tracker.moodle.org/browse/MDL-89321)
+
+### core_grades
+
+#### Deprecated
+
+- The behat steps `following "..." button should download an outcome file that:` and `following "..." link should download an outcome file that:` are deprecated. Use the equivalent `should download a file that:` steps in `behat_download` instead, which work with any element.
+
+  For more information see [MDL-86636](https://tracker.moodle.org/browse/MDL-86636)
+
 ### core_user
 
 #### Added
@@ -72,6 +143,23 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - A new hook, \core_user\hook\before_deletion_confirmation_html_generation, has been added to allow plugins to extend user deletion confirmation messaging. The hook is dispatched by \core\user::get_deletion_confirmation_text(). Plugins can append HTML to the confirmation dialog by registering a callback in db/hooks.php and calling $hook->add_html($html).
 
   For more information see [MDL-62843](https://tracker.moodle.org/browse/MDL-62843)
+
+### enrol_database
+
+#### Deprecated
+
+- The protected `db_get_sql()` method of `enrol_database_plugin` has been deprecated in favour of the new protected `db_get_query()` method. It takes the external database `ADOConnection` as its first parameter and returns an array of `[$sql, $params]`, so condition values are bound by the driver instead of being escaped and concatenated into the statement. The placeholders are generated with the connection's `Param()` method, so each ADOdb driver (including Oracle `oci8`) gets the syntax it binds natively. The plugin itself no longer calls `db_get_sql()`.
+
+  For more information see [MDL-90353](https://tracker.moodle.org/browse/MDL-90353)
+- The `db_addslashes()` method of `enrol_database_plugin` has been deprecated, because external database queries now use parameterised statements instead.
+
+  For more information see [MDL-90353](https://tracker.moodle.org/browse/MDL-90353)
+
+#### Removed
+
+- The `dbsybasequoting` admin setting has been removed, since it was only ever used by the now-deprecated `db_addslashes()` method. Any stored value is deleted on upgrade.
+
+  For more information see [MDL-90353](https://tracker.moodle.org/browse/MDL-90353)
 
 ### qtype
 
@@ -91,6 +179,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Changed
 
+- The activity card grid areas were rearranged so the icon, the group mode, the completion and the actions share the first row, and the name moves to its own row. The new `$activity-controls-height` SCSS variable sets the height of those controls to 28px, down from 32px.
+
+  For more information see [MDL-87840](https://tracker.moodle.org/browse/MDL-87840)
 - The top navbar is now 64px tall instead of 60px. The `$navbar-height` SCSS variable and the `--navbar-height` custom property reflect the new value, so anything positioned from them follows automatically. Themes or plugins that hardcode the old 60px offset need updating.
 
   For more information see [MDL-89293](https://tracker.moodle.org/browse/MDL-89293)

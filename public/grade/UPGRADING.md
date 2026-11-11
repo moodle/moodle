@@ -1,5 +1,13 @@
 # core_grades (subsystem) Upgrade notes
 
+## 6.0dev
+
+### Deprecated
+
+- The behat steps `following "..." button should download an outcome file that:` and `following "..." link should download an outcome file that:` are deprecated. Use the equivalent `should download a file that:` steps in `behat_download` instead, which work with any element.
+
+  For more information see [MDL-86636](https://tracker.moodle.org/browse/MDL-86636)
+
 ## 5.3
 
 ### Added
