@@ -1,6 +1,6 @@
 # core (subsystem) Upgrade notes
 
-## 5.2.4+
+## 5.2.5
 
 ### Added
 
