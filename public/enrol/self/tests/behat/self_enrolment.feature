@@ -169,3 +169,28 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I navigate to "Enrol me in this course" in current page administration
     And I click on "Enrol me" "button"
     Then I should see "New section"
+
+  @javascript
+  Scenario: Self-enrolling from the course menu returns the user to that course
+    Given the following "courses" exist:
+      | fullname | shortname | format |
+      | Course 2 | C2        | topics |
+    And I log in as "admin"
+    And I am on the "Course 1" "enrolment methods" page
+    And I click on "Enable" "link" in the "Self enrolment as 'Student'" "table_row"
+    And I am on the "Course 2" "enrolment methods" page
+    And I click on "Enable" "link" in the "Self enrolment as 'Student'" "table_row"
+    And I click on "Edit" "link" in the "Guest access" "table_row"
+    And I set the following fields to these values:
+      | Allow guest access | Yes |
+    And I press "Save changes"
+    And I log out
+    And I log in as "student1"
+    # Visiting Course 1 without enrolling leaves Course 1 as the page to return to after enrolment.
+    And I am on "Course 1" course homepage
+    And I should see "Enrolment options"
+    When I am on "Course 2" course homepage
+    And I navigate to "Enrol me in this course" in current page administration
+    And I click on "Enrol me" "button"
+    Then I should see "Course 2" in the "page-header" "region"
+    And I should not see "Enrolment options"
