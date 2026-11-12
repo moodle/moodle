@@ -27,10 +27,16 @@ require_once("$CFG->libdir/formslib.php");
 
 $id = required_param('id', PARAM_INT);
 $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
+// Where to go after enrolling. Takes priority over any existing $SESSION->wantsurl, which may have been
+// left behind by an earlier visit to the enrolment page of a different course.
+$wantsurl = optional_param('wantsurl', '', PARAM_LOCALURL);
+if ($wantsurl !== '') {
+    $SESSION->wantsurl = (new moodle_url($wantsurl))->out(false);
+}
 
 if (!isloggedin()) {
     $referer = get_local_referer();
-    if (empty($referer)) {
+    if (empty($referer) && $wantsurl === '') {
         // A user that is not logged in has arrived directly on this page,
         // they should be redirected to the course page they are trying to enrol on after logging in.
         $SESSION->wantsurl = "$CFG->wwwroot/course/view.php?id=$id";
