@@ -1,6 +1,6 @@
 # enrol_database Upgrade notes
 
-## 4.5.15+
+## 4.5.16
 
 ### Deprecated
 
@@ -16,4 +16,3 @@
 - The `dbsybasequoting` admin setting has been removed, since it was only ever used by the now-deprecated `db_addslashes()` method. Any stored value is deleted on upgrade.
 
   For more information see [MDL-90353](https://tracker.moodle.org/browse/MDL-90353)
-
