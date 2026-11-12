@@ -787,4 +787,25 @@ final class progress_test extends \advanced_testcase {
         // The next call in the same request must not serve the stale 100% cached value.
         $this->assertEquals(0, progress::get_course_progress_percentage($course, $user->id));
     }
+
+    /**
+     * Tests that the course progress is correctly updated after the course is marked complete.
+     */
+    public function test_course_progress_after_course_marked_complete(): void {
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        // Reload the course, as most callers do, so that it has its current cacherev.
+        $course = get_course($course->id);
+
+        // No activities with completion, so there is no progress yet.
+        $this->assertNull(\core_completion\progress::get_course_progress_percentage($course, $user->id));
+
+        // Mark the course as complete for the user.
+        $ccompletion = new completion_completion(['course' => $course->id, 'userid' => $user->id]);
+        $ccompletion->mark_complete();
+
+        $this->assertEquals(100, \core_completion\progress::get_course_progress_percentage($course, $user->id));
+    }
 }
