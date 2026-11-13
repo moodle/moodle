@@ -805,13 +805,16 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function cron_overdue_warning($cronoverdue) {
-        global $CFG;
         if (!$cronoverdue) {
             return '';
         }
 
         $check = new \tool_task\check\cronrunning();
         $result = $check->get_result();
+        if ($result->get_status() === \core\check\result::OK) {
+            return '';
+        }
+
         return $this->warning_with_label(
             $result->get_summary() . '&nbsp;' . $this->help_icon('cron', 'admin'),
             get_string('notificationlabelwarning', 'admin')
@@ -825,14 +828,16 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function cron_infrequent_warning(bool $croninfrequent): string {
-        global $CFG;
-
         if (!$croninfrequent) {
             return '';
         }
 
         $check = new \tool_task\check\cronrunning();
         $result = $check->get_result();
+        if ($result->get_status() === \core\check\result::OK) {
+            return '';
+        }
+
         return $this->warning_with_label(
             $result->get_summary() . '&nbsp;' . $this->help_icon('cron', 'admin'),
             get_string('notificationlabelwarning', 'admin')
