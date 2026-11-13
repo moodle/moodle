@@ -191,6 +191,52 @@ final class renderer_test extends \advanced_testcase {
     }
 
     /**
+     * Cron warnings are not rendered when the cron check reports cron is running as expected.
+     */
+    public function test_cron_warning_not_rendered_when_cron_check_ok(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $CFG->expectedcronfrequency = MINSECS;
+        $CFG->disableupdatenotifications = true;
+
+        // Last cron start is within the expected frequency plus the grace period.
+        set_config('lastcronstart', time() - 90, 'tool_task');
+        set_config('lastcroninterval', MINSECS, 'tool_task');
+
+        $output = $this->render_notifications_page(['cronoverdue' => true, 'croninfrequent' => true]);
+
+        $this->assertStringNotContainsString(get_string('cronok', 'tool_task'), $output);
+        $this->assertStringNotContainsString('notification-summary', $output);
+        $this->assertStringNotContainsString('alert-warning', $output);
+    }
+
+    /**
+     * Cron infrequent warning is rendered when the cron check reports cron is not running frequently.
+     */
+    public function test_cron_infrequent_warning_rendered(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $CFG->expectedcronfrequency = MINSECS;
+        $CFG->disableupdatenotifications = true;
+
+        set_config('lastcronstart', time() - 90, 'tool_task');
+        set_config('lastcroninterval', 5 * MINSECS, 'tool_task');
+
+        $output = $this->render_notifications_page(['croninfrequent' => true]);
+
+        $this->assertStringContainsString(get_string('notificationsummarywarning', 'admin', 1), $output);
+        $this->assertStringContainsString('alert-warning', $output);
+        $this->assertStringContainsString(get_string('croninfrequent', 'admin', [
+            'actual' => format_time(5 * MINSECS),
+            'expected' => format_time(MINSECS),
+        ]), $output);
+    }
+
+    /**
      * The available-updates check renders as a notice, per the MDL-89290 testing instructions.
      */
     public function test_available_updates_is_a_notice(): void {
