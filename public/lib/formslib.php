@@ -2709,6 +2709,12 @@ require([
             if (!is_array($element)) {
                 $element = [$element];
             }
+
+            // Multiple select elements are submitted as an array, alongside a hidden element without the suffix.
+            if (in_array($element[0]->getType(), ['select', 'autocomplete']) && $element[0]->getMultiple()) {
+                $elementName .= '[]';
+            }
+
             foreach ($element as $elem) {
                 if (key_exists('id', $elem->_attributes)) {
                     $js .= '
