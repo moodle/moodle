@@ -2659,21 +2659,32 @@ require([
                     errorSpan.removeChild(errorSpan.firstChild);
                 }
 
-                errorSpan.appendChild(document.createTextNode(_qfMsg.substring(3)));
+                errorSpan.appendChild(document.createTextNode(_qfMsg));
+                if (errorSpan.classList.contains(\'invalid-feedback\')) {
+                    errorSpan.style.display = \'block\';
+                }
 
                 if (div.className.substr(div.className.length - 6, 6) != " error"
                         && div.className != "error") {
                     div.className += " error";
-                    linebreak = document.createElement("br");
-                    linebreak.className = "error";
-                    linebreak.id = \'id_error_break_\' + escapedName;
-                    errorSpan.parentNode.insertBefore(linebreak, errorSpan.nextSibling);
+
+                    // The error container provided by the element template is already displayed as a block.
+                    if (!errorSpan.classList.contains(\'invalid-feedback\')) {
+                        linebreak = document.createElement("br");
+                        linebreak.className = "error";
+                        linebreak.id = \'id_error_break_\' + escapedName;
+                        errorSpan.parentNode.insertBefore(linebreak, errorSpan.nextSibling);
+                    }
                 }
 
                 return false;
             } else {
                 var errorSpan = document.getElementById(\'id_error_\' + escapedName);
-                if (errorSpan) {
+                if (errorSpan && errorSpan.classList.contains(\'invalid-feedback\')) {
+                    // Retain the error container provided by the element template.
+                    errorSpan.textContent = \'\';
+                    errorSpan.style.display = \'none\';
+                } else if (errorSpan) {
                     errorSpan.parentNode.removeChild(errorSpan);
                 }
                 var linebreak = document.getElementById(\'id_error_break_\' + escapedName);
