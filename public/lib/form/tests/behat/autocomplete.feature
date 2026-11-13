@@ -71,7 +71,6 @@ Feature: Autocomplete functionality in forms
       | user2    | Sam       | Smith    |
       | user3    | Mark      | Davis    |
     And I log in as "admin"
-
     When I navigate to "Server > Web services > Manage tokens" in site administration
     And I press "Create token"
     And I open the autocomplete suggestions list
@@ -83,3 +82,15 @@ Feature: Autocomplete functionality in forms
     And I click on "Jane Jones" "autocomplete_selection"
     And "Jane Jones" "autocomplete_selection" should not exist
     And I should see "No selection" in the ".form-autocomplete-selection" "css_element"
+
+  Scenario: Multi-select autocomplete displays client-side validation error
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    When I log in as "admin"
+    And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
+    And I click on "Enable" "link" in the "Course meta link" "table_row"
+    And I am on the "C1" "enrolment methods" page
+    And I select "Course meta link" from the "Add method" singleselect
+    And I press "Add method"
+    Then I should see "Required" in the "Link course" "form_row"
