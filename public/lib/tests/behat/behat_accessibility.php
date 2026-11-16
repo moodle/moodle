@@ -176,15 +176,18 @@ return (() => {
 })()
 EOF;
 
-        for ($i = 0; $i < self::get_extended_timeout() * 10; $i++) {
+        // Poll for the results every 100ms, up to the extended timeout.
+        $timeout = self::get_extended_timeout();
+        for ($i = 0; $i < $timeout * 10; $i++) {
             $results = json_decode($this->evaluate_script($getresults) ?? '');
             if ($results) {
                 break;
             }
+            usleep(100000);
         }
 
         if (empty($results)) {
-            throw new \Exception('No data');
+            throw new \Exception("axe did not return results within {$timeout} seconds");
         }
 
         if ($results->exception !== null) {
