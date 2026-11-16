@@ -217,10 +217,10 @@ describe('@moodle/lms/core/fetch', () => {
             expect(response).toBe(expected);
         });
 
-        it('rejects with statusText on error response', async() => {
+        it('rejects with the response on error response', async() => {
             mockFetch.mockResolvedValue(errorResponse(404, 'Not Found'));
 
-            await expect(Fetch.request('mod_example', 'missing')).rejects.toBe('Not Found');
+            await expect(Fetch.request('mod_example', 'missing')).rejects.toMatchObject({status: 404, statusText: 'Not Found'});
         });
 
         it('registers and completes a Pending operation', async() => {
@@ -652,8 +652,8 @@ describe('@moodle/lms/core/fetch', () => {
 
             await batcher.execute();
 
-            await expect(first).rejects.toBe('Internal Server Error');
-            await expect(second).rejects.toBe('Internal Server Error');
+            await expect(first).rejects.toMatchObject({status: 500, statusText: 'Internal Server Error'});
+            await expect(second).rejects.toMatchObject({status: 500, statusText: 'Internal Server Error'});
         });
 
         it('includes a debugging prologue line for each queued request in the batch body', async() => {
@@ -706,7 +706,7 @@ describe('@moodle/lms/core/fetch', () => {
 
             await batcher.execute();
 
-            await expect(first).rejects.toBe('Not Found');
+            await expect(first).rejects.toMatchObject({status: 404, statusText: 'Not Found'});
 
             const secondResponse = await second;
             expect(secondResponse.status).toBe(200);
@@ -790,7 +790,10 @@ describe('@moodle/lms/core/fetch', () => {
             await batcher.execute();
 
             await expect(first).resolves.toBeDefined();
-            await expect(second).rejects.toMatch('No response provided for request');
+            await expect(second).rejects.toMatchObject({
+                status: 502,
+                statusText: expect.stringContaining('No response provided for request'),
+            });
         });
 
         it('does nothing when execute() is called with no queued requests', async() => {

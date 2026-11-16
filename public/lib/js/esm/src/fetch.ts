@@ -137,7 +137,7 @@ class RequestWrapper {
     readonly #request: Request;
     readonly #promise: Promise<Response>;
     #resolve!: (value: Response) => void;
-    #reject!: (reason: string) => void;
+    #reject!: (reason: Response) => void;
 
     constructor(request: Request) {
         this.#request = request;
@@ -156,7 +156,7 @@ class RequestWrapper {
     }
 
     /** The Promise rejector, exposed so a batch response can reject individual sub-requests. */
-    get reject(): (reason: string) => void {
+    get reject(): (reason: Response) => void {
         return this.#reject;
     }
 
@@ -164,7 +164,7 @@ class RequestWrapper {
         if (response.ok) {
             this.#resolve(response);
         } else {
-            this.#reject(response.statusText);
+            this.#reject(response);
         }
     }
 }
@@ -515,7 +515,7 @@ export default class Fetch {
         const response = await fetch(await this.#getRequests(requestMap));
         if (!response.ok) {
             for (const requestWrapper of requestMap.values()) {
-                requestWrapper.reject(response.statusText);
+                requestWrapper.reject(response);
             }
 
             return;
@@ -534,7 +534,10 @@ export default class Fetch {
             if (responseMap.has(key)) {
                 requestWrapper.handleResponse(responseMap.get(key)!);
             } else {
-                requestWrapper.reject(`Request failed. No response provided for request ${key} by provider`);
+                requestWrapper.reject(new Response(null, {
+                    status: 502,
+                    statusText: `No response provided for request ${key} by provider`,
+                }));
             }
         }
     }
