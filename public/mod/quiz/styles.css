@@ -553,7 +553,7 @@ table.quizreviewsummary td.cell {
     text-align: center;
     margin: 0.1em 0.5em;
     display: inline-block;
-    background-color: var(--bs-secondary-bg);
+    background-color: var(--mds-bg-surface-strong);
     min-width: 2em;
 }
 #page-mod-quiz-edit li.section .slotnumber.shuffled {
@@ -1106,7 +1106,7 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit .inplaceeditable {
     box-sizing: border-box;
-    background: #fdfdfe;
+    background: var(--mds-bg-surface-default);
     display: inline-block;
     margin: 2px;
     padding: 0.5em 0 0.5em 0.1em;
@@ -1120,23 +1120,23 @@ table.quizreviewsummary td.cell {
     text-align: right;
 }
 #page-mod-quiz-editgrading .inplaceeditable .quickeditlink {
-    color: var(--bs-primary);
+    color: var(--mds-text-link-primary-default);
 }
 #page-mod-quiz-edit .inplaceeditable .quickeditlink {
-    color: var(--bs-primary);
+    color: var(--mds-text-link-primary-default);
     text-decoration: none;
     background-color: transparent;
     padding-left: 1px;
     margin: 0;
 }
 #page-mod-quiz-edit .quickeditlink .aalink {
-    color: var(--bs-primary);
+    color: var(--mds-text-link-primary-default);
     text-align: right;
     width: 10px;
     margin: 2px;
 }
 #page-mod-quiz-edit .quickedition {
-    color: var(--bs-primary);
+    color: var(--mds-text-link-primary-default);
     text-align: right;
     width: 10px;
     margin: 2px;
