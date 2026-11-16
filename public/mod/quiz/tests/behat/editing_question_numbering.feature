@@ -136,3 +136,8 @@ Feature: Editing question numbering of the existing questions already in a quiz
     And I should see "i" on quiz page "1"
     And I should see "1.a" on quiz page "1"
     And I should see "1.b" on quiz page "1"
+
+  @accessibility
+  Scenario: Quiz question numbering meets accessibility standards
+    When I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
+    Then the page should meet accessibility standards
