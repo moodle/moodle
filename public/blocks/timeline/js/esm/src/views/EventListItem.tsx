@@ -50,10 +50,10 @@ export default function EventListItem({event, courseview = false}: EventListItem
     useEffect(() => {
         void getString('ariaeventlistitem', 'block_timeline', {
             name: event.activityname ?? '',
-            course: event.course.fullnamedisplay,
+            course: event.course?.fullnamedisplay ?? '',
             date: event.formatteddatetime,
         }).then(setAriaLabel);
-    }, [event.activityname, event.course.fullnamedisplay, event.formatteddatetime]);
+    }, [event.activityname, event.course?.fullnamedisplay, event.formatteddatetime]);
 
     const time = new Date(event.timesort * 1000).toLocaleTimeString(undefined, {
         hour: '2-digit',
@@ -94,7 +94,7 @@ export default function EventListItem({event, courseview = false}: EventListItem
                         <small className='mb-0'>
                             {event.activitystr}
                             {!courseview && (event.course?.fullnamedisplay ?? '') !== '' && (
-                                <> &middot; {event.course.fullnamedisplay}</>
+                                <> &middot; {event.course?.fullnamedisplay}</>
                             )}
                         </small>
                     </div>
