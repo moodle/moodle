@@ -156,7 +156,7 @@ final class client_repository_test extends \advanced_testcase {
      * @param array $clientdata The data to insert into the clients table.
      * @param string|null $plaintextsecret The plain secret to insert (hashed) into secrets table.
      * @param int $secretrevoked Whether the secret is marked revoked in db.
-     * @param int $secretexpirytime The timestamp when the secret expires.
+     * @param string $expirymodifier The modifier to apply to the current time to get the secret expiry.
      * @param string $checkidentifier The client identifier passed to validateClient.
      * @param string|null $checksecret The secret passed to validateClient.
      * @param string|null $checkgranttype The grant type passed to validateClient.
@@ -168,7 +168,7 @@ final class client_repository_test extends \advanced_testcase {
         array $clientdata,
         ?string $plaintextsecret,
         int $secretrevoked,
-        int $secretexpirytime,
+        string $expirymodifier,
         string $checkidentifier,
         ?string $checksecret,
         ?string $checkgranttype,
@@ -186,12 +186,14 @@ final class client_repository_test extends \advanced_testcase {
             $clientdata['ownercontext'] = \context_system::instance()->id;
             $DB->insert_record('oauth2_server_clients', (object) $clientdata);
 
+            $expiry = $clock->now()->modify($expirymodifier);
+
             if ($plaintextsecret !== null) {
                 $secretid = $DB->insert_record('oauth2_server_client_secrets', (object) [
                     'clientidentifier' => $clientdata['clientidentifier'],
                     'secret' => password_hash($plaintextsecret, PASSWORD_DEFAULT),
                     'revoked' => $secretrevoked,
-                    'expirytime' => $secretexpirytime,
+                    'expirytime' => $expiry->getTimestamp(),
                     'timecreated' => time(),
                 ]);
             }
@@ -223,7 +225,7 @@ final class client_repository_test extends \advanced_testcase {
                 [],
                 null,
                 client_entity::SECRET_REVOKED_NO,
-                time() + 3600,
+                "+1 hour",
                 'non-existent',
                 'secret',
                 client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
@@ -247,7 +249,7 @@ final class client_repository_test extends \advanced_testcase {
                 ],
                 'supersecret',
                 client_entity::SECRET_REVOKED_NO,
-                time() + 3600,
+                "+1 hour",
                 'client-conf',
                 'supersecret',
                 client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
@@ -271,7 +273,7 @@ final class client_repository_test extends \advanced_testcase {
                 ],
                 'supersecret',
                 client_entity::SECRET_REVOKED_NO,
-                time() + 3600,
+                "+1 hour",
                 'client-conf',
                 'wrongsecret',
                 client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
@@ -295,7 +297,7 @@ final class client_repository_test extends \advanced_testcase {
                 ],
                 'supersecret',
                 client_entity::SECRET_REVOKED_YES,
-                time() + 3600,
+                "+1 hour",
                 'client-conf',
                 'supersecret',
                 client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
@@ -319,7 +321,7 @@ final class client_repository_test extends \advanced_testcase {
                 ],
                 'supersecret',
                 client_entity::SECRET_REVOKED_NO,
-                time() + 3600,
+                "+1 hour",
                 'client-conf',
                 null,
                 client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
@@ -343,7 +345,7 @@ final class client_repository_test extends \advanced_testcase {
                 ],
                 'supersecret',
                 client_entity::SECRET_REVOKED_NO,
-                time() - 3600,
+                "-1 hour",
                 'client-conf',
                 'supersecret',
                 client_entity::GRANT_TYPE_AUTHORIZATION_CODE,
