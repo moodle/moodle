@@ -6,6 +6,16 @@ More detailed information on key changes can be found in the [Developer update n
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
+## 5.2.5+
+
+### core_course
+
+#### Changed
+
+- `core_course_get_contents` no longer returns an empty `activitybadge` for modules whose badge has no content. The key is now omitted.
+
+  For more information see [MDL-90249](https://tracker.moodle.org/browse/MDL-90249)
+
 ## 5.2.5
 
 ### core
