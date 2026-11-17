@@ -1,5 +1,19 @@
 # theme_boost Upgrade notes
 
+## 5.3.1+
+
+### Changed
+
+- Open course index and block drawers on the course page (the limited-width layout) now keep `$drawer-edge-gap` (the same 1.25rem as the navbar side padding) from the screen edge and `$drawer-content-gap` (20px) from the course content in every drawer state. The page reserves room beside each open drawer to match, so the course content narrows when the screen is too narrow instead of a drawer touching the screen edge. Themes that override the drawer anchors or the page padding for this layout need to be checked.
+
+  For more information see [MDL-90206](https://tracker.moodle.org/browse/MDL-90206)
+
+### Removed
+
+- The following SCSS variables have been removed from theme_boost: `$drawer-anchor-left-open`, `$drawer-right-anchor-left-open`, `$drawer-anchor-right-open`, `$drawer-right-anchor-right-open`, `$drawer-both-offset`, `$drawer-both-left-anchor`, `$drawer-both-right-anchor`, `$drawer-anchor-both-left`, `$drawer-anchor-both-right`, `$drawer-anchor-xxl-left-open`, `$drawer-anchor-xxl-right-open`, `$drawer-anchor-solo-left-open` and `$drawer-anchor-solo-right-open`. The `drawer-left-anchor()` and `drawer-right-anchor()` SCSS functions replace them. Themes that reference these variables need to be updated.
+
+  For more information see [MDL-90206](https://tracker.moodle.org/browse/MDL-90206)
+
 ## 5.3
 
 ### Added
