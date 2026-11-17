@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8947992d153f61efec7b102c81a654ab",
+    "content-hash": "745bcea714ede2dee7ffea18343be880",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4876,16 +4876,16 @@
         },
         {
             "name": "moodle/moodle-testing",
-            "version": "v1.0.2",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/moodle/moodle-testing.git",
-                "reference": "1ccda1c03f65c8d0f30fdcf77c95e0d1ffd3f971"
+                "reference": "2df1e3e033aa60273b9897c9c1c0a5c461e15b3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moodle/moodle-testing/zipball/1ccda1c03f65c8d0f30fdcf77c95e0d1ffd3f971",
-                "reference": "1ccda1c03f65c8d0f30fdcf77c95e0d1ffd3f971",
+                "url": "https://api.github.com/repos/moodle/moodle-testing/zipball/2df1e3e033aa60273b9897c9c1c0a5c461e15b3c",
+                "reference": "2df1e3e033aa60273b9897c9c1c0a5c461e15b3c",
                 "shasum": ""
             },
             "require": {
@@ -4894,7 +4894,7 @@
                 "behat/mink-browserkit-driver": "^2.2.0",
                 "friends-of-behat/mink-extension": "^2.7.5",
                 "mikey179/vfsstream": "^1.6",
-                "moodle/lms": "^5.1-",
+                "moodle/lms": "^5.1 || ^6.0",
                 "oleg-andreyev/mink-phpwebdriver": "1.3.*",
                 "phpunit/phpunit": "^11",
                 "symfony/http-client": "^4.4 || ^5.0 || ^6.0 || ^7.0",
@@ -4909,9 +4909,9 @@
             "description": "Test dependencies for Moodle installations",
             "support": {
                 "issues": "https://github.com/moodle/moodle-testing/issues",
-                "source": "https://github.com/moodle/moodle-testing/tree/v1.0.2"
+                "source": "https://github.com/moodle/moodle-testing/tree/v1.1.0"
             },
-            "time": "2026-01-07T03:56:51+00:00"
+            "time": "2026-11-17T07:54:22+00:00"
         },
         {
             "name": "myclabs/deep-copy",
