@@ -411,6 +411,15 @@ MANAGER.prototype = {
     skipnodebottom: null,
 
     /**
+     * Where the block being dragged was before the drag started, so a rejected move can be undone.
+     * @private
+     * @property dragorigin
+     * @type {Object} With the parent Node and the Node the block was followed by (or null).
+     * @default null
+     */
+    dragorigin: null,
+
+    /**
      * An associative object of regions and the
      * @property regionobjects
      * @type {Object} Primitive object mocking an associative array.
@@ -501,6 +510,36 @@ MANAGER.prototype = {
 
             region.change_block_move_icons(this);
         }
+        // A page shown again by the back/forward buttons keeps its drag handles and page hash, but editing may have
+        // been switched off since (for example by viewing a course), so the server would reject any move.
+        var navigation = window.performance && window.performance.getEntriesByType ?
+            window.performance.getEntriesByType('navigation')[0] : null;
+        // A transferSize above 0 means the page was just fetched from the server (pages sent with no-store, such as
+        // the course page), so it is already current. Browsers without transferSize still reload.
+        var fromserver = navigation && navigation.transferSize > 0;
+        if (navigation && navigation.type === 'back_forward' && !fromserver) {
+            // Replayed from the browser cache: scripts run again, so load the page again to get the current state.
+            this.loadCurrentPage();
+        }
+        window.addEventListener('pageshow', function(e) {
+            // Restored from the back/forward cache: scripts do not run again.
+            if (e.persisted) {
+                this.loadCurrentPage();
+            }
+        }.bind(this));
+    },
+
+    /**
+     * Loads the page again to show its current state.
+     *
+     * The page is requested by its URL rather than reloaded: reloading a page that was the answer to a form
+     * submission (such as the button that turns editing on in themes without the edit mode switch) makes the
+     * browser ask whether to send the form again.
+     *
+     * @method loadCurrentPage
+     */
+    loadCurrentPage: function() {
+        window.location.replace(this.get('pageurl') || window.location.href.split('#')[0]);
     },
 
     /**
@@ -590,6 +629,39 @@ MANAGER.prototype = {
         if (drag.get('node').next() && drag.get('node').next().hasClass(CSS.SKIPBLOCKTO)) {
             this.skipnodebottom = drag.get('node').next();
         }
+
+        // Remember the original position, so the block can be put back if the server rejects the move.
+        var lastnode = this.skipnodebottom || drag.get('node');
+        this.dragorigin = {
+            parent: drag.get('node').get('parentNode'),
+            next: lastnode.next()
+        };
+    },
+
+    /**
+     * Puts a block (with its skip links) back where it was before it was dragged.
+     * @method restoreOriginalPosition
+     * @param {Node} dragnode The block that was moved.
+     * @param {Object} origin The dragorigin recorded when the drag started.
+     */
+    restoreOriginalPosition: function(dragnode, origin) {
+        if (!origin || !origin.parent) {
+            return;
+        }
+        var nodes = [dragnode];
+        if (dragnode.previous() && dragnode.previous().hasClass(CSS.SKIPBLOCK)) {
+            nodes.unshift(dragnode.previous());
+        }
+        if (dragnode.next() && dragnode.next().hasClass(CSS.SKIPBLOCKTO)) {
+            nodes.push(dragnode.next());
+        }
+        nodes.forEach(function(node) {
+            if (origin.next && origin.parent.contains(origin.next)) {
+                origin.next.insert(node, 'before');
+            } else {
+                origin.parent.append(node);
+            }
+        });
     },
 
     dragOver: function(e) {
@@ -678,6 +750,7 @@ MANAGER.prototype = {
 
         // Add lightbox if it not there
         var lightbox = M.util.add_lightbox(Y, dragnode);
+        var origin = this.dragorigin;
 
         // Prepare request parameters
         var params = {
@@ -708,20 +781,26 @@ MANAGER.prototype = {
                     window.setTimeout(function() {
                         lightbox.hide();
                     }, 250);
+                    var rejected = false;
                     try {
                         var responsetext = Y.JSON.parse(response.responseText);
                         if (responsetext.error) {
+                            rejected = true;
                             new M.core.ajaxException(responsetext);
                         }
                     } catch (e) {
                         // Ignore.
                     }
+                    if (rejected) {
+                        this.restoreOriginalPosition(dragnode, origin);
+                    }
                 },
                 failure: function(tid, response) {
+                    this.restoreOriginalPosition(dragnode, origin);
                     this.ajax_failure(response);
                     lightbox.hide();
                 },
-                complete: function() {
+                end: function() {
                     this.disable_regions_if_required();
                 }
             },
@@ -739,6 +818,16 @@ Y.extend(MANAGER, M.core.dragdrop, MANAGER.prototype, {
          * @default null
          */
         pagehash: {
+            value: null
+        },
+
+        /**
+         * The URL of the page, used to load it again.
+         * @attribute pageurl
+         * @type string|null
+         * @default null
+         */
+        pageurl: {
             value: null
         },
 
