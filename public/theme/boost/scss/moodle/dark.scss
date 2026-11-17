@@ -68,6 +68,9 @@
     // A disabled control is exempt from 1.4.11, and the light value is a tint of the brand towards the page behind
     // it, so the dark one is the same idea in the other direction: faded into the surface, but still visible.
     --mds-border-interactive-primary-disabled: #{mix(dark-readable($primary, $min: 3), $dark-surface-raised, 55%)};
+    // The design system focus colour is an alias of the primary interactive border, but the token build resolves it
+    // to a fixed colour, so it does not follow the border above. Pointing it back at the border restores the alias.
+    --mds-focus-default: var(--mds-border-interactive-primary-default);
     --mds-text-default: #{$gray-300};
     --mds-text-emphasis: #{$gray-100};
     --mds-text-subtle: #{$gray-400};
@@ -89,8 +92,10 @@
     }
 
     // The focus ring has to be visible against the dark surfaces it is drawn on (WCAG 2.2 focus appearance). Focus
-    // indicators are non-text, so the 3:1 threshold applies.
-    --#{$prefix}focus-ring-color: #{rgba(dark-readable($primary, $min: 3), $focus-ring-opacity)};
+    // indicators are non-text, so the 3:1 threshold applies. The ring is drawn translucent, so it is measured after
+    // blending, or a colour which reaches 3:1 at full strength falls short once it is drawn.
+    $focus-ring-dark: dark-readable($primary, $min: 3, $alpha: $focus-ring-opacity);
+    --#{$prefix}focus-ring-color: #{rgba($focus-ring-dark, $focus-ring-opacity)};
 
     --mds-text-link-primary-default: #{dark-readable($link-color)};
     --mds-text-link-primary-hover: #{dark-readable($link-color, $min: 7)};

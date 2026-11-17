@@ -93,19 +93,23 @@ $_dark-readable-cache: ();
 // tints them in 5% steps and returns the first tint which reaches the required contrast, so that the dark palette
 // keeps meeting WCAG AA even when a site changes the brand colour.
 //
+// The contrast is measured once the colour has been blended into the surface, using its own opacity. A colour which
+// will be drawn with a different opacity, such as an opaque colour given one later by rgba(), passes that instead.
+//
 // @param {Color} $color The colour to lighten.
 // @param {Color} $background The surface the colour is drawn on.
 // @param {Number} $min The contrast ratio to reach.
+// @param {Number|null} $alpha The opacity the colour will be drawn with, or null for its own.
 // @return {Color}
-@function dark-readable($color, $background: $dark-surface-raised, $min: $dark-min-contrast) {
-    $key: "#{$color} #{$background} #{$min}";
+@function dark-readable($color, $background: $dark-surface-raised, $min: $dark-min-contrast, $alpha: null) {
+    $key: "#{$color} #{$background} #{$min} #{$alpha}";
     @if map-has-key($_dark-readable-cache, $key) {
         @return map-get($_dark-readable-cache, $key);
     }
     // Stop as soon as the colour is readable: each check is slow to compile.
     $readable: $color;
     $step: 0;
-    @while $step < 20 and not _contrast-reaches($background, $readable, $min) {
+    @while $step < 20 and not _contrast-reaches($background, if($alpha == null, $readable, rgba($readable, $alpha)), $min) {
         $step: $step + 1;
         $readable: tint-color($color, percentage($step * 0.05));
     }
