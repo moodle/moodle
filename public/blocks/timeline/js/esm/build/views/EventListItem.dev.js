@@ -22,10 +22,10 @@ function EventListItem({ event, courseview = false }) {
   useEffect(() => {
     getString("ariaeventlistitem", "block_timeline", {
       name: event.activityname ?? "",
-      course: event.course.fullnamedisplay,
+      course: event.course?.fullnamedisplay ?? "",
       date: event.formatteddatetime
     }).then(setAriaLabel);
-  }, [event.activityname, event.course.fullnamedisplay, event.formatteddatetime]);
+  }, [event.activityname, event.course?.fullnamedisplay, event.formatteddatetime]);
   const time = new Date(event.timesort * 1e3).toLocaleTimeString(void 0, {
     hour: "2-digit",
     minute: "2-digit",
