@@ -7,6 +7,9 @@
 - In the `dates` context of `core_courseformat/local/content/cm/activity`, `activitydates` is now the rendered dates component instead of a list of dates. Likewise, the `activitydates` context of the activity header now provides `hasdates` and the rendered `activitydates` component.
 
   For more information see [MDL-87838](https://tracker.moodle.org/browse/MDL-87838)
+- `core_course_get_contents` no longer returns an empty `activitybadge` for modules whose badge has no content. The key is now omitted.
+
+  For more information see [MDL-90249](https://tracker.moodle.org/browse/MDL-90249)
 
 ### Deprecated
 

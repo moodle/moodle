@@ -77,6 +77,9 @@
   For full documentation, see https://moodledev.io/general/development/policies/codingstyle/typescript
 
   For more information see [MDL-87988](https://tracker.moodle.org/browse/MDL-87988)
+- The long-deprecated `$CFG->httpswwwroot` has been removed. It has been an alias for `$CFG->wwwroot` since Moodle 3.4, and any remaining usage in third-party code should be replaced with `$CFG->wwwroot`
+
+  For more information see [MDL-89722](https://tracker.moodle.org/browse/MDL-89722)
 
 ## 5.3
 

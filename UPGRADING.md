@@ -85,6 +85,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   For full documentation, see https://moodledev.io/general/development/policies/codingstyle/typescript
 
   For more information see [MDL-87988](https://tracker.moodle.org/browse/MDL-87988)
+- The long-deprecated `$CFG->httpswwwroot` has been removed. It has been an alias for `$CFG->wwwroot` since Moodle 3.4, and any remaining usage in third-party code should be replaced with `$CFG->wwwroot`
+
+  For more information see [MDL-89722](https://tracker.moodle.org/browse/MDL-89722)
 
 ### core_completion
 
@@ -101,6 +104,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - In the `dates` context of `core_courseformat/local/content/cm/activity`, `activitydates` is now the rendered dates component instead of a list of dates. Likewise, the `activitydates` context of the activity header now provides `hasdates` and the rendered `activitydates` component.
 
   For more information see [MDL-87838](https://tracker.moodle.org/browse/MDL-87838)
+- `core_course_get_contents` no longer returns an empty `activitybadge` for modules whose badge has no content. The key is now omitted.
+
+  For more information see [MDL-90249](https://tracker.moodle.org/browse/MDL-90249)
 
 #### Deprecated
 
@@ -112,6 +118,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Changed
 
+- In the course index, clicking a section name now navigates to the section and no longer expands it. Only the chevron expands or collapses a section (a section name without a link still expands it). The `data-action="togglecourseindexsection"` attribute is no longer set on section name links, and pressing Enter on a section no longer expands it.
+
+  For more information see [MDL-87829](https://tracker.moodle.org/browse/MDL-87829)
 - When the activity name is editable (editing mode on and the user can manage activities), the `core_courseformat/local/content/cm/title` template no longer renders a link to the activity. The whole title is now the inplace editable trigger, so clicking it renames the activity instead of opening it. Behat scenarios that click an activity name on the course page with editing mode on should navigate with `I am on the "<activity name>" "<modname> activity" page` instead.
 
   For more information see [MDL-87832](https://tracker.moodle.org/browse/MDL-87832)
@@ -173,18 +182,45 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
+- The completion marks of the course index are drawn from the new `$courseindex-completion-glyph-check` and `$courseindex-completion-glyph-xmark` SCSS variables. Themes can override them with an SVG `url()` whose glyph is centred in a 12x12 box. The image is used as a mask, so the glyph takes the text colour.
+
+  For more information see [MDL-87829](https://tracker.moodle.org/browse/MDL-87829)
 - The contents of the top navbar are now capped at `$navbar-content-maxwidth` (1440px by default) and centred, while the navbar background and bottom border still span the full window. The cap applies to the new `.navbar-content` class on the navbar's inner container in the `theme_boost/navbar` and `theme_boost/navbar-secure` templates. Child themes can set `$navbar-content-maxwidth: none` to restore the full-width layout.
 
   For more information see [MDL-89293](https://tracker.moodle.org/browse/MDL-89293)
 
 #### Changed
 
+- The active item of the course index is now a light row instead of a row filled with the primary colour. The defaults of `$courseindex-item-page-bg` and `$courseindex-link-color-selected` changed (the second is now `null`, which keeps the normal text colour). Themes that set them keep their values.
+
+  For more information see [MDL-87829](https://tracker.moodle.org/browse/MDL-87829)
+- The "Collapse all" button of the course index drawer now uses the design system ghost button classes (`mds-btn btn btn-ghost mds-btn--size-md`).
+
+  For more information see [MDL-87829](https://tracker.moodle.org/browse/MDL-87829)
+- The `$courseindex-link-color` and `$courseindex-link-hover-color` only affect the course index drawer heading. `$courseindex-item-current` and `$courseindex-item-page-bg` now default to CSS custom properties, so Sass colour functions such as `darken()` cannot be applied to them.
+
+  For more information see [MDL-87829](https://tracker.moodle.org/browse/MDL-87829)
 - The activity card grid areas were rearranged so the icon, the group mode, the completion and the actions share the first row, and the name moves to its own row. The new `$activity-controls-height` SCSS variable sets the height of those controls to 28px, down from 32px.
 
   For more information see [MDL-87840](https://tracker.moodle.org/browse/MDL-87840)
 - The top navbar is now 64px tall instead of 60px. The `$navbar-height` SCSS variable and the `--navbar-height` custom property reflect the new value, so anything positioned from them follows automatically. Themes or plugins that hardcode the old 60px offset need updating.
 
   For more information see [MDL-89293](https://tracker.moodle.org/browse/MDL-89293)
+- Open course index and block drawers on the course page (the limited-width layout) now keep `$drawer-edge-gap` (the same 1.25rem as the navbar side padding) from the screen edge and `$drawer-content-gap` (20px) from the course content in every drawer state. The page reserves room beside each open drawer to match, so the course content narrows when the screen is too narrow instead of a drawer touching the screen edge. Themes that override the drawer anchors or the page padding for this layout need to be checked.
+
+  For more information see [MDL-90206](https://tracker.moodle.org/browse/MDL-90206)
+
+#### Deprecated
+
+- The `$courseindex-item-radius` no longer changes the course index rows. The `$courseindex-item-padding-y` and `$courseindex-item-padding-x` SCSS variables are deprecated. The course index no longer uses them. They are kept in `deprecated.scss` so that themes that read them still compile, and will be removed in a future version.
+
+  For more information see [MDL-87829](https://tracker.moodle.org/browse/MDL-87829)
+
+#### Removed
+
+- The following SCSS variables have been removed from theme_boost: `$drawer-anchor-left-open`, `$drawer-right-anchor-left-open`, `$drawer-anchor-right-open`, `$drawer-right-anchor-right-open`, `$drawer-both-offset`, `$drawer-both-left-anchor`, `$drawer-both-right-anchor`, `$drawer-anchor-both-left`, `$drawer-anchor-both-right`, `$drawer-anchor-xxl-left-open`, `$drawer-anchor-xxl-right-open`, `$drawer-anchor-solo-left-open` and `$drawer-anchor-solo-right-open`. The `drawer-left-anchor()` and `drawer-right-anchor()` SCSS functions replace them. Themes that reference these variables need to be updated.
+
+  For more information see [MDL-90206](https://tracker.moodle.org/browse/MDL-90206)
 
 ## 5.3
 

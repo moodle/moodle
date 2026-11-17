@@ -4,6 +4,9 @@
 
 ### Changed
 
+- In the course index, clicking a section name now navigates to the section and no longer expands it. Only the chevron expands or collapses a section (a section name without a link still expands it). The `data-action="togglecourseindexsection"` attribute is no longer set on section name links, and pressing Enter on a section no longer expands it.
+
+  For more information see [MDL-87829](https://tracker.moodle.org/browse/MDL-87829)
 - When the activity name is editable (editing mode on and the user can manage activities), the `core_courseformat/local/content/cm/title` template no longer renders a link to the activity. The whole title is now the inplace editable trigger, so clicking it renames the activity instead of opening it. Behat scenarios that click an activity name on the course page with editing mode on should navigate with `I am on the "<activity name>" "<modname> activity" page` instead.
 
   For more information see [MDL-87832](https://tracker.moodle.org/browse/MDL-87832)
