@@ -1,2 +1,12 @@
+// The focus rings of form controls and of Moodle's own components are drawn from the custom property rather than the
+// compiled colour, so that they follow the current colour mode, see scss/moodle/dark.scss. They are set here rather
+// than in a preset so that every preset gets them. A preset which sets its own values before this import keeps them.
+$variable-prefix: bs- !default;
+$prefix: $variable-prefix !default;
+$focus-ring-width: .25rem !default;
+$focus-ring-blur: 0 !default;
+$focus-ring-box-shadow: 0 0 $focus-ring-blur $focus-ring-width var(--#{$prefix}focus-ring-color) !default;
+$input-btn-focus-color: var(--#{$prefix}focus-ring-color) !default;
+
 // Import Bootstrap.
 @import "../../../../lib/bundles/bootstrap/scss/bootstrap.scss";
