@@ -1,0 +1,15 @@
+issueNumber: MDL-89920
+notes:
+  theme_boost:
+    - message: >-
+        The focus rings built from Bootstrap's focus variables now follow the
+        colour mode. To do that, `scss/bootstrap.scss` sets
+        `$input-btn-focus-color` to `var(--#{$prefix}focus-ring-color)` and
+        builds `$focus-ring-box-shadow` from the same custom property, for every
+        preset. `$input-btn-focus-color` is therefore no longer a Sass colour.
+        Themes and presets that pass it to a colour function such as `mix()`,
+        `tint-color()` or `lighten()` will fail to compile, and those that pass
+        it to `rgba()` will compile to a value browsers ignore, so their focus
+        ring disappears. Use `$focus-ring-color`, which is still a colour, in
+        those places instead.
+      type: changed
