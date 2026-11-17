@@ -96,4 +96,27 @@ final class page_requirements_manager_test extends \advanced_testcase {
         $this->assertNotFalse($linkpos, 'Expected at least one modulepreload link in the output.');
         $this->assertLessThan($linkpos, $scriptpos, 'The importmap script tag must precede modulepreload links.');
     }
+
+    /**
+     * When editing is on, the block drag and drop module is given the URL of the page, so that it can load the
+     * page again without repeating the request that produced it.
+     */
+    public function test_block_drag_and_drop_is_given_the_page_url(): void {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $USER->editing = 1;
+
+        $page = new \moodle_page();
+        $page->set_context(\core\context\system::instance());
+        $page->set_pagelayout('standard');
+        $page->set_url('/my/index.php', ['example' => 1, 'other' => 2]);
+        $page->requires->get_head_code($page, $page->get_renderer('core'));
+
+        $this->assertStringContainsString(
+            '"pageurl":' . json_encode($page->url->out(false)),
+            $page->requires->get_end_code(),
+        );
+    }
 }

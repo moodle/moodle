@@ -404,6 +404,9 @@ class page_requirements_manager {
                 'regions' => $page->blocks->get_regions(),
                 'pagehash' => $page->get_edited_page_hash(),
             ];
+            if ($page->has_set_url()) {
+                $params['pageurl'] = $page->url->out(false);
+            }
             if (!empty($page->cm->id)) {
                 $params['cmid'] = $page->cm->id;
             }
