@@ -91,7 +91,8 @@ class path_user extends \core\router\schema\parameters\path_parameter implements
         global $USER;
 
         if ($value === 'current') {
-            return $USER;
+            // The anonymous session user has no database record.
+            return $USER->id ? user::get_user($USER->id) : $USER;
         }
 
         $data = null;
