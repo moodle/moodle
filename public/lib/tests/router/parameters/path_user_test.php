@@ -34,7 +34,10 @@ final class path_user_test extends route_testcase {
     public function test_current_user(): void {
         $this->resetAfterTest();
 
-        $user = $this->getDataGenerator()->create_user();
+        $user = $this->getDataGenerator()->create_user([
+            'description' => 'Test user description',
+            'descriptionformat' => FORMAT_MARKDOWN,
+        ]);
         $this->setUser($user);
         $context = \core\context\user::instance($user->id);
 
@@ -47,8 +50,27 @@ final class path_user_test extends route_testcase {
         $this->assertInstanceOf(stdClass::class, $newrequest->getAttribute('user'));
         $this->assertInstanceOf(\core\context\user::class, $newrequest->getAttribute('usercontext'));
 
-        $this->assertEquals($user->id, $newrequest->getAttribute('user')->id);
+        $requestuser = $newrequest->getAttribute('user');
+        $this->assertEquals($user->id, $requestuser->id);
         $this->assertEquals($context->id, $newrequest->getAttribute('usercontext')->id);
+        $this->assertEquals('Test user description', $requestuser->description);
+        $this->assertEquals(FORMAT_MARKDOWN, $requestuser->descriptionformat);
+    }
+
+    /**
+     * The current user can be resolved without a login or a user context.
+     */
+    public function test_current_user_without_login(): void {
+        global $USER;
+
+        $param = new path_user();
+        $request = $param->add_attributes_for_parameter_value(
+            new ServerRequest('GET', '/user'),
+            'current',
+        );
+
+        $this->assertSame($USER, $request->getAttribute('user'));
+        $this->assertNull($request->getAttribute('usercontext'));
     }
 
     public function test_user_id(): void {
