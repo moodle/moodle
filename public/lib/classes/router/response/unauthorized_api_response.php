@@ -38,9 +38,4 @@ class unauthorized_api_response extends exception_response {
             static::get_www_authenticate_header($exception, 'invalid_token'),
         );
     }
-
-    #[\Override]
-    protected static function get_response_description(): string {
-        return 'Unauthorized';
-    }
 }

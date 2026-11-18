@@ -178,8 +178,6 @@ class preferences {
         ),
         responses: [
             new \core\router\schema\response\response(
-                statuscode: 200,
-                description: 'OK',
                 content: [
                     new \core\router\schema\response\content\json_media_type(
                         schema: new \core\router\schema\objects\array_of_strings(
@@ -240,7 +238,7 @@ class preferences {
         }
 
         if (!user::can_edit_preference($preference, $user)) {
-            throw new \core\exception\access_denied_exception('You do not have permission to edit this preference.');
+            throw new \core\exception\access_denied_exception('cannoteditthispreference');
         }
 
         if (isset($definition['type'])) {
@@ -267,7 +265,7 @@ class preferences {
 
         if ($user->id !== $USER->id) {
             throw new \core\exception\access_denied_exception(
-                'You do not have permission to view or edit preferences for other users.',
+                'cannotedituserpreferences',
             );
         }
     }

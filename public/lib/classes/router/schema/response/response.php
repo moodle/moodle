@@ -86,10 +86,7 @@ class response extends openapi_base {
             return $this->description;
         }
 
-        return match ($this->statuscode) {
-            200 => 'OK',
-            default => '',
-        };
+        return \core\router\util::get_status_description($this->statuscode);
     }
 
     #[\Override]

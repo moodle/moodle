@@ -93,6 +93,33 @@ final class response_test extends route_testcase {
         $this->assertEquals('OK', $schema->description);
     }
 
+    /**
+     * Default descriptions use the status code, including the fallback for unknown codes.
+     *
+     * @param int $statuscode
+     * @param string $description
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('default_description_provider')]
+    public function test_default_description(int $statuscode, string $description): void {
+        $response = new response(statuscode: $statuscode);
+        $schema = $response->get_openapi_schema(new specification());
+
+        $this->assertSame($description, $schema->description);
+    }
+
+    /**
+     * Data provider for default response descriptions.
+     *
+     * @return array
+     */
+    public static function default_description_provider(): array {
+        return [
+            'created' => [201, 'Created'],
+            'bad request' => [400, 'Bad Request'],
+            'unknown status' => [599, 'Internal Server Error'],
+        ];
+    }
+
     public function test_array_content(): void {
         $response = new response(
             statuscode: 450,

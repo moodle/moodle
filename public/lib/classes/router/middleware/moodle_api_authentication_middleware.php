@@ -244,7 +244,6 @@ class moodle_api_authentication_middleware extends moodle_authentication_middlew
      *
      * @param ServerRequestInterface $request
      * @param array $grantedscopes
-     * @return void
      */
     protected function validate_scope(
         ServerRequestInterface $request,

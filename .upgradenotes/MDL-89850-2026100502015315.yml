@@ -1,0 +1,13 @@
+issueNumber: MDL-89850
+notes:
+  core:
+    - message: >
+        The fields used in the response for a REST exception have been changed
+        to support the RFC-9457 standard. As part of this the following fields
+        have been deprecated:
+
+
+        - `message` - replaced by the new `detail` field; and
+
+        - `errorcode` - no replacement. See the HTTP status code for the equivalent information.
+      type: deprecated

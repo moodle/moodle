@@ -67,8 +67,6 @@ class bank {
         ],
         responses: [
             new response(
-                statuscode: 200,
-                description: 'OK',
                 content: [
                     new json_media_type(
                         schema: new schema_object(
@@ -147,8 +145,6 @@ class bank {
         ],
         responses: [
             new response(
-                statuscode: 200,
-                description: 'OK',
                 content: [
                     new json_media_type(
                         schema: new schema_object(
@@ -203,8 +199,6 @@ class bank {
         ],
         responses: [
             new response(
-                statuscode: 200,
-                description: 'OK',
                 content: [
                     new json_media_type(
                         schema: new schema_object(

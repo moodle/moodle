@@ -17,8 +17,14 @@
 namespace core\router;
 
 use core\exception\response_aware_exception;
+use core\router\response\access_denied_response;
 use core\router\response\exception_response;
-use Psr\Http\Message\ServerRequestInterface;
+use core\router\response\method_not_allowed_response;
+use core\router\response\not_found_response;
+use Psr\Http\Message\ResponseInterface;
+use Slim\Exception\HttpForbiddenException;
+use Slim\Exception\HttpMethodNotAllowedException;
+use Slim\Exception\HttpNotFoundException;
 use Slim\Handlers\ErrorHandler;
 
 /**
@@ -30,15 +36,28 @@ use Slim\Handlers\ErrorHandler;
  */
 class error_handler extends ErrorHandler {
     #[\Override]
-    protected function determineContentType(ServerRequestInterface $request): ?string {
-        // For anything hitting /rest/api/v2 we will default to JSON.
-        $restbase = (new \core\url('/rest/api/v2/'))->get_path();
-        if (substr($request->getUri()->getPath(), 0, strlen($restbase)) === $restbase) {
-            return 'application/json';
+    protected function respond(): ResponseInterface {
+        $restbase = \core\di::get(\core\router::class)->basepath . route_loader_interface::ROUTE_GROUP_API;
+        $path = $this->request->getUri()->getPath();
+        if ($path !== $restbase && !str_starts_with($path, "{$restbase}/")) {
+            return parent::respond();
         }
 
-        // Fall back to the default behaviour of using the Accept header.
-        return parent::determineContentType($request);
+        $responseclass = match (true) {
+            $this->exception instanceof response_aware_exception => $this->exception->get_response_classname(),
+            $this->exception instanceof HttpNotFoundException => not_found_response::class,
+            $this->exception instanceof HttpForbiddenException => access_denied_response::class,
+            $this->exception instanceof HttpMethodNotAllowedException => method_not_allowed_response::class,
+            default => null,
+        };
+        if ($responseclass === null) {
+            return parent::respond();
+        }
+
+        // Routing errors occur before the middleware which finishes bootstrapping Moodle.
+        util::load_full_moodle();
+
+        return $responseclass::get_response($this->request, $this->exception)->get_response($this->responseFactory);
     }
 
     #[\Override]

@@ -17,7 +17,7 @@
 namespace core\router\response;
 
 /**
- * A standard response for user preferences.
+ * A standard response for when a resource is not found.
  *
  * @package    core
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
@@ -27,10 +27,5 @@ class not_found_response extends exception_response {
     #[\Override]
     public static function get_exception_status_code(): int {
         return 404;
-    }
-
-    #[\Override]
-    protected static function get_response_description(): string {
-        return 'The item was not found.';
     }
 }

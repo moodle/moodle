@@ -136,7 +136,7 @@ final class preferences_test extends route_testcase {
 
         $this->assert_invalid_parameter_response($response);
         $payload = $this->decode_response($response);
-        $this->assertStringContainsString('filemanager_recentviewmode', $payload->message);
+        $this->assertStringContainsString('filemanager_recentviewmode', $payload->detail);
     }
 
     /**
@@ -208,7 +208,7 @@ final class preferences_test extends route_testcase {
 
         $this->assert_invalid_parameter_response($response);
         $payload = $this->decode_response($response);
-        $this->assertStringContainsString('filemanager_recentviewmode', $payload->message);
+        $this->assertStringContainsString('filemanager_recentviewmode', $payload->detail);
     }
 
     /**
@@ -231,7 +231,7 @@ final class preferences_test extends route_testcase {
 
         $this->assert_invalid_parameter_response($response);
         $payload = $this->decode_response($response);
-        $this->assertStringContainsString('what_a_fake', $payload->message);
+        $this->assertStringContainsString('what_a_fake', $payload->detail);
     }
 
     /**
