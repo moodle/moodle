@@ -170,6 +170,15 @@ class route {
     }
 
     /**
+     * Get the login requirement for this route, inheriting it from the parent route when needed.
+     *
+     * @return require_login|null
+     */
+    public function get_require_login(): ?require_login {
+        return $this->requirelogin ?? (isset($this->parentroute) ? $this->parentroute->get_require_login() : null);
+    }
+
+    /**
      * Get the fully-qualified path for this route relative to root.
      *
      * This includes the path of any parent route.

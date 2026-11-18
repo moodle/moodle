@@ -123,6 +123,25 @@ final class route_test extends route_testcase {
     }
 
     /**
+     * Test that login requirements are inherited from parent routes.
+     */
+    public function test_get_require_login(): void {
+        $requirelogin = new require_login();
+        $parent = new route(requirelogin: $requirelogin);
+        $child = new route();
+        $child->set_parent($parent);
+
+        $this->assertSame($requirelogin, $child->get_require_login());
+
+        $childrequirelogin = new require_login(requirelogin: false);
+        $child = new route(requirelogin: $childrequirelogin);
+        $child->set_parent($parent);
+
+        $this->assertSame($childrequirelogin, $child->get_require_login());
+        $this->assertNull((new route())->get_require_login());
+    }
+
+    /**
      * Ensure that pathtypes and queryparams accept query parameters correctly.
      */
     public function test_params_are_params(): void {
