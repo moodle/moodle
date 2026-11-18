@@ -34,10 +34,8 @@ class moodle_authentication_middleware implements MiddlewareInterface {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
         // Get the Moodle Route from the request. We need this to determine if login is required for this page.
         $moodleroute = $request->getAttribute(route::class);
-
-        if ($moodleroute && $moodleroute->requirelogin) {
-            $requirements = $moodleroute->requirelogin;
-
+        $requirements = $moodleroute?->get_require_login();
+        if ($requirements) {
             $courseattributename = $requirements->get_course_attribute_name();
             $courseorid = $courseattributename ? $request->getAttribute($courseattributename, null) : null;
 

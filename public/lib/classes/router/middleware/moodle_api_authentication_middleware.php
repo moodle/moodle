@@ -100,9 +100,8 @@ class moodle_api_authentication_middleware extends moodle_authentication_middlew
                 }
             }
 
-            if ($moodleroute->requirelogin) {
-                $requirements = $moodleroute->requirelogin;
-
+            $requirements = $moodleroute->get_require_login();
+            if ($requirements) {
                 $courseattributename = $requirements->get_course_attribute_name();
                 $courseorid = $courseattributename ? $request->getAttribute($courseattributename, null) : null;
 
