@@ -38,6 +38,7 @@ final class import_map_test extends \advanced_testcase {
         $this->assertArrayHasKey('@moodle/lms/', $data['imports']);
         $this->assertArrayHasKey('react', $data['imports']);
         $this->assertArrayHasKey('react/', $data['imports']);
+        $this->assertArrayHasKey('react-hook-form', $data['imports']);
     }
 
     /**
