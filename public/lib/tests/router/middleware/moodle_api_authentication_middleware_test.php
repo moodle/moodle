@@ -40,12 +40,13 @@ final class moodle_api_authentication_middleware_test extends route_testcase {
             return $response;
         });
 
-        $route = new \core\router\route(
+        $parentroute = new \core\router\route(
             requirelogin: new \core\router\require_login(
                 requirelogin: true,
                 autologinguest: false,
             ),
         );
+        $route = (new \core\router\route())->set_parent($parentroute);
 
         $request = (new ServerRequest('GET', '/test'))
             ->withAttribute(\core\router\route::class, $route);
