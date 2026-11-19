@@ -828,13 +828,20 @@ export default class {
      * @param {StateManager} stateManager the current state manager
      * @param {Boolean} enabled the new bulk state.
      */
-    bulkEnable(stateManager, enabled) {
+    async bulkEnable(stateManager, enabled) {
         const state = stateManager.state;
+        // Enabling an already enabled bulk mode only resets the selection, so there is nothing to announce.
+        const changed = state.bulk.enabled !== enabled;
         stateManager.setReadOnly(false);
         state.bulk.enabled = enabled;
         state.bulk.selectedType = '';
         state.bulk.selection = [];
         stateManager.setReadOnly(true);
+        if (changed) {
+            stateManager.addLoggerEntry(
+                await this._getLoggerEntry(stateManager, enabled ? 'bulk_enable' : 'bulk_disable', [])
+            );
+        }
     }
 
     /**

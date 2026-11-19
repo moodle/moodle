@@ -1,0 +1,25 @@
+issueNumber: MDL-89322
+notes:
+  core_courseformat:
+    - message: >-
+        The `core_courseformat/local/content/divider` and
+        `core_courseformat/local/content/section/addsectiondivider` templates no
+        longer use the `bulk-hidden` class, so dividers keep their space during
+        bulk editing and the page no longer shifts. Theme overrides should
+        remove `bulk-hidden` and hide the dividers with `visibility: hidden`
+        instead.
+      type: changed
+    - message: >-
+        The checkboxes in the `core_courseformat/local/content/cm/bulkselect`
+        and `core_courseformat/local/content/section/bulkselect` templates now
+        use the `form-check-input` class, and the activity checkbox is
+        positioned inside the card through `.activity-item > .bulkselect`.
+        Theme overrides should keep both the class and that structure.
+      type: changed
+    - message: >-
+        The `bulkEnable` mutation in
+        `core_courseformat/local/courseeditor/mutations` is now asynchronous and
+        always returns a Promise, as it announces to screen readers when bulk
+        editing is turned on or off. Code that calls it directly, or overrides
+        it and calls the parent, should await the result.
+      type: changed

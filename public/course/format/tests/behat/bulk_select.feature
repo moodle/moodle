@@ -53,6 +53,7 @@ Feature: Bulk activity and section selection.
     And I click on "Select activity Activity sample 1" "checkbox"
     And I click on "Select activity Activity sample 2" "checkbox"
     And I should see "2 selected" in the "sticky-footer" "region"
+    And the bulk select all checkbox should be partially checked
     And the field "Activity sample 1" matches value "1"
     And the field "Activity sample 2" matches value "1"
     And the field "Activity sample 3" matches value ""
@@ -60,6 +61,7 @@ Feature: Bulk activity and section selection.
     When I click on "Close bulk actions" "button" in the "sticky-footer" "region"
     And I click on "Bulk actions" "button"
     Then I should see "0 selected" in the "sticky-footer" "region"
+    And the bulk select all checkbox should not be partially checked
     And the field "Activity sample 1" matches value ""
     And the field "Activity sample 2" matches value ""
     And the field "Activity sample 3" matches value ""
@@ -81,8 +83,10 @@ Feature: Bulk activity and section selection.
 
   Scenario: Select all when an activity is selected will select all activities
     Given I click on "Bulk actions" "button"
+    And the bulk select all checkbox should not be partially checked
     And I click on "Select activity Activity sample 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
+    And the bulk select all checkbox should be partially checked
     And the field "Activity sample 1" matches value "1"
     And the field "Activity sample 2" matches value ""
     And the field "Activity sample 3" matches value ""
@@ -90,6 +94,8 @@ Feature: Bulk activity and section selection.
     And the "Select all" "checkbox" should be enabled
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
     Then I should see "4 selected" in the "sticky-footer" "region"
+    And the bulk select all checkbox should not be partially checked
+    And the field "Select all" matches value "1"
     And the field "Activity sample 1" matches value "1"
     And the field "Activity sample 2" matches value "1"
     And the field "Activity sample 3" matches value "1"
@@ -97,8 +103,10 @@ Feature: Bulk activity and section selection.
 
   Scenario: Select all when a section is selected will select all sections
     Given I click on "Bulk actions" "button"
+    And the bulk select all checkbox should not be partially checked
     And I click on "Select section Section 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
+    And the bulk select all checkbox should be partially checked
     And the field "Select section Section 1" matches value "1"
     And the field "Select section Section 2" matches value ""
     And the field "Select section Section 3" matches value ""
@@ -106,6 +114,8 @@ Feature: Bulk activity and section selection.
     And the "Select all" "checkbox" should be enabled
     When I click on "Select all" "checkbox" in the "sticky-footer" "region"
     Then I should see "4 selected" in the "sticky-footer" "region"
+    And the bulk select all checkbox should not be partially checked
+    And the field "Select all" matches value "1"
     And the field "Select section Section 1" matches value "1"
     And the field "Select section Section 2" matches value "1"
     And the field "Select section Section 3" matches value "1"
