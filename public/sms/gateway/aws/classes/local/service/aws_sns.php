@@ -19,6 +19,7 @@ namespace smsgateway_aws\local\service;
 use core_sms\message_status;
 use smsgateway_aws\helper;
 use smsgateway_aws\local\aws_sms_service_provider;
+use smsgateway_aws\local\sns_client_factory;
 use stdClass;
 
 /**
@@ -37,7 +38,7 @@ class aws_sns implements aws_sms_service_provider {
     ): message_status {
         global $SITE;
 
-        // Setup client params and instantiate client.
+        // Setup client params.
         $params = [
             'version' => 'latest',
             'region' => $config->api_region,
@@ -49,7 +50,6 @@ class aws_sns implements aws_sms_service_provider {
                 'secret' => $config->api_secret,
             ];
         }
-        $client = new \Aws\Sns\SnsClient($params);
 
         // Set up the sender information.
         $senderid = $SITE->shortname;
@@ -59,6 +59,7 @@ class aws_sns implements aws_sms_service_provider {
         $senderid = substr($senderid, 0, 11);
 
         try {
+            $client = \core\di::get(sns_client_factory::class)->create_client($params);
             $client->publish([
                 'Message' => $messagecontent,
                 'PhoneNumber' => $phonenumber,
@@ -74,8 +75,13 @@ class aws_sns implements aws_sms_service_provider {
                 ],
             ]);
             return \core_sms\message_status::GATEWAY_SENT;
-        } catch (\Aws\Exception\AwsException $e) {
-            return \core_sms\message_status::GATEWAY_NOT_AVAILABLE;
+        } catch (
+            \Aws\Exception\AwsException |
+            \Aws\Exception\CredentialsException |
+            \Aws\Exception\InvalidRegionException |
+            \InvalidArgumentException $e
+        ) {
+            return \core_sms\message_status::GATEWAY_FAILED;
         }
     }
 }
