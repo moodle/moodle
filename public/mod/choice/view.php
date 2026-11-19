@@ -208,7 +208,6 @@ if (!$choiceformshown) {
                      get_login_url(), new moodle_url('/course/view.php', array('id'=>$course->id)));
     } else if (!is_enrolled($context)) {
         // Only people enrolled can make a choice
-        $SESSION->wantsurl = qualified_me();
         $SESSION->enrolcancel = get_local_referer(false);
 
         $coursecontext = context_course::instance($course->id);
@@ -217,7 +216,9 @@ if (!$choiceformshown) {
         echo $OUTPUT->box_start('generalbox', 'notice');
         echo '<p align="center">'. get_string('notenrolledchoose', 'choice') .'</p>';
         echo $OUTPUT->container_start('continuebutton');
-        echo $OUTPUT->single_button(new moodle_url('/enrol/index.php?', array('id'=>$course->id)), get_string('enrolme', 'core_enrol', $courseshortname));
+        // Pass the return URL with the button, rather than setting $SESSION->wantsurl just for viewing this page.
+        $enrolurl = new moodle_url('/enrol/index.php', ['id' => $course->id, 'wantsurl' => qualified_me()]);
+        echo $OUTPUT->single_button($enrolurl, get_string('enrolme', 'core_enrol', $courseshortname));
         echo $OUTPUT->container_end();
         echo $OUTPUT->box_end();
 
