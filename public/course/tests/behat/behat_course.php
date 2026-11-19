@@ -761,10 +761,10 @@ class behat_course extends behat_base {
 
             // Additional check if this is a teacher in editing mode.
             if ($this->is_editing_on()) {
-                // The 'Hide' button should be available.
-                $nohideexception = new ExpectationException('"' . $activityname . '" doesn\'t have a "' .
-                    get_string('hide') . '" icon', $this->getSession());
-                $this->find('named_partial', array('link', get_string('hide')), $nohideexception, $activitynode);
+                // The visibility control or the 'Hide' link should be available.
+                $nohideexception = new ExpectationException('"' . $activityname . '" has neither the visibility control nor a "' .
+                    get_string('hide') . '" link', $this->getSession());
+                $this->find_activity_visibility_control($activitynode, [get_string('hide')], $nohideexception);
             }
         }
     }
@@ -800,14 +800,14 @@ class behat_course extends behat_base {
 
             // Additional check if this is a teacher in editing mode.
             if ($this->is_editing_on()) {
-                // Also has either 'Hide' or 'Make unavailable' edit control.
-                $nohideexception = new ExpectationException('"' . $activityname . '" has neither "' . get_string('hide') .
-                    '" nor "' . get_string('makeunavailable') . '" icons', $this->getSession());
-                try {
-                    $this->find('named_partial', array('link', get_string('hide')), false, $activitynode);
-                } catch (ElementNotFoundException $e) {
-                    $this->find('named_partial', array('link', get_string('makeunavailable')), $nohideexception, $activitynode);
-                }
+                // Also has the visibility control, or either 'Hide' or 'Make unavailable' edit control.
+                $nohideexception = new ExpectationException('"' . $activityname . '" has neither the visibility control nor "' .
+                    get_string('hide') . '" or "' . get_string('makeunavailable') . '" links', $this->getSession());
+                $this->find_activity_visibility_control(
+                    $activitynode,
+                    [get_string('hide'), get_string('makeunavailable')],
+                    $nohideexception,
+                );
             }
 
         } else {
@@ -841,14 +841,14 @@ class behat_course extends behat_base {
 
             // Additional check if this is a teacher in editing mode.
             if ($this->is_editing_on()) {
-                // Also has either 'Show' or 'Make available' edit control.
-                $noshowexception = new ExpectationException('"' . $activityname . '" has neither "' . get_string('show') .
-                    '" nor "' . get_string('makeavailable') . '" icons', $this->getSession());
-                try {
-                    $this->find('named_partial', array('link', get_string('show')), false, $activitynode);
-                } catch (ElementNotFoundException $e) {
-                    $this->find('named_partial', array('link', get_string('makeavailable')), $noshowexception, $activitynode);
-                }
+                // Also has the visibility control, or either 'Show' or 'Make available' edit control.
+                $noshowexception = new ExpectationException('"' . $activityname . '" has neither the visibility control nor "' .
+                    get_string('show') . '" or "' . get_string('makeavailable') . '" links', $this->getSession());
+                $this->find_activity_visibility_control(
+                    $activitynode,
+                    [get_string('show'), get_string('makeavailable')],
+                    $noshowexception,
+                );
             }
 
         } else {
@@ -1485,6 +1485,38 @@ class behat_course extends behat_base {
                 " and normalize-space(.)={$accessiblename}]" .
             " | .//*[self::span or self::button][contains(concat(' ', normalize-space(@class), ' '), ' badge ')]" .
                 "[text()[contains(., {$label})]]";
+    }
+
+    /**
+     * Find a control to change the activity visibility.
+     *
+     * When the activity card shows an interactive visibility control, the action menu does not repeat it.
+     * Otherwise, the action menu has a link to change it.
+     *
+     * @param \Behat\Mink\Element\NodeElement $activitynode the activity node
+     * @param string[] $menulinks the action menu links to look for when the card has no interactive control
+     * @param ExpectationException $exception the exception to throw when no control is found
+     * @throws ExpectationException
+     */
+    protected function find_activity_visibility_control(
+        \Behat\Mink\Element\NodeElement $activitynode,
+        array $menulinks,
+        ExpectationException $exception,
+    ): void {
+        // The interactive control on the activity card first, then the action menu links.
+        $controls = [['xpath', ".//*[@data-region='visibility']//button"]];
+        foreach ($menulinks as $menulink) {
+            $controls[] = ['named_partial', ['link', $menulink]];
+        }
+        foreach ($controls as [$selector, $locator]) {
+            try {
+                $this->find($selector, $locator, false, $activitynode);
+                return;
+            } catch (ElementNotFoundException $e) {
+                continue;
+            }
+        }
+        throw $exception;
     }
 
     /**

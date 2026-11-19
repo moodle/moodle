@@ -1,0 +1,18 @@
+issueNumber: MDL-90163
+notes:
+  core_courseformat:
+    - message: >-
+        The activity action menu no longer offers the availability and group
+        mode items when the activity card already shows an editable control for
+        them. The new `is_editable_on_card()` method in
+        `core_courseformat\output\local\content\cm\visibility` and
+        `core_courseformat\output\local\content\cm\groupmode` decides this.
+        Formats that change when those card controls are shown must override
+        `is_editable_on_card()` as well, so the setting can still be changed
+        from the menu.
+      type: changed
+    - message: >-
+        In course formats that do not support components, the activity card now
+        shows the read-only visibility indicator instead of the visibility
+        control, and the activity action menu keeps its availability item.
+      type: changed

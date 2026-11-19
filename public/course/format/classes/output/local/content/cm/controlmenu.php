@@ -308,6 +308,10 @@ class controlmenu extends basecontrolmenu {
         $outputclass = $this->format->get_output_classname('content\\cm\\visibility');
         /** @var \core_courseformat\output\local\content\cm\visibility $output */
         $output = new $outputclass($this->format, $this->section, $this->mod);
+        // The card already offers the same choices.
+        if ($output->is_editable_on_card()) {
+            return null;
+        }
         return $output->get_menu_item();
     }
 
@@ -389,6 +393,10 @@ class controlmenu extends basecontrolmenu {
         $groupmodeclass = $this->format->get_output_classname('content\\cm\\groupmode');
         /** @var \core_courseformat\output\local\content\cm\groupmode $groupmode */
         $groupmode = new $groupmodeclass($this->format, $this->section, $this->mod);
+        // The card already offers the same choices.
+        if ($groupmode->is_editable_on_card()) {
+            return null;
+        }
         return new subpanel(
             text: get_string('groupmode', 'group'),
             subpanel: $groupmode->get_choice_list(),

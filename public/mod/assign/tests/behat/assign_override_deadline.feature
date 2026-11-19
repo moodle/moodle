@@ -88,8 +88,7 @@ Feature: Assign override deadlines
   @javascript
   Scenario: Inactive override due to hidden assignment
     Given I am on "Course 1" course homepage with editing mode on
-    And I open "Test assignment name" actions menu
-    When I choose "Hide" in the open action menu
+    When I set the "Test assignment name" activity visibility to "Hide on course page"
     And I am on the "Test assignment name" Activity page
     And I navigate to "Overrides" in current page administration
     Then I should see "* This override is inactive because the user's access to the activity is restricted. This can be due to group or role assignments, other access restrictions, or the activity being hidden."

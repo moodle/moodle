@@ -44,13 +44,11 @@ Feature: Validate some activity editing has a non-ajax alternative
   Scenario: Hide and show an activity can be done without ajax
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I should not see "Show" in the ".cm_action_menu" "css_element"
-    When I click on "Hide" "link" in the "Activity sample 1" "activity"
-    Then I should see "Show" in the ".cm_action_menu" "css_element"
-    And I should not see "Hide" in the ".cm_action_menu" "css_element"
-    And I click on "Show" "link" in the "Activity sample 1" "activity"
-    And I should not see "Show" in the ".cm_action_menu" "css_element"
-    And I should see "Hide" in the ".cm_action_menu" "css_element"
+    And I should see "Available on course page" in the "Activity sample 1" "core_courseformat > Activity visibility"
+    When I click on "Hide on course page" "link" in the "Activity sample 1" "activity"
+    Then I should see "Hidden from students" in the "Activity sample 1" "core_courseformat > Activity visibility"
+    And I click on "Show on course page" "link" in the "Activity sample 1" "activity"
+    And I should see "Available on course page" in the "Activity sample 1" "core_courseformat > Activity visibility"
 
   Scenario: Activity visibility with stealth option can be changed without ajax
     Given the following config values are set as admin:

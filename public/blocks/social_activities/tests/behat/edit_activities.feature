@@ -48,8 +48,7 @@ Feature: Edit activities in social activities block
       | section  | 0             |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    When I open "My forum name" actions menu
-    And I choose "Availability > Make available but don't show on course page" in the open action menu
+    When I set the "My forum name" activity visibility to "Make available but don't show on course page"
     Then "Available but not shown on course page" "button" should exist in the "My forum name" "core_courseformat > Activity visibility"
     # Make sure that "Availability" dropdown in the edit menu has three options.
     And I open "My forum name" actions menu

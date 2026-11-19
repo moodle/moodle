@@ -111,8 +111,7 @@ Feature: Edited glossary entries handle tags correctly
       | Test glossary | Entry 1 | Entry 1 definition | OT1, OT2, OT3 | student1 |
     And I am on the "Course 1" course page logged in as teacher1
     And I turn editing mode on
-    And I open "Test glossary" actions menu
-    And I click on "Hide" "link" in the "Test glossary" activity
+    And I set the "Test glossary" activity visibility to "Hide on course page"
     When I log in as "student2"
     And I click on "OT1" "link" in the "Tags" "block"
     Then I should not see "Entry 1"

@@ -74,9 +74,8 @@ class groupmode implements named_templatable, renderable {
         if (!$this->format->show_groupmode($this->mod)) {
             return null;
         }
-        $usecomponents = $this->format->supports_components();
         $editing = $this->format->show_editor();
-        if ($editing && $usecomponents && !$this->mod->coursegroupmodeforce) {
+        if ($this->is_editable_on_card()) {
             return $this->build_editor_data($output);
         }
         $groupmode = (int) $this->mod->effectivegroupmode;
@@ -85,6 +84,21 @@ class groupmode implements named_templatable, renderable {
             return null;
         }
         return $this->build_static_data($output);
+    }
+
+    /**
+     * Check if the card shows a control the user can change the group mode with.
+     *
+     * The activity action menu leaves out its group mode item when this is true, so formats that change
+     * when the card control is shown should override this method too.
+     *
+     * @return bool
+     */
+    public function is_editable_on_card(): bool {
+        return $this->format->show_groupmode($this->mod)
+            && $this->format->supports_components()
+            && $this->format->show_editor()
+            && !$this->mod->coursegroupmodeforce;
     }
 
     /**

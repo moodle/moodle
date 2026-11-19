@@ -56,24 +56,16 @@ Feature: Verify activity group mode interface.
     And "Separate" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
 
   @javascript
-  Scenario: Teacher can edit the group mode using the activity action menu
+  Scenario: The activity action menu does not repeat the group mode control of the activity card
     Given the following "activities" exist:
       | activity | name            | intro                  | course | idnumber | section | groupmode |
       | forum    | Activity sample | Test forum description | C1     | sample   | 1       | 1         |
     And I am on the "C1" "Course" page logged in as "teacher1"
     And I turn editing mode on
-    And I open "Activity sample" actions menu
-    And I choose "Group mode > Visible groups" in the open action menu
-    And "Visible" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    And "Separate" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
     When I open "Activity sample" actions menu
-    And I choose "Group mode > Separate groups" in the open action menu
-    And "Separate" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    Then I open "Activity sample" actions menu
-    And I choose "Group mode > No groups" in the open action menu
-    And "No groups" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
-    And I open "Activity sample" actions menu
-    And I choose "Group mode > Separate groups" in the open action menu
-    And "Separate" "button" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
+    Then "Edit settings" "link" should exist in the "Activity sample" "activity"
+    And "Group mode" "link" should not exist in the "Activity sample" "activity"
 
   @javascript
   Scenario: Teacher cannot see Group mode submenu for an activity when group mode has been forced

@@ -81,12 +81,26 @@ class visibility implements named_templatable, renderable {
         if (!$this->format->show_activity_editor_options($this->mod)) {
             return null;
         }
-        $editing = $this->format->show_editor();
-        // In rare legacy cases, the section could be stealth (orphaned) but they are not editable.
-        if ($editing && has_capability('moodle/course:activityvisibility', $this->mod->context)) {
+        if ($this->is_editable_on_card()) {
             return $this->build_editor_data($output);
         }
         return $this->build_static_data($output);
+    }
+
+    /**
+     * Check if the card shows a control the user can change the visibility with.
+     *
+     * The control changes the visibility through the course editor, so it needs a format that supports components.
+     * The activity action menu leaves out its availability item when this is true, so formats that change when the
+     * card control is shown should override this method too.
+     *
+     * @return bool
+     */
+    public function is_editable_on_card(): bool {
+        return $this->format->show_activity_editor_options($this->mod)
+            && $this->format->supports_components()
+            && $this->format->show_editor()
+            && has_capability('moodle/course:activityvisibility', $this->mod->context);
     }
 
     /**

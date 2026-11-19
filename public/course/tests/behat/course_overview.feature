@@ -360,8 +360,7 @@ Feature: Users can access the course activities overview page
     And I am on "Course 1" course homepage with editing mode on
     And I hide section "1"
     # Make stealth the activity to guarantee the students can see it.
-    And I open "Test assignment name" actions menu
-    And I choose "Availability > Make available but don't show on course page" in the open action menu
+    And I set the "Test assignment name" activity visibility to "Make available but don't show on course page"
     # Teacher should see the section name.
     When I am on the "Course 1" "course > activities > assign" page
     Then I should see "Section 1" in the "Test assignment name" "table_row"

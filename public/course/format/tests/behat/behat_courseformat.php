@@ -129,4 +129,23 @@ class behat_courseformat extends behat_base {
 
         throw new ExpectationException('The course linear navigation is visible', $this->getSession());
     }
+
+    /**
+     * Changes the activity visibility using the visibility control on the activity card.
+     *
+     * The control is only interactive while editing and when the user can change the activity visibility.
+     *
+     * @When /^I set the "(?P<activity_name_string>(?:[^"]|\\")*)" activity visibility to "(?P<visibility_string>(?:[^"]|\\")*)"$/
+     * @param string $activityname the activity name
+     * @param string $visibility the visibility option, for example "Hide on course page"
+     */
+    public function i_set_the_activity_visibility_to(string $activityname, string $visibility): void {
+        $this->execute('behat_general::i_click_on_in_the', [
+            'button',
+            'css_element',
+            $activityname,
+            'core_courseformat > Activity visibility',
+        ]);
+        $this->execute('behat_general::i_click_on', [$visibility, 'button']);
+    }
 }

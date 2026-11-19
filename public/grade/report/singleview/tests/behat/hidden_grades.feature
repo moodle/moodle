@@ -40,8 +40,7 @@ Feature: We don't show hidden grades for users without the 'moodle/grade:viewhid
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
     # Hide assignment 2 activity.
-    And I open "Test assignment name 2" actions menu
-    And I choose "Hide" in the open action menu
+    And I set the "Test assignment name 2" activity visibility to "Hide on course page"
     And I navigate to "View > Grader report" in the course gradebook
     # Hide grade.
     And I click on grade menu "Test assignment name 1" for user "student1"

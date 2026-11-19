@@ -24,29 +24,22 @@ Feature: Verify activity visibility interface.
     And I turn editing mode on
 
   @javascript
-  Scenario: Teacher can hide an activity using the actions menu.
-    Given "Hidden from students" "button" should not exist in the "Activity sample 1" "core_courseformat > Activity visibility"
-    When I open "Activity sample 1" actions menu
-    And I choose "Hide" in the open action menu
-    Then "Hidden from students" "button" should exist in the "Activity sample 1" "core_courseformat > Activity visibility"
-
-  @javascript
-  Scenario: Teacher can show an activity using the actions menu.
+  Scenario: The actions menu does not offer show or hide when the activity card has the visibility control.
     Given "Hidden from students" "button" should exist in the "Activity sample 2" "core_courseformat > Activity visibility"
     When I open "Activity sample 2" actions menu
-    And I choose "Show" in the open action menu
-    Then "Hidden from students" "button" should not exist in the "Activity sample 2" "core_courseformat > Activity visibility"
+    Then "Edit settings" "link" should exist in the "Activity sample 2" "activity"
+    And "Show" "link" should not exist in the "Activity sample 2" "activity"
 
   @javascript
-  Scenario: Teacher can make available but not shown an activity using the actions menu.
+  Scenario: The actions menu does not offer availability when the activity card has the visibility control.
     Given the following config values are set as admin:
       | allowstealth | 1 |
     And I reload the page
-    And "Hidden from students" "button" should exist in the "Activity sample 2" "core_courseformat > Activity visibility"
-    When I open "Activity sample 2" actions menu
-    And I choose "Availability > Make available but don't show on course page" in the open action menu
-    Then "Hidden from students" "button" should not exist in the "Activity sample 2" "core_courseformat > Activity visibility"
-    And "Available but not shown on course page" "button" should exist in the "Activity sample 2" "core_courseformat > Activity visibility"
+    And "Available on course page" "button" should exist in the "Activity sample 1" "core_courseformat > Activity visibility"
+    When I open "Activity sample 1" actions menu
+    Then "Edit settings" "link" should exist in the "Activity sample 1" "activity"
+    And "Availability" "link" should not exist in the "Activity sample 1" "activity"
+    And "Hide" "link" should not exist in the "Activity sample 1" "activity"
 
   @javascript
   Scenario: Teacher can show an activity using the visibility badge.

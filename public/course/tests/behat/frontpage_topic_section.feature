@@ -55,15 +55,12 @@ Feature: Site home activities section
     And I am on site homepage
     And I turn editing mode on
     And I should see "Frontpage assignment" in the "region-main" "region"
-    Then I open "Frontpage assignment" actions menu
-    And I choose "Availability > Make available but don't show on course page" in the open action menu
+    Then I set the "Frontpage assignment" activity visibility to "Make available but don't show on course page"
     And "Available but not shown on course page" "button" should exist in the "Frontpage assignment" "core_courseformat > Activity visibility"
-    And I open "Frontpage assignment" actions menu
-    And I choose "Availability > Show on course page" in the open action menu
+    And I set the "Frontpage assignment" activity visibility to "Show on course page"
     And "Available but not shown on course page" "button" should not exist in the "Frontpage assignment" "core_courseformat > Activity visibility"
     And "Hidden from students" "button" should not exist in the "Frontpage assignment" "core_courseformat > Activity visibility"
-    And I open "Frontpage assignment" actions menu
-    And I choose "Availability > Hide on course page" in the open action menu
+    And I set the "Frontpage assignment" activity visibility to "Hide on course page"
     And "Available but not shown on course page" "button" should not exist in the "Frontpage assignment" "core_courseformat > Activity visibility"
     And "Hidden from students" "button" should exist in the "Frontpage assignment" "core_courseformat > Activity visibility"
 
