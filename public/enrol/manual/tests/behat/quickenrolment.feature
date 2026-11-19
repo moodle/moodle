@@ -214,13 +214,15 @@ Feature: Teacher can search and enrol users one by one into the course
     And the following "groups" exist:
       | name    | course | idnumber |
       | Group 1 | C001   | G1       |
+      | Group 2 | C001   | G2       |
     # Now we have a group, we can test adding a user.
     And I press "Enrol users"
-    And I set the field "Select users" to "student001"
-    And I click on "showgroups" "checkbox"
-    And I set the field "Add to group" to "Group 1"
+    And I set the following fields in the "Enrol users" "dialogue" to these values:
+      | Select users | student001       |
+      | Add to group | 1                |
+      | Groups       | Group 1, Group 2 |
     And I click on "Enrol users" "button" in the "Enrol users" "dialogue"
-    And I should see "Group 1" in the "Student 001" "table_row"
+    And I should see "Group 1, Group 2" in the "Student 001" "table_row"
 
 # The following tests are commented out as a result of MDL-66339.
 #  @javascript

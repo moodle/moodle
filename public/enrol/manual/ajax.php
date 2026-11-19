@@ -107,7 +107,11 @@ switch ($action) {
         $startdateselect = optional_param_array('startdateselect', [], PARAM_INT);
         $recovergrades = optional_param('recovergrades', 0, PARAM_INT);
         $timeend = optional_param_array('timeend', [], PARAM_INT);
+        $groupids = optional_param_array('groups', [], PARAM_INT);
         $groupid = optional_param('group', 0, PARAM_INT);
+        if ($groupid) {
+            $groupids[] = $groupid;
+        }
 
         if (empty($roleid)) {
             $roleid = null;
@@ -163,7 +167,7 @@ switch ($action) {
 
         $mform = new enrol_manual_enrol_users_form(null, (object)["context" => $context]);
         $userenroldata = [
-                'group' => $groupid,
+                'groups' => $groupids,
                 'startdate' => $timestart,
                 'timeend' => $timeend,
         ];
@@ -184,13 +188,22 @@ switch ($action) {
         }
         $plugin = $plugins[$instance->enrol];
         if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
+
+            $groups = [];
+            if ($groupids && has_capability('moodle/course:managegroups', $context)) {
+                [$groupselect, $groupparams] = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, 'groupid');
+
+                $groups = $DB->get_records_select(
+                    'groups',
+                    "id {$groupselect} AND courseid = :courseid",
+                    array_merge($groupparams, ['courseid' => $course->id]),
+                );
+            }
+
             foreach ($users as $user) {
                 $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend, null, $recovergrades);
-                if ($groupid) {
-                    $group = $DB->get_record('groups', ['id' => $groupid, 'courseid' => $course->id]);
-                    if ($group && has_capability('moodle/course:managegroups', $context)) {
-                        groups_add_member($group, $user);
-                    }
+                foreach ($groups as $group) {
+                    groups_add_member($group, $user);
                 }
             }
             $outcome->count += count($users);

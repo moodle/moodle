@@ -136,12 +136,13 @@ class enrol_manual_enrol_users_form extends moodleform {
                     get_string('showgroups', 'enrol_manual'),
                 );
                 $mform->addElement(
-                    'select',
-                    'group',
+                    'autocomplete',
+                    'groups',
                     get_string('groups'),
-                    $options,
+                    [0 => ''] + $options,
+                    ['multiple' => true],
                 )->setHiddenLabel(true);
-                $mform->hideIf('group', 'showgroups', 'notchecked');
+                $mform->hideIf('groups', 'showgroups', 'notchecked');
             }
         }
 
