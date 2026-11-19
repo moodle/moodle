@@ -1,0 +1,11 @@
+issueNumber: MDL-84943
+notes:
+  smsgateway_aws:
+    - message: >
+        The AWS SMS gateway now uses its configured default country code for
+        phone numbers in local format. Before, these numbers were always sent
+        with the country code 1, whatever was configured. Sites that relied on
+        this, for example in the United States or Canada, must set the
+        gateway's default country code to 1, otherwise local numbers are sent
+        without a country code and fail.
+      type: changed
