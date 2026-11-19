@@ -94,7 +94,7 @@ final class auth_test extends \advanced_testcase {
                 unset($user['email']);
             }
             if ($includepicture) {
-                $user['picture'] = self::getExternalTestFileUrl('/test.jpg');
+                $user['picture'] = '/test.jpg';
             }
             $users[] = $user;
         }
@@ -123,7 +123,7 @@ final class auth_test extends \advanced_testcase {
             $data['email'] = $mockuser['email'];
         }
         if (!empty($mockuser['picture'])) {
-            $data['picture'] = $mockuser['picture'];
+            $data['picture'] = self::getExternalTestFileUrl($mockuser['picture']);
         }
         if (!empty($legacyuserid)) {
             $data['lti11_legacy_user_id'] = $legacyuserid;
@@ -175,7 +175,7 @@ final class auth_test extends \advanced_testcase {
         }
 
         if (!empty($mockuser['picture'])) {
-            $data['picture'] = $mockuser['picture'];
+            $data['picture'] = self::getExternalTestFileUrl($mockuser['picture']);
         }
 
         if ($mockmigration) {
