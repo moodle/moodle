@@ -898,7 +898,8 @@ $cronoverdue = ($lastcron < time() - 3600 * 24);
 $lastcroninterval = get_config('tool_task', 'lastcroninterval');
 
 $expectedfrequency = $CFG->expectedcronfrequency ?? MINSECS;
-$croninfrequent = !$cronoverdue && ($lastcroninterval > ($expectedfrequency + MINSECS) || $lastcron < time() - $expectedfrequency);
+$croninfrequent = !$cronoverdue &&
+    ($lastcroninterval > ($expectedfrequency + MINSECS) || $lastcron < time() - ($expectedfrequency + MINSECS));
 $dbproblems = $DB->diagnose();
 $maintenancemode = !empty($CFG->maintenance_enabled);
 
