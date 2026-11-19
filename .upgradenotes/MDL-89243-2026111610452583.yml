@@ -4,6 +4,8 @@ notes:
     - type: changed
       message: >-
         The core/fetch module now rejects failed requests with the Response
-        object instead of its status text, so callers can read the status,
-        headers and body of an error response. Callers that used the rejection
-        reason as a string should read its statusText property instead.
+        object instead of its status text. This is a breaking change for code
+        which uses the rejection reason as a string.
+
+        For more information, including how to support both forms, see
+        https://moodledev.io/docs/6.0/devupdate#fetch-requests-reject-with-the-response
