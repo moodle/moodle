@@ -123,7 +123,7 @@ function qf_errorHandler(element, _qfMsg) {
   if (_qfMsg != \'\') {
     span = document.createElement("span");
     span.className = "error";
-    span.appendChild(document.createTextNode(_qfMsg.substring(3)));
+    span.appendChild(document.createTextNode(_qfMsg));
     br = document.createElement("br");
 
     var errorDiv = document.getElementById(element.name + \'_errorDiv\');
