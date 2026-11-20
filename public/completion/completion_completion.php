@@ -246,6 +246,10 @@ class completion_completion extends data_object {
             $data = $this->get_record_data();
             $key = $data->userid . '_' . $data->course;
             $cache->set($key, ['value' => $data]);
+
+            // Purge the per-request progress cache so this course completion change is seen immediately.
+            \cache::make_from_params(\cache_store::MODE_REQUEST, 'core', 'course_progress')->purge();
+
             return $this->id;
         }
 
