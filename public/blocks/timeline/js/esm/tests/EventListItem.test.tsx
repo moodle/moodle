@@ -97,6 +97,17 @@ describe('EventListItem', () => {
         expect(screen.queryByText(/Course 2/)).not.toBeInTheDocument();
     });
 
+    it('renders an event without a course, such as a site home activity', async() => {
+        const event = makeEvent();
+        delete (event as Partial<CalendarEvent>).course;
+        await renderItem(<EventListItem event={event} />);
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', '/mod/quiz/view.php?id=1');
+        expect(link).toHaveTextContent('Quiz 1');
+        expect(screen.getByText('Quiz is due')).toBeInTheDocument();
+    });
+
     it('renders the icon container only when the event has an icon', async() => {
         const {rerender} = await renderItem(<EventListItem event={makeEvent()} />);
         expect(screen.queryByTestId('activity-icon')).not.toBeInTheDocument();
