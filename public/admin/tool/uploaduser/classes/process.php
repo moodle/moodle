@@ -629,8 +629,16 @@ class process {
             return;
         }
 
+        // It both are enabled the oldusername field is not taken into account because existinguser is searched
+        // with email not with oldusername. If an existinguser is found and the username doesn't match the csv
+        // username, oldusername is overwritten with existinguser username and the rename flow continues normally.
         $matchonemailallowrename = $this->get_match_on_email() && $this->get_allow_renames();
-        if ($matchonemailallowrename && $user->username && ($user->username !== $existinguser->username)) {
+        if (
+            $matchonemailallowrename &&
+            $user->username &&
+            !empty($existinguser->username) &&
+            ($user->username !== $existinguser->username)
+        ) {
             $user->oldusername = $existinguser->username;
             $existinguser = false;
         }
@@ -643,7 +651,8 @@ class process {
                 return;
             }
 
-            if ($existinguser) {
+            // We also need to check if username exists somewhere else not just under the mail from the file.
+            if ($existinguser || $DB->record_exists('user', ['username' => $user->username])) {
                 $this->upt->track('status', get_string('usernotrenamedexists', 'error'), 'error');
                 $this->renameerrors++;
                 return;

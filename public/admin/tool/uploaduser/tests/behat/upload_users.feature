@@ -295,7 +295,7 @@ Feature: Upload users
     And I should not see "Frodo Baggins"
 
   @javascript
-  Scenario: Create a new user when matching them on email where where the username already exists
+  Scenario: Create a new user when matching them on email where the username already exists
     Given the following "users" exist:
       | username | firstname | lastname | email               |
       | bilbob   | Samwise   | Gamgee   | samwise@example.com |
@@ -315,3 +315,28 @@ Feature: Upload users
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I should see "Samwise Gamgee"
     And I should see "Frodo Baggins"
+
+  @javascript
+  Scenario: Rename a username to an existing username when matching on email
+    Given the following "users" exist:
+      | username   | firstname | lastname | email                  |
+      | firstuser  | First     | User     | firstuser@example.com  |
+      | seconduser | Second    | User     | seconduser@example.com |
+      | thirduser  | Third     | User     | thirduser@example.com  |
+      | fifthuser  | Fifth     | User     | fifthuser@example.com  |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_email_matching_oldusername.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And I set the following fields to these values:
+      | Upload type            | Add new and update existing users |
+      | Allow renames          | Yes                               |
+      | Match on email address | Yes                               |
+    And I press "Upload users"
+    And I should see "User not renamed - the new username is already in use"
+    And I should see "User not added - username already exists under a different email"
+    And I should see "Users created: 1"
+    And I should see "Users renamed: 2"
+    And I should see "Rename errors: 2"
+    And I should see "Users skipped: 1"
