@@ -505,7 +505,7 @@ final class overview_test extends \advanced_testcase {
                 }
 
                 $status = $recordinginfo['status'] ?? recording::RECORDING_STATUS_PROCESSED;
-                $currentgroupid = $groups[$groupname]->id ?? 0;
+                $currentgroupid = $groups[$groupname ?? '']->id ?? 0;
                 $instance = instance::get_from_instanceid($instances['withrecordings']->id);
                 if (!isset($hasmeetingforgroup[$currentgroupid])) {
                     // Create a meeting for the group if it does not exist.

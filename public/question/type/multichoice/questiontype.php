@@ -298,7 +298,7 @@ class qtype_multichoice extends question_type {
                         $answer->fraction);
             }
 
-            $responses[null] = question_possible_response::no_response();
+            $responses[''] = question_possible_response::no_response();
             return array($questiondata->id => $responses);
         } else {
             $parts = array();

@@ -173,7 +173,7 @@ class qtype_match extends question_type {
                         $q->html_to_text($stem, $q->stemformat[$stemid]) . ': ' . $choice,
                         ($choiceid == $q->right[$stemid]) / count($q->stems));
             }
-            $responses[null] = question_possible_response::no_response();
+            $responses[''] = question_possible_response::no_response();
 
             $subqs[$stemid] = $responses;
         }

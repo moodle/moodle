@@ -135,9 +135,10 @@ class condition extends \core_availability\condition {
     public function is_available($not, info $info, $grabthelot, $userid): bool {
         list($selfcmid, $selfsectionid) = $this->get_selfids($info);
         $cmid = $this->get_cmid($info->get_course(), $selfcmid, $selfsectionid);
+        $cmidkey = $cmid ?? '';
         $modinfo = $info->get_modinfo();
         $completion = new \completion_info($modinfo->get_course());
-        if (!array_key_exists($cmid, $modinfo->cms) || $modinfo->cms[$cmid]->deletioninprogress) {
+        if (!isset($modinfo->cms[$cmidkey]) || $modinfo->cms[$cmidkey]->deletioninprogress) {
             // If the cmid cannot be found, always return false regardless
             // of the condition or $not state. (Will be displayed in the
             // information message.)
@@ -241,10 +242,10 @@ class condition extends \core_availability\condition {
      */
     private function get_previous_cmid(stdClass $course, ?int $selfcmid, ?int $selfsectionid): ?int {
         $this->load_course_structure($course);
-        if (isset($this->modfastprevious[$selfcmid])) {
+        if ($selfcmid !== null && isset($this->modfastprevious[$selfcmid])) {
             return $this->modfastprevious[$selfcmid];
         }
-        if (isset($this->sectionfastprevious[$selfsectionid])) {
+        if ($selfsectionid !== null && isset($this->sectionfastprevious[$selfsectionid])) {
             return $this->sectionfastprevious[$selfsectionid];
         }
         return null;
@@ -395,11 +396,12 @@ class condition extends \core_availability\condition {
         } else {
             // Get name for module.
             $cmid = $this->get_cmid($course, $selfcmid, $selfsectionid);
+            $cmidkey = $cmid ?? '';
             $modinfo = $info->get_modinfo();
-            if (!array_key_exists($cmid, $modinfo->cms) || $modinfo->cms[$cmid]->deletioninprogress) {
+            if (!isset($modinfo->cms[$cmidkey]) || $modinfo->cms[$cmidkey]->deletioninprogress) {
                 $modname = get_string('missing', 'availability_completion');
             } else {
-                $modname = self::description_cm_name($modinfo->cms[$cmid]->id);
+                $modname = self::description_cm_name($modinfo->cms[$cmidkey]->id);
             }
         }
 

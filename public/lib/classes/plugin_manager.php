@@ -670,6 +670,9 @@ class plugin_manager {
      */
     public function get_plugin_info($component) {
         [$type, $name] = core_component::normalize_component($component);
+        if (!isset($name)) {
+            return null;
+        }
         $plugins = $this->get_plugins_of_type($type, true);
         if (isset($plugins[$name])) {
             return $plugins[$name];

@@ -69,4 +69,46 @@ final class navigation_node_collection_test extends navigation_testcase {
         // Test it's empty again!
         $this->assertEquals(0, count($navigationnodecollection->get_key_list()));
     }
+
+    public function test_type_and_remove_with_normalized_index(): void {
+        $navigationnodecollection = new navigation_node_collection();
+        $node = new navigation_node('Test node');
+        $navigationnodecollection->add($node);
+        $this->assertDebuggingCalled('Navigation node add: Node key should not be null');
+
+        $this->assertSame($node, $navigationnodecollection->get('', ''));
+        $this->assertSame($node, $navigationnodecollection->get(null, null));
+        $this->assertSame($node, $navigationnodecollection->find('', ''));
+        $this->assertArrayHasKey('', $navigationnodecollection->type(''));
+        $this->assertSame($node, $navigationnodecollection->type('')['']);
+
+        $this->assertTrue($navigationnodecollection->remove('', ''));
+        $this->assertCount(0, $navigationnodecollection);
+        $this->assertSame([], $navigationnodecollection->get_key_list());
+        $this->assertFalse($navigationnodecollection->get('', ''));
+        $this->assertSame([], $navigationnodecollection->type(''));
+
+        $node = new navigation_node(['text' => 'Another test node', 'key' => '']);
+        $navigationnodecollection->add($node);
+        $this->assertTrue($navigationnodecollection->remove(''));
+        $this->assertCount(0, $navigationnodecollection);
+    }
+
+    public function test_get_and_find_with_empty_string_key(): void {
+        $navigationnodecollection = new navigation_node_collection();
+        $node = new navigation_node(['text' => 'Test node', 'key' => '', 'type' => navigation_node::TYPE_CUSTOM]);
+        $navigationnodecollection->add($node);
+
+        $this->assertSame($node, $navigationnodecollection->get('', navigation_node::TYPE_CUSTOM));
+        $this->assertSame($node, $navigationnodecollection->find('', navigation_node::TYPE_CUSTOM));
+    }
+
+    public function test_remove_missing_node_does_not_decrement_count(): void {
+        $navigationnodecollection = new navigation_node_collection();
+        $node = new navigation_node(['text' => 'Test node', 'key' => 'demo', 'type' => navigation_node::TYPE_CUSTOM]);
+        $navigationnodecollection->add($node);
+
+        $this->assertFalse($navigationnodecollection->remove('missing', navigation_node::TYPE_CUSTOM));
+        $this->assertCount(1, $navigationnodecollection);
+    }
 }

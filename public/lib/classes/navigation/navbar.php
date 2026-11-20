@@ -116,18 +116,18 @@ class navbar extends navigation_node {
     /**
      * Gets a navigation node
      *
-     * @param string|int $key for referencing the navbar nodes
-     * @param int $type breadcrumb_navigation_node::TYPE_*
+     * @param string|int|null $key for referencing the navbar nodes
+     * @param ?int $type breadcrumb_navigation_node::TYPE_*
      * @return breadcrumb_navigation_node|bool
      */
     public function get($key, $type = null) {
         foreach ($this->children as &$child) {
-            if ($child->key === $key && ($type == null || $type == $child->type)) {
+            if ($child->key === $key && ($type === null || $type === $child->type)) {
                 return $child;
             }
         }
         foreach ($this->prependchildren as &$child) {
-            if ($child->key === $key && ($type == null || $type == $child->type)) {
+            if ($child->key === $key && ($type === null || $type === $child->type)) {
                 return $child;
             }
         }

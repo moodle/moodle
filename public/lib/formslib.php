@@ -1788,10 +1788,11 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      *
      * If you set a header element to advanced then all elements it contains will also be set as advanced.
      *
-     * @param string $elementName group or element name (not the element name of something inside a group).
+     * @param string|null $elementName group or element name (not the element name of something inside a group).
      * @param bool $advanced default true sets the element to advanced. False removes advanced mark.
      */
     function setAdvanced($elementName, $advanced = true) {
+        $elementName = $elementName ?? '';
         if ($advanced){
             $this->_advancedElements[$elementName]='';
         } elseif (isset($this->_advancedElements[$elementName])) {
@@ -2021,9 +2022,10 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             $anyError = false;
             foreach (array_keys($this->_elements) as $elementIndex){
                 $element =& $this->_elements[$elementIndex];
+                $elementname = $element->getName() ?? '';
 
                 // if closing header and any contained element was advanced then mark it as advanced
-                if ($element->getType()=='header' || in_array($element->getName(), $stopFields)){
+                if ($element->getType() === 'header' || in_array($elementname, $stopFields)) {
                     if ($anyAdvanced && !is_null($lastHeader)) {
                         $lastHeader->_generateId();
                         $this->setAdvanced($lastHeader->getName());
@@ -2033,17 +2035,17 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                     unset($lastHeader);
                     $lastHeader = null;
                 } elseif ($lastHeaderAdvanced) {
-                    $this->setAdvanced($element->getName());
+                    $this->setAdvanced($elementname);
                 }
 
                 if ($element->getType()=='header'){
                     $lastHeader =& $element;
                     $anyAdvanced = false;
                     $anyError = false;
-                    $lastHeaderAdvanced = isset($this->_advancedElements[$element->getName()]);
-                } elseif (isset($this->_advancedElements[$element->getName()])){
+                    $lastHeaderAdvanced = isset($this->_advancedElements[$elementname]);
+                } else if (isset($this->_advancedElements[$elementname])) {
                     $anyAdvanced = true;
-                    if (isset($this->_errors[$element->getName()])) {
+                    if (isset($this->_errors[$elementname])) {
                         $anyError = true;
                     }
                 }
@@ -2069,16 +2071,17 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 
             $anyrequiredorerror = false;
             $headercounter = 0;
-            $headername = null;
+            $headername = '';
             foreach (array_keys($this->_elements) as $elementIndex){
                 $element =& $this->_elements[$elementIndex];
+                $elementname = $element->getName() ?? '';
 
                 if ($element->getType() == 'header') {
                     $headercounter++;
                     $element->_generateId();
-                    $headername = $element->getName();
+                    $headername = $elementname;
                     $anyrequiredorerror = false;
-                } else if (in_array($element->getName(), $this->_required) || isset($this->_errors[$element->getName()])) {
+                } else if (in_array($elementname, $this->_required) || isset($this->_errors[$elementname])) {
                     $anyrequiredorerror = true;
                 } else {
                     // Do not reset $anyrequiredorerror to false because we do not want any other element
@@ -3079,7 +3082,7 @@ require([
         }
 
         foreach (array_keys($this->_elements) as $key) {
-            $name = $this->_elements[$key]->getName();
+            $name = $this->_elements[$key]->getName() ?? '';
             if ($this->_freezeAll || isset($elementList[$name])) {
                 $this->_elements[$key]->freeze();
                 $this->_elements[$key]->setPersistantFreeze(false);
@@ -3439,7 +3442,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
         // Make sure the element has an id.
         $element->_generateId();
-        $advanced = isset($this->_advancedElements[$element->getName()]);
+        $elementname = $element->getName() ?? '';
+        $advanced = isset($this->_advancedElements[$elementname]);
 
         $html = $OUTPUT->mform_element($element, $required, $advanced, $error, false);
         $fromtemplate = !empty($html);
@@ -3454,14 +3458,14 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             } else {
                 $html = $this->_elementTemplates['default'];
             }
-            if (isset($this->_advancedElements[$element->getName()])) {
+            if (isset($this->_advancedElements[$elementname])) {
                 $html = str_replace(' {advanced}', ' advanced', $html);
                 $html = str_replace(' {aria-live}', ' aria-live="polite"', $html);
             } else {
                 $html = str_replace(' {advanced}', '', $html);
                 $html = str_replace(' {aria-live}', '', $html);
             }
-            if (isset($this->_advancedElements[$element->getName()]) || $element->getName() == 'mform_showadvanced') {
+            if (isset($this->_advancedElements[$elementname]) || $elementname === 'mform_showadvanced') {
                 $html = str_replace('{advancedimg}', $this->_advancedHTML, $html);
             } else {
                 $html = str_replace('{advancedimg}', '', $html);
@@ -3469,7 +3473,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $html = str_replace('{id}', 'fitem_' . $element->getAttribute('id'), $html);
             $html = str_replace('{typeclass}', 'f' . $element->getType(), $html);
             $html = str_replace('{type}', $element->getType(), $html);
-            $html = str_replace('{name}', $element->getName(), $html);
+            $html = str_replace('{name}', $elementname, $html);
             $html = str_replace('{groupname}', '', $html);
             $html = str_replace('{class}', $element->getAttribute('class') ?? '', $html);
             $emptylabel = '';
@@ -3489,12 +3493,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
         if (($this->_inGroup) and !empty($this->_groupElementTemplate)) {
             $this->_groupElementTemplate = $html;
-        } else if (!isset($this->_templates[$element->getName()])) {
-            $this->_templates[$element->getName()] = $html;
+        } else if (!isset($this->_templates[$elementname])) {
+            $this->_templates[$elementname] = $html;
         }
 
         // Check if the element should be displayed in the sticky footer.
-        if ($element->getName() && ($this->_stickyfooterelement == $element->getName())) {
+        if ($elementname && ($this->_stickyfooterelement === $elementname)) {
             $stickyfooter = new core\output\sticky_footer($html);
             $html = $OUTPUT->render($stickyfooter);
         }
@@ -3502,7 +3506,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         if (!$fromtemplate) {
             parent::renderElement($element, $required, $error);
         } else {
-            if (in_array($element->getName(), $this->_stopFieldsetElements) && $this->_fieldsetsOpen > 0) {
+            if (in_array($elementname, $this->_stopFieldsetElements) && $this->_fieldsetsOpen > 0) {
                 $this->_html .= $this->_closeFieldsetTemplate;
                 $this->_fieldsetsOpen--;
             }

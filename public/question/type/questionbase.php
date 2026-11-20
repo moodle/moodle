@@ -696,6 +696,11 @@ class question_classified_response {
         $this->fraction = $fraction;
     }
 
+    /**
+     * Create a classified response representing no response.
+     *
+     * @return question_classified_response
+     */
     public static function no_response() {
         return new question_classified_response(null, get_string('noresponse', 'question'), null);
     }

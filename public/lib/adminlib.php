@@ -1161,9 +1161,11 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
     }
 
     $form .= $setting->output_setting_flags();
-    $isforcedcore = $setting->is_forceable() && array_key_exists($setting->name, $CFG->config_php_settings);
-    $isforcedplugin = array_key_exists($setting->plugin, $CFG->forced_plugin_settings)
-        && array_key_exists($setting->name, $CFG->forced_plugin_settings[$setting->plugin]);
+    $pluginname = $setting->plugin ?? '';
+    $settingname = $setting->name ?? '';
+    $isforcedcore = $setting->is_forceable() && array_key_exists($settingname, $CFG->config_php_settings);
+    $isforcedplugin = isset($CFG->forced_plugin_settings[$pluginname])
+        && array_key_exists($settingname, $CFG->forced_plugin_settings[$pluginname]);
 
     // Dispatch the hook for all settings.
     $notificationhook = new admin_setting_notification($setting);

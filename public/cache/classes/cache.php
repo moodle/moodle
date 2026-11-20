@@ -1420,6 +1420,7 @@ class cache implements loader_interface {
      * @return bool True on success, false otherwise.
      */
     protected function static_acceleration_delete($key) {
+        $key = $key ?? '';
         unset($this->staticaccelerationarray[$key]);
         if ($this->staticaccelerationsize !== false && isset($this->staticaccelerationkeys[$key])) {
             unset($this->staticaccelerationkeys[$key]);

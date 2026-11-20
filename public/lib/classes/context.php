@@ -208,6 +208,7 @@ abstract class context extends stdClass implements IteratorAggregate {
      * @return context|bool Context or false if not in cache
      */
     protected static function cache_get($contextlevel, $instance) {
+        $instance = $instance ?? '';
         if (isset(self::$cache_contexts[$contextlevel][$instance])) {
             return self::$cache_contexts[$contextlevel][$instance];
         }

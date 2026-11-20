@@ -397,7 +397,8 @@ class modinfo {
      * @return section_info|null Information for numbered section or null if not found
      */
     public function get_section_info($sectionnumber, $strictness = IGNORE_MISSING) {
-        if (!array_key_exists($sectionnumber, $this->sectioninfobynum)) {
+        $sectionnumber = $sectionnumber ?? '';
+        if (!isset($this->sectioninfobynum[$sectionnumber])) {
             if ($strictness === MUST_EXIST) {
                 throw new moodle_exception('sectionnotexist');
             } else {
@@ -414,7 +415,7 @@ class modinfo {
      * @return section_info|null Information for numbered section or null if not found
      */
     public function get_section_info_by_id(int $sectionid, int $strictness = IGNORE_MISSING): ?section_info {
-        if (!array_key_exists($sectionid, $this->sectioninfobyid)) {
+        if (!isset($this->sectioninfobyid[$sectionid])) {
             if ($strictness === MUST_EXIST) {
                 throw new moodle_exception('sectionnotexist');
             } else {
@@ -739,7 +740,7 @@ class modinfo {
                 if (!isset($this->delegatedsections[$sectioninfo->component])) {
                     $this->delegatedsections[$sectioninfo->component] = [];
                 }
-                $this->delegatedsections[$sectioninfo->component][$sectioninfo->itemid] = $sectioninfo;
+                $this->delegatedsections[$sectioninfo->component][$sectioninfo->itemid ?? ''] = $sectioninfo;
             }
         }
         ksort($this->sectioninfobynum);

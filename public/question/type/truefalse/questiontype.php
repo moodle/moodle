@@ -186,7 +186,7 @@ class qtype_truefalse extends question_type {
                 1 => new question_possible_response(get_string('true', 'qtype_truefalse'),
                         $questiondata->options->answers[
                         $questiondata->options->trueanswer]->fraction),
-                null => question_possible_response::no_response()
+                '' => question_possible_response::no_response(),
             )
         );
     }

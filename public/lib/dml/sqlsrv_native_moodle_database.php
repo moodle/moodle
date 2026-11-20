@@ -988,7 +988,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
 
         foreach ($rs as $row) {
             $rowarray = (array)$row;
-            $id = reset($rowarray);
+            $id = reset($rowarray) ?? '';
 
             if (isset($results[$id])) {
                 $colname = key($rowarray);

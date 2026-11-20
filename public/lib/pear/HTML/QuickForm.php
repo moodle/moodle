@@ -607,7 +607,7 @@ class HTML_QuickForm extends HTML_Common {
                 return $elementObject;
             }
         }
-        $elementName = $elementObject->getName();
+        $elementName = $elementObject->getName() ?? '';
 
         // Add the element if it is not an incompatible duplicate
         if (!empty($elementName) && isset($this->_elementIndex[$elementName])) {
@@ -659,7 +659,7 @@ class HTML_QuickForm extends HTML_Common {
             $error = self::raiseError(null, QUICKFORM_NONEXIST_ELEMENT, null, E_USER_WARNING, "Element '$nameAfter' does not exist in HTML_QuickForm::insertElementBefore()", 'HTML_QuickForm_Error', true);
             return $error;
         }
-        $elementName = $element->getName();
+        $elementName = $element->getName() ?? '';
         $targetIdx   = $this->_elementIndex[$nameAfter];
         $duplicate   = false;
         // Like in addElement(), check that it's not an incompatible duplicate
@@ -674,7 +674,7 @@ class HTML_QuickForm extends HTML_Common {
         $elKeys = array_keys($this->_elements);
         for ($i = end($elKeys); $i >= $targetIdx; $i--) {
             if (isset($this->_elements[$i])) {
-                $currentName = $this->_elements[$i]->getName();
+                $currentName = $this->_elements[$i]->getName() ?? '';
                 $this->_elements[$i + 1] =& $this->_elements[$i];
                 if ($this->_elementIndex[$currentName] == $i) {
                     $this->_elementIndex[$currentName] = $i + 1;
@@ -898,6 +898,7 @@ class HTML_QuickForm extends HTML_Common {
      */
     function getElementError($element)
     {
+        $element = $element ?? '';
         if (isset($this->_errors[$element])) {
             return $this->_errors[$element];
         }
@@ -1563,7 +1564,7 @@ class HTML_QuickForm extends HTML_Common {
 
         $frozen = [];
         foreach (array_keys($this->_elements) as $key) {
-            $name = $this->_elements[$key]->getName();
+            $name = $this->_elements[$key]->getName() ?? '';
             if ($this->_freezeAll || isset($elementList[$name])) {
                 $this->_elements[$key]->freeze();
                 $frozen[$name] = true;

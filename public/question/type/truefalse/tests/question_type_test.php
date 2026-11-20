@@ -132,7 +132,8 @@ final class question_type_test extends \advanced_testcase {
             $q->id => array(
                 0 => new question_possible_response(get_string('false', 'qtype_truefalse'), 0),
                 1 => new question_possible_response(get_string('true', 'qtype_truefalse'), 1),
-                null => question_possible_response::no_response()),
+                '' => question_possible_response::no_response(),
+            ),
         ), $this->qtype->get_possible_responses($q));
     }
 

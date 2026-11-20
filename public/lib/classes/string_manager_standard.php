@@ -278,7 +278,7 @@ class core_string_manager_standard implements core_string_manager {
     public function string_exists($identifier, $component) {
         $lang = current_language();
         $string = $this->load_component_strings($component, $lang);
-        return isset($string[$identifier]);
+        return isset($string[$identifier ?? '']);
     }
 
     /**

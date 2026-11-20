@@ -253,13 +253,15 @@ final class stateactions_test extends \advanced_testcase {
         $updates = new stateupdates($courseformat);
 
         // Execute given method.
+        $targetsectionid = $params['targetsectionid'] ?? '';
+        $targetcmid = $params['targetcmid'] ?? '';
         $actions = new stateactions();
         $actions->$method(
             $updates,
             $course,
             $this->translate_references($references, $params['ids']),
-            $references[$params['targetsectionid']] ?? null,
-            $references[$params['targetcmid']] ?? null
+            $references[$targetsectionid] ?? null,
+            $references[$targetcmid] ?? null
         );
 
         // Format results in a way we can compare easily.

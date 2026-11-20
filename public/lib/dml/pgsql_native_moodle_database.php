@@ -1055,7 +1055,7 @@ class pgsql_native_moodle_database extends moodle_database {
 
         $return = [];
         while ($row = pg_fetch_assoc($result)) {
-            $id = reset($row);
+            $id = reset($row) ?? '';
             if ($blobs) {
                 foreach ($blobs as $blob) {
                     $row[$blob] = ($row[$blob] !== null ? pg_unescape_bytea($row[$blob]) : null);

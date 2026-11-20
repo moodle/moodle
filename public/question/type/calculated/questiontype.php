@@ -1835,7 +1835,7 @@ class qtype_calculated extends question_type {
             get_string('didnotmatchanyanswer', 'question'), 0);
         }
 
-        $responses[null] = question_possible_response::no_response();
+        $responses[''] = question_possible_response::no_response();
 
         return [$questiondata->id => $responses];
     }
