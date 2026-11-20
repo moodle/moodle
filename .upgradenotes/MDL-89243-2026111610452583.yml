@@ -1,0 +1,11 @@
+issueNumber: MDL-89243
+notes:
+  core:
+    - type: changed
+      message: >-
+        The core/fetch module now rejects failed requests with the Response
+        object instead of its status text. This is a breaking change for code
+        which uses the rejection reason as a string.
+
+        For more information, including how to support both forms, see
+        https://moodledev.io/docs/6.0/devupdate#fetch-requests-reject-with-the-response

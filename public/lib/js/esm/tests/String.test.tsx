@@ -192,14 +192,15 @@ describe('@moodle/lms/core/String', () => {
             expect(screen.getByText('Hello World')).toBeInTheDocument();
         });
 
-        it('renders the default fallback while suspended', async() => {
+        it('renders nothing while suspended when no fallback is given', async() => {
             mockPendingString('loading', 'mod_quiz');
 
+            let container!: HTMLElement;
             await act(async() => {
-                render(<String identifier="loading" component="mod_quiz" />);
+                ({container} = render(<String identifier="loading" component="mod_quiz" />));
             });
 
-            expect(screen.getByText('loading, mod_quiz')).toBeInTheDocument();
+            expect(container).toBeEmptyDOMElement();
         });
 
         it('renders custom children as fallback while suspended', async() => {

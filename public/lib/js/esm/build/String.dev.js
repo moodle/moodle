@@ -11,8 +11,8 @@ function StringInner({ identifier, component, params }) {
   }, this);
 }
 __name(StringInner, "StringInner");
-function String({ children, identifier, component = "core", params }) {
-  return /* @__PURE__ */ jsxDEV(Suspense, { fallback: children ?? `${identifier}, ${component}`, children: /* @__PURE__ */ jsxDEV(StringInner, { identifier, component, params }, void 0, false, {
+function String({ children = "", identifier, component = "core", params }) {
+  return /* @__PURE__ */ jsxDEV(Suspense, { fallback: children, children: /* @__PURE__ */ jsxDEV(StringInner, { identifier, component, params }, void 0, false, {
     fileName: "public/lib/js/esm/src/String.tsx",
     lineNumber: 32,
     columnNumber: 13

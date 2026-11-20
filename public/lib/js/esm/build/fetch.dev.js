@@ -92,7 +92,7 @@ class RequestWrapper {
     if (response.ok) {
       this.#resolve(response);
     } else {
-      this.#reject(response.statusText);
+      this.#reject(response);
     }
   }
 }
@@ -370,7 +370,7 @@ class Fetch {
     const response = await fetch(await this.#getRequests(requestMap));
     if (!response.ok) {
       for (const requestWrapper of requestMap.values()) {
-        requestWrapper.reject(response.statusText);
+        requestWrapper.reject(response);
       }
       return;
     }
@@ -385,7 +385,10 @@ class Fetch {
       if (responseMap.has(key)) {
         requestWrapper.handleResponse(responseMap.get(key));
       } else {
-        requestWrapper.reject(`Request failed. No response provided for request ${key} by provider`);
+        requestWrapper.reject(new Response(null, {
+          status: 502,
+          statusText: `No response provided for request ${key} by provider`
+        }));
       }
     }
   }

@@ -76,7 +76,7 @@ export default function ViewSelector({activeOrder, onChange}: ViewSelectorProps)
                 title={menuLabel}
             >
                 <span data-active-item-text=''>
-                    <String identifier={activeOption.labelKey} component='block_timeline'>{''}</String>
+                    <String identifier={activeOption.labelKey} component='block_timeline' />
                 </span>
             </button>
 
@@ -101,7 +101,7 @@ export default function ViewSelector({activeOrder, onChange}: ViewSelectorProps)
                             onChange(option.name);
                         }}
                     >
-                        <String identifier={option.labelKey} component='block_timeline'>{''}</String>
+                        <String identifier={option.labelKey} component='block_timeline' />
                     </a>
                 ))}
             </div>

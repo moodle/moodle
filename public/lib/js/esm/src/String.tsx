@@ -26,9 +26,9 @@ function StringInner({identifier, component, params}: StringProps) {
     return <>{use(getString(identifier, component, params))}</>;
 }
 
-function String({children, identifier, component = 'core', params}: StringProps & {children?: ReactNode}) {
+function String({children = '', identifier, component = 'core', params}: StringProps & {children?: ReactNode}) {
     return (
-        <Suspense fallback={children ?? `${identifier}, ${component}`}>
+        <Suspense fallback={children}>
             <StringInner identifier={identifier} component={component} params={params} />
         </Suspense>
     );

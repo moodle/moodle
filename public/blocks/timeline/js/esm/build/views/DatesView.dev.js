@@ -111,7 +111,7 @@ function DatesView({
           lineNumber: 174,
           columnNumber: 21
         }, this),
-        /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "nocoursesinprogress", component: "block_timeline", children: "" }, void 0, false, {
+        /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "nocoursesinprogress", component: "block_timeline" }, void 0, false, {
           fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
           lineNumber: 176,
           columnNumber: 25
@@ -132,7 +132,7 @@ function DatesView({
         lineNumber: 184,
         columnNumber: 17
       }, this),
-      /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "noevents", component: "block_timeline", children: "" }, void 0, false, {
+      /* @__PURE__ */ jsxDEV("p", { className: "text-muted mt-1", children: /* @__PURE__ */ jsxDEV(String, { identifier: "noevents", component: "block_timeline" }, void 0, false, {
         fileName: "public/blocks/timeline/js/esm/src/views/DatesView.tsx",
         lineNumber: 186,
         columnNumber: 21
