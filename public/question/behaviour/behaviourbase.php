@@ -555,8 +555,10 @@ abstract class question_behaviour {
     protected function summarise_manual_comment($step) {
         $a = new stdClass();
         if ($step->has_behaviour_var('comment')) {
-            $comment = question_utils::to_plain_text($step->get_behaviour_var('comment'),
-                    $step->get_behaviour_var('commentformat'));
+            $comment = question_utils::to_plain_text(
+                $step->get_behaviour_var('comment') ?? '',
+                $step->get_behaviour_var('commentformat')
+            );
             $a->comment = shorten_text($comment, 200);
         } else {
             $a->comment = '';

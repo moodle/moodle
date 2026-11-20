@@ -706,12 +706,16 @@ final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         // Process a second grade and comment.
         $this->manual_grade('Second comment', '7.0', FORMAT_HTML);
 
+        // Process a third grade with a null comment.
+        $this->manual_grade(null, '8.0', FORMAT_HTML);
+
         // Verify.
         $this->check_current_state(question_state::$mangrpartial);
-        $this->check_current_mark(7);
+        $this->check_current_mark(8);
         $this->displayoptions->history = question_display_options::VISIBLE;
         $this->render();
         $this->check_output_contains('Manually graded 5 with comment: First comment');
         $this->check_output_contains('Manually graded 7 with comment: Second comment');
+        $this->check_output_contains('Manually graded 8 with comment: ');
     }
 }
