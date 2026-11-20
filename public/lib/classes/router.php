@@ -307,13 +307,27 @@ class router {
         global $CFG;
 
         // Note: Slim uses a file cache and is not compatible with MUC.
-        $this->app->getRouteCollector()->setCacheFile(
-            sprintf(
-                "%s/routes.%s.cache",
-                $CFG->cachedir,
-                sha1($this->basepath),
-            ),
+        $cachefile = sprintf(
+            "%s/routes.%s.cache",
+            $CFG->cachedir,
+            sha1($this->basepath),
         );
+
+        if (file_exists($cachefile)) {
+            $this->app->getRouteCollector()->setCacheFile($cachefile);
+            return;
+        }
+
+        // FastRoute writes the cache file in place, so a parallel request can read it half written and fail.
+        // Have it write a file of our own, and move that into place at the end of the request.
+        // A plain shutdown function is used because routes like the ESM one stop after config.
+        $tempfile = $cachefile . '.' . uniqid(more_entropy: true) . '.tmp';
+        $this->app->getRouteCollector()->setCacheFile($tempfile);
+        register_shutdown_function(function () use ($tempfile, $cachefile): void {
+            if (file_exists($tempfile) && !@rename($tempfile, $cachefile)) {
+                @unlink($tempfile);
+            }
+        });
     }
 
     /**
