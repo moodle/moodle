@@ -7,8 +7,9 @@
 /* Import Noto Sans font face declarations. */
 @import "moodle/fonts";
 
-/* Override the code-color to increase the contrast. */
-$code-color: #db1a74 !default;
+/* Override the code-color to increase the contrast, matching the one on default.scss. */
+$code-color: $mds-color-pink-600 !default;
+$code-color-dark: $mds-color-pink-200 !default;
 
 /* Give editor access to all of bootstrap. */
 @import "../../../../lib/bundles/bootstrap/scss/bootstrap.scss";
@@ -19,6 +20,12 @@ $code-color: #db1a74 !default;
 /* The editor content is a separate document, so it needs its own copy of the colour mode helpers and palette.
    editor_tiny repeats the data-bs-theme attribute on that document's root for these to take effect. */
 @import "moodle/colour-mode";
+
+/* Inline code in table cells, so that it has the same colours as it does on the page. Unlike on the page, Bootstrap
+   paints the tint of a coloured row on every cell here, so the darker code colour is needed on all of them. */
+$table-tint-on-all-cells: true;
+
+@import "moodle/table-code";
 
 /**
  * Reset the Bootstrap _reboot.scss styles for tables.

@@ -52,3 +52,22 @@ Feature: Colour mode accessibility
       | mode  |
       | light |
       | dark  |
+
+  @javascript
+  Scenario Outline: Inline code meets colour contrast standards on tinted surfaces in <mode> mode
+    Given the following "activities" exist:
+      | activity | name      | course | contentformat | content                                                                                                                                                                                                                                                                                                                                                                            |
+      | page     | Code page | C1     | 1             | <div class="alert alert-info"><code>admin/cli/cron.php</code></div><div class="alert alert-light"><code>admin/cli/cron.php</code></div><div class="alert alert-dark"><code>admin/cli/cron.php</code></div><table class="table table-striped table-hover"><tbody><tr><td><code>admin/cli/cron.php</code></td></tr><tr><td><code>admin/cli/cron.php</code></td></tr></tbody></table> |
+    And the following "user preferences" exist:
+      | user     | preference             | value  |
+      | student1 | theme_boost_colourmode | <mode> |
+    When I am on the "Code page" "page activity" page logged in as student1
+    # The old code colour failed on these alerts: alert-info and alert-dark in light mode, and alert-light in dark mode.
+    # Axe cannot see the shading of a striped or hovered table row, which is painted as a box shadow, so the table
+    # only checks that body cells in dark mode resolve to a readable colour.
+    Then the "#region-main .generalbox" "css_element" should meet accessibility standards
+
+    Examples:
+      | mode  |
+      | light |
+      | dark  |
