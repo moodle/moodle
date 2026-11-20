@@ -165,7 +165,6 @@ final class overviewfactory_test extends \advanced_testcase {
         // the exception.
         $reflection = new \ReflectionClass($cm);
         $property = $reflection->getProperty('modname');
-        $property->setAccessible(true);
         $property->setValue($cm, 'wrongcm');
 
         $this->expectException(\coding_exception::class);

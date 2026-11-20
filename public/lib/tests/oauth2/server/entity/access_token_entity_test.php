@@ -167,7 +167,6 @@ final class access_token_entity_test extends \advanced_testcase {
         $token->setPrivateKey($cryptkey);
 
         $reflection = new \ReflectionProperty($token, 'privateKey');
-        $reflection->setAccessible(true);
 
         $this->assertSame($cryptkey, $reflection->getValue($token));
     }
@@ -187,7 +186,6 @@ final class access_token_entity_test extends \advanced_testcase {
         $token->initJwtConfiguration();
 
         $reflection = new \ReflectionProperty($token, 'jwtConfiguration');
-        $reflection->setAccessible(true);
 
         $this->assertInstanceOf(Configuration::class, $reflection->getValue($token));
     }

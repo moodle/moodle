@@ -84,7 +84,6 @@ final class humandate_exporter_test extends \advanced_testcase {
         $this->assertCount(9, get_object_vars($data));
 
         $formatmethod = new \ReflectionMethod(humandate::class, 'format_time');
-        $formatmethod->setAccessible(true);
 
         $expected = [
             'timestamp' => $timestamp,

@@ -45,11 +45,9 @@ final class check_table_test extends \advanced_testcase {
         $table = (new \ReflectionClass(table::class))->newInstanceWithoutConstructor();
 
         $urlproperty = new \ReflectionProperty(table::class, 'url');
-        $urlproperty->setAccessible(true);
         $urlproperty->setValue($table, new \moodle_url('/report/status/index.php'));
 
         $typeproperty = new \ReflectionProperty(table::class, 'type');
-        $typeproperty->setAccessible(true);
         $typeproperty->setValue($table, 'status');
 
         $table->checks = [$check->get_ref() => $check];

@@ -633,7 +633,6 @@ final class registration_test extends \advanced_testcase {
         ];
 
         $method = new \ReflectionMethod(registration::class, 'get_registration_redirect_url');
-        $method->setAccessible(true);
         $url = $method->invoke(null, 'sometoken123', $siteinfo);
 
         $this->assertInstanceOf(\moodle_url::class, $url);

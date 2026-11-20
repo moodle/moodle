@@ -126,8 +126,6 @@ final class manager_test extends provider_testcase {
         };
 
         $manager = new manager();
-        // Since PHP 8.1, all Reflection*::setAccessible() calls are no-ops and are
-        // deprecation-warned as of PHP 8.5, so we skip them and write directly.
         (new \ReflectionProperty($manager, 'client'))->setValue($manager, $stub);
         return $manager;
     }

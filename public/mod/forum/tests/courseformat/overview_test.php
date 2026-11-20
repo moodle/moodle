@@ -193,7 +193,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_forumtype_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertNull($item);
 
@@ -202,7 +201,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_forumtype_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('forumtype', 'forum'), $item->get_name());
         $this->assertEquals($forumtype, $item->get_value());
@@ -285,7 +283,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_track_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('tracking', 'forum'), $item->get_name());
         $this->assertStringContainsString('data-type="forum-track-toggle"', $item->get_content());
@@ -445,7 +442,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_subscribed_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('subscribed', 'forum'), $item->get_name());
         $this->assertStringContainsString('data-type="forum-subscription-toggle"', $item->get_content());
@@ -553,7 +549,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_emaildigest_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('digesttype', 'forum'), $item->get_name());
         if ($emaildigestvalue === '-') {
@@ -667,7 +662,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_discussions_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('discussions', 'forum'), $item->get_name());
         $this->assertEquals(0, $item->get_value());
@@ -686,7 +680,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_discussions_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('discussions', 'forum'), $item->get_name());
         $this->assertEquals(3, $item->get_value());
@@ -698,7 +691,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_discussions_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('discussions', 'forum'), $item->get_name());
         $this->assertEquals(3, $item->get_value());

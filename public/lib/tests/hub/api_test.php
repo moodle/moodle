@@ -140,7 +140,6 @@ final class api_test extends \advanced_testcase {
      */
     private function sign_registration_update(string $siteurl): array {
         $method = new \ReflectionMethod(api::class, 'sign_registration_update');
-        $method->setAccessible(true);
         return $method->invoke(null, $siteurl);
     }
 

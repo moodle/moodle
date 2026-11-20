@@ -336,7 +336,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
         // Use reflection to test protected method.
         $reflection = new \ReflectionClass($setting);
         $method = $reflection->getMethod('resolve_label');
-        $method->setAccessible(true);
 
         // Test with known format that has a language string.
         $label = $method->invoke($setting, 'video');
@@ -365,7 +364,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
         // Use reflection to test protected method.
         $reflection = new \ReflectionClass($setting);
         $method = $reflection->getMethod('resolve_label');
-        $method->setAccessible(true);
 
         // Test with custom format names.
         $label = $method->invoke($setting, 'my_custom_format');
@@ -399,7 +397,6 @@ final class setting_configmultiselect_tags_test extends advanced_testcase {
         // Use reflection to test protected method.
         $reflection = new \ReflectionClass($setting);
         $method = $reflection->getMethod('resolve_label');
-        $method->setAccessible(true);
 
         $label = $method->invoke($setting, '');
         $this->assertEquals('', $label);

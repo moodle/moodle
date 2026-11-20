@@ -62,7 +62,6 @@ final class humantimeperiod_test extends \advanced_testcase {
 
         $reflection = new \ReflectionClass($humantimeperiod);
         $method = $reflection->getMethod('format_period');
-        $method->setAccessible(true);
         $result = $method->invoke($humantimeperiod);
         $this->compare_output($expected, $result);
     }
