@@ -48,7 +48,7 @@ export type CalendarEvent = {
     activitystr?: string;
     purpose?: string;
     icon?: CalendarEventIcon;
-    course: {
+    course?: {
         id: number;
         fullname: string;
         fullnamedisplay: string;
