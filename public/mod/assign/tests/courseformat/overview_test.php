@@ -270,7 +270,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submissions_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('submissions', 'assign'), $item->get_name());
         $this->assertEquals(0, $item->get_value());
@@ -295,7 +294,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submissions_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertNull($item);
 
@@ -305,7 +303,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submissions_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('submissions', 'assign'), $item->get_name());
         $this->assertEquals(1, $item->get_value());
@@ -354,7 +351,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submissions_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('submissions', 'assign'), $item->get_name());
         $this->assertEquals(0, $item->get_value());
@@ -397,7 +393,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submissions_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertNull($item);
 
@@ -407,7 +402,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submissions_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('submissions', 'assign'), $item->get_name());
         $this->assertEquals(3, $item->get_value());
@@ -418,7 +412,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submissions_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('submissions', 'assign'), $item->get_name());
         $this->assertEquals(1, $item->get_value());
@@ -450,7 +443,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submission_status_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertNull($item);
 
@@ -460,7 +452,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submission_status_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertNull($item);
         // Unless the admin is enrolled as a student.
@@ -474,7 +465,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submission_status_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('submissionstatus', 'assign'), $item->get_name());
         $this->assertEquals(get_string('submissionstatus_new', 'assign'), $item->get_value());
@@ -499,7 +489,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submission_status_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('submissionstatus', 'assign'), $item->get_name());
         $this->assertEquals(get_string('submissionstatus_submitted', 'assign'), $item->get_value());
@@ -538,7 +527,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submission_status_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertNull($item);
 
@@ -548,7 +536,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submission_status_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertNull($item);
 
@@ -558,7 +545,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submission_status_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('submissionstatus', 'assign'), $item->get_name());
         $this->assertEquals(get_string('submissionstatus_new', 'assign'), $item->get_value());
@@ -583,7 +569,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submission_status_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         $this->assertEquals(get_string('submissionstatus', 'assign'), $item->get_name());
         $this->assertEquals(get_string('submissionstatus_submitted', 'assign'), $item->get_value());

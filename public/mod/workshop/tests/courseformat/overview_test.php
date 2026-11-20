@@ -196,7 +196,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_phase_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         $this->assertEquals(get_string('phase', 'mod_workshop'), $item->get_name());
@@ -296,7 +295,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_deadline_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         $this->assertEquals(get_string('deadline', 'mod_workshop'), $item->get_name());
@@ -491,11 +489,9 @@ final class overview_test extends \advanced_testcase {
         $reflection = new \ReflectionClass($overview);
 
         $method = $reflection->getMethod('get_extra_submissions_overview');
-        $method->setAccessible(true);
         $itemsubmissions = $method->invoke($overview);
 
         $method = $reflection->getMethod('get_extra_assessments_overview');
-        $method->setAccessible(true);
         $itemassessment = $method->invoke($overview);
 
         if ($expectnull) {

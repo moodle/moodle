@@ -187,7 +187,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_responses_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         // Students should not see item.
@@ -333,7 +332,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_responses_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         $this->assertEquals(get_string('responses', 'mod_feedback'), $item->get_name());
@@ -480,7 +478,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_submitted_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         // Students should not see item.

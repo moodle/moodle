@@ -235,7 +235,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_comments_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         if ($expected === null) {
@@ -319,7 +318,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_comments_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         $this->assertEquals(get_string('comments', 'glossary'), $item->get_name());
@@ -415,7 +413,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_totalentries_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         $this->assertEquals(
@@ -528,7 +525,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_myentries_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         if ($expected === null) {

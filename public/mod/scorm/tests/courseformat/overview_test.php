@@ -120,7 +120,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_totalattempts_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         if (!isset($expected['totalattempts'])) {
             $this->assertNull($item);
@@ -171,7 +170,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cm);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_studentsattempted_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
         if (!isset($expected['attempted'])) {
             $this->assertNull($item);

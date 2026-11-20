@@ -423,7 +423,6 @@ final class client_entity_test extends \advanced_testcase {
      */
     protected function set_protected_property(object $object, string $property, mixed $value): void {
         $reflection = new \ReflectionProperty($object, $property);
-        $reflection->setAccessible(true);
         $reflection->setValue($object, $value);
     }
 }

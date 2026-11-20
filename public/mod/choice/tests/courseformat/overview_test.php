@@ -211,7 +211,6 @@ final class overview_test extends \advanced_testcase {
             $content = $result['studentwhoresponded']->get_content();
             $reflection = new \ReflectionClass($content);
             $description = $reflection->getProperty('description');
-            $description->setAccessible(true);
             if ($allowmultiple) {
                 $this->assertEquals(
                     get_string('allowmultiple', 'mod_choice'),
@@ -223,7 +222,6 @@ final class overview_test extends \advanced_testcase {
 
             $reflection = new \ReflectionClass($content);
             $items = $reflection->getProperty('items');
-            $items->setAccessible(true);
             $this->assertEquals(
                 3, // A, B, C.
                 count($items->getValue($content)),

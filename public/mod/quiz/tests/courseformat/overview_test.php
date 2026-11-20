@@ -159,7 +159,6 @@ final class overview_test extends \advanced_testcase {
 
             $reflection = new \ReflectionClass($overview);
             $method = $reflection->getMethod('get_extra_total_attempts_overview');
-            $method->setAccessible(true);
             $item = $method->invoke($overview);
 
             if ($studentswhoattempted === null) {
@@ -230,7 +229,6 @@ final class overview_test extends \advanced_testcase {
 
             $reflection = new \ReflectionClass($overview);
             $method = $reflection->getMethod('get_extra_total_attempts_overview');
-            $method->setAccessible(true);
             $item = $method->invoke($overview);
 
             if ($averageattempts === null) {
@@ -299,7 +297,6 @@ final class overview_test extends \advanced_testcase {
 
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_total_attempts_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         $items = $item->get_content()->get_items();
@@ -311,7 +308,6 @@ final class overview_test extends \advanced_testcase {
         $overview = overviewfactory::create($cminfo);
         $reflection = new \ReflectionClass($overview);
         $method = $reflection->getMethod('get_extra_total_attempts_overview');
-        $method->setAccessible(true);
         $item = $method->invoke($overview);
 
         $items = $item->get_content()->get_items();
@@ -340,7 +336,6 @@ final class overview_test extends \advanced_testcase {
 
             $reflection = new \ReflectionClass($overview);
             $method = $reflection->getMethod('get_extra_students_who_attempted_overview');
-            $method->setAccessible(true);
             $item = $method->invoke($overview);
 
             if ($totalattempts === null) {

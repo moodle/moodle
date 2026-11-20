@@ -427,7 +427,6 @@ final class extension_test extends \advanced_testcase {
         $data = json_encode($result->data);
         $reflection = new \ReflectionClass(broker::class);
         $method = $reflection->getMethod('process_extension_actions');
-        $method->setAccessible(true);
         $method->invokeArgs(null, [$instance, $data]);
         $addondata = $DB->get_field('bbbext_simple', 'meetingevents', ['bigbluebuttonbnid' => $bbactivity->id]);
         $addondata = json_decode($addondata);
