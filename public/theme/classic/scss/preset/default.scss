@@ -59,6 +59,11 @@ $headings-font-weight:   300 !default;
 $link-decoration: none !default;
 $link-hover-decoration: underline !default;
 
+// Inline code
+// Darker and lighter than $pink so that code stays readable on tinted surfaces such as alerts and table stripes.
+$code-color:      #af155d !default;
+$code-color-dark: #f1a3c7 !default;
+
 // Navbar
 $navbar-dark-hover-color:           rgba($white, 1) !default;
 $navbar-light-color:                rgba($black, 0.6) !default;

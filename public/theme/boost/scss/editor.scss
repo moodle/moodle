@@ -1,8 +1,22 @@
-/* Override the code-color to increase the contrast. */
-$code-color: #db1a74 !default;
+/* Override the code-color to increase the contrast, matching the one on default.scss. */
+$code-color: #af155d !default;
+$code-color-dark: #f1a3c7 !default;
 
 /* Give editor access to all of bootstrap. */
 @import "bootstrap/bootstrap";
+
+/* Inline code in coloured table rows and cells, with the same colours as tables.scss so that code reads the same while
+   it is being edited. Unlike on the page, Bootstrap paints the tint of a coloured row on every cell here. The tints get
+   darker on hover and active, so code on them uses the darker pink-700, and code on .table-dark uses the light
+   pink-100. These are hex values because the editor does not load the tokens. */
+$table-code-color-tinted: #831046 !default;
+$table-code-color-dark: #f8d1e3 !default;
+
+@each $color, $value in $table-variants {
+    .table-#{$color} {
+        --#{$prefix}code-color: #{if($color == "dark", $table-code-color-dark, $table-code-color-tinted)};
+    }
+}
 
 /**
  * Reset the Bootstrap _reboot.scss styles for tables.
