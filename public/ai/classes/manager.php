@@ -593,6 +593,9 @@ class manager {
             $deleted = false;
         } else {
             $deleted = $this->db->delete_records('ai_providers', ['id' => $provider->id]);
+            if ($deleted) {
+                $this->update_provider_order($provider->id, aiproviderplugin::DISABLE);
+            }
         }
         return $deleted;
     }
@@ -710,12 +713,14 @@ class manager {
      * @throws dml_exception
      */
     public function update_provider_order(int $providerid, string|int $action): void {
-        $order = explode(',', get_config('core_ai', 'provider_order'));
+        $raworder = (string) get_config('core_ai', 'provider_order');
+        $order = array_filter(explode(',', $raworder), 'strlen');
+        $existingids = $this->db->get_fieldset('ai_providers', 'id');
+        $order = array_values(array_intersect($order, $existingids));
         $key = array_search($providerid, $order);
-
         switch ($action) {
             case aiproviderplugin::MOVE_UP:
-                if ($key >= 1) {
+                if ($key !== false && $key >= 1) {
                     $fsave = $order[$key];
                     $order[$key] = $order[$key - 1];
                     $order[$key - 1] = $fsave;
@@ -723,7 +728,7 @@ class manager {
                 break;
 
             case aiproviderplugin::MOVE_DOWN:
-                if ($key < (count($order) - 1)) {
+                if ($key !== false && $key < (count($order) - 1)) {
                     $fsave = $order[$key];
                     $order[$key] = $order[$key + 1];
                     $order[$key + 1] = $fsave;
@@ -731,13 +736,13 @@ class manager {
                 break;
 
             case aiproviderplugin::ENABLE:
-                if (!$key) {
+                if ($key === false) {
                     $order[] = $providerid;
                 }
                 break;
 
             case aiproviderplugin::DISABLE:
-                if ($key) {
+                if ($key !== false) {
                     unset($order[$key]);
                 }
                 break;
