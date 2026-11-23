@@ -120,6 +120,17 @@
     </copyrights>
   </library>
   <library>
+    <location>bundles/react-hook-form</location>
+    <name>react-hook-form</name>
+    <description>Performant, flexible and extensible forms library for React Hooks</description>
+    <version>7.92.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/react-hook-form/react-hook-form</repository>
+    <copyrights>
+      <copyright>2019-present Beier(Bill) Luo</copyright>
+    </copyrights>
+  </library>
+  <library>
     <location>bundles/@popperjs</location>
     <name>Popper.js</name>
     <description>A kickass library used to created Poppers in web applications.</description>

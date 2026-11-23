@@ -18,6 +18,7 @@
     "bootstrap": "^5.3.8",
     "react": "^19.1",
     "react-dom": "^19.1",
+    "react-hook-form": "^7.92.0",
     "tabbable": "^6.5.0"
   },
   "devDependencies": {

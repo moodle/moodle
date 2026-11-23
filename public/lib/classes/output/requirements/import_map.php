@@ -236,6 +236,11 @@ class import_map implements \JsonSerializable {
             path: 'lib/bundles/tabbable/tabbable',
             preload: true,
         );
+        $this->add_import(
+            'react-hook-form',
+            path: 'lib/bundles/react-hook-form/react-hook-form',
+            themable: false,
+        );
 
         // Register the main Bootstrap bundle as a bare specifier, and the internal util and dom modules as subpath specifiers.
         $this->add_import(
