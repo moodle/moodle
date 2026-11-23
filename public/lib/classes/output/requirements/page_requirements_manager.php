@@ -1588,6 +1588,14 @@ class page_requirements_manager {
             $output .= html_writer::script('', $this->js_fix_url('/lib/requirejs/require.js'));
         }
 
+        // RequireJS calls every callback waiting on a module in one loop. With its default error
+        // handler an exception in one callback ends that loop, and the callbacks after it never run.
+        // A custom handler makes RequireJS catch the exception, so the other callbacks still run.
+        // Throw the error again from a new task so it is still reported as an uncaught error.
+        $output .= html_writer::script(
+            'requirejs.onError = function(err) { setTimeout(function() { throw err; }); };'
+        );
+
         $requirejshook = new \core\hook\output\before_requirejs_config();
         \core\di::get(\core\hook\manager::class)->dispatch($requirejshook);
 
