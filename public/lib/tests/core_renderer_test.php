@@ -579,7 +579,7 @@ EOF
         $page = new moodle_page();
         $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
 
-        $html = $renderer->help_icon('moodledocslink', 'core');
+        $html = $renderer->help_icon('maximumupload', 'core');
         $this->assertIsString($html);
         $this->assertStringContainsString('Replaced help icon', $html);
         $this->assertStringContainsString('custom-replacement', $html);
@@ -603,7 +603,7 @@ EOF
         $page = new moodle_page();
         $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
 
-        $html = $renderer->help_icon('moodledocslink', 'core');
+        $html = $renderer->help_icon('maximumupload', 'core');
         $this->assertIsString($html);
         // The original help icon should still be present.
         $this->assertStringContainsString('data-bs-toggle="popover"', $html);
