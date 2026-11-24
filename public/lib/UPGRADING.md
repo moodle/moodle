@@ -44,6 +44,10 @@
 - The `core/Storage` ESM module has been renamed to `core/storage` to follow the ESM naming conventions. ESM code importing `@moodle/lms/core/Storage` must import `@moodle/lms/core/storage` instead. AMD code using `core/localstorage`, `core/sessionstorage` or `core/storagewrapper` is not affected.
 
   For more information see [MDL-89230](https://tracker.moodle.org/browse/MDL-89230)
+- The core/fetch module now rejects failed requests with the Response object instead of its status text. This is a breaking change for code which uses the rejection reason as a string.
+  For more information, including how to support both forms, see https://moodledev.io/docs/6.0/devupdate#fetch-requests-reject-with-the-response
+
+  For more information see [MDL-89243](https://tracker.moodle.org/browse/MDL-89243)
 - The eye icons now use the solid Font Awesome style site-wide. This affects the `core:i/hide`, `core:i/show`, `core:t/hide` and `core:t/show` mappings, and the `mod_scorm:browsed` mapping. The corresponding SVG fallbacks have also been updated. Themes and plugins using these icons inherit the new appearance unless they override them. Theme and plugin developers should review any icon overrides to keep them consistent with the solid style.
 
   For more information see [MDL-89320](https://tracker.moodle.org/browse/MDL-89320)
@@ -59,6 +63,15 @@
 - The `override` and `warning` context variables of the `core_admin/setting` template are deprecated and are no longer rendered by core. Use the new `notifications` context variable instead. Theme and plugin overrides of this template should be updated; the old variables are still provided until their final deprecation.
 
   For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+- The fields used in the response for a REST exception have been changed to support the RFC-9457 standard. As part of this the following fields have been deprecated:
+
+  - `message` - replaced by the new `detail` field; and
+  - `errorcode` - no replacement. See the HTTP status code for the equivalent information.
+
+  For more information see [MDL-89850](https://tracker.moodle.org/browse/MDL-89850)
+- The `\core\router\response\exception_response::get_payload_data()` method has been deprecated and replaced with a new `get_response_payload()` method which has strictly typed properties.
+
+  For more information see [MDL-89850](https://tracker.moodle.org/browse/MDL-89850)
 - The following methods in the `\core\oauth2\server\repository\scope_repository` class have been deprecated and replaced:
 
   | Method name | Replacement |

@@ -52,6 +52,10 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `core/Storage` ESM module has been renamed to `core/storage` to follow the ESM naming conventions. ESM code importing `@moodle/lms/core/Storage` must import `@moodle/lms/core/storage` instead. AMD code using `core/localstorage`, `core/sessionstorage` or `core/storagewrapper` is not affected.
 
   For more information see [MDL-89230](https://tracker.moodle.org/browse/MDL-89230)
+- The core/fetch module now rejects failed requests with the Response object instead of its status text. This is a breaking change for code which uses the rejection reason as a string.
+  For more information, including how to support both forms, see https://moodledev.io/docs/6.0/devupdate#fetch-requests-reject-with-the-response
+
+  For more information see [MDL-89243](https://tracker.moodle.org/browse/MDL-89243)
 - The eye icons now use the solid Font Awesome style site-wide. This affects the `core:i/hide`, `core:i/show`, `core:t/hide` and `core:t/show` mappings, and the `mod_scorm:browsed` mapping. The corresponding SVG fallbacks have also been updated. Themes and plugins using these icons inherit the new appearance unless they override them. Theme and plugin developers should review any icon overrides to keep them consistent with the solid style.
 
   For more information see [MDL-89320](https://tracker.moodle.org/browse/MDL-89320)
@@ -67,6 +71,15 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `override` and `warning` context variables of the `core_admin/setting` template are deprecated and are no longer rendered by core. Use the new `notifications` context variable instead. Theme and plugin overrides of this template should be updated; the old variables are still provided until their final deprecation.
 
   For more information see [MDL-87756](https://tracker.moodle.org/browse/MDL-87756)
+- The fields used in the response for a REST exception have been changed to support the RFC-9457 standard. As part of this the following fields have been deprecated:
+
+  - `message` - replaced by the new `detail` field; and
+  - `errorcode` - no replacement. See the HTTP status code for the equivalent information.
+
+  For more information see [MDL-89850](https://tracker.moodle.org/browse/MDL-89850)
+- The `\core\router\response\exception_response::get_payload_data()` method has been deprecated and replaced with a new `get_response_payload()` method which has strictly typed properties.
+
+  For more information see [MDL-89850](https://tracker.moodle.org/browse/MDL-89850)
 - The following methods in the `\core\oauth2\server\repository\scope_repository` class have been deprecated and replaced:
 
   | Method name | Replacement |
@@ -136,6 +149,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The `core_courseformat\output\local\content\cm\groupmode` now exports the group mode dropdown for all values, including No groups, instead of hiding it behind a card hover. The dropdown is rendered by the new `core_course/local/cm/GroupModeDropdown` React component. The context replaces `autohide` with `accessiblename` and `reactprops`.
 
   For more information see [MDL-89321](https://tracker.moodle.org/browse/MDL-89321)
+- The `core_courseformat/local/content/divider` and `core_courseformat/local/content/section/addsectiondivider` templates no longer use the `bulk-hidden` class, so dividers keep their space during bulk editing and the page no longer shifts. Theme overrides should remove `bulk-hidden` and hide the dividers with `visibility: hidden` instead.
+
+  For more information see [MDL-89322](https://tracker.moodle.org/browse/MDL-89322)
+- The checkboxes in the `core_courseformat/local/content/cm/bulkselect` and `core_courseformat/local/content/section/bulkselect` templates now use the `form-check-input` class, and the activity checkbox is positioned inside the card through `.activity-item > .bulkselect`. Theme overrides should keep both the class and that structure.
+
+  For more information see [MDL-89322](https://tracker.moodle.org/browse/MDL-89322)
+- The `bulkEnable` mutation in `core_courseformat/local/courseeditor/mutations` is now asynchronous and always returns a Promise, as it announces to screen readers when bulk editing is turned on or off. Code that calls it directly, or overrides it and calls the parent, should await the result.
+
+  For more information see [MDL-89322](https://tracker.moodle.org/browse/MDL-89322)
+- The activity action menu no longer offers the availability and group mode items when the activity card already shows an editable control for them. The new `is_editable_on_card()` method in `core_courseformat\output\local\content\cm\visibility` and `core_courseformat\output\local\content\cm\groupmode` decides this. Formats that change when those card controls are shown must override `is_editable_on_card()` as well, so the setting can still be changed from the menu.
+
+  For more information see [MDL-90163](https://tracker.moodle.org/browse/MDL-90163)
+- In course formats that do not support components, the activity card now shows the read-only visibility indicator instead of the visibility control, and the activity action menu keeps its availability item.
+
+  For more information see [MDL-90163](https://tracker.moodle.org/browse/MDL-90163)
 
 ### core_grades
 
@@ -178,6 +206,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-90067](https://tracker.moodle.org/browse/MDL-90067)
 
+### smsgateway_aws
+
+#### Changed
+
+- The AWS SMS gateway now uses its configured default country code for phone numbers in local format. Before, these numbers were always sent with the country code 1, whatever was configured. Sites that relied on this, for example in the United States or Canada, must set the gateway's default country code to 1, otherwise local numbers are sent without a country code and fail.
+
+  For more information see [MDL-84943](https://tracker.moodle.org/browse/MDL-84943)
+
 ### theme_boost
 
 #### Added
@@ -206,6 +242,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The top navbar is now 64px tall instead of 60px. The `$navbar-height` SCSS variable and the `--navbar-height` custom property reflect the new value, so anything positioned from them follows automatically. Themes or plugins that hardcode the old 60px offset need updating.
 
   For more information see [MDL-89293](https://tracker.moodle.org/browse/MDL-89293)
+- The focus rings built from Bootstrap's focus variables now follow the colour mode. To do that, `scss/bootstrap.scss` sets `$input-btn-focus-color` to `var(--#{$prefix}focus-ring-color)` and builds `$focus-ring-box-shadow` from the same custom property, for every preset. `$input-btn-focus-color` is therefore no longer a Sass colour. Themes and presets that pass it to a colour function such as `mix()`, `tint-color()` or `lighten()` will fail to compile, and those that pass it to `rgba()` will compile to a value browsers ignore, so their focus ring disappears. Use `$focus-ring-color`, which is still a colour, in those places instead.
+
+  For more information see [MDL-89920](https://tracker.moodle.org/browse/MDL-89920)
 - Open course index and block drawers on the course page (the limited-width layout) now keep `$drawer-edge-gap` (the same 1.25rem as the navbar side padding) from the screen edge and `$drawer-content-gap` (20px) from the course content in every drawer state. The page reserves room beside each open drawer to match, so the course content narrows when the screen is too narrow instead of a drawer touching the screen edge. Themes that override the drawer anchors or the page padding for this layout need to be checked.
 
   For more information see [MDL-90206](https://tracker.moodle.org/browse/MDL-90206)

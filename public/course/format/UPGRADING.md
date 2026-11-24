@@ -22,6 +22,21 @@
 - The `core_courseformat\output\local\content\cm\groupmode` now exports the group mode dropdown for all values, including No groups, instead of hiding it behind a card hover. The dropdown is rendered by the new `core_course/local/cm/GroupModeDropdown` React component. The context replaces `autohide` with `accessiblename` and `reactprops`.
 
   For more information see [MDL-89321](https://tracker.moodle.org/browse/MDL-89321)
+- The `core_courseformat/local/content/divider` and `core_courseformat/local/content/section/addsectiondivider` templates no longer use the `bulk-hidden` class, so dividers keep their space during bulk editing and the page no longer shifts. Theme overrides should remove `bulk-hidden` and hide the dividers with `visibility: hidden` instead.
+
+  For more information see [MDL-89322](https://tracker.moodle.org/browse/MDL-89322)
+- The checkboxes in the `core_courseformat/local/content/cm/bulkselect` and `core_courseformat/local/content/section/bulkselect` templates now use the `form-check-input` class, and the activity checkbox is positioned inside the card through `.activity-item > .bulkselect`. Theme overrides should keep both the class and that structure.
+
+  For more information see [MDL-89322](https://tracker.moodle.org/browse/MDL-89322)
+- The `bulkEnable` mutation in `core_courseformat/local/courseeditor/mutations` is now asynchronous and always returns a Promise, as it announces to screen readers when bulk editing is turned on or off. Code that calls it directly, or overrides it and calls the parent, should await the result.
+
+  For more information see [MDL-89322](https://tracker.moodle.org/browse/MDL-89322)
+- The activity action menu no longer offers the availability and group mode items when the activity card already shows an editable control for them. The new `is_editable_on_card()` method in `core_courseformat\output\local\content\cm\visibility` and `core_courseformat\output\local\content\cm\groupmode` decides this. Formats that change when those card controls are shown must override `is_editable_on_card()` as well, so the setting can still be changed from the menu.
+
+  For more information see [MDL-90163](https://tracker.moodle.org/browse/MDL-90163)
+- In course formats that do not support components, the activity card now shows the read-only visibility indicator instead of the visibility control, and the activity action menu keeps its availability item.
+
+  For more information see [MDL-90163](https://tracker.moodle.org/browse/MDL-90163)
 
 ## 5.3
 
