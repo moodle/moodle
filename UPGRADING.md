@@ -16,10 +16,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-90249](https://tracker.moodle.org/browse/MDL-90249)
 
+### smsgateway_aws
+
+#### Changed
+
+- The AWS SMS gateway now uses its configured default country code for phone numbers in local format. Before, these numbers were always sent with the country code 1, whatever was configured. Sites that relied on this, for example in the United States or Canada, must set the gateway's default country code to 1, otherwise local numbers are sent without a country code and fail.
+
+  For more information see [MDL-84943](https://tracker.moodle.org/browse/MDL-84943)
+
 ### theme_boost
 
 #### Changed
 
+- The focus rings built from Bootstrap's focus variables now follow the colour mode. To do that, `scss/bootstrap.scss` sets `$input-btn-focus-color` to `var(--#{$prefix}focus-ring-color)` and builds `$focus-ring-box-shadow` from the same custom property, for every preset. `$input-btn-focus-color` is therefore no longer a Sass colour. Themes and presets that pass it to a colour function such as `mix()`, `tint-color()` or `lighten()` will fail to compile, and those that pass it to `rgba()` will compile to a value browsers ignore, so their focus ring disappears. Use `$focus-ring-color`, which is still a colour, in those places instead.
+
+  For more information see [MDL-89920](https://tracker.moodle.org/browse/MDL-89920)
 - Open course index and block drawers on the course page (the limited-width layout) now keep `$drawer-edge-gap` (the same 1.25rem as the navbar side padding) from the screen edge and `$drawer-content-gap` (20px) from the course content in every drawer state. The page reserves room beside each open drawer to match, so the course content narrows when the screen is too narrow instead of a drawer touching the screen edge. Themes that override the drawer anchors or the page padding for this layout need to be checked.
 
   For more information see [MDL-90206](https://tracker.moodle.org/browse/MDL-90206)
