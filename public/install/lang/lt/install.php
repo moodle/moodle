@@ -62,6 +62,8 @@ $string['pathsunsecuredataroot'] = 'Šakninio duomenų katalogo kelias nesaugus'
 $string['pathswrongadmindir'] = 'Nėra administratoriaus katalogo';
 $string['phpextension'] = '{$a} PHP plėtinys';
 $string['phpversion'] = 'PHP versija';
+$string['webserverconfigproblemdescription'] = 'Jūsų žiniatinklio serveris nesukonfigūruotas taip, kad neleistų pasiekti failų už katalogo /public ribų. Kaip tinkamai sukonfigūruoti žiniatinklio serverį, skaitykite dokumentacijoje <a href="https://docs.moodle.org/en/Upgrading#Code_directories_restructure">Upgrading - Code directories restructure</a>. Perkonfigūravę <a href="{$a}">vėl atidarykite žiniatinklio šakninį katalogą</a>.';
+$string['webservernotconfigured'] = 'Žiniatinklio serveris nesukonfigūruotas';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Matote šį puslapį, nes į kompiuterį sėkmingai įdiegėte ir paleidote <strong>{$a->packname} {$a->packversion}</strong> paketą. Sveikiname!';
 $string['welcomep30'] = 'Šiame <strong>{$a->installername}</strong> leidime yra taikomosios programos, skirtos aplinkai, kurioje veiks <strong>Moodle</strong>, sukurti:';
