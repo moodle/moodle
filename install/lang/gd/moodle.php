@@ -31,6 +31,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'Cànan';
 $string['moodlelogo'] = 'Logo Mhoodle';
-$string['next'] = 'Ath';
+$string['next'] = 'An ath';
 $string['previous'] = 'Roimhe';
 $string['reload'] = 'Ath-luchdaich';
